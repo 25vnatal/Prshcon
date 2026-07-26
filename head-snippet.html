@@ -1,0 +1,84 @@
+<!--
+  PARISH CONNECT — CANONICAL HEAD SNIPPET
+  "Community Heart" v1
+  ------------------------------------------------------------
+  Copy this ENTIRE block, unmodified, into the <head> of every
+  new screen file. This is what keeps Parishioner / Parish /
+  Diocese screens visually consistent despite each being a
+  separate, self-contained HTML file (no shared build/includes).
+
+  If tokens ever change: update design-tokens.css first, then
+  update THIS file, then re-paste into every existing screen.
+
+  NOTE: screens built before this v1 update (Midnight Digital)
+  still use the old indigo/cool-gray tokens and are tracked as
+  restyle debt in screens-index.md.
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts: Manrope (headings, 600/700 only) + Inter (body/UI, 400/500). No serif. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD',
+          'card-bg': '#FFFFFF',
+          'section-bg': '#F5F7FB',
+          divider: '#E8EDF5',
+          ink: '#1F2937',        // text-primary
+          'ink-muted': '#6B7280', // text-secondary
+          primary: {
+            DEFAULT: '#4F7CF5',
+            hover: '#3F6CE4',
+            light: '#EEF4FF',
+          },
+          coral: '#FF7F73',
+          gold: '#F6C453',
+          green: '#6CBF84',
+          lavender: '#A88BFF',
+          error: {
+            DEFAULT: '#E5645A',
+            bg: '#FDECEA',
+          },
+        },
+        fontFamily: {
+          heading: ['Manrope', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+        borderRadius: {
+          card: '24px',
+          button: '16px',
+          input: '16px',
+          dialog: '24px',
+          badge: '999px',
+        },
+        boxShadow: {
+          card: '0 6px 24px rgba(30, 41, 59, 0.08)',
+          'card-hover': '0 12px 36px rgba(30, 41, 59, 0.12)',
+        },
+        maxWidth: {
+          content: '1440px',
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, h4, .font-heading { font-family: 'Manrope', sans-serif; }
+  /* Visible focus states everywhere — required for the low-digital-literacy audience */
+  :focus-visible {
+    outline: 2px solid #4F7CF5;
+    outline-offset: 2px;
+  }
+  /* Motion: fade/slide/scale only, 200ms — never bounce/spin/elastic */
+  .transition-warm { transition: all 200ms ease; }
+</style>

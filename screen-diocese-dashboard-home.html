@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Diocese Dashboard</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+  @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+</style>
+</head>
+<body class="text-ink">
+
+  <!-- ============ DEMO CONTROLS (not part of the product UI) ============ -->
+  <div id="demo-bar" class="hidden bg-ink text-white text-xs px-4 py-2 flex items-center gap-2 flex-wrap sticky top-0 z-50">
+    <span class="opacity-60 mr-1">Preview state:</span>
+    <button onclick="setState('loading')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20">Loading</button>
+    <button onclick="setState('populated')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20">Populated</button>
+    <button onclick="setState('error')" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20">Error</button>
+    <button onclick="document.getElementById('demo-bar').classList.add('hidden')" class="ml-auto px-2 py-1 rounded bg-white/10 hover:bg-white/20">Hide</button>
+  </div>
+  <button onclick="document.getElementById('demo-bar').classList.toggle('hidden')" aria-label="Toggle preview state controls" class="fixed bottom-2 right-2 w-3 h-3 rounded-full bg-ink/20 hover:bg-ink/50 z-50"></button>
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR (desktop-first, 280px) ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p class="text-xs text-ink-muted mt-1">Bangalore Archdiocese</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="toast('Parishes')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Parishes
+        </button>
+        <button onclick="toast('Ministry')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Ministry
+        </button>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Top bar -->
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p class="text-sm font-semibold">Bangalore Archdiocese</p>
+            <p class="text-xs text-ink-muted">Diocese oversight</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button aria-label="Search" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-lavender/30 text-[#5b3fc4] text-xs font-bold flex items-center justify-center flex-shrink-0">DA</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Diocese Admin</p>
+            <p class="text-xs text-ink-muted">Bangalore Archdiocese</p>
+          </div>
+          <button onclick="window.location.href='screen-diocese-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main id="main-content" class="px-6 lg:px-10 py-8 space-y-8 max-w-content"></main>
+
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = `Opening ${msg}…`;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  const icons = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    alert: '<path d="M12 9v4"/><circle cx="12" cy="16.5" r="0.75" fill="currentColor" stroke="none"/><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
+    chevron: '<polyline points="9 18 15 12 9 6"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${icons[name]}</svg>`; }
+
+  // ---------------- Mock data ----------------
+  // Diocese Snapshot figures are illustrative aggregate estimates, consistent with
+  // parishCount (130) and totalCatholicPopulation (~360,561) in mock-seed.json.
+  const seed = {
+    snapshot: [
+      { label: "Total parishes", value: "130" },
+      { label: "Registered families", value: "46,820" },
+      { label: "Active parishioners", value: "218,450" },
+      { label: "Upcoming diocese events", value: "4" },
+    ],
+    actionCenter: [
+      { label: "Parish reports pending", sub: "9 parishes haven't submitted this month's report", status: "Action needed", tone: "gold" },
+      { label: "Parish profile approvals", sub: "3 profile updates awaiting diocesan review", status: "Action needed", tone: "gold" },
+      { label: "New parish onboarding", sub: "St. Teresa of Kolkata Church — setup in progress", status: "In progress", tone: "lavender" },
+      { label: "Diocese announcements awaiting approval", sub: "1 announcement drafted by communications team", status: "Action needed", tone: "gold" },
+    ],
+    parishHealth: [
+      { name: "St Anthony's Church", locality: "T. C. Palya, K. R. Puram", reason: "Monthly report overdue (12 days)" },
+      { name: "Our Lady of Fatima Church", locality: "Jalahalli", reason: "No Mass schedule published" },
+      { name: "Christ the King Church", locality: "Malleswaram West", reason: "High volume of pending document requests" },
+      { name: "St Joseph's Church", locality: "Chamarajapete", reason: "Large number of pending approvals" },
+      { name: "Holy Family Church", locality: "Ramamurthy Nagar", reason: "Parish profile incomplete" },
+    ],
+    upcoming: [
+      { label: "Bishop's calendar", value: "Confirmation Mass — 3 Aug", sub: "St Francis Xavier Cathedral" },
+      { label: "Diocese event", value: "Diocesan Youth Convention — 16 Aug", sub: "Registrations open" },
+      { label: "Major celebration", value: "Feast of the Assumption — 15 Aug", sub: "Diocese-wide" },
+    ],
+    announcements: [
+      { title: "Diocesan Synod — Call for Parish Delegates", date: "22 Jul 2026" },
+      { title: "Updated Guidelines for Parish Financial Reporting", date: "15 Jul 2026" },
+    ],
+  };
+
+  function renderLoading() {
+    const skel = (h) => `<div class="skeleton rounded-card" style="height:${h}"></div>`;
+    return `
+      <div class="skeleton rounded h-7 w-56"></div>
+      <div class="grid md:grid-cols-4 gap-4">${Array(4).fill(0).map(()=>skel('90px')).join('')}</div>
+      ${skel('160px')}
+      ${skel('260px')}
+      ${skel('160px')}
+      ${skel('140px')}
+    `;
+  }
+
+  function renderError() {
+    return `
+      <div class="bg-error-bg rounded-card p-10 text-center space-y-3 max-w-lg mx-auto">
+        <p class="text-sm font-semibold text-error">We couldn't load the diocese dashboard</p>
+        <p class="text-xs text-error/90">Please check your connection and try again.</p>
+        <button onclick="setState('loading'); setTimeout(()=>setState('populated'), 900)" class="bg-error text-white text-sm font-semibold px-6 py-3 rounded-button min-h-[48px] transition-warm">Try again</button>
+      </div>
+    `;
+  }
+
+  function renderPopulated() {
+    const toneMap = {
+      gold: ['bg-gold/20', 'text-[#8a5a10]', 'alert'],
+      lavender: ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
+    };
+    return `
+      <section>
+        <p class="font-heading font-bold text-2xl">Diocese snapshot</p>
+        <p class="text-ink-muted text-sm mt-1">Bangalore Archdiocese — an overview across all 130 parishes.</p>
+      </section>
+
+      <section>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          ${seed.snapshot.map(s => `
+            <div class="bg-card-bg rounded-card shadow-card p-5">
+              <p class="text-xs text-ink-muted uppercase tracking-wide mb-2">${s.label}</p>
+              <p class="font-heading font-bold text-2xl">${s.value}</p>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+
+      <section>
+        <h2 class="font-heading font-bold text-lg mb-3">Action center</h2>
+        <div class="space-y-3">
+          ${seed.actionCenter.map(item => {
+            const [bg, text, iconName] = toneMap[item.tone];
+            return `
+            <button onclick="toast('${item.label}')" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold">${item.label}</p>
+                <p class="text-xs text-ink-muted mt-1">${item.sub}</p>
+              </div>
+              <span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex-shrink-0 flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${item.status}</span>
+            </button>
+          `}).join('')}
+        </div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-heading font-bold text-lg">Parish health <span class="text-ink-muted font-normal text-sm">— top 5 needing attention</span></h2>
+          <button onclick="toast('All Parishes')" class="text-primary text-xs font-semibold flex items-center gap-1">View all parishes ${icon('chevron','w-3.5 h-3.5')}</button>
+        </div>
+        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+          ${seed.parishHealth.map(p => `
+            <button onclick="toast('${p.name}')" class="w-full flex items-center justify-between px-5 py-4 text-left transition-warm hover:bg-section-bg min-h-[44px]">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold">${p.name}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${p.locality}</p>
+              </div>
+              <span class="bg-error-bg text-error text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex-shrink-0 ml-4">${p.reason}</span>
+            </button>
+          `).join('')}
+        </div>
+      </section>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <section>
+          <h2 class="font-heading font-bold text-lg mb-3">Upcoming</h2>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+            ${seed.upcoming.map(u => `
+              <div class="px-5 py-4">
+                <p class="text-xs text-ink-muted uppercase tracking-wide">${u.label}</p>
+                <p class="text-sm font-semibold mt-1">${u.value}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${u.sub}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-heading font-bold text-lg">Diocese announcements</h2>
+            <button onclick="toast('All Announcements')" class="text-primary text-xs font-semibold">View all</button>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+            ${seed.announcements.map(a => `
+              <div class="px-5 py-4">
+                <p class="text-sm font-semibold">${a.title}</p>
+                <p class="text-xs text-ink-muted mt-1">${a.date}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+  const renderers = { loading: renderLoading, populated: renderPopulated, error: renderError };
+
+  function setState(state) {
+    document.getElementById('main-content').innerHTML = renderers[state]();
+  }
+
+  setState('loading');
+  setTimeout(() => setState('populated'), 900);
+</script>
+
+</body>
+</html>

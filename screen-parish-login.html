@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Parish Sign In</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          green: '#6CBF84',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="min-h-screen flex">
+
+    <!-- Left: brand panel (desktop-first) -->
+    <div class="hidden lg:flex lg:w-1/2 bg-primary text-white flex-col justify-center px-16 relative overflow-hidden">
+      <svg width="200" height="200" viewBox="0 0 120 120" fill="none" class="absolute -right-8 -bottom-8 opacity-20">
+        <path d="M40 100V56l20-16 20 16v44" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M18 100c4-10 10-16 10-16s6 6 10 16" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M82 100c4-10 10-16 10-16s6 6 10 16" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="w-14 h-14 rounded-badge bg-white/15 font-heading font-bold text-xl flex items-center justify-center mb-6">PC</div>
+      <p class="font-heading font-bold text-3xl leading-tight mb-3">Parish Connect<br>for Parish Offices</p>
+      <p class="text-white/85 text-sm max-w-sm">Manage your own parish's families, requests, masses, and finances — every parish sees only its own data.</p>
+    </div>
+
+    <!-- Right: login form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-10 bg-bg-warm">
+      <div class="w-full max-w-sm">
+
+        <div class="mb-8 lg:hidden text-center">
+          <div class="w-14 h-14 rounded-badge bg-primary-light text-primary font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4">PC</div>
+          <p class="font-heading font-bold text-xl">Parish Connect</p>
+        </div>
+        <p class="font-heading font-bold text-xl mb-1.5 hidden lg:block">Sign in to your parish office</p>
+        <p class="text-ink-muted text-sm mb-6">Select your parish and sign in with your staff credentials.</p>
+
+        <form id="login-form" class="bg-card-bg rounded-card shadow-card p-6 space-y-4" onsubmit="return handleLogin(event)">
+
+          <div class="space-y-2">
+            <label for="parish-input" class="text-sm font-medium">Parish</label>
+            <input id="parish-input" list="parish-options" required autocomplete="off"
+              placeholder="Search for your parish…"
+              class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <datalist id="parish-options"></datalist>
+            <p class="text-xs text-ink-muted">130 parishes · Bangalore Archdiocese</p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="email" class="text-sm font-medium">Staff email</label>
+            <input id="email" type="text" required placeholder="office@parish.example"
+              class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          </div>
+
+          <div class="space-y-2">
+            <label for="password" class="text-sm font-medium">Password</label>
+            <input id="password" type="password" required placeholder="••••••••"
+              class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          </div>
+
+          <p id="error-msg" class="hidden text-xs text-error bg-error-bg rounded-badge px-4 py-2.5"></p>
+
+          <button type="submit" id="submit-btn" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">
+            Sign in
+          </button>
+        </form>
+
+        <p class="text-center text-xs text-ink-muted mt-6">Signing in on behalf of the Diocese? <a href="screen-diocese-login.html" class="text-primary font-semibold">Diocese sign in</a></p>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  const PARISHES = [{"id": "PAR-0001", "name": "St Mary's Minor Basilica Church", "address": "Msgr. F. Noronha Road"}, {"id": "PAR-0002", "name": "Infant Jesus Shrine", "address": "Post Box 4712"}, {"id": "PAR-0003", "name": "St Francis Xavier Cathedral", "address": "Promenade Road"}, {"id": "PAR-0004", "name": "Holy Ghost Parish", "address": "No. 9/1"}, {"id": "PAR-0005", "name": "Our Lady of Lourdes Church", "address": "Whitefield"}, {"id": "PAR-0006", "name": "Sacred Heart Church", "address": "No. 62"}, {"id": "PAR-0007", "name": "Immaculate Conception Church", "address": "Doresanipalya"}, {"id": "PAR-0008", "name": "Immaculate Heart of Mary Church", "address": "Mt St Joseph's Campus"}, {"id": "PAR-0009", "name": "Our Lady of Sacred Heart Church", "address": "Haralur Road"}, {"id": "PAR-0010", "name": "Resurrection Church", "address": "Old Madras Road"}, {"id": "PAR-0011", "name": "St Anthony's Church", "address": "T. C. Palya"}, {"id": "PAR-0012", "name": "St Anthony's Friary Church", "address": "No. 85"}, {"id": "PAR-0013", "name": "St Francis De Sales Church", "address": "Mermier Nagara"}, {"id": "PAR-0014", "name": "St John The Evangelist Church", "address": "Church Road"}, {"id": "PAR-0015", "name": "St Peter's Church", "address": "Rustum Bagh (Behind Manipal Hospital)"}, {"id": "PAR-0016", "name": "Ascension Church", "address": "2nd Cross"}, {"id": "PAR-0017", "name": "Christha Prabhalaya Epiphany Church", "address": "16th Main"}, {"id": "PAR-0018", "name": "Don Bosco Church", "address": "No. 5/10"}, {"id": "PAR-0019", "name": "Holy Family Church", "address": "Ramamurthy Nagar Main Road"}, {"id": "PAR-0020", "name": "Holy Redeemer Church", "address": "Sadupadesha Vidyalaya"}, {"id": "PAR-0021", "name": "Immaculate Conception Church", "address": "M.G. Railway Colony"}, {"id": "PAR-0022", "name": "Our Lady of Fatima Church", "address": "Jalahalli"}, {"id": "PAR-0023", "name": "Our Lady of Lourdes Church", "address": "Lourdunagara"}, {"id": "PAR-0024", "name": "St Paul Church", "address": "8th Mile"}, {"id": "PAR-0025", "name": "St Pius X Church", "address": "Kammanahalli"}, {"id": "PAR-0026", "name": "Christ the King Church", "address": "8th Main Road"}, {"id": "PAR-0027", "name": "Good Shepherd Church", "address": "Thamarai Kannan Road"}, {"id": "PAR-0028", "name": "Holy Rosary Church", "address": "New Airport Road"}, {"id": "PAR-0029", "name": "Mother of Mines Shrine", "address": "Orgaum Post"}, {"id": "PAR-0030", "name": "Nativity Church", "address": "No. 431"}, {"id": "PAR-0031", "name": "Our Lady of Lourdes Church", "address": "No. 14"}, {"id": "PAR-0032", "name": "Our Lady of Mount Carmel Church", "address": "Mariapura"}, {"id": "PAR-0033", "name": "Our Lady of Victories Church", "address": "Champion Reefs"}, {"id": "PAR-0034", "name": "Sacred Heart Church", "address": "Siluvepura"}, {"id": "PAR-0035", "name": "Ss Peter and Paul Church", "address": "Jagajivan Ram Nagara"}, {"id": "PAR-0036", "name": "St Anthony's Church", "address": "St. Anthony's Church Street"}, {"id": "PAR-0037", "name": "St Ignatius Church", "address": "Begur"}, {"id": "PAR-0038", "name": "St Ignatius Church", "address": "Beguru"}, {"id": "PAR-0039", "name": "St James Church", "address": "Mariannapalya"}, {"id": "PAR-0040", "name": "St John Paul II Church", "address": "K. Channasandra Main Road"}, {"id": "PAR-0041", "name": "St John the Baptist Church", "address": "No. 95/12"}, {"id": "PAR-0042", "name": "St Joseph's Church", "address": "Briand Square"}, {"id": "PAR-0043", "name": "St Patrick's Church", "address": "15 K"}, {"id": "PAR-0044", "name": "St Theresa's Church", "address": "J. C. Road"}, {"id": "PAR-0045", "name": "Annunciation Church", "address": "No. 50"}, {"id": "PAR-0046", "name": "Assumption Church", "address": "2nd Block"}, {"id": "PAR-0047", "name": "Christ The King Church", "address": "Byrathi"}, {"id": "PAR-0048", "name": "Church of the Holy Name of Jesus", "address": "No. 912"}, {"id": "PAR-0049", "name": "Divine Mercy Church", "address": "Anagalapura"}, {"id": "PAR-0050", "name": "Holy Eucharist Church", "address": "Near Graffitti Garments"}, {"id": "PAR-0051", "name": "Holy Trinity Church", "address": "Mylasandra"}, {"id": "PAR-0052", "name": "Holy Trinity Church", "address": "No. 7"}, {"id": "PAR-0053", "name": "Immaculate Heart of Mary Church", "address": "Sanyasa Institute Campus"}, {"id": "PAR-0054", "name": "Infant Jesus Church", "address": "5th Cross"}, {"id": "PAR-0055", "name": "Krista Krupalaya Church", "address": "Hosakerehalli"}, {"id": "PAR-0056", "name": "Kristha Karunalaya Church", "address": "Kanakapura Main Road"}, {"id": "PAR-0057", "name": "Mother of Perpetual Help Church", "address": "Akashnagar"}, {"id": "PAR-0058", "name": "Our Lady of Good Health Church", "address": "Anekal"}, {"id": "PAR-0059", "name": "Our Lady of Lourdes Church", "address": "Karubele"}, {"id": "PAR-0060", "name": "Our Lady of Vailankanni Church", "address": "23/A C.A. Site"}, {"id": "PAR-0061", "name": "Sacred Heart Church", "address": "No. 3069"}, {"id": "PAR-0062", "name": "St Anne's Church", "address": "H.A.L. Colony"}, {"id": "PAR-0063", "name": "St Anne's Church", "address": "Dr. Shivaram Karanth Nagara Post"}, {"id": "PAR-0064", "name": "St Anthony's Church", "address": "Gangondanahalli"}, {"id": "PAR-0065", "name": "St Anthony's Church", "address": "Uttarahalli"}, {"id": "PAR-0066", "name": "St Anthony's Church", "address": "A' Street"}, {"id": "PAR-0067", "name": "St Anthony's Church", "address": "No. 225"}, {"id": "PAR-0068", "name": "St Anthony's Church", "address": "3rd Main Road"}, {"id": "PAR-0069", "name": "St Anthony's Church", "address": "Gottigere Post"}, {"id": "PAR-0070", "name": "St Anthony's Church", "address": "N.H. 4"}, {"id": "PAR-0071", "name": "St Anthony's Church", "address": "Munnekolala"}, {"id": "PAR-0072", "name": "St Benedict's Church", "address": "Asirvanam"}, {"id": "PAR-0073", "name": "St Francis of Assisi Church", "address": "No. 26/1"}, {"id": "PAR-0074", "name": "St Francis Xavier's Church", "address": "Chikkakammanahalli"}, {"id": "PAR-0075", "name": "St Francis Xavier's Church", "address": "Somanahalli Post"}, {"id": "PAR-0076", "name": "St Gaspar's Church", "address": "Precious Blood Missionaries"}, {"id": "PAR-0077", "name": "St John Marie Vianney Semi Public Church", "address": "83"}, {"id": "PAR-0078", "name": "St John the Britto Church", "address": "Laggere Main Road (Near Old Bus Stop)"}, {"id": "PAR-0079", "name": "St Joseph Vaz Church", "address": "1st Block"}, {"id": "PAR-0080", "name": "St Joseph's Church", "address": "Adigondanahally"}, {"id": "PAR-0081", "name": "St Joseph's Church", "address": "Soluru Post"}, {"id": "PAR-0082", "name": "St Joseph's Church", "address": "Susaipalayam"}, {"id": "PAR-0083", "name": "St Joseph's Church", "address": "Church Street"}, {"id": "PAR-0084", "name": "St Jude's Church", "address": "Karahalli Post"}, {"id": "PAR-0085", "name": "St Jude's Church", "address": "7th Main"}, {"id": "PAR-0086", "name": "St Jude's Church", "address": "Dr. S. Kumara Layout"}, {"id": "PAR-0087", "name": "St Mary's Church", "address": "Ramakrishna Hegde Nagar"}, {"id": "PAR-0088", "name": "St Michael's Church", "address": "Church Road"}, {"id": "PAR-0089", "name": "St Paul the Hermit Church", "address": "Nagenahalli"}, {"id": "PAR-0090", "name": "St Rock's Church", "address": "Amruthnagar"}, {"id": "PAR-0091", "name": "St Teresa of Kolkata Church", "address": "Kalpana Chawla Road"}, {"id": "PAR-0092", "name": "St Theresa of Child Jesus Church, Singasandra", "address": "Manipal County Rd"}, {"id": "PAR-0093", "name": "St Theresa's Church", "address": "2nd Cross Road"}, {"id": "PAR-0094", "name": "St Thomas Church", "address": "Jeevanbhima Nagara (HAL)"}, {"id": "PAR-0095", "name": "St Thomas Church", "address": "7th cross"}, {"id": "PAR-0096", "name": "Church of Our Lady of Compassion", "address": "Nugilubande"}, {"id": "PAR-0097", "name": "Holy Cross Church", "address": "B.E.M.L. Nagar"}, {"id": "PAR-0098", "name": "Holy Rosary Church", "address": "Harobale"}, {"id": "PAR-0099", "name": "Holy Rosary Church", "address": "Bidadi Hobali"}, {"id": "PAR-0100", "name": "Immaculate Heart of Mary Church", "address": "M. B. Road"}, {"id": "PAR-0101", "name": "Infant Jesus Church", "address": "Sidlaghatta Road"}, {"id": "PAR-0102", "name": "Nithyadhara Mathe Church", "address": "Rajaji Road"}, {"id": "PAR-0103", "name": "Our Lady of Divine Providence Semi Public Church", "address": "Kannuru Village Post"}, {"id": "PAR-0104", "name": "Our Lady of Fathima Church", "address": "Old Madras Road"}, {"id": "PAR-0105", "name": "Our Lady of Lourdes Church", "address": "Horapete Post"}, {"id": "PAR-0106", "name": "Our Lady of Lourdes Church", "address": "Ramanagara Post"}, {"id": "PAR-0107", "name": "Sacred Heart Church", "address": "K. R. Extension"}, {"id": "PAR-0108", "name": "Sacred Heart Church", "address": "Chintamani Road"}, {"id": "PAR-0109", "name": "St Anthony's Church", "address": "Kadisenahalli"}, {"id": "PAR-0110", "name": "St Anthony's Church", "address": "Bettada Halasuru"}, {"id": "PAR-0111", "name": "St Anthony's Church", "address": "Hospete Circle"}, {"id": "PAR-0112", "name": "St Anthony's Church", "address": "Yedavanahalli"}, {"id": "PAR-0113", "name": "St Anthony's Church", "address": "Amalagondi"}, {"id": "PAR-0114", "name": "St Francis de Sales Church", "address": "J.J. Nagara"}, {"id": "PAR-0115", "name": "St Francis Xavier's Church", "address": "Gokunte"}, {"id": "PAR-0116", "name": "St Francis Xavier's Church", "address": "B. B. Road"}, {"id": "PAR-0117", "name": "St Joseph's Church", "address": "Church Road"}, {"id": "PAR-0118", "name": "St Joseph's Church", "address": "Sannenahalli"}, {"id": "PAR-0119", "name": "St Joseph's Church", "address": "Channapatna"}, {"id": "PAR-0120", "name": "St Joseph's Church", "address": "Soosaipalya"}, {"id": "PAR-0121", "name": "St Joseph's Church", "address": "M. G. Road"}, {"id": "PAR-0122", "name": "St Joseph's Church", "address": "Jyothi Nagar"}, {"id": "PAR-0123", "name": "St Paul's Church", "address": "Marikuppa"}, {"id": "PAR-0124", "name": "St Peter's Church", "address": "Court Road"}, {"id": "PAR-0125", "name": "St Rita's Church", "address": "Church Street"}, {"id": "PAR-0126", "name": "St Rita's Church", "address": "Kunigal"}, {"id": "PAR-0127", "name": "St Rita's Church", "address": "Kaggalahalli Village and Post"}, {"id": "PAR-0128", "name": "St Sebastian's Church", "address": "Coramandel Post"}, {"id": "PAR-0129", "name": "St Theresa of Child Jesus Church", "address": "T.C. Halli"}, {"id": "PAR-0130", "name": "St Theresa's Church", "address": "Theresapura"}];
+
+  const datalist = document.getElementById('parish-options');
+  PARISHES.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.name;
+    opt.label = p.address;
+    datalist.appendChild(opt);
+  });
+
+  function findParish(nameInput) {
+    const val = nameInput.trim().toLowerCase();
+    return PARISHES.find(p => p.name.toLowerCase() === val)
+      || PARISHES.find(p => p.name.toLowerCase().includes(val));
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const parishInput = document.getElementById('parish-input').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+    const btn = document.getElementById('submit-btn');
+
+    const parish = findParish(parishInput);
+
+    if (!parishInput || !email || !password) {
+      errorMsg.textContent = 'Please select your parish and enter your email and password.';
+      errorMsg.classList.remove('hidden');
+      return false;
+    }
+    if (!parish) {
+      errorMsg.textContent = `We couldn't find "${parishInput}" in the Bangalore Archdiocese directory. Please select a parish from the list.`;
+      errorMsg.classList.remove('hidden');
+      return false;
+    }
+    errorMsg.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    // Simulated auth — accepts any credentials for a parish that exists in the directory (front-end demo only).
+    setTimeout(() => {
+      const params = new URLSearchParams({ role: 'staff', parish: parish.id, parishName: parish.name });
+      window.location.href = `screen-parish-dashboard-home.html?${params.toString()}`;
+    }, 600);
+    return false;
+  }
+</script>
+
+</body>
+</html>

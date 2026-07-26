@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Sign In</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen flex flex-col justify-center px-6 py-10">
+
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 rounded-badge bg-primary-light text-primary font-heading font-bold text-xl flex items-center justify-center mx-auto mb-5">PC</div>
+      <p class="font-heading font-bold text-2xl">Welcome back</p>
+      <p class="text-ink-muted text-sm mt-1.5">Infant Jesus Shrine, Viveknagar</p>
+    </div>
+
+    <form id="login-form" class="bg-card-bg rounded-card shadow-card p-6 space-y-4" onsubmit="return handleLogin(event)">
+      <div class="space-y-2">
+        <label for="email" class="text-sm font-medium">Email or mobile number</label>
+        <input id="email" type="text" required placeholder="john.rodrigues@example.com"
+          class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+      </div>
+      <div class="space-y-2">
+        <label for="password" class="text-sm font-medium">Password</label>
+        <input id="password" type="password" required placeholder="••••••••"
+          class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+      </div>
+      <p id="error-msg" class="hidden text-xs text-error bg-error-bg rounded-badge px-4 py-2.5">Enter your email/mobile and password to continue.</p>
+      <button type="submit" id="submit-btn" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">
+        Sign in
+      </button>
+      <button type="button" onclick="toast('Password reset')" class="w-full text-primary text-sm font-semibold py-1 min-h-[44px]">Forgot password?</button>
+    </form>
+
+    <p class="text-center text-xs text-ink-muted mt-6">New parishioner? <button onclick="toast('Registration')" class="text-primary font-semibold">Register your family</button></p>
+
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = `Opening ${msg}…`;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+    const btn = document.getElementById('submit-btn');
+
+    if (!email || !password) {
+      errorMsg.classList.remove('hidden');
+      return false;
+    }
+    errorMsg.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    // Simulated auth — accepts any non-empty credentials (front-end demo only, no real backend).
+    setTimeout(() => {
+      const params = new URLSearchParams({ role: 'parishioner', name: 'John Rodrigues', parish: 'PAR-0002' });
+      window.location.href = `screen-parishioner-dashboard-home.html?${params.toString()}`;
+    }, 600);
+    return false;
+  }
+</script>
+
+</body>
+</html>

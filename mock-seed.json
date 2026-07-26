@@ -1,0 +1,322 @@
+{
+  "diocese": {
+    "id": "DIO-0001",
+    "name": "Bangalore Archdiocese",
+    "totalCatholicPopulation": 360561,
+    "parishCount": 130
+  },
+  "parish": {
+    "id": "PAR-0002",
+    "name": "Infant Jesus Shrine",
+    "shortName": "Infant Jesus Shrine, Viveknagar",
+    "address": "Post Box 4712, Viveknagar, Bengaluru 560 047",
+    "sizeTier": "Large",
+    "estFamilies": "925 - 2,300",
+    "parishPriest": "Fr. John Anthony",
+    "assistantPriests": ["Fr. Francis Billemane"],
+    "yearEstablished": 1971,
+    "phone": "25301206",
+    "email": null,
+    "website": null,
+    "patronSaint": "Infant Jesus",
+    "feastDay": "13 January",
+    "officeHours": {
+      "weekday": "9:00 AM - 5:30 PM",
+      "saturday": "9:00 AM - 1:00 PM",
+      "sunday": "Closed (Mass timings only)",
+      "weeklyHoliday": "Monday"
+    }
+  },
+  "family": {
+    "id": "FAM-1001",
+    "familyRecordNumber": "IJS/FAM/1001",
+    "familyName": "Rodrigues Family",
+    "headOfFamilyId": "MEM-2001",
+    "registeredParishId": "PAR-0002",
+    "registrationDate": "2010-06-12",
+    "bccWardZone": "Ward 4 - Viveknagar",
+    "address": {
+      "houseNo": "No. 27, 2nd Cross",
+      "street": "Church Street",
+      "locality": "Viveknagar",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "pinCode": "560047",
+      "landmark": "Near Infant Jesus Shrine"
+    },
+    "mobile": "9845012345",
+    "email": "john.rodrigues@example.com",
+    "preferredLanguage": "English",
+    "marriageDate": "2001-11-24",
+    "marriageChurch": "Infant Jesus Shrine, Viveknagar",
+    "subscriptionStatus": "Paid",
+    "internalNotes": "",
+    "status": "Active"
+  },
+  "members": [
+    {
+      "id": "MEM-2001",
+      "familyId": "FAM-1001",
+      "fullName": "John Rodrigues",
+      "preferredName": "John",
+      "gender": "Male",
+      "dateOfBirth": "1975-03-14",
+      "placeOfBirth": "Bengaluru",
+      "relationship": "Head",
+      "fatherName": "Michael Rodrigues",
+      "motherName": "Teresa Rodrigues",
+      "maritalStatus": "Married",
+      "mobile": "9845012345",
+      "email": "john.rodrigues@example.com",
+      "occupation": "Bank Manager",
+      "education": "MBA",
+      "membershipStatus": "Active",
+      "specialCategories": [],
+      "sacramentalSummary": [
+        { "sacrament": "Baptism", "date": "1975-04-20", "church": "Infant Jesus Shrine, Viveknagar" },
+        { "sacrament": "Confirmation", "date": "1990-05-15", "church": "Infant Jesus Shrine, Viveknagar" },
+        { "sacrament": "Marriage", "date": "2001-11-24", "church": "Infant Jesus Shrine, Viveknagar" }
+      ]
+    },
+    {
+      "id": "MEM-2002",
+      "familyId": "FAM-1001",
+      "fullName": "Grace Rodrigues",
+      "preferredName": "Grace",
+      "gender": "Female",
+      "dateOfBirth": "1978-07-02",
+      "placeOfBirth": "Bengaluru",
+      "relationship": "Spouse",
+      "fatherName": "Anthony Pinto",
+      "motherName": "Rose Pinto",
+      "maritalStatus": "Married",
+      "mobile": "9845012346",
+      "email": "grace.rodrigues@example.com",
+      "occupation": "Homemaker",
+      "education": "B.Com",
+      "membershipStatus": "Active",
+      "specialCategories": [],
+      "sacramentalSummary": [
+        { "sacrament": "Baptism", "date": "1978-08-10", "church": "St Patrick's Church" },
+        { "sacrament": "Marriage", "date": "2001-11-24", "church": "Infant Jesus Shrine, Viveknagar" }
+      ]
+    },
+    {
+      "id": "MEM-2003",
+      "familyId": "FAM-1001",
+      "fullName": "Kevin Rodrigues",
+      "preferredName": "Kevin",
+      "gender": "Male",
+      "dateOfBirth": "2003-01-18",
+      "placeOfBirth": "Bengaluru",
+      "relationship": "Son",
+      "fatherName": "John Rodrigues",
+      "motherName": "Grace Rodrigues",
+      "maritalStatus": "Single",
+      "mobile": "9845012347",
+      "email": "kevin.rodrigues@example.com",
+      "occupation": "Student",
+      "education": "Pursuing B.E.",
+      "membershipStatus": "Active",
+      "specialCategories": [],
+      "sacramentalSummary": [
+        { "sacrament": "Baptism", "date": "2003-02-14", "church": "Infant Jesus Shrine, Viveknagar" },
+        { "sacrament": "First Communion", "date": "2011-04-10", "church": "Infant Jesus Shrine, Viveknagar" },
+        { "sacrament": "Confirmation", "date": "2017-09-03", "church": "Infant Jesus Shrine, Viveknagar" }
+      ]
+    },
+    {
+      "id": "MEM-2004",
+      "familyId": "FAM-1001",
+      "fullName": "Clara Rodrigues",
+      "preferredName": "Clara",
+      "gender": "Female",
+      "dateOfBirth": "2006-09-25",
+      "placeOfBirth": "Bengaluru",
+      "relationship": "Daughter",
+      "fatherName": "John Rodrigues",
+      "motherName": "Grace Rodrigues",
+      "maritalStatus": "Single",
+      "mobile": null,
+      "email": null,
+      "occupation": "Student",
+      "education": "Pursuing PUC",
+      "membershipStatus": "Active",
+      "specialCategories": [],
+      "sacramentalSummary": [
+        { "sacrament": "Baptism", "date": "2006-10-15", "church": "Infant Jesus Shrine, Viveknagar" },
+        { "sacrament": "First Communion", "date": "2014-04-06", "church": "Infant Jesus Shrine, Viveknagar" }
+      ]
+    }
+  ],
+  "subscriptionLedger": [
+    {
+      "familyId": "FAM-1001",
+      "billingPeriod": "2026-Q3",
+      "minimumAmountDue": 1200,
+      "amountPaid": 1200,
+      "outstandingAmount": 0,
+      "lastPaymentDate": "2026-07-05",
+      "status": "Paid"
+    }
+  ],
+  "documentRequests": [
+    {
+      "id": "REQ-3001",
+      "documentTypeId": "DOC-TYPE-BAPTISM-CERT",
+      "documentTypeName": "Baptism Certificate",
+      "requesterId": "MEM-2001",
+      "familyId": "FAM-1001",
+      "purpose": "School admission for Clara",
+      "uploadedDocuments": ["id_proof.pdf"],
+      "deliveryMethod": "Physical Collection",
+      "adminCharge": 100,
+      "paymentMethod": "UPI",
+      "additionalInfo": "",
+      "requestStatus": "Under Review",
+      "paymentStatus": "Paid",
+      "documentVerificationStatus": "Verified",
+      "deliveryStatus": "Not Ready",
+      "submissionDate": "2026-07-20",
+      "requestReference": "DOC-REQ-2026-0142",
+      "internalNotes": ""
+    }
+  ],
+  "homeServiceRequests": [
+    {
+      "id": "REQ-3101",
+      "serviceType": "House Blessing",
+      "familyId": "FAM-1001",
+      "familyMemberId": null,
+      "preferredDate": "2026-08-15",
+      "preferredTime": "10:00 AM",
+      "occasion": "New home blessing",
+      "notes": "",
+      "status": "Pending Approval"
+    }
+  ],
+  "sacramentRegistrations": [
+    {
+      "id": "REQ-3201",
+      "sacramentId": "SAC-CONFIRMATION",
+      "sacramentName": "Confirmation",
+      "candidateMemberId": "MEM-2004",
+      "familyId": "FAM-1001",
+      "requiredDocuments": ["Baptism Certificate"],
+      "uploadedDocuments": ["clara_baptism_cert.pdf"],
+      "registrationFee": 200,
+      "paymentMethod": "Card",
+      "additionalInfo": "",
+      "registrationStatus": "Approved",
+      "paymentStatus": "Paid",
+      "documentVerificationStatus": "Verified",
+      "submissionDate": "2026-06-01",
+      "registrationReference": "SAC-REG-2026-0087",
+      "internalNotes": ""
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ANN-4001",
+      "title": "Feast of Infant Jesus - Novena Begins",
+      "content": "The nine-day novena in preparation for the Feast of Infant Jesus begins this Friday at 6:00 PM. All parishioners are invited.",
+      "image": null,
+      "attachment": null,
+      "status": "Published",
+      "createdBy": "Parish Office",
+      "createdDate": "2026-07-18",
+      "publishedDate": "2026-07-18",
+      "lastUpdated": "2026-07-18"
+    }
+  ],
+  "donationCauses": [
+    {
+      "id": "CAUSE-5001",
+      "name": "Church Renovation Fund",
+      "description": "Support the ongoing renovation of the parish worship hall.",
+      "institutionId": "PAR-0002",
+      "donationType": "Goal-based",
+      "suggestedAmounts": [500, 1000, 2500],
+      "allowCustomAmount": true,
+      "targetAmount": 2500000,
+      "status": "Active"
+    },
+    {
+      "id": "CAUSE-5002",
+      "name": "Education Support Fund",
+      "description": "Scholarships for children from economically weaker families in the parish.",
+      "institutionId": "PAR-0002",
+      "donationType": "Open",
+      "suggestedAmounts": [250, 500, 1000],
+      "allowCustomAmount": true,
+      "status": "Active"
+    }
+  ],
+  "events": [
+    {
+      "id": "EVT-6001",
+      "name": "Feast Day Celebration",
+      "description": "Annual feast day celebration with Mass, procession, and fellowship lunch.",
+      "category": "Feast",
+      "status": "Published",
+      "eventDate": "2027-01-13",
+      "startTime": "07:00 AM",
+      "endTime": "01:00 PM",
+      "venue": "Infant Jesus Shrine Grounds",
+      "registrationRequired": true,
+      "capacity": 500,
+      "paidEvent": false,
+      "attendanceTrackingEnabled": false
+    }
+  ],
+  "massSchedules": [
+    {
+      "id": "MASS-7001",
+      "massName": "Sunday 8:00 AM Mass",
+      "massType": "Sunday",
+      "church": "Infant Jesus Shrine, Viveknagar",
+      "recurrence": "Weekly",
+      "daysOfWeek": ["Sunday"],
+      "massTime": "08:00 AM",
+      "onlineBookingEnabled": true,
+      "maxIntentions": 5,
+      "allowMultipleIntentions": true,
+      "suggestedOffering": 100,
+      "status": "Active"
+    }
+  ],
+  "massBookings": [
+    {
+      "id": "BOOK-7101",
+      "massScheduleId": "MASS-7001",
+      "massInstanceDate": "2026-08-02",
+      "familyId": "FAM-1001",
+      "requestedBy": "John Rodrigues",
+      "mobile": "9845012345",
+      "email": "john.rodrigues@example.com",
+      "intentionType": "Thanksgiving",
+      "intentionFor": "Rodrigues Family",
+      "intentionMessage": "In thanksgiving for good health",
+      "offeringAmount": 100,
+      "paymentMethod": "UPI",
+      "bookingReference": "MASS-BOOK-2026-0311",
+      "paymentStatus": "Paid",
+      "receiptNumber": "RCPT-0311"
+    }
+  ],
+  "financialTransactions": [
+    {
+      "id": "FIN-8001",
+      "type": "Income",
+      "date": "2026-07-20",
+      "amount": 100,
+      "account": "Parish Bank Account",
+      "category": "Mass Offering",
+      "description": "Sunday Mass intention offering - Rodrigues Family",
+      "referenceNumber": "MASS-BOOK-2026-0311",
+      "paymentMethod": "UPI",
+      "status": "Posted",
+      "paymentStatus": "Completed"
+    }
+  ]
+}
