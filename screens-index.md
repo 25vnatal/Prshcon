@@ -19,6 +19,7 @@ Every screen below must:
 | `screen-parishioner-documents-request.html` | Parishioner | Documents & Certificates → Request Document | ✅ Done | Guided multi-step flow (doc type → for whom → purpose → supporting docs [conditional] → delivery → payment [conditional] → review/submit); pre-fills family members from the Rodrigues family |
 | `screen-parishioner-documents-myrequests.html` | Parishioner | Documents & Certificates → My Requests | ✅ Done | Status list with filter tabs (New/In Progress/Awaiting Action/Completed), expandable Activity Timeline per request using the granular→display status mapping from mock-data-schema.md |
 | `screen-parishioner-documents-mydocuments.html` | Parishioner | Documents & Certificates → My Documents | ✅ Done | Completed/delivered documents only, simulated download; empty state if none |
+| `screen-parish-requests-hub.html` | Parish | Requests hub → Documents & Certificates | ✅ Done | Documents & Certificates fully built (All/Pending/Approve/Generate/Deliver/Archive tabs, expandable detail, working client-side status transitions); Sacraments/Home Services/Facility Bookings shown as "not built yet" placeholders in the same shell. Closes the Stage 2 loop — Parish dashboard's "Approve Requests" quick action and priority items now link here |
 | `screen-parish-dashboard-home.html` | Parish | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav, session-aware; non-seeded parish logins render genuine Empty state, proving data isolation |
 | `screen-diocese-dashboard-home.html` | Diocese | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav; follows the locked Diocese Dashboard spec (Snapshot → Action Center → Parish Health → Upcoming → Announcements); Parish Health uses real parishes from the directory |
 
@@ -59,7 +60,7 @@ This entire set is built to be deployed to a static web host (Netlify/Vercel/Git
 | Parish | Dashboard (home) | `screen-parish-dashboard-home.html` | ✅ Built |
 | Parish | Family Records | `screen-parish-familyrecords-search.html` | Planned |
 | Parish | Committees | `screen-parish-committees-hub.html` | Planned |
-| Parish | Requests (hub) | `screen-parish-requests-hub.html` | Planned |
+| Parish | Requests (hub) | `screen-parish-requests-hub.html` | ✅ Built |
 | Parish | Masses | `screen-parish-masses-hub.html` | Planned |
 | Parish | Communication | `screen-parish-communication-hub.html` | Planned |
 | Parish | Finance | `screen-parish-finance-hub.html` | Planned |

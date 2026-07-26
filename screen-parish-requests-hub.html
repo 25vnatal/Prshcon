@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Requests</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="toast('Family Records')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="toast('Committees')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </a>
+        <button onclick="toast('Masses')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="toast('Finance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="toast('Administration')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Requests</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button aria-label="Search" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Requests</p>
+          <p class="text-ink-muted text-sm mt-1">Every workflow a parishioner starts lands here, with one consistent lifecycle.</p>
+        </div>
+
+        <!-- Module tabs -->
+        <div class="flex gap-2 mb-6 overflow-x-auto">
+          <button onclick="setModule('documents')" data-module="documents" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Documents &amp; Certificates</button>
+          <button onclick="setModule('sacraments')" data-module="sacraments" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Sacraments</button>
+          <button onclick="setModule('homeservices')" data-module="homeservices" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Home Services</button>
+          <button onclick="setModule('facilities')" data-module="facilities" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Facility Bookings</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    alert: '<path d="M12 9v4"/><circle cx="12" cy="16.5" r="0.75" fill="currentColor" stroke="none"/><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
+    fileCheck: '<path d="M14 3v5a1 1 0 0 0 1 1h5"/><path d="M6 3h8l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="m9 15 2 2 4-4"/>',
+    archive: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  // ---------------- Mock data (from mock-seed.json documentRequests) ----------------
+  let documentRequests = [
+    { id:"REQ-3002", documentTypeName:"No Objection / Good Standing Certificate", forMemberName:"John Rodrigues", purpose:"Godparent eligibility for a relative's child", requestStatus:"Submitted", submissionDate:"24 Jul 2026", requestReference:"DOC-REQ-2026-0158", paymentStatus:"Paid", documentVerificationStatus:"Pending", deliveryStatus:"Not Ready", deliveryMethod:"Email", uploadedDocuments:[] },
+    { id:"REQ-3001", documentTypeName:"Baptism Certificate", forMemberName:"Clara Rodrigues", purpose:"School admission for Clara", requestStatus:"Under Review", submissionDate:"20 Jul 2026", requestReference:"DOC-REQ-2026-0142", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:["id_proof.pdf"] },
+    { id:"REQ-3003", documentTypeName:"Confirmation Certificate", forMemberName:"Kevin Rodrigues", purpose:"College admission documentation", requestStatus:"Awaiting Information", submissionDate:"15 Jul 2026", requestReference:"DOC-REQ-2026-0121", paymentStatus:"Paid", documentVerificationStatus:"Rejected", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:[], internalNotes:"Baptism certificate copy uploaded is illegible — requested a clearer scan from the parishioner." },
+    { id:"REQ-3006", documentTypeName:"Marriage Certificate", forMemberName:"John & Grace Rodrigues", purpose:"Insurance documentation", requestStatus:"Approved", submissionDate:"18 Jul 2026", requestReference:"DOC-REQ-2026-0139", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:["baptism_cert_john.pdf","baptism_cert_grace.pdf"], internalNotes:"Approved by Fr. John Anthony — awaiting certificate generation." },
+    { id:"REQ-3007", documentTypeName:"Baptism Certificate", forMemberName:"Kevin Rodrigues", purpose:"Passport application", requestStatus:"Approved", submissionDate:"12 Jul 2026", requestReference:"DOC-REQ-2026-0110", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Ready for Delivery", deliveryMethod:"Physical Collection", uploadedDocuments:["id_proof_kevin.pdf"], internalNotes:"Certificate generated 22 Jul — ready for collection at the parish office." },
+    { id:"REQ-3004", documentTypeName:"First Communion Certificate", forMemberName:"Clara Rodrigues", purpose:"Confirmation preparation enrollment", requestStatus:"Completed", submissionDate:"10 Jun 2026", requestReference:"DOC-REQ-2026-0079", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Delivered", deliveryMethod:"Digital Download", uploadedDocuments:["baptism_cert_clara.pdf"] },
+    { id:"REQ-3005", documentTypeName:"Parish Transfer Certificate", forMemberName:"John Rodrigues", purpose:"Requested in error — family is not transferring parish", requestStatus:"Rejected", submissionDate:"2 May 2026", requestReference:"DOC-REQ-2026-0044", paymentStatus:"Not Required", documentVerificationStatus:"Pending", deliveryStatus:"Not Ready", deliveryMethod:"Email", uploadedDocuments:[], internalNotes:"Parishioner confirmed this was submitted by mistake; no transfer intended." },
+  ];
+
+  // Which staff-pipeline stage a request currently sits in.
+  function pipelineStage(r) {
+    if (['Submitted','Under Review'].includes(r.requestStatus)) return 'Pending';
+    if (r.requestStatus === 'Pending Approval') return 'Approve';
+    if (r.requestStatus === 'Approved' && r.deliveryStatus === 'Not Ready') return 'Generate';
+    if (r.requestStatus === 'Approved' && r.deliveryStatus === 'Ready for Delivery') return 'Deliver';
+    if (r.requestStatus === 'Completed') return 'Archive';
+    return 'Exception'; // Awaiting Information / Rejected — not part of the 5-stage pipeline, shown only in "All"
+  }
+
+  const STAGE_STYLE = {
+    'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
+    'Approve': ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
+    'Generate': ['bg-primary-light', 'text-primary', 'fileCheck'],
+    'Deliver': ['bg-green/20', 'text-[#2f6b45]', 'fileCheck'],
+    'Archive': ['bg-section-bg', 'text-ink-muted', 'archive'],
+    'Exception': ['bg-error-bg', 'text-error', 'alert'],
+  };
+
+  const TABS = ['All', 'Pending', 'Approve', 'Generate', 'Deliver', 'Archive'];
+  let currentTab = 'All';
+  let expandedId = null;
+  let currentModule = 'documents';
+
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule !== 'documents') {
+      const labels = { sacraments: 'Sacraments', homeservices: 'Home Services', facilities: 'Facility Bookings' };
+      el.innerHTML = `
+        <div class="bg-card-bg rounded-card shadow-card p-12 text-center space-y-2">
+          <p class="text-sm font-semibold">${labels[currentModule]} requests aren't built yet</p>
+          <p class="text-sm text-ink-muted">This module will follow the same Pending → Approve → Generate/Schedule → Deliver → Archive pattern once built.</p>
+        </div>
+      `;
+      return;
+    }
+    el.innerHTML = `
+      <div class="flex gap-2 mb-5 overflow-x-auto" id="stage-tabs"></div>
+      <div id="request-list" class="space-y-3"></div>
+    `;
+    renderStageTabs();
+    renderLoading();
+    setTimeout(renderList, 600);
+  }
+
+  function renderStageTabs() {
+    document.getElementById('stage-tabs').innerHTML = TABS.map(t => {
+      const count = t === 'All' ? documentRequests.length : documentRequests.filter(r => pipelineStage(r) === t).length;
+      const active = currentTab === t;
+      return `<button onclick="setTab('${t}')" class="px-3.5 py-2 rounded-badge text-xs font-semibold whitespace-nowrap transition-warm ${active ? 'bg-ink text-white' : 'bg-section-bg text-ink-muted'}">${t} <span class="opacity-70">${count}</span></button>`;
+    }).join('');
+  }
+
+  function setTab(t) {
+    currentTab = t;
+    expandedId = null;
+    renderStageTabs();
+    renderList();
+  }
+
+  function toggleExpand(id) {
+    expandedId = expandedId === id ? null : id;
+    renderList();
+  }
+
+  function renderLoading() {
+    document.getElementById('request-list').innerHTML = `
+      <div class="skeleton rounded-card" style="height:80px"></div>
+      <div class="skeleton rounded-card" style="height:80px"></div>
+      <div class="skeleton rounded-card" style="height:80px"></div>
+    `;
+  }
+
+  function renderList() {
+    const listEl = document.getElementById('request-list');
+    if (!listEl) return;
+    const filtered = currentTab === 'All' ? documentRequests : documentRequests.filter(r => pipelineStage(r) === currentTab);
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `
+        <div class="bg-card-bg rounded-card shadow-card p-10 text-center space-y-2">
+          <p class="text-sm font-semibold">Nothing here right now</p>
+          <p class="text-sm text-ink-muted">No requests currently sit in "${currentTab}".</p>
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(r => {
+      const stage = pipelineStage(r);
+      const [bg, text, iconName] = STAGE_STYLE[stage];
+      const isOpen = expandedId === r.id;
+      return `
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+          <button onclick="toggleExpand('${r.id}')" class="w-full text-left p-5 flex items-start justify-between gap-3 min-h-[44px] transition-warm hover:bg-section-bg">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">${r.documentTypeName} <span class="text-ink-muted font-normal">— ${r.forMemberName}</span></p>
+              <p class="text-xs text-ink-muted mt-1">${r.requestReference} · Submitted ${r.submissionDate}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${r.purpose}</p>
+            </div>
+            <div class="flex flex-col items-end gap-2 flex-shrink-0">
+              <span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${stage === 'Exception' ? r.requestStatus : stage}</span>
+              <span class="text-ink-muted transition-warm" style="transform: rotate(${isOpen ? '180' : '0'}deg)">${icon('chevronDown', 'w-4 h-4')}</span>
+            </div>
+          </button>
+          ${isOpen ? renderDetail(r, stage) : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderDetail(r, stage) {
+    return `
+      <div class="border-t border-divider px-5 py-4 space-y-3">
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div><p class="text-ink-muted">Delivery method</p><p class="font-medium mt-0.5">${r.deliveryMethod}</p></div>
+          <div><p class="text-ink-muted">Payment</p><p class="font-medium mt-0.5">${r.paymentStatus}</p></div>
+          <div><p class="text-ink-muted">Document verification</p><p class="font-medium mt-0.5">${r.documentVerificationStatus}</p></div>
+          <div><p class="text-ink-muted">Uploaded documents</p><p class="font-medium mt-0.5">${r.uploadedDocuments.length ? r.uploadedDocuments.join(', ') : '—'}</p></div>
+        </div>
+        ${r.internalNotes ? `<div class="bg-section-bg rounded-card p-3"><p class="text-xs text-ink-muted uppercase tracking-wide mb-1">Internal note</p><p class="text-xs">${r.internalNotes}</p></div>` : ''}
+        <div class="flex flex-wrap gap-2 pt-1">
+          ${renderActions(r, stage)}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderActions(r, stage) {
+    if (stage === 'Pending') {
+      return `
+        <button onclick="advance('${r.id}', 'verify')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Verify &amp; Forward to Priest</button>
+        <button onclick="requestInfo('${r.id}')" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request More Information</button>
+        <button onclick="reject('${r.id}')" class="text-error text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>
+      `;
+    }
+    if (stage === 'Approve') {
+      return `<button onclick="advance('${r.id}', 'approve')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark Approved by Priest</button>`;
+    }
+    if (stage === 'Generate') {
+      return `<button onclick="advance('${r.id}', 'generate')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Generated</button>`;
+    }
+    if (stage === 'Deliver') {
+      return `<button onclick="advance('${r.id}', 'deliver')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Delivered</button>`;
+    }
+    if (stage === 'Archive') {
+      return `<span class="text-xs text-ink-muted">Completed and archived — no further action needed.</span>`;
+    }
+    return `<span class="text-xs text-ink-muted">Awaiting the parishioner's response.</span>`;
+  }
+
+  function findReq(id) { return documentRequests.find(r => r.id === id); }
+
+  function advance(id, action) {
+    const r = findReq(id);
+    if (action === 'verify') { r.requestStatus = 'Approved'; r.deliveryStatus = 'Not Ready'; toast('Forwarded to the parish priest for approval.'); }
+    if (action === 'approve') { r.requestStatus = 'Approved'; r.deliveryStatus = 'Not Ready'; toast('Marked as approved.'); }
+    if (action === 'generate') { r.deliveryStatus = 'Ready for Delivery'; toast('Certificate marked as generated — ready for delivery.'); }
+    if (action === 'deliver') { r.requestStatus = 'Completed'; r.deliveryStatus = 'Delivered'; toast('Marked as delivered and archived.'); }
+    renderStageTabs();
+    renderList();
+  }
+
+  function requestInfo(id) {
+    const r = findReq(id);
+    r.requestStatus = 'Awaiting Information';
+    r.internalNotes = 'Awaiting additional information from the parishioner.';
+    toast('Requested more information from the parishioner.');
+    renderStageTabs();
+    renderList();
+  }
+
+  function reject(id) {
+    const r = findReq(id);
+    r.requestStatus = 'Rejected';
+    toast('Request rejected.');
+    renderStageTabs();
+    renderList();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>
