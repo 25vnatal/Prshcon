@@ -904,6 +904,11 @@
   document.getElementById('ward-filter').innerHTML += WARDS.map(w => `<option value="${w}">${w}</option>`).join('');
 
   renderTable();
+
+  if (sessionParams.get('openRegister') === '1') {
+    openRegisterModal();
+  }
+
 </script>
 
 </body>

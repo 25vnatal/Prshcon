@@ -155,6 +155,7 @@
 
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
   function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
+  function goRegisterFamily() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString() + '&openRegister=1'; return false; }
 
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
@@ -252,7 +253,7 @@
         <h2 class="font-heading font-bold text-lg mb-3">Quick actions</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           ${seed.quickActions.map(qa => `
-            <button onclick="${qa.label === 'Approve Requests' ? 'goRequests()' : `toast('${qa.label}')`}" class="bg-card-bg rounded-card shadow-card p-5 flex flex-col items-center gap-2.5 transition-warm hover:shadow-card-hover min-h-[44px]">
+            <button onclick="${qa.label === 'Approve Requests' ? 'goRequests()' : qa.label === 'Register New Family' ? 'goRegisterFamily()' : `toast('${qa.label}')`}" class="bg-card-bg rounded-card shadow-card p-5 flex flex-col items-center gap-2.5 transition-warm hover:shadow-card-hover min-h-[44px]">
               <span class="w-11 h-11 rounded-badge bg-primary-light text-primary flex items-center justify-center">${icon(qa.icon)}</span>
               <span class="text-xs font-medium text-center">${qa.label}</span>
             </button>
@@ -272,7 +273,7 @@
         ${chapelIllustration(96)}
         <p class="text-sm font-semibold">No records yet for ${parishName}</p>
         <p class="text-sm text-ink-muted max-w-md mx-auto">This parish doesn't have any families, requests, or mass schedules on Parish Connect yet — each parish only ever sees its own data. Get started by registering your first family.</p>
-        <button onclick="toast('Register New Family')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-6 py-3 rounded-button min-h-[48px] transition-warm">Register a Family</button>
+        <button onclick="goRegisterFamily()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-6 py-3 rounded-button min-h-[48px] transition-warm">Register a Family</button>
       </section>
       ${quickActionsSection()}
     `;
