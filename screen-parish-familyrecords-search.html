@@ -129,10 +129,20 @@
             <p class="font-heading font-bold text-2xl">Family Records</p>
             <p class="text-ink-muted text-sm mt-1">Search, view, and manage every registered family in the parish.</p>
           </div>
-          <button onclick="openRegisterModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm flex items-center gap-1.5 flex-shrink-0">
-            <svg class="icon w-4 h-4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Register Family
-          </button>
+          <div class="flex items-center gap-3">
+            <div class="bg-card-bg rounded-card shadow-card px-4 py-2.5 text-center">
+              <p class="font-heading font-bold text-lg leading-none" id="stat-registered">—</p>
+              <p class="text-[11px] text-ink-muted mt-1">Registered</p>
+            </div>
+            <div class="bg-card-bg rounded-card shadow-card px-4 py-2.5 text-center">
+              <p class="font-heading font-bold text-lg leading-none text-green" id="stat-active">—</p>
+              <p class="text-[11px] text-ink-muted mt-1">Active</p>
+            </div>
+            <button onclick="openRegisterModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm flex items-center gap-1.5 flex-shrink-0">
+              <svg class="icon w-4 h-4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Register Family
+            </button>
+          </div>
         </div>
 
         <!-- Toolbar: search + filters -->
@@ -149,6 +159,9 @@
             <option value="Temporarily Away">Temporarily Away</option>
             <option value="Transferred">Transferred</option>
             <option value="Archived">Archived</option>
+          </select>
+          <select id="ward-filter" onchange="renderTable()" class="border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option value="All">All wards</option>
           </select>
           <select id="subscription-filter" onchange="renderTable()" class="border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
             <option value="All">All subscription statuses</option>
@@ -248,6 +261,8 @@
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
+  const WARDS = ["Viveknagar", "Ejipura", "Neelasandra", "Austin Town", "National Games Village"];
+
   const MONTHLY_RATE = 400;
   const CURRENT_MONTH = "2026-07"; // "today" for this demo
   const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -267,7 +282,7 @@
 
   // ---------------- Mock data ----------------
   let families = [
-    { id:"FAM-1001", familyRecordNumber:"IJS/FAM/1001", familyName:"Rodrigues Family", headOfFamily:"John Rodrigues", ward:"Ward 4 - Viveknagar",
+    { id:"FAM-1001", familyRecordNumber:"IJS/FAM/1001", familyName:"Rodrigues Family", headOfFamily:"John Rodrigues", ward:"Viveknagar",
       address:"No. 27, 2nd Cross, Church Street, Viveknagar, Bengaluru 560047", mobile:"9845012345", email:"john.rodrigues@example.com",
       preferredLanguage:"English", registrationDate:"2010-06-12", lastPaidThrough:"2026-07",
       members:[
@@ -276,15 +291,15 @@
         { name:"Kevin Rodrigues", relationship:"Son", dob:"2003-01-18", status:"Active" },
         { name:"Clara Rodrigues", relationship:"Daughter", dob:"2006-09-25", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1002", familyRecordNumber:"IJS/FAM/1002", familyName:"Pinto Family", headOfFamily:"Michael Pinto", ward:"Ward 2 - Cooke Town",
-      address:"No. 14, Haines Road, Cooke Town, Bengaluru 560005", mobile:"9845019001", email:"michael.pinto@example.com",
+    { id:"FAM-1002", familyRecordNumber:"IJS/FAM/1002", familyName:"Pinto Family", headOfFamily:"Michael Pinto", ward:"Ejipura",
+      address:"No. 14, 1st Cross, Ejipura, Bengaluru 560047", mobile:"9845019001", email:"michael.pinto@example.com",
       preferredLanguage:"English", registrationDate:"2012-03-03", lastPaidThrough:"2026-06",
       members:[
         { name:"Michael Pinto", relationship:"Head", dob:"1980-11-09", status:"Active" },
         { name:"Sandra Pinto", relationship:"Spouse", dob:"1983-02-22", status:"Active" },
         { name:"Ryan Pinto", relationship:"Son", dob:"2010-05-05", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1003", familyRecordNumber:"IJS/FAM/1003", familyName:"D'Souza Family", headOfFamily:"Anthony D'Souza", ward:"Ward 4 - Viveknagar",
+    { id:"FAM-1003", familyRecordNumber:"IJS/FAM/1003", familyName:"D'Souza Family", headOfFamily:"Anthony D'Souza", ward:"Viveknagar",
       address:"No. 8, 1st Main, Viveknagar, Bengaluru 560047", mobile:"9845019002", email:"anthony.dsouza@example.com",
       preferredLanguage:"Kannada", registrationDate:"2008-08-18", lastPaidThrough:"2026-07",
       members:[
@@ -293,50 +308,50 @@
         { name:"Naomi D'Souza", relationship:"Daughter", dob:"2005-06-30", status:"Active" },
         { name:"Ethan D'Souza", relationship:"Son", dob:"2008-12-12", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1004", familyRecordNumber:"IJS/FAM/1004", familyName:"Fernandes Family", headOfFamily:"Peter Fernandes", ward:"Ward 1 - Coles Road",
-      address:"No. 45, Coles Road, Fraser Town, Bengaluru 560005", mobile:"9845019003", email:"peter.fernandes@example.com",
+    { id:"FAM-1004", familyRecordNumber:"IJS/FAM/1004", familyName:"Fernandes Family", headOfFamily:"Peter Fernandes", ward:"Neelasandra",
+      address:"No. 45, Neelasandra Main Road, Bengaluru 560047", mobile:"9845019003", email:"peter.fernandes@example.com",
       preferredLanguage:"English", registrationDate:"2015-09-25", lastPaidThrough:"2026-02",
       members:[
         { name:"Peter Fernandes", relationship:"Head", dob:"1982-07-19", status:"Active" },
         { name:"Diana Fernandes", relationship:"Spouse", dob:"1985-10-03", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1005", familyRecordNumber:"IJS/FAM/1005", familyName:"Colaco Family", headOfFamily:"George Colaco", ward:"Ward 3 - Dodda Gubbi",
-      address:"No. 3, Church Road, Dodda Gubbi, Bengaluru 560077", mobile:"9845019004", email:"george.colaco@example.com",
+    { id:"FAM-1005", familyRecordNumber:"IJS/FAM/1005", familyName:"Colaco Family", headOfFamily:"George Colaco", ward:"Austin Town",
+      address:"No. 3, Dickenson Road Extension, Austin Town, Bengaluru 560047", mobile:"9845019004", email:"george.colaco@example.com",
       preferredLanguage:"English", registrationDate:"2011-01-10", lastPaidThrough:"2026-07",
       members:[
         { name:"George Colaco", relationship:"Head", dob:"1968-02-27", status:"Away for Work" },
         { name:"Lisa Colaco", relationship:"Spouse", dob:"1971-05-15", status:"Away for Work" },
       ], status:"Temporarily Away" },
-    { id:"FAM-1006", familyRecordNumber:"IJS/FAM/1006", familyName:"Mascarenhas Family", headOfFamily:"Simon Mascarenhas", ward:"Ward 2 - Cooke Town",
-      address:"No. 22, Lloyd Road, Cooke Town, Bengaluru 560005", mobile:"9845019005", email:"simon.mascarenhas@example.com",
+    { id:"FAM-1006", familyRecordNumber:"IJS/FAM/1006", familyName:"Mascarenhas Family", headOfFamily:"Simon Mascarenhas", ward:"National Games Village",
+      address:"No. 22, National Games Village, Koramangala, Bengaluru 560047", mobile:"9845019005", email:"simon.mascarenhas@example.com",
       preferredLanguage:"English", registrationDate:"2009-07-07", lastPaidThrough:"2026-07",
       members:[
         { name:"Simon Mascarenhas", relationship:"Head", dob:"1976-09-11", status:"Active" },
         { name:"Nita Mascarenhas", relationship:"Spouse", dob:"1979-12-29", status:"Active" },
         { name:"Aaron Mascarenhas", relationship:"Son", dob:"2012-08-08", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1007", familyRecordNumber:"IJS/FAM/1007", familyName:"Rebello Family", headOfFamily:"Francis Rebello", ward:"Ward 4 - Viveknagar",
-      address:"No. 19, 3rd Cross, Viveknagar, Bengaluru 560047", mobile:"9845019006", email:"francis.rebello@example.com",
+    { id:"FAM-1007", familyRecordNumber:"IJS/FAM/1007", familyName:"Rebello Family", headOfFamily:"Francis Rebello", ward:"Ejipura",
+      address:"No. 19, 3rd Cross, Ejipura, Bengaluru 560047", mobile:"9845019006", email:"francis.rebello@example.com",
       preferredLanguage:"English", registrationDate:"2013-11-14", lastPaidThrough:"2026-06",
       members:[
         { name:"Francis Rebello", relationship:"Head", dob:"1985-06-06", status:"Active" },
         { name:"Melissa Rebello", relationship:"Spouse", dob:"1988-03-20", status:"Active" },
       ], status:"Active" },
-    { id:"FAM-1008", familyRecordNumber:"IJS/FAM/1008", familyName:"Lobo Family", headOfFamily:"Joseph Lobo", ward:"Ward 1 - Coles Road",
-      address:"No. 6, Haines Road Extension, Bengaluru 560005", mobile:"9845019007", email:"joseph.lobo@example.com",
+    { id:"FAM-1008", familyRecordNumber:"IJS/FAM/1008", familyName:"Lobo Family", headOfFamily:"Joseph Lobo", ward:"Neelasandra",
+      address:"No. 6, Neelasandra, Bengaluru 560047", mobile:"9845019007", email:"joseph.lobo@example.com",
       preferredLanguage:"English", registrationDate:"2007-02-02", lastPaidThrough:"2026-07",
       members:[
         { name:"Joseph Lobo", relationship:"Head", dob:"1965-04-04", status:"Transferred" },
         { name:"Cecilia Lobo", relationship:"Spouse", dob:"1969-01-17", status:"Transferred" },
       ], status:"Transferred" },
-    { id:"FAM-1009", familyRecordNumber:"IJS/FAM/1009", familyName:"Vaz Family", headOfFamily:"Anthony Vaz", ward:"Ward 3 - Dodda Gubbi",
-      address:"No. 11, Bagalur Road, Dodda Gubbi, Bengaluru 560077", mobile:"9845019008", email:"anthony.vaz@example.com",
+    { id:"FAM-1009", familyRecordNumber:"IJS/FAM/1009", familyName:"Vaz Family", headOfFamily:"Anthony Vaz", ward:"Austin Town",
+      address:"No. 11, Austin Town, Bengaluru 560047", mobile:"9845019008", email:"anthony.vaz@example.com",
       preferredLanguage:"English", registrationDate:"2005-09-09", lastPaidThrough:"2026-07",
       members:[
         { name:"Anthony Vaz", relationship:"Head", dob:"1955-10-23", status:"Deceased" },
       ], status:"Archived" },
-    { id:"FAM-1010", familyRecordNumber:"IJS/FAM/1010", familyName:"Almeida Family", headOfFamily:"Michael Almeida", ward:"Ward 2 - Cooke Town",
-      address:"No. 30, Kennedy Road, Cooke Town, Bengaluru 560005", mobile:"9845019009", email:"michael.almeida@example.com",
+    { id:"FAM-1010", familyRecordNumber:"IJS/FAM/1010", familyName:"Almeida Family", headOfFamily:"Michael Almeida", ward:"National Games Village",
+      address:"No. 30, National Games Village, Koramangala, Bengaluru 560047", mobile:"9845019009", email:"michael.almeida@example.com",
       preferredLanguage:"English", registrationDate:"2016-04-21", lastPaidThrough:"2026-01",
       members:[
         { name:"Michael Almeida", relationship:"Head", dob:"1979-02-02", status:"Active" },
@@ -408,13 +423,15 @@
   function renderTable() {
     const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
     const statusFilter = document.getElementById('status-filter').value;
+    const wardFilter = document.getElementById('ward-filter').value;
     const subFilter = document.getElementById('subscription-filter').value;
 
     let filtered = families.filter(f => {
       const sub = computeSubscription(f).status;
       const matchesStatus = statusFilter === 'All' || f.status === statusFilter;
+      const matchesWard = wardFilter === 'All' || f.ward === wardFilter;
       const matchesSub = subFilter === 'All' || sub === subFilter;
-      return matchesStatus && matchesSub && matchesSearch(f, q);
+      return matchesStatus && matchesWard && matchesSub && matchesSearch(f, q);
     });
 
     filtered.sort((a, b) => {
@@ -423,6 +440,8 @@
     });
 
     document.getElementById('result-count').textContent = `${filtered.length} of ${families.length} families`;
+    document.getElementById('stat-registered').textContent = families.length;
+    document.getElementById('stat-active').textContent = families.filter(f => f.status === 'Active').length;
     ['familyName','headOfFamily','ward'].forEach(k => {
       document.getElementById('sort-'+k).innerHTML = sortKey === k ? icon(sortDir === 'asc' ? 'up' : 'down', 'icon w-3 h-3 inline') : '';
     });
@@ -466,6 +485,7 @@
     showAddMemberForm = false;
     showPaymentHistory = false;
     showPaymentForm = false;
+    editingMemberIndex = null;
     document.getElementById('drawer').classList.remove('translate-x-full');
     document.getElementById('drawer-backdrop').classList.remove('hidden');
     renderDrawer();
@@ -482,6 +502,7 @@
     showAddMemberForm = false;
     showPaymentHistory = false;
     showPaymentForm = false;
+    editingMemberIndex = null;
     renderDrawer();
   }
 
@@ -554,7 +575,11 @@
     return `
       <div class="grid sm:grid-cols-2 gap-x-4 gap-y-3 mb-5">
         <div class="space-y-1.5"><label class="text-xs font-medium">Head of Family</label><input id="ed-head" type="text" value="${f.headOfFamily}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-        <div class="space-y-1.5"><label class="text-xs font-medium">Ward / BCC Zone</label><input id="ed-ward" type="text" value="${f.ward}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Ward</label>
+          <select id="ed-ward" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${WARDS.map(w => `<option value="${w}" ${f.ward===w?'selected':''}>${w}</option>`).join('')}
+          </select>
+        </div>
         <div class="space-y-1.5"><label class="text-xs font-medium">Preferred Language</label><input id="ed-lang" type="text" value="${f.preferredLanguage}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
         <div class="space-y-1.5"><label class="text-xs font-medium">Mobile</label><input id="ed-mobile" type="text" value="${f.mobile}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
         <div class="space-y-1.5 sm:col-span-2"><label class="text-xs font-medium">Address</label><textarea id="ed-address" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${f.address}</textarea></div>
@@ -581,24 +606,67 @@
     renderDrawer();
   }
 
+  let editingMemberIndex = null;
+
   function renderMembersTab(f) {
     return `
       <div class="space-y-2.5 mb-4">
-        ${f.members.map(m => `
+        ${f.members.map((m, i) => editingMemberIndex === i ? renderEditMemberForm(f, m, i) : `
           <div class="flex items-center justify-between gap-3 bg-section-bg rounded-card p-4">
             <div class="flex items-center gap-3 min-w-0">
               <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
               <div class="min-w-0">
                 <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
-                <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)}</p>
+                <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)} · ${m.status}</p>
               </div>
             </div>
-            <span class="text-xs text-ink-muted flex-shrink-0">${m.status}</span>
+            <button onclick="editingMemberIndex=${i}; showAddMemberForm=false; renderDrawer()" aria-label="Edit member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm flex-shrink-0">${icon('edit','icon w-4 h-4')}</button>
           </div>
         `).join('')}
       </div>
-      ${showAddMemberForm ? renderAddMemberForm(f) : `<button onclick="showAddMemberForm=true; renderDrawer()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Member</button>`}
+      ${showAddMemberForm ? renderAddMemberForm(f) : `<button onclick="showAddMemberForm=true; editingMemberIndex=null; renderDrawer()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Member</button>`}
     `;
+  }
+
+  function renderEditMemberForm(f, m, i) {
+    return `
+      <div class="bg-section-bg rounded-card p-4 space-y-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Full name</label><input id="em-name-${i}" type="text" value="${m.name}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5"><label class="text-xs font-medium">Relationship</label>
+            <select id="em-rel-${i}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              ${["Head","Spouse","Son","Daughter","Parent","Other"].map(r => `<option ${m.relationship===r?'selected':''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="space-y-1.5"><label class="text-xs font-medium">Date of birth</label><input id="em-dob-${i}" type="date" value="${m.dob||''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+          <select id="em-status-${i}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${["Active","Away for Studies","Away for Work","Transferred","Deceased"].map(s => `<option ${m.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="saveMemberEdit('${f.id}', ${i})" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Save Changes</button>
+          <button onclick="editingMemberIndex=null; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-white transition-warm">Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveMemberEdit(familyId, i) {
+    const f = findFamily(familyId);
+    const m = f.members[i];
+    const name = document.getElementById(`em-name-${i}`).value.trim();
+    if (!name) { toast('Please enter a name.'); return; }
+    m.name = name;
+    m.relationship = document.getElementById(`em-rel-${i}`).value;
+    m.dob = document.getElementById(`em-dob-${i}`).value || '';
+    m.status = document.getElementById(`em-status-${i}`).value;
+    if (m.relationship === 'Head') f.headOfFamily = name;
+    editingMemberIndex = null;
+    toast(`${name} updated.`);
+    renderTable();
+    renderDrawer();
   }
 
   function renderAddMemberForm(f) {
@@ -635,55 +703,51 @@
 
   function renderSubscriptionTab(f) {
     const sub = computeSubscription(f);
+    const amountColor = sub.monthsOutstanding === 0 ? 'text-green' : sub.monthsOutstanding === 1 ? 'text-[#8a5a10]' : 'text-error';
     return `
-      <div class="flex items-center justify-between bg-section-bg rounded-card p-4 mb-4">
-        <div>
-          <p class="text-xs text-ink-muted">Paid through</p>
-          <p class="text-sm font-semibold mt-0.5">${ymToLabel(f.lastPaidThrough)}</p>
-        </div>
-        ${subPill(sub.status)}
-      </div>
-      <div class="grid grid-cols-2 gap-3 mb-4">
-        <div class="bg-section-bg rounded-card p-4">
-          <p class="text-xs text-ink-muted">Months outstanding</p>
-          <p class="font-heading font-bold text-xl mt-1">${sub.monthsOutstanding}</p>
-        </div>
-        <div class="bg-section-bg rounded-card p-4">
-          <p class="text-xs text-ink-muted">Total outstanding</p>
-          <p class="font-heading font-bold text-xl mt-1">₹${sub.outstandingAmount.toLocaleString('en-IN')}</p>
+      <div class="bg-section-bg rounded-card p-5 mb-4 text-center">
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1">Total Outstanding</p>
+        <p class="font-heading font-bold text-4xl ${amountColor}">₹${sub.outstandingAmount.toLocaleString('en-IN')}</p>
+        <p class="text-xs text-ink-muted mt-2">${sub.monthsOutstanding > 0 ? `${sub.monthsOutstanding} month${sub.monthsOutstanding>1?'s':''} outstanding` : 'Fully up to date'}</p>
+        <div class="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-divider">
+          <span class="text-xs text-ink-muted">Subscription paid till</span>
+          <span class="text-xs font-semibold">${ymToLabel(f.lastPaidThrough)}</span>
+          ${subPill(sub.status)}
         </div>
       </div>
 
       <div class="flex flex-wrap gap-2 mb-4">
-        <button onclick="showPaymentHistory=!showPaymentHistory; renderDrawer()" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('history','icon w-4 h-4')}View Payment History</button>
-        ${sub.monthsOutstanding > 0 ? `<button onclick="showPaymentForm=!showPaymentForm; renderDrawer()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Record Payment</button>` : ''}
+        ${sub.monthsOutstanding > 0 ? `<button onclick="showPaymentForm=!showPaymentForm; showPaymentHistory=false; renderDrawer()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Record Payment</button>` : ''}
+        <button onclick="showPaymentHistory=!showPaymentHistory; showPaymentForm=false; renderDrawer()" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('history','icon w-4 h-4')}View Payment History</button>
       </div>
 
+      <div id="payment-form-area">${showPaymentForm ? renderPaymentForm(f, sub) : ''}</div>
+
       ${showPaymentHistory ? `
-        <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden mb-4">
-          ${paymentHistoryFor(f).map(p => `
-            <div class="px-4 py-3 flex items-center justify-between text-xs">
-              <div><p class="font-medium">${p.period}</p><p class="text-ink-muted mt-0.5">${p.date} · ${p.method} · ${p.receiptNumber}</p></div>
-              <p class="font-semibold">₹${p.amount}</p>
-            </div>
-          `).join('')}
+        <div class="mt-2">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Payment History</p>
+          <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden">
+            ${paymentHistoryFor(f).map(p => `
+              <div class="px-4 py-3 flex items-center justify-between text-xs">
+                <div><p class="font-medium">${p.period}</p><p class="text-ink-muted mt-0.5">${p.date} · ${p.method} · ${p.receiptNumber}</p></div>
+                <p class="font-semibold">₹${p.amount}</p>
+              </div>
+            `).join('')}
+          </div>
         </div>
       ` : ''}
-
-      ${showPaymentForm ? renderPaymentForm(f, sub) : ''}
-      <div id="payment-confirmation"></div>
     `;
   }
 
   function renderPaymentForm(f, sub) {
     const fromLabel = ymToLabel(sub.nextUnpaid);
     return `
-      <div class="bg-section-bg rounded-card p-4 space-y-3">
-        <p class="text-xs font-medium">Collect payment</p>
+      <div class="bg-card-bg border-2 border-primary-light rounded-card p-4 space-y-3 mb-4">
+        <p class="text-sm font-semibold">Record Payment</p>
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1.5">
-            <label class="text-xs text-ink-muted">From</label>
-            <div class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white flex items-center text-ink-muted">${fromLabel}</div>
+            <label class="text-xs text-ink-muted">From (fixed)</label>
+            <div class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg flex items-center text-ink-muted">${fromLabel}</div>
           </div>
           <div class="space-y-1.5">
             <label class="text-xs text-ink-muted">To</label>
@@ -691,12 +755,21 @@
               oninput="updatePaymentPreview('${f.id}')" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
           </div>
         </div>
-        <div id="payment-preview" class="text-xs text-ink-muted"></div>
+        <div id="payment-preview" class="bg-primary-light rounded-card p-3 flex items-center justify-between">${paymentPreviewHTML(1, sub.nextUnpaid, sub.nextUnpaid)}</div>
         <div class="flex gap-2 pt-1">
-          <button onclick="submitPayment('${f.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Collect Payment</button>
-          <button onclick="showPaymentForm=false; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-white transition-warm">Cancel</button>
+          <button onclick="submitPayment('${f.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Collect Payment</button>
+          <button onclick="showPaymentForm=false; renderDrawer()" class="text-ink-muted text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-section-bg transition-warm">Cancel</button>
         </div>
       </div>
+    `;
+  }
+
+  function paymentPreviewHTML(months, fromYm, toYm) {
+    const amount = Math.max(months, 0) * MONTHLY_RATE;
+    if (months <= 0) return `<p class="text-xs text-error">Select a valid "to" month.</p>`;
+    return `
+      <span class="text-xs text-primary">${months} month${months>1?'s':''} · ${ymToLabel(fromYm)} – ${ymToLabel(toYm)}</span>
+      <span class="font-heading font-bold text-lg text-primary">₹${amount.toLocaleString('en-IN')}</span>
     `;
   }
 
@@ -705,10 +778,7 @@
     const sub = computeSubscription(f);
     const toMonth = document.getElementById('pay-to-month').value || sub.nextUnpaid;
     const months = ymDiffMonths(sub.nextUnpaid, toMonth);
-    const amount = Math.max(months, 0) * MONTHLY_RATE;
-    document.getElementById('payment-preview').textContent = months > 0
-      ? `${months} month${months>1?'s':''} (${ymToLabel(sub.nextUnpaid)} – ${ymToLabel(toMonth)}) · ₹${amount.toLocaleString('en-IN')}`
-      : 'Select a valid "to" month.';
+    document.getElementById('payment-preview').innerHTML = paymentPreviewHTML(months, sub.nextUnpaid, toMonth);
   }
 
   function submitPayment(familyId) {
@@ -721,15 +791,14 @@
     f.lastPaidThrough = toMonth;
     showPaymentForm = false;
     const newSub = computeSubscription(f);
-    document.getElementById('payment-confirmation').innerHTML = `
-      <div class="bg-green/20 rounded-card p-4 mt-2 flex items-center gap-2.5">
-        <span class="text-[#2f6b45]">${icon('check','w-5 h-5')}</span>
-        <p class="text-sm text-[#2f6b45] font-medium">₹${amount.toLocaleString('en-IN')} collected for ${months} month${months>1?'s':''}. Now paid through ${ymToLabel(toMonth)} — status: ${newSub.status}.</p>
+    document.getElementById('payment-form-area').innerHTML = `
+      <div class="bg-green/20 rounded-card p-4 mb-4 flex items-center gap-2.5">
+        <span class="text-[#2f6b45] flex-shrink-0">${icon('check','w-5 h-5')}</span>
+        <p class="text-sm text-[#2f6b45] font-medium">₹${amount.toLocaleString('en-IN')} collected for ${months} month${months>1?'s':''}. Subscription now paid till ${ymToLabel(toMonth)} — status: ${newSub.status}.</p>
       </div>
     `;
     toast(`Payment recorded for ${f.familyName}.`);
     renderTable();
-    setTimeout(() => renderDrawer(), 50);
   }
 
   function renderTransferTab(f) {
@@ -788,7 +857,11 @@
       <div class="space-y-1.5"><label class="text-xs font-medium">Address</label><textarea id="rf-address" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea></div>
       <div class="grid grid-cols-2 gap-3">
         <div class="space-y-1.5"><label class="text-xs font-medium">Mobile</label><input id="rf-mobile" type="text" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-        <div class="space-y-1.5"><label class="text-xs font-medium">Ward / BCC Zone</label><input id="rf-ward" type="text" placeholder="e.g. Ward 4 - Viveknagar" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Ward</label>
+          <select id="rf-ward" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${WARDS.map(w => `<option value="${w}">${w}</option>`).join('')}
+          </select>
+        </div>
       </div>
       <div class="space-y-1.5"><label class="text-xs font-medium">Email</label><input id="rf-email" type="email" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
     `;
@@ -827,6 +900,8 @@
 
   // Trimmed parish directory for the transfer/marriage-parish pickers
   const PARISHES = [{"id": "PAR-0001", "name": "St Mary's Minor Basilica Church", "address": "Msgr. F. Noronha Road"}, {"id": "PAR-0002", "name": "Infant Jesus Shrine", "address": "Post Box 4712"}, {"id": "PAR-0003", "name": "St Francis Xavier Cathedral", "address": "Promenade Road"}, {"id": "PAR-0004", "name": "Holy Ghost Parish", "address": "No. 9/1"}, {"id": "PAR-0005", "name": "Our Lady of Lourdes Church", "address": "Whitefield"}, {"id": "PAR-0006", "name": "Sacred Heart Church", "address": "No. 62"}, {"id": "PAR-0007", "name": "Immaculate Conception Church", "address": "Doresanipalya"}, {"id": "PAR-0008", "name": "Immaculate Heart of Mary Church", "address": "Mt St Joseph's Campus"}, {"id": "PAR-0009", "name": "Our Lady of Sacred Heart Church", "address": "Haralur Road"}, {"id": "PAR-0010", "name": "Resurrection Church", "address": "Old Madras Road"}, {"id": "PAR-0011", "name": "St Anthony's Church", "address": "T. C. Palya"}, {"id": "PAR-0012", "name": "St Anthony's Friary Church", "address": "No. 85"}, {"id": "PAR-0013", "name": "St Francis De Sales Church", "address": "Mermier Nagara"}, {"id": "PAR-0014", "name": "St John The Evangelist Church", "address": "Church Road"}, {"id": "PAR-0015", "name": "St Peter's Church", "address": "Rustum Bagh (Behind Manipal Hospital)"}, {"id": "PAR-0016", "name": "Ascension Church", "address": "2nd Cross"}, {"id": "PAR-0017", "name": "Christha Prabhalaya Epiphany Church", "address": "16th Main"}, {"id": "PAR-0018", "name": "Don Bosco Church", "address": "No. 5/10"}, {"id": "PAR-0019", "name": "Holy Family Church", "address": "Ramamurthy Nagar Main Road"}, {"id": "PAR-0020", "name": "Holy Redeemer Church", "address": "Sadupadesha Vidyalaya"}, {"id": "PAR-0021", "name": "Immaculate Conception Church", "address": "M.G. Railway Colony"}, {"id": "PAR-0022", "name": "Our Lady of Fatima Church", "address": "Jalahalli"}, {"id": "PAR-0023", "name": "Our Lady of Lourdes Church", "address": "Lourdunagara"}, {"id": "PAR-0024", "name": "St Paul Church", "address": "8th Mile"}, {"id": "PAR-0025", "name": "St Pius X Church", "address": "Kammanahalli"}, {"id": "PAR-0026", "name": "Christ the King Church", "address": "8th Main Road"}, {"id": "PAR-0027", "name": "Good Shepherd Church", "address": "Thamarai Kannan Road"}, {"id": "PAR-0028", "name": "Holy Rosary Church", "address": "New Airport Road"}, {"id": "PAR-0029", "name": "Mother of Mines Shrine", "address": "Orgaum Post"}, {"id": "PAR-0030", "name": "Nativity Church", "address": "No. 431"}, {"id": "PAR-0031", "name": "Our Lady of Lourdes Church", "address": "No. 14"}, {"id": "PAR-0032", "name": "Our Lady of Mount Carmel Church", "address": "Mariapura"}, {"id": "PAR-0033", "name": "Our Lady of Victories Church", "address": "Champion Reefs"}, {"id": "PAR-0034", "name": "Sacred Heart Church", "address": "Siluvepura"}, {"id": "PAR-0035", "name": "Ss Peter and Paul Church", "address": "Jagajivan Ram Nagara"}, {"id": "PAR-0036", "name": "St Anthony's Church", "address": "St. Anthony's Church Street"}, {"id": "PAR-0037", "name": "St Ignatius Church", "address": "Begur"}, {"id": "PAR-0038", "name": "St Ignatius Church", "address": "Beguru"}, {"id": "PAR-0039", "name": "St James Church", "address": "Mariannapalya"}, {"id": "PAR-0040", "name": "St John Paul II Church", "address": "K. Channasandra Main Road"}, {"id": "PAR-0041", "name": "St John the Baptist Church", "address": "No. 95/12"}, {"id": "PAR-0042", "name": "St Joseph's Church", "address": "Briand Square"}, {"id": "PAR-0043", "name": "St Patrick's Church", "address": "15 K"}, {"id": "PAR-0044", "name": "St Theresa's Church", "address": "J. C. Road"}, {"id": "PAR-0045", "name": "Annunciation Church", "address": "No. 50"}, {"id": "PAR-0046", "name": "Assumption Church", "address": "2nd Block"}, {"id": "PAR-0047", "name": "Christ The King Church", "address": "Byrathi"}, {"id": "PAR-0048", "name": "Church of the Holy Name of Jesus", "address": "No. 912"}, {"id": "PAR-0049", "name": "Divine Mercy Church", "address": "Anagalapura"}, {"id": "PAR-0050", "name": "Holy Eucharist Church", "address": "Near Graffitti Garments"}, {"id": "PAR-0051", "name": "Holy Trinity Church", "address": "Mylasandra"}, {"id": "PAR-0052", "name": "Holy Trinity Church", "address": "No. 7"}, {"id": "PAR-0053", "name": "Immaculate Heart of Mary Church", "address": "Sanyasa Institute Campus"}, {"id": "PAR-0054", "name": "Infant Jesus Church", "address": "5th Cross"}, {"id": "PAR-0055", "name": "Krista Krupalaya Church", "address": "Hosakerehalli"}, {"id": "PAR-0056", "name": "Kristha Karunalaya Church", "address": "Kanakapura Main Road"}, {"id": "PAR-0057", "name": "Mother of Perpetual Help Church", "address": "Akashnagar"}, {"id": "PAR-0058", "name": "Our Lady of Good Health Church", "address": "Anekal"}, {"id": "PAR-0059", "name": "Our Lady of Lourdes Church", "address": "Karubele"}, {"id": "PAR-0060", "name": "Our Lady of Vailankanni Church", "address": "23/A C.A. Site"}, {"id": "PAR-0061", "name": "Sacred Heart Church", "address": "No. 3069"}, {"id": "PAR-0062", "name": "St Anne's Church", "address": "H.A.L. Colony"}, {"id": "PAR-0063", "name": "St Anne's Church", "address": "Dr. Shivaram Karanth Nagara Post"}, {"id": "PAR-0064", "name": "St Anthony's Church", "address": "Gangondanahalli"}, {"id": "PAR-0065", "name": "St Anthony's Church", "address": "Uttarahalli"}, {"id": "PAR-0066", "name": "St Anthony's Church", "address": "A' Street"}, {"id": "PAR-0067", "name": "St Anthony's Church", "address": "No. 225"}, {"id": "PAR-0068", "name": "St Anthony's Church", "address": "3rd Main Road"}, {"id": "PAR-0069", "name": "St Anthony's Church", "address": "Gottigere Post"}, {"id": "PAR-0070", "name": "St Anthony's Church", "address": "N.H. 4"}, {"id": "PAR-0071", "name": "St Anthony's Church", "address": "Munnekolala"}, {"id": "PAR-0072", "name": "St Benedict's Church", "address": "Asirvanam"}, {"id": "PAR-0073", "name": "St Francis of Assisi Church", "address": "No. 26/1"}, {"id": "PAR-0074", "name": "St Francis Xavier's Church", "address": "Chikkakammanahalli"}, {"id": "PAR-0075", "name": "St Francis Xavier's Church", "address": "Somanahalli Post"}, {"id": "PAR-0076", "name": "St Gaspar's Church", "address": "Precious Blood Missionaries"}, {"id": "PAR-0077", "name": "St John Marie Vianney Semi Public Church", "address": "83"}, {"id": "PAR-0078", "name": "St John the Britto Church", "address": "Laggere Main Road (Near Old Bus Stop)"}, {"id": "PAR-0079", "name": "St Joseph Vaz Church", "address": "1st Block"}, {"id": "PAR-0080", "name": "St Joseph's Church", "address": "Adigondanahally"}, {"id": "PAR-0081", "name": "St Joseph's Church", "address": "Soluru Post"}, {"id": "PAR-0082", "name": "St Joseph's Church", "address": "Susaipalayam"}, {"id": "PAR-0083", "name": "St Joseph's Church", "address": "Church Street"}, {"id": "PAR-0084", "name": "St Jude's Church", "address": "Karahalli Post"}, {"id": "PAR-0085", "name": "St Jude's Church", "address": "7th Main"}, {"id": "PAR-0086", "name": "St Jude's Church", "address": "Dr. S. Kumara Layout"}, {"id": "PAR-0087", "name": "St Mary's Church", "address": "Ramakrishna Hegde Nagar"}, {"id": "PAR-0088", "name": "St Michael's Church", "address": "Church Road"}, {"id": "PAR-0089", "name": "St Paul the Hermit Church", "address": "Nagenahalli"}, {"id": "PAR-0090", "name": "St Rock's Church", "address": "Amruthnagar"}, {"id": "PAR-0091", "name": "St Teresa of Kolkata Church", "address": "Kalpana Chawla Road"}, {"id": "PAR-0092", "name": "St Theresa of Child Jesus Church, Singasandra", "address": "Manipal County Rd"}, {"id": "PAR-0093", "name": "St Theresa's Church", "address": "2nd Cross Road"}, {"id": "PAR-0094", "name": "St Thomas Church", "address": "Jeevanbhima Nagara (HAL)"}, {"id": "PAR-0095", "name": "St Thomas Church", "address": "7th cross"}, {"id": "PAR-0096", "name": "Church of Our Lady of Compassion", "address": "Nugilubande"}, {"id": "PAR-0097", "name": "Holy Cross Church", "address": "B.E.M.L. Nagar"}, {"id": "PAR-0098", "name": "Holy Rosary Church", "address": "Harobale"}, {"id": "PAR-0099", "name": "Holy Rosary Church", "address": "Bidadi Hobali"}, {"id": "PAR-0100", "name": "Immaculate Heart of Mary Church", "address": "M. B. Road"}, {"id": "PAR-0101", "name": "Infant Jesus Church", "address": "Sidlaghatta Road"}, {"id": "PAR-0102", "name": "Nithyadhara Mathe Church", "address": "Rajaji Road"}, {"id": "PAR-0103", "name": "Our Lady of Divine Providence Semi Public Church", "address": "Kannuru Village Post"}, {"id": "PAR-0104", "name": "Our Lady of Fathima Church", "address": "Old Madras Road"}, {"id": "PAR-0105", "name": "Our Lady of Lourdes Church", "address": "Horapete Post"}, {"id": "PAR-0106", "name": "Our Lady of Lourdes Church", "address": "Ramanagara Post"}, {"id": "PAR-0107", "name": "Sacred Heart Church", "address": "K. R. Extension"}, {"id": "PAR-0108", "name": "Sacred Heart Church", "address": "Chintamani Road"}, {"id": "PAR-0109", "name": "St Anthony's Church", "address": "Kadisenahalli"}, {"id": "PAR-0110", "name": "St Anthony's Church", "address": "Bettada Halasuru"}, {"id": "PAR-0111", "name": "St Anthony's Church", "address": "Hospete Circle"}, {"id": "PAR-0112", "name": "St Anthony's Church", "address": "Yedavanahalli"}, {"id": "PAR-0113", "name": "St Anthony's Church", "address": "Amalagondi"}, {"id": "PAR-0114", "name": "St Francis de Sales Church", "address": "J.J. Nagara"}, {"id": "PAR-0115", "name": "St Francis Xavier's Church", "address": "Gokunte"}, {"id": "PAR-0116", "name": "St Francis Xavier's Church", "address": "B. B. Road"}, {"id": "PAR-0117", "name": "St Joseph's Church", "address": "Church Road"}, {"id": "PAR-0118", "name": "St Joseph's Church", "address": "Sannenahalli"}, {"id": "PAR-0119", "name": "St Joseph's Church", "address": "Channapatna"}, {"id": "PAR-0120", "name": "St Joseph's Church", "address": "Soosaipalya"}, {"id": "PAR-0121", "name": "St Joseph's Church", "address": "M. G. Road"}, {"id": "PAR-0122", "name": "St Joseph's Church", "address": "Jyothi Nagar"}, {"id": "PAR-0123", "name": "St Paul's Church", "address": "Marikuppa"}, {"id": "PAR-0124", "name": "St Peter's Church", "address": "Court Road"}, {"id": "PAR-0125", "name": "St Rita's Church", "address": "Church Street"}, {"id": "PAR-0126", "name": "St Rita's Church", "address": "Kunigal"}, {"id": "PAR-0127", "name": "St Rita's Church", "address": "Kaggalahalli Village and Post"}, {"id": "PAR-0128", "name": "St Sebastian's Church", "address": "Coramandel Post"}, {"id": "PAR-0129", "name": "St Theresa of Child Jesus Church", "address": "T.C. Halli"}, {"id": "PAR-0130", "name": "St Theresa's Church", "address": "Theresapura"}];
+
+  document.getElementById('ward-filter').innerHTML += WARDS.map(w => `<option value="${w}">${w}</option>`).join('');
 
   renderTable();
 </script>
