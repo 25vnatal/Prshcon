@@ -360,8 +360,101 @@
       ], status:"Active" },
   ];
 
+  // ---------------- Family Update Requests (submitted by parishioners via "My Family") ----------------
+  let updateRequests = [
+    { id: "UPD-4001", familyId: "FAM-1001", type: "Add a Family Member", submittedBy: "John Rodrigues", submissionDate: "24 Jul 2026",
+      proposedChanges: { name: "Baby Rodrigues", relationship: "Daughter", dob: "2026-07-01" },
+      comments: "New baby born on 1 July, please add to our family record.", status: "Submitted", rejectionReason: null },
+  ];
+  function updateRequestsFor(familyId) { return updateRequests.filter(r => r.familyId === familyId); }
+
+  const UPDATE_FIELD_LABELS = { name: "Name", relationship: "Relationship", dob: "Date of Birth", address: "Address", mobile: "Mobile", email: "Email", preferredLanguage: "Preferred Language", originalName: "Member" };
+
+  function renderUpdatesTab(f) {
+    const requests = updateRequestsFor(f.id);
+    if (requests.length === 0) {
+      return `<div class="bg-section-bg rounded-card p-8 text-center"><p class="text-sm font-semibold">No update requests</p><p class="text-xs text-ink-muted mt-1">Changes submitted by the family through "My Family" will appear here for review.</p></div>`;
+    }
+    return `<div class="space-y-3">${requests.map((r, i) => renderUpdateRequestCard(f, r, i)).join('')}</div>`;
+  }
+
+  function renderUpdateRequestCard(f, r, i) {
+    const statusStyle = r.status === 'Submitted' ? ['bg-gold/20','text-[#8a5a10]','clock'] : r.status === 'Approved' ? ['bg-green/20','text-[#2f6b45]','check'] : ['bg-error-bg','text-error','x'];
+    const [bg, text, iconName] = statusStyle;
+    return `
+      <div class="bg-section-bg rounded-card p-4">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <p class="text-sm font-semibold">${r.type}</p>
+            <p class="text-xs text-ink-muted mt-0.5">Submitted by ${r.submittedBy} · ${r.submissionDate}</p>
+          </div>
+          <span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1 flex-shrink-0">${icon(iconName,'w-3 h-3')}${r.status}</span>
+        </div>
+        <div class="bg-white rounded-card divide-y divide-divider overflow-hidden mb-3">
+          ${Object.entries(r.proposedChanges).map(([k,v]) => `<div class="px-3 py-2 flex justify-between text-xs"><span class="text-ink-muted">${UPDATE_FIELD_LABELS[k]||k}</span><span class="font-medium">${k==='dob'?formatDate(v):v}</span></div>`).join('')}
+        </div>
+        ${r.comments ? `<p class="text-xs text-ink-muted italic mb-3">"${r.comments}"</p>` : ''}
+        ${r.status === 'Rejected' && r.rejectionReason ? `<div class="bg-error-bg rounded-card p-3 mb-3"><p class="text-xs text-error font-semibold uppercase tracking-wide mb-1">Reason sent to parishioner</p><p class="text-xs text-error">${r.rejectionReason}</p></div>` : ''}
+        ${r.status === 'Submitted' ? `
+          ${updateRejectPromptFor === r.id ? `
+            <div class="bg-white rounded-card p-3 space-y-2">
+              <label class="text-xs font-medium">Reason for rejecting (sent to parishioner)</label>
+              <textarea id="update-reject-reason" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+              <div class="flex gap-2">
+                <button onclick="rejectUpdateRequest('${r.id}')" class="bg-error hover:bg-error text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Confirm Rejection</button>
+                <button onclick="updateRejectPromptFor=null; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : `
+            <div class="flex gap-2">
+              <button onclick="approveUpdateRequest('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Approve</button>
+              <button onclick="updateRejectPromptFor='${r.id}'; renderDrawer()" class="text-error text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-error-bg transition-warm">Reject</button>
+            </div>
+          `}
+        ` : ''}
+      </div>
+    `;
+  }
+
+  let updateRejectPromptFor = null;
+
+  function findUpdateRequest(id) { return updateRequests.find(r => r.id === id); }
+
+  function approveUpdateRequest(id) {
+    const r = findUpdateRequest(id);
+    const f = findFamily(r.familyId);
+    if (r.type === 'Add a Family Member') {
+      f.members.push({ name: r.proposedChanges.name, relationship: r.proposedChanges.relationship, dob: r.proposedChanges.dob || '', status: 'Active' });
+    } else if (r.type === "Update a Member's Details") {
+      const m = f.members.find(mm => mm.name === r.proposedChanges.originalName);
+      if (m) {
+        if (r.proposedChanges.name) m.name = r.proposedChanges.name;
+        if (r.proposedChanges.relationship) m.relationship = r.proposedChanges.relationship;
+        if (r.proposedChanges.dob) m.dob = r.proposedChanges.dob;
+      }
+    } else if (r.type === 'Update Family Details') {
+      ['address','mobile','email','preferredLanguage'].forEach(k => { if (r.proposedChanges[k]) f[k] = r.proposedChanges[k]; });
+    }
+    r.status = 'Approved';
+    toast(`Update approved and applied to ${f.familyName}.`);
+    renderTable();
+    renderDrawer();
+  }
+
+  function rejectUpdateRequest(id) {
+    const reason = document.getElementById('update-reject-reason').value.trim();
+    if (!reason) { toast('Please provide a reason before rejecting.'); return; }
+    const r = findUpdateRequest(id);
+    r.status = 'Rejected';
+    r.rejectionReason = reason;
+    updateRejectPromptFor = null;
+    toast('Update request rejected — parishioner notified.');
+    renderDrawer();
+  }
+
   // Fabricate a short payment history ending at lastPaidThrough, for the "View Payment History" list.
   function paymentHistoryFor(f) {
+
     const history = [];
     for (let i = 2; i >= 0; i--) {
       const period = ymAdd(f.lastPaidThrough, -i);
@@ -486,6 +579,7 @@
     showPaymentHistory = false;
     showPaymentForm = false;
     editingMemberIndex = null;
+    updateRejectPromptFor = null;
     document.getElementById('drawer').classList.remove('translate-x-full');
     document.getElementById('drawer-backdrop').classList.remove('hidden');
     renderDrawer();
@@ -503,6 +597,7 @@
     showPaymentHistory = false;
     showPaymentForm = false;
     editingMemberIndex = null;
+    updateRejectPromptFor = null;
     renderDrawer();
   }
 
@@ -517,8 +612,9 @@
     const el = document.getElementById('drawer-content');
     if (!f) { el.innerHTML = ''; return; }
 
-    const tabs = ['overview', 'members', 'subscription', 'transfer'];
-    const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', transfer: 'Transfer' };
+    const tabs = ['overview', 'members', 'subscription', 'transfer', 'updates'];
+    const pendingUpdates = updateRequestsFor(f.id).filter(r => r.status === 'Submitted').length;
+    const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', transfer: 'Transfer', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
 
     el.innerHTML = `
       <div class="p-6 border-b border-divider sticky top-0 bg-card-bg z-10">
@@ -539,6 +635,7 @@
         <div class="flex gap-2 mt-3">
           ${pill(f.status, STATUS_STYLE)}
           ${subPill(computeSubscription(f).status)}
+          ${pendingUpdates > 0 ? `<span class="bg-coral/20 text-[#b1402f] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('alert','w-3 h-3')}${pendingUpdates} update request${pendingUpdates>1?'s':''} pending</span>` : ''}
         </div>
         <div class="flex gap-1 mt-4 -mb-6 overflow-x-auto">
           ${tabs.map(t => `<button onclick="setTab('${t}')" class="px-3 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-warm ${activeTab===t ? 'border-primary text-primary' : 'border-transparent text-ink-muted hover:text-ink'}">${tabLabels[t]}</button>`).join('')}
@@ -549,6 +646,7 @@
         ${activeTab === 'members' ? renderMembersTab(f) : ''}
         ${activeTab === 'subscription' ? renderSubscriptionTab(f) : ''}
         ${activeTab === 'transfer' ? renderTransferTab(f) : ''}
+        ${activeTab === 'updates' ? renderUpdatesTab(f) : ''}
       </div>
     `;
   }
@@ -907,6 +1005,10 @@
 
   if (sessionParams.get('openRegister') === '1') {
     openRegisterModal();
+  }
+  if (sessionParams.get('family')) {
+    openDrawer(sessionParams.get('family'));
+    if (sessionParams.get('tab')) { activeTab = sessionParams.get('tab'); renderDrawer(); }
   }
 
 </script>

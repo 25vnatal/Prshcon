@@ -199,6 +199,7 @@
     priorities: [
       { label: "Baptism Certificate request — Rodrigues family", sub: "Submitted 20 Jul · awaiting your review", status: "Pending", tone: "gold" },
       { label: "House blessing request — Rodrigues family", sub: "Awaiting Fr. John Anthony's approval", status: "Pending", tone: "gold" },
+      { label: "Family update request — Rodrigues family", sub: "Add a Family Member — awaiting your review", status: "Pending", tone: "gold", href: "screen-parish-familyrecords-search.html", extraParams: "&family=FAM-1001&tab=updates" },
       { label: "Clara Rodrigues' Confirmation registration", sub: "Documents verified, payment received", status: "Approved", tone: "green" },
     ],
     quickActions: [
@@ -299,7 +300,7 @@
           ${seed.priorities.map(item => {
             const [bg, text, iconName] = toneMap[item.tone];
             return `
-            <button onclick="goRequests()" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
+            <button onclick="${item.href ? `window.location.href='${item.href}?' + sessionParams.toString() + '${item.extraParams||''}'` : 'goRequests()'}" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
               <div class="min-w-0">
                 <p class="text-sm font-semibold">${item.label}</p>
                 <p class="text-xs text-ink-muted mt-1">${item.sub}</p>
