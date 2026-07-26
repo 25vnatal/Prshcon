@@ -78,20 +78,22 @@
 
   // ---------------- Reference data (from mock-data-schema.md / mock-seed.json) ----------------
   const documentTypes = [
-    { id: "DOC-TYPE-BAPTISM-CERT", name: "Baptism Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Photo ID of requester"], deliveryOptions: ["Digital Download","Email","Physical Collection","Postal"], time: "3-5 working days" },
-    { id: "DOC-TYPE-COMMUNION-CERT", name: "First Communion Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["Digital Download","Email","Physical Collection","Postal"], time: "3-5 working days" },
-    { id: "DOC-TYPE-CONFIRMATION-CERT", name: "Confirmation Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["Digital Download","Email","Physical Collection","Postal"], time: "3-5 working days" },
-    { id: "DOC-TYPE-MARRIAGE-CERT", name: "Marriage Certificate", category: "Sacramental", adminCharge: 150, requiredSupportingDocs: ["Baptism Certificates of both spouses"], deliveryOptions: ["Digital Download","Email","Physical Collection","Postal"], time: "5-7 working days" },
-    { id: "DOC-TYPE-NOC", name: "No Objection / Good Standing Certificate", category: "Administrative", adminCharge: 50, requiredSupportingDocs: [], deliveryOptions: ["Digital Download","Email","Physical Collection"], time: "2-3 working days" },
-    { id: "DOC-TYPE-TRANSFER", name: "Parish Transfer Certificate", category: "Administrative", adminCharge: 0, requiredSupportingDocs: [], deliveryOptions: ["Digital Download","Email","Physical Collection"], time: "5-7 working days" },
+    { id: "DOC-TYPE-BAPTISM-CERT", name: "Baptism Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Photo ID of requester"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"], time: "3-5 working days" },
+    { id: "DOC-TYPE-COMMUNION-CERT", name: "First Communion Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"], time: "3-5 working days" },
+    { id: "DOC-TYPE-CONFIRMATION-CERT", name: "Confirmation Certificate", category: "Sacramental", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"], time: "3-5 working days" },
+    { id: "DOC-TYPE-MARRIAGE-CERT", name: "Marriage Certificate", category: "Sacramental", adminCharge: 150, requiredSupportingDocs: ["Baptism Certificates of both spouses"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"], time: "5-7 working days" },
+    { id: "DOC-TYPE-NOC", name: "No Objection / Good Standing Certificate", category: "Administrative", adminCharge: 50, requiredSupportingDocs: [], deliveryOptions: ["In-app Download","Email","Collect at the Parish"], time: "2-3 working days" },
+    { id: "DOC-TYPE-TRANSFER", name: "Parish Transfer Certificate", category: "Administrative", adminCharge: 0, requiredSupportingDocs: [], deliveryOptions: ["In-app Download","Email","Collect at the Parish"], time: "5-7 working days" },
   ];
 
+  const documentTypesRenamed = true; // delivery options below use the renamed, clarified labels
   const familyMembers = [
-    { id: "MEM-2001", name: "John Rodrigues", relationship: "Head" },
-    { id: "MEM-2002", name: "Grace Rodrigues", relationship: "Spouse" },
-    { id: "MEM-2003", name: "Kevin Rodrigues", relationship: "Son" },
-    { id: "MEM-2004", name: "Clara Rodrigues", relationship: "Daughter" },
+    { id: "MEM-2001", name: "John Rodrigues", relationship: "Head", email: "john.rodrigues@example.com" },
+    { id: "MEM-2002", name: "Grace Rodrigues", relationship: "Spouse", email: "grace.rodrigues@example.com" },
+    { id: "MEM-2003", name: "Kevin Rodrigues", relationship: "Son", email: "kevin.rodrigues@example.com" },
+    { id: "MEM-2004", name: "Clara Rodrigues", relationship: "Daughter", email: null },
   ];
+  const familyAddress = "No. 27, 2nd Cross, Church Street, Viveknagar, Bengaluru, Karnataka 560047";
   const defaultMember = familyMembers.find(m => m.name === sessionName) || familyMembers[0];
 
   const state = {
@@ -100,10 +102,13 @@
     purpose: '',
     uploadedFileName: null,
     deliveryMethod: null,
+    emailAddress: '',
+    mailingAddress: familyAddress,
     paymentMethod: null,
   };
 
   function selectedDocType() { return documentTypes.find(d => d.id === state.documentTypeId); }
+  function selectedMember() { return familyMembers.find(m => m.id === state.forMemberId); }
   function needsUpload() { const d = selectedDocType(); return d && d.requiredSupportingDocs.length > 0; }
   function needsPayment() { const d = selectedDocType(); return d && d.adminCharge > 0; }
 
@@ -158,6 +163,7 @@
     if (step === 'purpose' && !state.purpose.trim()) { toast('Please tell us the purpose of this request.'); return false; }
     if (step === 'upload' && needsUpload() && !state.uploadedFileName) { toast('Please attach the required document.'); return false; }
     if (step === 'delivery' && !state.deliveryMethod) { toast('Please choose how you\'d like to receive it.'); return false; }
+    if (step === 'delivery' && state.deliveryMethod && !validateDeliveryDetail()) { return false; }
     if (step === 'payment' && needsPayment() && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
     return true;
   }
@@ -242,23 +248,99 @@
     render();
   }
 
+  const DELIVERY_INFO = {
+    'In-app Download': {
+      icon: ICONS.download,
+      note: "Get notified in the app and download instantly from My Documents. Fastest option, no extra charge.",
+    },
+    'Email': {
+      icon: ICONS.mail,
+      note: "We'll email a digital copy to your registered email address.",
+    },
+    'Collect at the Parish': {
+      icon: ICONS.home,
+      note: "Pick up a printed copy from the parish office during working hours.",
+    },
+    'Post / Courier': {
+      icon: ICONS.truck,
+      note: "We'll post a printed copy to your registered address. This may take a few extra days.",
+    },
+  };
+
   function renderDelivery() {
     const d = selectedDocType();
-    const optionIcons = { 'Digital Download': ICONS.download, 'Email': ICONS.mail, 'Physical Collection': ICONS.home, 'Postal': ICONS.truck };
     return `
       <p class="font-heading font-bold text-xl mb-1">How would you like to receive it?</p>
       <p class="text-ink-muted text-sm mb-4">Choose a delivery method.</p>
       <div class="space-y-3">
-        ${d.deliveryOptions.map(opt => `
-          <button onclick="state.deliveryMethod='${opt}'; render()" class="option-card w-full rounded-card p-4 flex items-center gap-3 text-left transition-warm min-h-[44px] ${state.deliveryMethod === opt ? 'selected' : 'bg-card-bg'}">
-            <span class="w-10 h-10 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon(optionIcons[opt])}</span>
-            <span class="flex-1 text-sm font-semibold">${opt}</span>
-            ${state.deliveryMethod === opt ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+        ${d.deliveryOptions.map(opt => {
+          const info = DELIVERY_INFO[opt];
+          return `
+          <button onclick="selectDelivery('${opt}')" class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${state.deliveryMethod === opt ? 'selected' : 'bg-card-bg'}">
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon(info.icon)}</span>
+              <span class="flex-1 text-sm font-semibold">${opt}</span>
+              ${state.deliveryMethod === opt ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+            </div>
+            <p class="text-xs text-ink-muted mt-2 leading-relaxed">${info.note}</p>
           </button>
-        `).join('')}
+        `}).join('')}
       </div>
+      ${renderDeliveryDetail()}
     `;
   }
+
+  function selectDelivery(opt) {
+    state.deliveryMethod = opt;
+    if (opt === 'Email' && !state.emailAddress) {
+      const m = selectedMember();
+      state.emailAddress = m.email || familyMembers.find(f => f.id === defaultMember.id).email || '';
+    }
+    render();
+  }
+
+  function renderDeliveryDetail() {
+    if (state.deliveryMethod === 'Email') {
+      return `
+        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-2">
+          <label for="email-input" class="text-sm font-medium">Email address</label>
+          <input id="email-input" type="email" value="${state.emailAddress}" placeholder="you@example.com"
+            class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
+            oninput="state.emailAddress = this.value">
+          <p class="text-xs text-ink-muted">We'll send the certificate here — pre-filled from your family record, feel free to edit it.</p>
+        </div>
+      `;
+    }
+    if (state.deliveryMethod === 'Post / Courier') {
+      return `
+        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-2">
+          <label for="address-input" class="text-sm font-medium">Mailing address</label>
+          <textarea id="address-input" rows="3"
+            class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"
+            oninput="state.mailingAddress = this.value">${state.mailingAddress}</textarea>
+          <p class="text-xs text-ink-muted">Pre-filled from your family record — feel free to edit it.</p>
+        </div>
+      `;
+    }
+    if (state.deliveryMethod === 'Collect at the Parish') {
+      return `
+        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-1.5">
+          <p class="text-sm font-semibold">Infant Jesus Shrine, Viveknagar</p>
+          <p class="text-xs text-ink-muted">Post Box 4712, Viveknagar, Bengaluru 560 047</p>
+          <p class="text-xs text-ink-muted">Mon–Sat, 9:00 AM – 5:30 PM (Sat until 1:00 PM) · Closed Monday</p>
+          <p class="text-xs text-ink-muted">Parish office: 25301206</p>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function validateDeliveryDetail() {
+    if (state.deliveryMethod === 'Email' && !state.emailAddress.trim()) { toast('Please provide an email address.'); return false; }
+    if (state.deliveryMethod === 'Post / Courier' && !state.mailingAddress.trim()) { toast('Please provide a mailing address.'); return false; }
+    return true;
+  }
+
 
   function renderPayment() {
     const d = selectedDocType();
@@ -293,6 +375,9 @@
         <div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Purpose</span><span class="text-sm font-semibold text-right">${state.purpose}</span></div>
         ${state.uploadedFileName ? `<div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Attached</span><span class="text-sm font-semibold">${state.uploadedFileName}</span></div>` : ''}
         <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Delivery</span><span class="text-sm font-semibold">${state.deliveryMethod}</span></div>
+        ${state.deliveryMethod === 'Email' ? `<div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Sending to</span><span class="text-sm font-semibold text-right">${state.emailAddress}</span></div>` : ''}
+        ${state.deliveryMethod === 'Post / Courier' ? `<div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Mailing to</span><span class="text-sm font-semibold text-right">${state.mailingAddress}</span></div>` : ''}
+        ${state.deliveryMethod === 'Collect at the Parish' ? `<div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Collect from</span><span class="text-sm font-semibold text-right">Parish office, Mon–Sat 9:00 AM–5:30 PM</span></div>` : ''}
         ${needsPayment() ? `<div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Payment</span><span class="text-sm font-semibold">₹${d.adminCharge} via ${state.paymentMethod}</span></div>` : ''}
         <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Expected processing</span><span class="text-sm font-semibold">${d.time}</span></div>
       </div>

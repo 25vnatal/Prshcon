@@ -13,7 +13,9 @@
     "sizeTier": "Large",
     "estFamilies": "925 - 2,300",
     "parishPriest": "Fr. John Anthony",
-    "assistantPriests": ["Fr. Francis Billemane"],
+    "assistantPriests": [
+      "Fr. Francis Billemane"
+    ],
     "yearEstablished": 1971,
     "phone": "25301206",
     "email": null,
@@ -73,9 +75,21 @@
       "membershipStatus": "Active",
       "specialCategories": [],
       "sacramentalSummary": [
-        { "sacrament": "Baptism", "date": "1975-04-20", "church": "Infant Jesus Shrine, Viveknagar" },
-        { "sacrament": "Confirmation", "date": "1990-05-15", "church": "Infant Jesus Shrine, Viveknagar" },
-        { "sacrament": "Marriage", "date": "2001-11-24", "church": "Infant Jesus Shrine, Viveknagar" }
+        {
+          "sacrament": "Baptism",
+          "date": "1975-04-20",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        },
+        {
+          "sacrament": "Confirmation",
+          "date": "1990-05-15",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        },
+        {
+          "sacrament": "Marriage",
+          "date": "2001-11-24",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        }
       ]
     },
     {
@@ -97,8 +111,16 @@
       "membershipStatus": "Active",
       "specialCategories": [],
       "sacramentalSummary": [
-        { "sacrament": "Baptism", "date": "1978-08-10", "church": "St Patrick's Church" },
-        { "sacrament": "Marriage", "date": "2001-11-24", "church": "Infant Jesus Shrine, Viveknagar" }
+        {
+          "sacrament": "Baptism",
+          "date": "1978-08-10",
+          "church": "St Patrick's Church"
+        },
+        {
+          "sacrament": "Marriage",
+          "date": "2001-11-24",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        }
       ]
     },
     {
@@ -120,9 +142,21 @@
       "membershipStatus": "Active",
       "specialCategories": [],
       "sacramentalSummary": [
-        { "sacrament": "Baptism", "date": "2003-02-14", "church": "Infant Jesus Shrine, Viveknagar" },
-        { "sacrament": "First Communion", "date": "2011-04-10", "church": "Infant Jesus Shrine, Viveknagar" },
-        { "sacrament": "Confirmation", "date": "2017-09-03", "church": "Infant Jesus Shrine, Viveknagar" }
+        {
+          "sacrament": "Baptism",
+          "date": "2003-02-14",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        },
+        {
+          "sacrament": "First Communion",
+          "date": "2011-04-10",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        },
+        {
+          "sacrament": "Confirmation",
+          "date": "2017-09-03",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        }
       ]
     },
     {
@@ -144,8 +178,16 @@
       "membershipStatus": "Active",
       "specialCategories": [],
       "sacramentalSummary": [
-        { "sacrament": "Baptism", "date": "2006-10-15", "church": "Infant Jesus Shrine, Viveknagar" },
-        { "sacrament": "First Communion", "date": "2014-04-06", "church": "Infant Jesus Shrine, Viveknagar" }
+        {
+          "sacrament": "Baptism",
+          "date": "2006-10-15",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        },
+        {
+          "sacrament": "First Communion",
+          "date": "2014-04-06",
+          "church": "Infant Jesus Shrine, Viveknagar"
+        }
       ]
     }
   ],
@@ -161,12 +203,102 @@
     }
   ],
   "documentTypes": [
-    { "id": "DOC-TYPE-BAPTISM-CERT", "name": "Baptism Certificate", "category": "Sacramental", "adminCharge": 100, "paymentRequired": true, "requiredSupportingDocs": ["Photo ID of requester"], "deliveryOptions": ["Digital Download", "Email", "Physical Collection", "Postal"], "expectedProcessingTime": "3-5 working days" },
-    { "id": "DOC-TYPE-COMMUNION-CERT", "name": "First Communion Certificate", "category": "Sacramental", "adminCharge": 100, "paymentRequired": true, "requiredSupportingDocs": ["Baptism Certificate"], "deliveryOptions": ["Digital Download", "Email", "Physical Collection", "Postal"], "expectedProcessingTime": "3-5 working days" },
-    { "id": "DOC-TYPE-CONFIRMATION-CERT", "name": "Confirmation Certificate", "category": "Sacramental", "adminCharge": 100, "paymentRequired": true, "requiredSupportingDocs": ["Baptism Certificate"], "deliveryOptions": ["Digital Download", "Email", "Physical Collection", "Postal"], "expectedProcessingTime": "3-5 working days" },
-    { "id": "DOC-TYPE-MARRIAGE-CERT", "name": "Marriage Certificate", "category": "Sacramental", "adminCharge": 150, "paymentRequired": true, "requiredSupportingDocs": ["Baptism Certificates of both spouses"], "deliveryOptions": ["Digital Download", "Email", "Physical Collection", "Postal"], "expectedProcessingTime": "5-7 working days" },
-    { "id": "DOC-TYPE-NOC", "name": "No Objection / Good Standing Certificate", "category": "Administrative", "adminCharge": 50, "paymentRequired": true, "requiredSupportingDocs": [], "deliveryOptions": ["Digital Download", "Email", "Physical Collection"], "expectedProcessingTime": "2-3 working days" },
-    { "id": "DOC-TYPE-TRANSFER", "name": "Parish Transfer Certificate", "category": "Administrative", "adminCharge": 0, "paymentRequired": false, "requiredSupportingDocs": [], "deliveryOptions": ["Digital Download", "Email", "Physical Collection"], "expectedProcessingTime": "5-7 working days" }
+    {
+      "id": "DOC-TYPE-BAPTISM-CERT",
+      "name": "Baptism Certificate",
+      "category": "Sacramental",
+      "adminCharge": 100,
+      "paymentRequired": true,
+      "requiredSupportingDocs": [
+        "Photo ID of requester"
+      ],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish",
+        "Post / Courier"
+      ],
+      "expectedProcessingTime": "3-5 working days"
+    },
+    {
+      "id": "DOC-TYPE-COMMUNION-CERT",
+      "name": "First Communion Certificate",
+      "category": "Sacramental",
+      "adminCharge": 100,
+      "paymentRequired": true,
+      "requiredSupportingDocs": [
+        "Baptism Certificate"
+      ],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish",
+        "Post / Courier"
+      ],
+      "expectedProcessingTime": "3-5 working days"
+    },
+    {
+      "id": "DOC-TYPE-CONFIRMATION-CERT",
+      "name": "Confirmation Certificate",
+      "category": "Sacramental",
+      "adminCharge": 100,
+      "paymentRequired": true,
+      "requiredSupportingDocs": [
+        "Baptism Certificate"
+      ],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish",
+        "Post / Courier"
+      ],
+      "expectedProcessingTime": "3-5 working days"
+    },
+    {
+      "id": "DOC-TYPE-MARRIAGE-CERT",
+      "name": "Marriage Certificate",
+      "category": "Sacramental",
+      "adminCharge": 150,
+      "paymentRequired": true,
+      "requiredSupportingDocs": [
+        "Baptism Certificates of both spouses"
+      ],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish",
+        "Post / Courier"
+      ],
+      "expectedProcessingTime": "5-7 working days"
+    },
+    {
+      "id": "DOC-TYPE-NOC",
+      "name": "No Objection / Good Standing Certificate",
+      "category": "Administrative",
+      "adminCharge": 50,
+      "paymentRequired": true,
+      "requiredSupportingDocs": [],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish"
+      ],
+      "expectedProcessingTime": "2-3 working days"
+    },
+    {
+      "id": "DOC-TYPE-TRANSFER",
+      "name": "Parish Transfer Certificate",
+      "category": "Administrative",
+      "adminCharge": 0,
+      "paymentRequired": false,
+      "requiredSupportingDocs": [],
+      "deliveryOptions": [
+        "In-app Download",
+        "Email",
+        "Collect at the Parish"
+      ],
+      "expectedProcessingTime": "5-7 working days"
+    }
   ],
   "documentRequests": [
     {
@@ -178,8 +310,10 @@
       "forMemberId": "MEM-2004",
       "forMemberName": "Clara Rodrigues",
       "purpose": "School admission for Clara",
-      "uploadedDocuments": ["id_proof.pdf"],
-      "deliveryMethod": "Physical Collection",
+      "uploadedDocuments": [
+        "id_proof.pdf"
+      ],
+      "deliveryMethod": "Collect at the Parish",
       "adminCharge": 100,
       "paymentMethod": "UPI",
       "additionalInfo": "",
@@ -223,7 +357,7 @@
       "forMemberName": "Kevin Rodrigues",
       "purpose": "College admission documentation",
       "uploadedDocuments": [],
-      "deliveryMethod": "Physical Collection",
+      "deliveryMethod": "Collect at the Parish",
       "adminCharge": 100,
       "paymentMethod": "UPI",
       "additionalInfo": "",
@@ -233,7 +367,7 @@
       "deliveryStatus": "Not Ready",
       "submissionDate": "2026-07-15",
       "requestReference": "DOC-REQ-2026-0121",
-      "internalNotes": "Baptism certificate copy uploaded is illegible — requested a clearer scan from the parishioner."
+      "internalNotes": "Baptism certificate copy uploaded is illegible \u2014 requested a clearer scan from the parishioner."
     },
     {
       "id": "REQ-3004",
@@ -244,8 +378,10 @@
       "forMemberId": "MEM-2004",
       "forMemberName": "Clara Rodrigues",
       "purpose": "Confirmation preparation enrollment",
-      "uploadedDocuments": ["baptism_cert_clara.pdf"],
-      "deliveryMethod": "Digital Download",
+      "uploadedDocuments": [
+        "baptism_cert_clara.pdf"
+      ],
+      "deliveryMethod": "In-app Download",
       "adminCharge": 100,
       "paymentMethod": "Card",
       "additionalInfo": "",
@@ -267,7 +403,7 @@
       "familyId": "FAM-1001",
       "forMemberId": "MEM-2001",
       "forMemberName": "John Rodrigues",
-      "purpose": "Requested in error — family is not transferring parish",
+      "purpose": "Requested in error \u2014 family is not transferring parish",
       "uploadedDocuments": [],
       "deliveryMethod": "Email",
       "adminCharge": 0,
@@ -290,8 +426,11 @@
       "forMemberId": "MEM-2001",
       "forMemberName": "John & Grace Rodrigues",
       "purpose": "Insurance documentation",
-      "uploadedDocuments": ["baptism_cert_john.pdf", "baptism_cert_grace.pdf"],
-      "deliveryMethod": "Physical Collection",
+      "uploadedDocuments": [
+        "baptism_cert_john.pdf",
+        "baptism_cert_grace.pdf"
+      ],
+      "deliveryMethod": "Collect at the Parish",
       "adminCharge": 150,
       "paymentMethod": "UPI",
       "additionalInfo": "",
@@ -301,7 +440,7 @@
       "deliveryStatus": "Not Ready",
       "submissionDate": "2026-07-18",
       "requestReference": "DOC-REQ-2026-0139",
-      "internalNotes": "Approved by Fr. John Anthony — awaiting certificate generation."
+      "internalNotes": "Approved by Fr. John Anthony \u2014 awaiting certificate generation."
     },
     {
       "id": "REQ-3007",
@@ -312,8 +451,10 @@
       "forMemberId": "MEM-2003",
       "forMemberName": "Kevin Rodrigues",
       "purpose": "Passport application",
-      "uploadedDocuments": ["id_proof_kevin.pdf"],
-      "deliveryMethod": "Physical Collection",
+      "uploadedDocuments": [
+        "id_proof_kevin.pdf"
+      ],
+      "deliveryMethod": "Collect at the Parish",
       "adminCharge": 100,
       "paymentMethod": "Card",
       "additionalInfo": "",
@@ -323,7 +464,7 @@
       "deliveryStatus": "Ready for Delivery",
       "submissionDate": "2026-07-12",
       "requestReference": "DOC-REQ-2026-0110",
-      "internalNotes": "Certificate generated 22 Jul — ready for collection at the parish office."
+      "internalNotes": "Certificate generated 22 Jul \u2014 ready for collection at the parish office."
     }
   ],
   "homeServiceRequests": [
@@ -346,8 +487,12 @@
       "sacramentName": "Confirmation",
       "candidateMemberId": "MEM-2004",
       "familyId": "FAM-1001",
-      "requiredDocuments": ["Baptism Certificate"],
-      "uploadedDocuments": ["clara_baptism_cert.pdf"],
+      "requiredDocuments": [
+        "Baptism Certificate"
+      ],
+      "uploadedDocuments": [
+        "clara_baptism_cert.pdf"
+      ],
       "registrationFee": 200,
       "paymentMethod": "Card",
       "additionalInfo": "",
@@ -380,7 +525,11 @@
       "description": "Support the ongoing renovation of the parish worship hall.",
       "institutionId": "PAR-0002",
       "donationType": "Goal-based",
-      "suggestedAmounts": [500, 1000, 2500],
+      "suggestedAmounts": [
+        500,
+        1000,
+        2500
+      ],
       "allowCustomAmount": true,
       "targetAmount": 2500000,
       "status": "Active"
@@ -391,7 +540,11 @@
       "description": "Scholarships for children from economically weaker families in the parish.",
       "institutionId": "PAR-0002",
       "donationType": "Open",
-      "suggestedAmounts": [250, 500, 1000],
+      "suggestedAmounts": [
+        250,
+        500,
+        1000
+      ],
       "allowCustomAmount": true,
       "status": "Active"
     }
@@ -420,7 +573,9 @@
       "massType": "Sunday",
       "church": "Infant Jesus Shrine, Viveknagar",
       "recurrence": "Weekly",
-      "daysOfWeek": ["Sunday"],
+      "daysOfWeek": [
+        "Sunday"
+      ],
       "massTime": "08:00 AM",
       "onlineBookingEnabled": true,
       "maxIntentions": 5,

@@ -176,40 +176,62 @@
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
-  // ---------------- Mock data (from mock-seed.json documentRequests) ----------------
+  // ---------------- Mock data (from mock-seed.json documentRequests, extended with workflow state) ----------------
   let documentRequests = [
-    { id:"REQ-3002", documentTypeName:"No Objection / Good Standing Certificate", forMemberName:"John Rodrigues", purpose:"Godparent eligibility for a relative's child", requestStatus:"Submitted", submissionDate:"24 Jul 2026", requestReference:"DOC-REQ-2026-0158", paymentStatus:"Paid", documentVerificationStatus:"Pending", deliveryStatus:"Not Ready", deliveryMethod:"Email", uploadedDocuments:[] },
-    { id:"REQ-3001", documentTypeName:"Baptism Certificate", forMemberName:"Clara Rodrigues", purpose:"School admission for Clara", requestStatus:"Under Review", submissionDate:"20 Jul 2026", requestReference:"DOC-REQ-2026-0142", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:["id_proof.pdf"] },
-    { id:"REQ-3003", documentTypeName:"Confirmation Certificate", forMemberName:"Kevin Rodrigues", purpose:"College admission documentation", requestStatus:"Awaiting Information", submissionDate:"15 Jul 2026", requestReference:"DOC-REQ-2026-0121", paymentStatus:"Paid", documentVerificationStatus:"Rejected", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:[], internalNotes:"Baptism certificate copy uploaded is illegible — requested a clearer scan from the parishioner." },
-    { id:"REQ-3006", documentTypeName:"Marriage Certificate", forMemberName:"John & Grace Rodrigues", purpose:"Insurance documentation", requestStatus:"Approved", submissionDate:"18 Jul 2026", requestReference:"DOC-REQ-2026-0139", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Not Ready", deliveryMethod:"Physical Collection", uploadedDocuments:["baptism_cert_john.pdf","baptism_cert_grace.pdf"], internalNotes:"Approved by Fr. John Anthony — awaiting certificate generation." },
-    { id:"REQ-3007", documentTypeName:"Baptism Certificate", forMemberName:"Kevin Rodrigues", purpose:"Passport application", requestStatus:"Approved", submissionDate:"12 Jul 2026", requestReference:"DOC-REQ-2026-0110", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Ready for Delivery", deliveryMethod:"Physical Collection", uploadedDocuments:["id_proof_kevin.pdf"], internalNotes:"Certificate generated 22 Jul — ready for collection at the parish office." },
-    { id:"REQ-3004", documentTypeName:"First Communion Certificate", forMemberName:"Clara Rodrigues", purpose:"Confirmation preparation enrollment", requestStatus:"Completed", submissionDate:"10 Jun 2026", requestReference:"DOC-REQ-2026-0079", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryStatus:"Delivered", deliveryMethod:"Digital Download", uploadedDocuments:["baptism_cert_clara.pdf"] },
-    { id:"REQ-3005", documentTypeName:"Parish Transfer Certificate", forMemberName:"John Rodrigues", purpose:"Requested in error — family is not transferring parish", requestStatus:"Rejected", submissionDate:"2 May 2026", requestReference:"DOC-REQ-2026-0044", paymentStatus:"Not Required", documentVerificationStatus:"Pending", deliveryStatus:"Not Ready", deliveryMethod:"Email", uploadedDocuments:[], internalNotes:"Parishioner confirmed this was submitted by mistake; no transfer intended." },
+    { id:"REQ-3002", documentTypeName:"No Objection / Good Standing Certificate", forMemberName:"John Rodrigues", purpose:"Godparent eligibility for a relative's child", submissionDate:"24 Jul 2026", requestReference:"DOC-REQ-2026-0158", paymentStatus:"Paid", documentVerificationStatus:"Pending", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
+      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Submitted" },
+    { id:"REQ-3001", documentTypeName:"Baptism Certificate", forMemberName:"Clara Rodrigues", purpose:"School admission for Clara", submissionDate:"20 Jul 2026", requestReference:"DOC-REQ-2026-0142", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof.pdf"],
+      verified:true, generatedFileName:"baptism_cert_clara_reissue.pdf", approvalRequested:true, approvalNotes:"All documents verified, certificate ready for signature.", approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Pending Approval" },
+    { id:"REQ-3003", documentTypeName:"Confirmation Certificate", forMemberName:"Kevin Rodrigues", purpose:"College admission documentation", submissionDate:"15 Jul 2026", requestReference:"DOC-REQ-2026-0121", paymentStatus:"Paid", documentVerificationStatus:"Rejected", deliveryMethod:"Collect at the Parish", uploadedDocuments:[],
+      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:"The baptism certificate copy you uploaded is illegible — please upload a clearer scan.", requestStatus:"Awaiting Information" },
+    { id:"REQ-3006", documentTypeName:"Marriage Certificate", forMemberName:"John & Grace Rodrigues", purpose:"Insurance documentation", submissionDate:"18 Jul 2026", requestReference:"DOC-REQ-2026-0139", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["baptism_cert_john.pdf","baptism_cert_grace.pdf"],
+      verified:true, generatedFileName:"marriage_cert_john_grace.pdf", approvalRequested:true, approvalNotes:"Ready for review.", approved:true, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Approved" },
+    { id:"REQ-3007", documentTypeName:"Baptism Certificate", forMemberName:"Kevin Rodrigues", purpose:"Passport application", submissionDate:"12 Jul 2026", requestReference:"DOC-REQ-2026-0110", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof_kevin.pdf"],
+      verified:true, generatedFileName:"baptism_cert_kevin.pdf", approvalRequested:true, approvalNotes:'', approved:true, notified:true, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Approved" },
+    { id:"REQ-3004", documentTypeName:"First Communion Certificate", forMemberName:"Clara Rodrigues", purpose:"Confirmation preparation enrollment", submissionDate:"10 Jun 2026", requestReference:"DOC-REQ-2026-0079", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"In-app Download", uploadedDocuments:["baptism_cert_clara.pdf"],
+      verified:true, generatedFileName:"communion_cert_clara.pdf", approvalRequested:true, approvalNotes:'', approved:true, notified:false, deliveryActionDone:true, completed:true, clarificationMessage:null, requestStatus:"Completed" },
+    { id:"REQ-3005", documentTypeName:"Parish Transfer Certificate", forMemberName:"John Rodrigues", purpose:"Requested in error — family is not transferring parish", submissionDate:"2 May 2026", requestReference:"DOC-REQ-2026-0044", paymentStatus:"Not Required", documentVerificationStatus:"Pending", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
+      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:"Parishioner confirmed this was submitted by mistake; no transfer intended.", requestStatus:"Rejected" },
   ];
 
   // Which staff-pipeline stage a request currently sits in.
   function pipelineStage(r) {
-    if (['Submitted','Under Review'].includes(r.requestStatus)) return 'Pending';
-    if (r.requestStatus === 'Pending Approval') return 'Approve';
-    if (r.requestStatus === 'Approved' && r.deliveryStatus === 'Not Ready') return 'Generate';
-    if (r.requestStatus === 'Approved' && r.deliveryStatus === 'Ready for Delivery') return 'Deliver';
-    if (r.requestStatus === 'Completed') return 'Archive';
-    return 'Exception'; // Awaiting Information / Rejected — not part of the 5-stage pipeline, shown only in "All"
+    if (r.requestStatus === 'Awaiting Information') return 'Exception';
+    if (r.requestStatus === 'Rejected') return 'Exception';
+    if (r.completed) return 'Archive';
+    if (r.approved) return 'Deliver';
+    if (r.approvalRequested) return 'Awaiting Approval';
+    return 'Pending';
   }
 
   const STAGE_STYLE = {
     'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
-    'Approve': ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
-    'Generate': ['bg-primary-light', 'text-primary', 'fileCheck'],
+    'Awaiting Approval': ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
     'Deliver': ['bg-green/20', 'text-[#2f6b45]', 'fileCheck'],
     'Archive': ['bg-section-bg', 'text-ink-muted', 'archive'],
     'Exception': ['bg-error-bg', 'text-error', 'alert'],
   };
 
-  const TABS = ['All', 'Pending', 'Approve', 'Generate', 'Deliver', 'Archive'];
+  const PAYMENT_STYLE = {
+    'Paid': ['bg-green/20', 'text-[#2f6b45]', 'check'],
+    'Not Required': ['bg-section-bg', 'text-ink-muted', 'check'],
+    'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
+  };
+  const VERIFICATION_STYLE = {
+    'Verified': ['bg-green/20', 'text-[#2f6b45]', 'check'],
+    'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
+    'Rejected': ['bg-error-bg', 'text-error', 'alert'],
+  };
+  function pill(label, styleMap) {
+    const [bg, text, iconName] = styleMap[label] || ['bg-section-bg', 'text-ink-muted', 'clock'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap inline-flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${label}</span>`;
+  }
+
+  const TABS = ['All', 'Pending', 'Awaiting Approval', 'Deliver', 'Archive'];
   let currentTab = 'All';
   let expandedId = null;
   let currentModule = 'documents';
+  let openPrompt = null; // { id, type: 'info' | 'reject' | 'approval' }
 
   function setModule(m) {
     currentModule = m;
@@ -227,7 +249,7 @@
       el.innerHTML = `
         <div class="bg-card-bg rounded-card shadow-card p-12 text-center space-y-2">
           <p class="text-sm font-semibold">${labels[currentModule]} requests aren't built yet</p>
-          <p class="text-sm text-ink-muted">This module will follow the same Pending → Approve → Generate/Schedule → Deliver → Archive pattern once built.</p>
+          <p class="text-sm text-ink-muted">This module will follow the same mini-workflow pattern once built.</p>
         </div>
       `;
       return;
@@ -252,12 +274,14 @@
   function setTab(t) {
     currentTab = t;
     expandedId = null;
+    openPrompt = null;
     renderStageTabs();
     renderList();
   }
 
   function toggleExpand(id) {
     expandedId = expandedId === id ? null : id;
+    openPrompt = null;
     renderList();
   }
 
@@ -309,69 +333,223 @@
 
   function renderDetail(r, stage) {
     return `
-      <div class="border-t border-divider px-5 py-4 space-y-3">
+      <div class="border-t border-divider px-5 py-4 space-y-4">
+        <div class="flex flex-wrap gap-2">
+          ${pill(r.paymentStatus, PAYMENT_STYLE)}
+          ${pill(r.documentVerificationStatus, VERIFICATION_STYLE)}
+        </div>
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div><p class="text-ink-muted">Delivery method</p><p class="font-medium mt-0.5">${r.deliveryMethod}</p></div>
-          <div><p class="text-ink-muted">Payment</p><p class="font-medium mt-0.5">${r.paymentStatus}</p></div>
-          <div><p class="text-ink-muted">Document verification</p><p class="font-medium mt-0.5">${r.documentVerificationStatus}</p></div>
           <div><p class="text-ink-muted">Uploaded documents</p><p class="font-medium mt-0.5">${r.uploadedDocuments.length ? r.uploadedDocuments.join(', ') : '—'}</p></div>
         </div>
-        ${r.internalNotes ? `<div class="bg-section-bg rounded-card p-3"><p class="text-xs text-ink-muted uppercase tracking-wide mb-1">Internal note</p><p class="text-xs">${r.internalNotes}</p></div>` : ''}
-        <div class="flex flex-wrap gap-2 pt-1">
-          ${renderActions(r, stage)}
+        ${r.clarificationMessage ? `<div class="bg-error-bg rounded-card p-3"><p class="text-xs text-error font-semibold uppercase tracking-wide mb-1">${stage === 'Exception' && r.requestStatus === 'Rejected' ? 'Rejection reason sent to parishioner' : 'Message sent to parishioner'}</p><p class="text-xs text-error">${r.clarificationMessage}</p></div>` : ''}
+        <div>
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Workflow</p>
+          ${renderWorkflow(r, stage)}
         </div>
       </div>
     `;
   }
 
-  function renderActions(r, stage) {
-    if (stage === 'Pending') {
-      return `
-        <button onclick="advance('${r.id}', 'verify')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Verify &amp; Forward to Priest</button>
-        <button onclick="requestInfo('${r.id}')" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request More Information</button>
-        <button onclick="reject('${r.id}')" class="text-error text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>
-      `;
-    }
-    if (stage === 'Approve') {
-      return `<button onclick="advance('${r.id}', 'approve')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark Approved by Priest</button>`;
-    }
-    if (stage === 'Generate') {
-      return `<button onclick="advance('${r.id}', 'generate')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Generated</button>`;
-    }
-    if (stage === 'Deliver') {
-      return `<button onclick="advance('${r.id}', 'deliver')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Delivered</button>`;
+  // ---------------- Mini workflow checklist ----------------
+  function workflowStep(label, state, actionHtml) {
+    // state: 'done' | 'current' | 'locked'
+    const dot = state === 'done' ? 'bg-green' : state === 'current' ? 'bg-primary' : 'bg-divider';
+    const textClass = state === 'locked' ? 'text-ink-muted' : 'text-ink';
+    return `
+      <div class="flex gap-3 ${state === 'locked' ? 'opacity-50' : ''}">
+        <div class="flex flex-col items-center pt-1">
+          <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 ${dot}"></span>
+          <span class="w-px flex-1 bg-divider my-1"></span>
+        </div>
+        <div class="pb-4 flex-1 min-w-0">
+          <p class="text-sm font-medium ${textClass}">${label}</p>
+          ${actionHtml || ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderWorkflow(r, stage) {
+    if (stage === 'Exception') {
+      return `<p class="text-xs text-ink-muted">This request is paused — ${r.requestStatus === 'Rejected' ? 'it was rejected.' : 'awaiting the parishioner\'s response before staff work can continue.'}</p>`;
     }
     if (stage === 'Archive') {
-      return `<span class="text-xs text-ink-muted">Completed and archived — no further action needed.</span>`;
+      return `<p class="text-xs text-ink-muted">Completed and delivered — no further action needed.</p>`;
     }
-    return `<span class="text-xs text-ink-muted">Awaiting the parishioner's response.</span>`;
+
+    let html = '';
+
+    // Step 1: Verify
+    html += workflowStep(
+      'Verify request details',
+      r.verified ? 'done' : 'current',
+      r.verified ? '' : `
+        <div class="mt-2 flex flex-wrap gap-2">
+          <button onclick="doVerify('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Verified</button>
+          <button onclick="openPromptFor('${r.id}', 'info')" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request More Information</button>
+          <button onclick="openPromptFor('${r.id}', 'reject')" class="text-error text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>
+        </div>
+        ${openPrompt && openPrompt.id === r.id ? renderPrompt(r) : ''}
+      `
+    );
+
+    // Step 2: Prepare & upload certificate
+    html += workflowStep(
+      'Prepare &amp; upload the certificate',
+      r.generatedFileName ? 'done' : (r.verified ? 'current' : 'locked'),
+      !r.verified ? '' : r.generatedFileName
+        ? `<p class="text-xs text-green mt-1">${icon('check','w-3.5 h-3.5 inline mb-0.5')} ${r.generatedFileName} <button onclick="doUpload('${r.id}')" class="text-primary font-semibold ml-1">Replace</button></p>`
+        : `<button onclick="doUpload('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Upload Generated Document</button>`
+    );
+
+    // Step 3: Request approval
+    html += workflowStep(
+      `Request approval from Fr. John Anthony`,
+      r.approvalRequested ? 'done' : (r.generatedFileName ? 'current' : 'locked'),
+      !r.generatedFileName ? '' : r.approvalRequested
+        ? (r.approvalNotes ? `<p class="text-xs text-ink-muted mt-1">Note: "${r.approvalNotes}"</p>` : '')
+        : `
+          <button onclick="openPromptFor('${r.id}', 'approval')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request Approval</button>
+          ${openPrompt && openPrompt.id === r.id ? renderPrompt(r) : ''}
+        `
+    );
+
+    // Step 4: Priest approval
+    html += workflowStep(
+      'Awaiting Fr. John Anthony\'s approval',
+      r.approved ? 'done' : (r.approvalRequested ? 'current' : 'locked'),
+      !r.approvalRequested || r.approved ? '' : `<button onclick="doApprove('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Record Priest's Approval</button>`
+    );
+
+    // Step 5: Delivery action (method-specific)
+    html += renderDeliveryStep(r);
+
+    return `<div class="mt-1">${html}</div>`;
+  }
+
+  function renderDeliveryStep(r) {
+    const active = r.approved && !r.deliveryActionDone;
+    const state = r.deliveryActionDone ? 'done' : (r.approved ? 'current' : 'locked');
+
+    if (r.deliveryMethod === 'Email') {
+      return workflowStep(
+        `Send email to ${r.recipientEmail || 'the parishioner'}`,
+        state,
+        !active ? '' : `<button onclick="doDeliver('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Send Email</button>`
+      );
+    }
+    if (r.deliveryMethod === 'Post / Courier') {
+      return workflowStep(
+        `Post to ${r.mailingAddress || "the parishioner's address"}`,
+        state,
+        !active ? '' : `<button onclick="doDeliver('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Posted</button>`
+      );
+    }
+    if (r.deliveryMethod === 'Collect at the Parish') {
+      if (!active) return workflowStep('Notify parishioner &amp; hand over at the parish office', state, '');
+      if (!r.notified) {
+        return workflowStep('Notify parishioner &amp; hand over at the parish office', 'current', `<button onclick="doNotify('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Notify Parishioner — Ready for Collection</button>`);
+      }
+      return workflowStep('Notify parishioner &amp; hand over at the parish office', 'current', `<p class="text-xs text-ink-muted mt-1 mb-2">Parishioner notified — awaiting collection.</p><button onclick="doDeliver('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark as Collected</button>`);
+    }
+    // In-app Download
+    return workflowStep(
+      'Publish to parishioner\'s My Documents',
+      state,
+      !active ? '' : `<button onclick="doDeliver('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Publish for Download</button>`
+    );
+  }
+
+  function renderPrompt(r) {
+    const type = openPrompt.type;
+    const config = {
+      info: { label: 'What information do you need from the parishioner?', placeholder: 'e.g. Please upload a clearer scan of the baptism certificate.', confirmLabel: 'Send Request', confirmClass: 'bg-primary hover:bg-primary-hover text-white' },
+      reject: { label: 'Let the parishioner know why this request is being rejected.', placeholder: 'e.g. This document type isn\'t applicable to your situation.', confirmLabel: 'Confirm Rejection', confirmClass: 'bg-error hover:bg-error text-white' },
+      approval: { label: 'Add an optional note for the parish priest.', placeholder: 'e.g. All documents verified, ready for signature.', confirmLabel: 'Request Approval', confirmClass: 'bg-primary hover:bg-primary-hover text-white' },
+    }[type];
+    return `
+      <div class="mt-3 bg-section-bg rounded-card p-4 space-y-2">
+        <label class="text-xs font-medium">${config.label}</label>
+        <textarea id="prompt-textarea" rows="2" placeholder="${config.placeholder}"
+          class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+        <div class="flex gap-2 pt-1">
+          <button onclick="submitPrompt('${r.id}')" class="${config.confirmClass} text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">${config.confirmLabel}</button>
+          <button onclick="openPrompt=null; renderList()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-white">Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function openPromptFor(id, type) {
+    openPrompt = { id, type };
+    renderList();
+    setTimeout(() => document.getElementById('prompt-textarea')?.focus(), 50);
+  }
+
+  function submitPrompt(id) {
+    const r = findReq(id);
+    const text = document.getElementById('prompt-textarea').value.trim();
+    if (!text) { toast('Please add a message before continuing.'); return; }
+    if (openPrompt.type === 'info') {
+      r.requestStatus = 'Awaiting Information';
+      r.clarificationMessage = text;
+      toast('Requested more information from the parishioner.');
+    }
+    if (openPrompt.type === 'reject') {
+      r.requestStatus = 'Rejected';
+      r.clarificationMessage = text;
+      toast('Request rejected — parishioner notified.');
+    }
+    if (openPrompt.type === 'approval') {
+      r.approvalRequested = true;
+      r.approvalNotes = text;
+      toast('Approval requested from Fr. John Anthony.');
+    }
+    openPrompt = null;
+    renderStageTabs();
+    renderList();
   }
 
   function findReq(id) { return documentRequests.find(r => r.id === id); }
 
-  function advance(id, action) {
+  function doVerify(id) {
     const r = findReq(id);
-    if (action === 'verify') { r.requestStatus = 'Approved'; r.deliveryStatus = 'Not Ready'; toast('Forwarded to the parish priest for approval.'); }
-    if (action === 'approve') { r.requestStatus = 'Approved'; r.deliveryStatus = 'Not Ready'; toast('Marked as approved.'); }
-    if (action === 'generate') { r.deliveryStatus = 'Ready for Delivery'; toast('Certificate marked as generated — ready for delivery.'); }
-    if (action === 'deliver') { r.requestStatus = 'Completed'; r.deliveryStatus = 'Delivered'; toast('Marked as delivered and archived.'); }
+    r.verified = true;
+    r.documentVerificationStatus = 'Verified';
+    toast('Marked as verified.');
+    renderList();
+  }
+
+  function doUpload(id) {
+    const r = findReq(id);
+    r.generatedFileName = r.documentTypeName.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.pdf';
+    toast('Generated document attached.');
+    renderList();
+  }
+
+  function doApprove(id) {
+    const r = findReq(id);
+    r.approved = true;
+    r.requestStatus = 'Approved';
+    toast('Approval recorded.');
     renderStageTabs();
     renderList();
   }
 
-  function requestInfo(id) {
+  function doNotify(id) {
     const r = findReq(id);
-    r.requestStatus = 'Awaiting Information';
-    r.internalNotes = 'Awaiting additional information from the parishioner.';
-    toast('Requested more information from the parishioner.');
-    renderStageTabs();
+    r.notified = true;
+    toast('Parishioner notified — ready for collection.');
     renderList();
   }
 
-  function reject(id) {
+  function doDeliver(id) {
     const r = findReq(id);
-    r.requestStatus = 'Rejected';
-    toast('Request rejected.');
+    r.deliveryActionDone = true;
+    r.completed = true;
+    r.requestStatus = 'Completed';
+    toast('Marked as delivered and archived.');
     renderStageTabs();
     renderList();
   }
