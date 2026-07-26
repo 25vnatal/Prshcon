@@ -166,9 +166,22 @@ Workflow actors, consistent across every module: **Requester (Parishioner or Par
 ## 4. Module Entities
 
 ### 4.1 Document Type (config) → Document Request → Generated Document
-- **Document Type**: name, category, description, status, adminCharge, paymentRequired, requiredSupportingDocs[], deliveryOptions[] (Digital Download/Email/Physical Collection/Postal), expectedProcessingTime, processingInstructions
-- **Document Request**: id, documentTypeId, requesterId, familyId, purpose, uploadedDocuments[], deliveryMethod, adminCharge, paymentMethod, additionalInfo, requestStatus (universal lifecycle), paymentStatus, documentVerificationStatus, deliveryStatus, submissionDate, requestReference, internalNotes
-- **Generated Document**: linked file, generatedDate, deliveredDate
+- **Document Type**: name, category, description, status, adminCharge, paymentRequired, requiredSupportingDocs[], deliveryOptions[] (In-app Download/Email/Collect at the Parish/Post / Courier), expectedProcessingTime, processingInstructions
+- **Document Request**: id, documentTypeId, requesterId, familyId, purpose, uploadedDocuments[], deliveryMethod, adminCharge, paymentMethod, additionalInfo, requestStatus (universal lifecycle), paymentStatus, documentVerificationStatus, deliveryStatus, submissionDate, requestReference, internalNotes, capturedFields (see below)
+- **Generated Document**: linked file, certificateNumber, issueDate, generatedDate, deliveredDate
+
+**Per-document-type field requirements** (not in the original feature briefs — provided directly by the product owner). Each type distinguishes fields already known from the family/member record (auto-filled, Capture Once) from fields only the parishioner can provide (captured at request time) and fields the parish staff fills in when preparing the certificate (system/output fields, not requested from the parishioner):
+
+| Document Type | Auto-filled (from family/member record) | Parishioner must provide | Parish staff fills in at generation |
+|---|---|---|---|
+| Baptism Certificate | Full Name, Date of Birth, Father's Name, Mother's Name, Baptism Date, Baptism Parish | Godfather, Godmother | Certificate Number, Issue Date |
+| First Communion Certificate | Full Name, Date of Birth, First Communion Date, Parish | — | Certificate Number, Issue Date |
+| Confirmation Certificate | Full Name, Date of Birth, Confirmation Date, Parish | — | Certificate Number, Issue Date |
+| Marriage Certificate | Groom Name, Bride Name, Marriage Date, Marriage Parish | Witness 1, Witness 2, Celebrant | Certificate Number, Issue Date |
+| No Objection / Good Standing Certificate | Full Name, Family Record Number, Address, Membership Status | Destination (Parish/Institution/Organization) | Certificate Number, Issue Date |
+| Parish Transfer Certificate | Family Record Number, Family Name, Head of Family, Family Members | Destination Parish, Transfer Date | Certificate Number, Issue Date |
+
+Baptism Date/Parish, Communion Date/Parish, and Confirmation Date/Parish are resolved from the Family Member's `sacramentalSummary` when available; if no matching sacrament entry exists on file, the field renders empty and editable rather than blocking the request.
 
 ### 4.2 Home Service (config) → Home Service Request
 - **Home Service types** (fixed list): Home Communion, House Blessing, Sick Visit/Anointing, Funeral Visit/Prayer, Confession at Home, Family Prayer/Rosary, Blessing of Vehicle/Business/Office, Other Pastoral Visit — each with active/inactive, availability, approvalRequired, instructions, emergencyAllowed (where applicable)

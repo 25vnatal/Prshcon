@@ -86,20 +86,81 @@
     { id: "DOC-TYPE-TRANSFER", name: "Parish Transfer Certificate", category: "Administrative", adminCharge: 0, requiredSupportingDocs: [], deliveryOptions: ["In-app Download","Email","Collect at the Parish"], time: "5-7 working days" },
   ];
 
-  const documentTypesRenamed = true; // delivery options below use the renamed, clarified labels
   const familyMembers = [
-    { id: "MEM-2001", name: "John Rodrigues", relationship: "Head", email: "john.rodrigues@example.com" },
-    { id: "MEM-2002", name: "Grace Rodrigues", relationship: "Spouse", email: "grace.rodrigues@example.com" },
-    { id: "MEM-2003", name: "Kevin Rodrigues", relationship: "Son", email: "kevin.rodrigues@example.com" },
-    { id: "MEM-2004", name: "Clara Rodrigues", relationship: "Daughter", email: null },
+    { id: "MEM-2001", name: "John Rodrigues", relationship: "Head", email: "john.rodrigues@example.com", dateOfBirth: "14 Mar 1975", fatherName: "Michael Rodrigues", motherName: "Teresa Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "20 Apr 1975", church: "Infant Jesus Shrine, Viveknagar" }, Confirmation: { date: "15 May 1990", church: "Infant Jesus Shrine, Viveknagar" } } },
+    { id: "MEM-2002", name: "Grace Rodrigues", relationship: "Spouse", email: "grace.rodrigues@example.com", dateOfBirth: "2 Jul 1978", fatherName: "Anthony Pinto", motherName: "Rose Pinto", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "10 Aug 1978", church: "St Patrick's Church" } } },
+    { id: "MEM-2003", name: "Kevin Rodrigues", relationship: "Son", email: "kevin.rodrigues@example.com", dateOfBirth: "18 Jan 2003", fatherName: "John Rodrigues", motherName: "Grace Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "14 Feb 2003", church: "Infant Jesus Shrine, Viveknagar" }, "First Communion": { date: "10 Apr 2011", church: "Infant Jesus Shrine, Viveknagar" }, Confirmation: { date: "3 Sep 2017", church: "Infant Jesus Shrine, Viveknagar" } } },
+    { id: "MEM-2004", name: "Clara Rodrigues", relationship: "Daughter", email: null, dateOfBirth: "25 Sep 2006", fatherName: "John Rodrigues", motherName: "Grace Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "15 Oct 2006", church: "Infant Jesus Shrine, Viveknagar" }, "First Communion": { date: "6 Apr 2014", church: "Infant Jesus Shrine, Viveknagar" } } },
   ];
   const familyAddress = "No. 27, 2nd Cross, Church Street, Viveknagar, Bengaluru, Karnataka 560047";
+  const family = {
+    familyRecordNumber: "IJS/FAM/1001",
+    familyName: "Rodrigues Family",
+    headOfFamily: "John Rodrigues",
+    spouseName: "Grace Rodrigues",
+    marriageDate: "24 Nov 2001",
+    marriageChurch: "Infant Jesus Shrine, Viveknagar",
+    address: familyAddress,
+  };
   const defaultMember = familyMembers.find(m => m.name === sessionName) || familyMembers[0];
+
+  // Per-document-type field requirements, distinguishing what's already known (auto-filled,
+  // Capture Once principle) from what only the parishioner can provide, and what the parish
+  // staff fills in later at certificate generation (Certificate Number / Issue Date).
+  const FIELD_LABELS = {
+    fullName: "Full Name", dateOfBirth: "Date of Birth", fatherName: "Father's Name", motherName: "Mother's Name",
+    baptismDate: "Baptism Date", baptismParish: "Baptism Parish",
+    communionDate: "First Communion Date", communionParish: "Parish",
+    confirmationDate: "Confirmation Date", confirmationParish: "Parish",
+    groomName: "Groom Name", brideName: "Bride Name", marriageDate: "Marriage Date", marriageParish: "Marriage Parish",
+    familyRecordNumber: "Family Record Number", familyName: "Family Name", headOfFamily: "Head of Family",
+    familyMembers: "Family Members", address: "Address", membershipStatus: "Membership Status",
+  };
+  const FIELD_SPECS = {
+    "DOC-TYPE-BAPTISM-CERT": { autoFields: ["fullName","dateOfBirth","fatherName","motherName","baptismDate","baptismParish"], inputFields: [{ key: "godfather", label: "Godfather" }, { key: "godmother", label: "Godmother" }] },
+    "DOC-TYPE-COMMUNION-CERT": { autoFields: ["fullName","dateOfBirth","communionDate","communionParish"], inputFields: [] },
+    "DOC-TYPE-CONFIRMATION-CERT": { autoFields: ["fullName","dateOfBirth","confirmationDate","confirmationParish"], inputFields: [] },
+    "DOC-TYPE-MARRIAGE-CERT": { autoFields: ["groomName","brideName","marriageDate","marriageParish"], inputFields: [{ key: "witness1", label: "Witness 1" }, { key: "witness2", label: "Witness 2" }, { key: "celebrant", label: "Celebrant (Priest)" }] },
+    "DOC-TYPE-NOC": { autoFields: ["fullName","familyRecordNumber","address","membershipStatus"], inputFields: [{ key: "destination", label: "Destination (Parish / Institution / Organization)" }] },
+    "DOC-TYPE-TRANSFER": { autoFields: ["familyRecordNumber","familyName","headOfFamily","familyMembers"], inputFields: [{ key: "destinationParish", label: "Destination Parish" }, { key: "transferDate", label: "Transfer Date", type: "date" }] },
+  };
+
+  function sacramentEntry(member, name) { return (member.sacraments || {})[name]; }
+  function resolveAutoField(key, member) {
+    switch (key) {
+      case 'fullName': return member.name;
+      case 'dateOfBirth': return member.dateOfBirth;
+      case 'fatherName': return member.fatherName;
+      case 'motherName': return member.motherName;
+      case 'baptismDate': return sacramentEntry(member, 'Baptism')?.date || '';
+      case 'baptismParish': return sacramentEntry(member, 'Baptism')?.church || '';
+      case 'communionDate': return sacramentEntry(member, 'First Communion')?.date || '';
+      case 'communionParish': return sacramentEntry(member, 'First Communion')?.church || '';
+      case 'confirmationDate': return sacramentEntry(member, 'Confirmation')?.date || '';
+      case 'confirmationParish': return sacramentEntry(member, 'Confirmation')?.church || '';
+      case 'groomName': return family.headOfFamily;
+      case 'brideName': return family.spouseName;
+      case 'marriageDate': return family.marriageDate;
+      case 'marriageParish': return family.marriageChurch;
+      case 'familyRecordNumber': return family.familyRecordNumber;
+      case 'familyName': return family.familyName;
+      case 'headOfFamily': return family.headOfFamily;
+      case 'familyMembers': return familyMembers.map(m => m.name).join(', ');
+      case 'address': return family.address;
+      case 'membershipStatus': return member.membershipStatus || 'Active';
+      default: return '';
+    }
+  }
 
   const state = {
     documentTypeId: null,
     forMemberId: defaultMember.id,
     purpose: '',
+    docFields: {}, // parishioner-provided input fields, keyed by FIELD_SPECS inputFields[].key
     uploadedFileName: null,
     deliveryMethod: null,
     emailAddress: '',
@@ -112,11 +173,9 @@
   function needsUpload() { const d = selectedDocType(); return d && d.requiredSupportingDocs.length > 0; }
   function needsPayment() { const d = selectedDocType(); return d && d.adminCharge > 0; }
 
-  // Steps are computed dynamically since upload/payment steps are conditional.
+  // Steps are computed dynamically since the payment step is conditional.
   function getSteps() {
-    const steps = ['docType', 'forWhom', 'purpose'];
-    if (needsUpload()) steps.push('upload');
-    steps.push('delivery');
+    const steps = ['docType', 'forWhom', 'purpose', 'details', 'delivery'];
     if (needsPayment()) steps.push('payment');
     steps.push('review');
     return steps;
@@ -161,7 +220,13 @@
     if (step === 'docType' && !state.documentTypeId) { toast('Please choose a document type.'); return false; }
     if (step === 'forWhom' && !state.forMemberId) { toast('Please select who this is for.'); return false; }
     if (step === 'purpose' && !state.purpose.trim()) { toast('Please tell us the purpose of this request.'); return false; }
-    if (step === 'upload' && needsUpload() && !state.uploadedFileName) { toast('Please attach the required document.'); return false; }
+    if (step === 'details') {
+      const spec = FIELD_SPECS[state.documentTypeId] || { inputFields: [] };
+      for (const f of spec.inputFields) {
+        if (!(state.docFields[f.key] || '').trim()) { toast(`Please provide ${f.label}.`); return false; }
+      }
+      if (needsUpload() && !state.uploadedFileName) { toast('Please attach the required document.'); return false; }
+    }
     if (step === 'delivery' && !state.deliveryMethod) { toast('Please choose how you\'d like to receive it.'); return false; }
     if (step === 'delivery' && state.deliveryMethod && !validateDeliveryDetail()) { return false; }
     if (step === 'payment' && needsPayment() && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
@@ -226,20 +291,52 @@
     `;
   }
 
-  function renderUpload() {
+  function renderDetails() {
     const d = selectedDocType();
+    const member = selectedMember();
+    const spec = FIELD_SPECS[d.id] || { autoFields: [], inputFields: [] };
     return `
-      <p class="font-heading font-bold text-xl mb-1">Supporting documents</p>
-      <p class="text-ink-muted text-sm mb-4">${d.name} requires: ${d.requiredSupportingDocs.join(', ')}.</p>
-      <div class="bg-card-bg rounded-card shadow-card p-6 text-center space-y-3">
-        ${state.uploadedFileName
-          ? `<p class="text-sm font-semibold text-green">${icon(ICONS.check, 'w-5 h-5 inline mb-1')}<br>${state.uploadedFileName}</p>
-             <button onclick="simulateUpload()" class="text-primary text-xs font-semibold">Replace file</button>`
-          : `<span class="w-12 h-12 rounded-badge bg-primary-light text-primary flex items-center justify-center mx-auto">${icon(ICONS.upload)}</span>
-             <p class="text-sm text-ink-muted">Attach a clear photo or scan (PDF/JPG)</p>
-             <button onclick="simulateUpload()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-button min-h-[44px] transition-warm">Choose File</button>`
-        }
-      </div>
+      <p class="font-heading font-bold text-xl mb-1">Document Details</p>
+      <p class="text-ink-muted text-sm mb-4">We've filled in what we already have on file — just confirm or add the rest.</p>
+
+      ${spec.autoFields.length ? `
+        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden mb-4">
+          ${spec.autoFields.map(key => `
+            <div class="px-5 py-3.5 flex items-center justify-between gap-3">
+              <span class="text-sm text-ink-muted">${FIELD_LABELS[key]}</span>
+              <span class="text-sm font-semibold text-right">${resolveAutoField(key, member) || '<span class="text-ink-muted font-normal">Not on file</span>'}</span>
+            </div>
+          `).join('')}
+        </div>
+        <p class="text-xs text-ink-muted mb-4">From your family record — let the parish office know if anything here needs correcting.</p>
+      ` : ''}
+
+      ${spec.inputFields.length ? `
+        <div class="bg-card-bg rounded-card shadow-card p-5 space-y-4 mb-4">
+          ${spec.inputFields.map(f => `
+            <div class="space-y-1.5">
+              <label for="field-${f.key}" class="text-sm font-medium">${f.label}</label>
+              <input id="field-${f.key}" type="${f.type || 'text'}" value="${state.docFields[f.key] || ''}"
+                class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
+                oninput="state.docFields['${f.key}'] = this.value">
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      ${needsUpload() ? `
+        <p class="text-sm font-semibold mb-2">Supporting documents</p>
+        <p class="text-xs text-ink-muted mb-3">${d.name} requires: ${d.requiredSupportingDocs.join(', ')}.</p>
+        <div class="bg-card-bg rounded-card shadow-card p-6 text-center space-y-3">
+          ${state.uploadedFileName
+            ? `<p class="text-sm font-semibold text-green">${icon(ICONS.check, 'w-5 h-5 inline mb-1')}<br>${state.uploadedFileName}</p>
+               <button onclick="simulateUpload()" class="text-primary text-xs font-semibold">Replace file</button>`
+            : `<span class="w-12 h-12 rounded-badge bg-primary-light text-primary flex items-center justify-center mx-auto">${icon(ICONS.upload)}</span>
+               <p class="text-sm text-ink-muted">Attach a clear photo or scan (PDF/JPG)</p>
+               <button onclick="simulateUpload()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-button min-h-[44px] transition-warm">Choose File</button>`
+          }
+        </div>
+      ` : ''}
     `;
   }
 
@@ -275,18 +372,21 @@
       <div class="space-y-3">
         ${d.deliveryOptions.map(opt => {
           const info = DELIVERY_INFO[opt];
+          const isSelected = state.deliveryMethod === opt;
           return `
-          <button onclick="selectDelivery('${opt}')" class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${state.deliveryMethod === opt ? 'selected' : 'bg-card-bg'}">
-            <div class="flex items-center gap-3">
-              <span class="w-10 h-10 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon(info.icon)}</span>
-              <span class="flex-1 text-sm font-semibold">${opt}</span>
-              ${state.deliveryMethod === opt ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
-            </div>
-            <p class="text-xs text-ink-muted mt-2 leading-relaxed">${info.note}</p>
-          </button>
+          <div class="option-card w-full rounded-card transition-warm ${isSelected ? 'selected' : 'bg-card-bg'}">
+            <button onclick="selectDelivery('${opt}')" class="w-full text-left p-4 min-h-[44px]">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon(info.icon)}</span>
+                <span class="flex-1 text-sm font-semibold">${opt}</span>
+                ${isSelected ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+              </div>
+              <p class="text-xs text-ink-muted mt-2 leading-relaxed">${info.note}</p>
+            </button>
+            ${isSelected ? renderDeliveryDetail() : ''}
+          </div>
         `}).join('')}
       </div>
-      ${renderDeliveryDetail()}
     `;
   }
 
@@ -302,7 +402,7 @@
   function renderDeliveryDetail() {
     if (state.deliveryMethod === 'Email') {
       return `
-        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-2">
+        <div class="border-t border-divider mx-4 mb-4 pt-4 space-y-2">
           <label for="email-input" class="text-sm font-medium">Email address</label>
           <input id="email-input" type="email" value="${state.emailAddress}" placeholder="you@example.com"
             class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
@@ -313,7 +413,7 @@
     }
     if (state.deliveryMethod === 'Post / Courier') {
       return `
-        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-2">
+        <div class="border-t border-divider mx-4 mb-4 pt-4 space-y-2">
           <label for="address-input" class="text-sm font-medium">Mailing address</label>
           <textarea id="address-input" rows="3"
             class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"
@@ -324,7 +424,7 @@
     }
     if (state.deliveryMethod === 'Collect at the Parish') {
       return `
-        <div class="bg-card-bg rounded-card shadow-card p-5 mt-4 space-y-1.5">
+        <div class="border-t border-divider mx-4 mb-4 pt-4 space-y-1.5">
           <p class="text-sm font-semibold">Infant Jesus Shrine, Viveknagar</p>
           <p class="text-xs text-ink-muted">Post Box 4712, Viveknagar, Bengaluru 560 047</p>
           <p class="text-xs text-ink-muted">Mon–Sat, 9:00 AM – 5:30 PM (Sat until 1:00 PM) · Closed Monday</p>
@@ -366,6 +466,7 @@
   function renderReview() {
     const d = selectedDocType();
     const member = familyMembers.find(m => m.id === state.forMemberId);
+    const spec = FIELD_SPECS[d.id] || { inputFields: [] };
     return `
       <p class="font-heading font-bold text-xl mb-1">Review your request</p>
       <p class="text-ink-muted text-sm mb-4">Please confirm the details before submitting.</p>
@@ -373,6 +474,7 @@
         <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Document</span><span class="text-sm font-semibold text-right">${d.name}</span></div>
         <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">For</span><span class="text-sm font-semibold">${member.name}</span></div>
         <div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Purpose</span><span class="text-sm font-semibold text-right">${state.purpose}</span></div>
+        ${spec.inputFields.map(f => `<div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">${f.label}</span><span class="text-sm font-semibold text-right">${state.docFields[f.key] || ''}</span></div>`).join('')}
         ${state.uploadedFileName ? `<div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Attached</span><span class="text-sm font-semibold">${state.uploadedFileName}</span></div>` : ''}
         <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Delivery</span><span class="text-sm font-semibold">${state.deliveryMethod}</span></div>
         ${state.deliveryMethod === 'Email' ? `<div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Sending to</span><span class="text-sm font-semibold text-right">${state.emailAddress}</span></div>` : ''}
@@ -386,11 +488,11 @@
 
   const RENDERERS = {
     docType: renderDocType, forWhom: renderForWhom, purpose: renderPurpose,
-    upload: renderUpload, delivery: renderDelivery, payment: renderPayment, review: renderReview,
+    details: renderDetails, delivery: renderDelivery, payment: renderPayment, review: renderReview,
   };
   const STEP_LABELS = {
     docType: 'Document', forWhom: 'For whom', purpose: 'Purpose',
-    upload: 'Documents', delivery: 'Delivery', payment: 'Payment', review: 'Review',
+    details: 'Details', delivery: 'Delivery', payment: 'Payment', review: 'Review',
   };
 
   function render() {

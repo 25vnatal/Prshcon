@@ -144,6 +144,27 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
 
+  <!-- ============ NEW REQUEST MODAL (walk-in / offline requests) ============ -->
+  <div id="new-request-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <div>
+          <p class="font-heading font-bold text-lg">New Request</p>
+          <p class="text-xs text-ink-muted mt-0.5">For a walk-in or phone request from a parishioner.</p>
+        </div>
+        <button onclick="closeNewRequestModal()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="new-request-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitNewRequest()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save Request</button>
+        <button onclick="closeNewRequestModal()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
   const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
@@ -176,29 +197,106 @@
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
+  // ---------------- Reference data: family + per-document-type field specs (mirrors parishioner side) ----------------
+  const familyMembers = [
+    { id: "MEM-2001", name: "John Rodrigues", relationship: "Head", email: "john.rodrigues@example.com", dateOfBirth: "14 Mar 1975", fatherName: "Michael Rodrigues", motherName: "Teresa Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "20 Apr 1975", church: "Infant Jesus Shrine, Viveknagar" } } },
+    { id: "MEM-2002", name: "Grace Rodrigues", relationship: "Spouse", email: "grace.rodrigues@example.com", dateOfBirth: "2 Jul 1978", fatherName: "Anthony Pinto", motherName: "Rose Pinto", membershipStatus: "Active", sacraments: {} },
+    { id: "MEM-2003", name: "Kevin Rodrigues", relationship: "Son", email: "kevin.rodrigues@example.com", dateOfBirth: "18 Jan 2003", fatherName: "John Rodrigues", motherName: "Grace Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "14 Feb 2003", church: "Infant Jesus Shrine, Viveknagar" }, "First Communion": { date: "10 Apr 2011", church: "Infant Jesus Shrine, Viveknagar" }, Confirmation: { date: "3 Sep 2017", church: "Infant Jesus Shrine, Viveknagar" } } },
+    { id: "MEM-2004", name: "Clara Rodrigues", relationship: "Daughter", email: null, dateOfBirth: "25 Sep 2006", fatherName: "John Rodrigues", motherName: "Grace Rodrigues", membershipStatus: "Active",
+      sacraments: { Baptism: { date: "15 Oct 2006", church: "Infant Jesus Shrine, Viveknagar" }, "First Communion": { date: "6 Apr 2014", church: "Infant Jesus Shrine, Viveknagar" } } },
+  ];
+  const familyAddress = "No. 27, 2nd Cross, Church Street, Viveknagar, Bengaluru, Karnataka 560047";
+  const family = { familyRecordNumber: "IJS/FAM/1001", familyName: "Rodrigues Family", headOfFamily: "John Rodrigues", spouseName: "Grace Rodrigues", marriageDate: "24 Nov 2001", marriageChurch: "Infant Jesus Shrine, Viveknagar", address: familyAddress };
+
+  const FIELD_LABELS = {
+    fullName: "Full Name", dateOfBirth: "Date of Birth", fatherName: "Father's Name", motherName: "Mother's Name",
+    baptismDate: "Baptism Date", baptismParish: "Baptism Parish",
+    communionDate: "First Communion Date", communionParish: "Parish",
+    confirmationDate: "Confirmation Date", confirmationParish: "Parish",
+    groomName: "Groom Name", brideName: "Bride Name", marriageDate: "Marriage Date", marriageParish: "Marriage Parish",
+    familyRecordNumber: "Family Record Number", familyName: "Family Name", headOfFamily: "Head of Family",
+    familyMembers: "Family Members", address: "Address", membershipStatus: "Membership Status",
+    godfather: "Godfather", godmother: "Godmother", witness1: "Witness 1", witness2: "Witness 2", celebrant: "Celebrant (Priest)",
+    destination: "Destination (Parish / Institution / Organization)", destinationParish: "Destination Parish", transferDate: "Transfer Date",
+  };
+  const FIELD_SPECS = {
+    "DOC-TYPE-BAPTISM-CERT": { autoFields: ["fullName","dateOfBirth","fatherName","motherName","baptismDate","baptismParish"], inputFields: ["godfather","godmother"] },
+    "DOC-TYPE-COMMUNION-CERT": { autoFields: ["fullName","dateOfBirth","communionDate","communionParish"], inputFields: [] },
+    "DOC-TYPE-CONFIRMATION-CERT": { autoFields: ["fullName","dateOfBirth","confirmationDate","confirmationParish"], inputFields: [] },
+    "DOC-TYPE-MARRIAGE-CERT": { autoFields: ["groomName","brideName","marriageDate","marriageParish"], inputFields: ["witness1","witness2","celebrant"] },
+    "DOC-TYPE-NOC": { autoFields: ["fullName","familyRecordNumber","address","membershipStatus"], inputFields: ["destination"] },
+    "DOC-TYPE-TRANSFER": { autoFields: ["familyRecordNumber","familyName","headOfFamily","familyMembers"], inputFields: ["destinationParish","transferDate"] },
+  };
+  const DOCUMENT_TYPES = [
+    { id: "DOC-TYPE-BAPTISM-CERT", name: "Baptism Certificate", adminCharge: 100, requiredSupportingDocs: ["Photo ID of requester"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"] },
+    { id: "DOC-TYPE-COMMUNION-CERT", name: "First Communion Certificate", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"] },
+    { id: "DOC-TYPE-CONFIRMATION-CERT", name: "Confirmation Certificate", adminCharge: 100, requiredSupportingDocs: ["Baptism Certificate"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"] },
+    { id: "DOC-TYPE-MARRIAGE-CERT", name: "Marriage Certificate", adminCharge: 150, requiredSupportingDocs: ["Baptism Certificates of both spouses"], deliveryOptions: ["In-app Download","Email","Collect at the Parish","Post / Courier"] },
+    { id: "DOC-TYPE-NOC", name: "No Objection / Good Standing Certificate", adminCharge: 50, requiredSupportingDocs: [], deliveryOptions: ["In-app Download","Email","Collect at the Parish"] },
+    { id: "DOC-TYPE-TRANSFER", name: "Parish Transfer Certificate", adminCharge: 0, requiredSupportingDocs: [], deliveryOptions: ["In-app Download","Email","Collect at the Parish"] },
+  ];
+
+  function sacramentEntry(member, name) { return (member.sacraments || {})[name]; }
+  function resolveAutoField(key, member) {
+    switch (key) {
+      case 'fullName': return member.name;
+      case 'dateOfBirth': return member.dateOfBirth;
+      case 'fatherName': return member.fatherName;
+      case 'motherName': return member.motherName;
+      case 'baptismDate': return sacramentEntry(member, 'Baptism')?.date || '';
+      case 'baptismParish': return sacramentEntry(member, 'Baptism')?.church || '';
+      case 'communionDate': return sacramentEntry(member, 'First Communion')?.date || '';
+      case 'communionParish': return sacramentEntry(member, 'First Communion')?.church || '';
+      case 'confirmationDate': return sacramentEntry(member, 'Confirmation')?.date || '';
+      case 'confirmationParish': return sacramentEntry(member, 'Confirmation')?.church || '';
+      case 'groomName': return family.headOfFamily;
+      case 'brideName': return family.spouseName;
+      case 'marriageDate': return family.marriageDate;
+      case 'marriageParish': return family.marriageChurch;
+      case 'familyRecordNumber': return family.familyRecordNumber;
+      case 'familyName': return family.familyName;
+      case 'headOfFamily': return family.headOfFamily;
+      case 'familyMembers': return familyMembers.map(m => m.name).join(', ');
+      case 'address': return family.address;
+      case 'membershipStatus': return member.membershipStatus || 'Active';
+      default: return '';
+    }
+  }
+  function memberByName(name) { return familyMembers.find(m => name.includes(m.name)) || familyMembers[0]; }
+
   // ---------------- Mock data (from mock-seed.json documentRequests, extended with workflow state) ----------------
   let documentRequests = [
-    { id:"REQ-3002", documentTypeName:"No Objection / Good Standing Certificate", forMemberName:"John Rodrigues", purpose:"Godparent eligibility for a relative's child", submissionDate:"24 Jul 2026", requestReference:"DOC-REQ-2026-0158", paymentStatus:"Paid", documentVerificationStatus:"Pending", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
-      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Submitted" },
-    { id:"REQ-3001", documentTypeName:"Baptism Certificate", forMemberName:"Clara Rodrigues", purpose:"School admission for Clara", submissionDate:"20 Jul 2026", requestReference:"DOC-REQ-2026-0142", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof.pdf"],
-      verified:true, generatedFileName:"baptism_cert_clara_reissue.pdf", approvalRequested:true, approvalNotes:"All documents verified, certificate ready for signature.", approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Pending Approval" },
-    { id:"REQ-3003", documentTypeName:"Confirmation Certificate", forMemberName:"Kevin Rodrigues", purpose:"College admission documentation", submissionDate:"15 Jul 2026", requestReference:"DOC-REQ-2026-0121", paymentStatus:"Paid", documentVerificationStatus:"Rejected", deliveryMethod:"Collect at the Parish", uploadedDocuments:[],
-      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:"The baptism certificate copy you uploaded is illegible — please upload a clearer scan.", requestStatus:"Awaiting Information" },
-    { id:"REQ-3006", documentTypeName:"Marriage Certificate", forMemberName:"John & Grace Rodrigues", purpose:"Insurance documentation", submissionDate:"18 Jul 2026", requestReference:"DOC-REQ-2026-0139", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["baptism_cert_john.pdf","baptism_cert_grace.pdf"],
-      verified:true, generatedFileName:"marriage_cert_john_grace.pdf", approvalRequested:true, approvalNotes:"Ready for review.", approved:true, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Approved" },
-    { id:"REQ-3007", documentTypeName:"Baptism Certificate", forMemberName:"Kevin Rodrigues", purpose:"Passport application", submissionDate:"12 Jul 2026", requestReference:"DOC-REQ-2026-0110", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof_kevin.pdf"],
-      verified:true, generatedFileName:"baptism_cert_kevin.pdf", approvalRequested:true, approvalNotes:'', approved:true, notified:true, deliveryActionDone:false, completed:false, clarificationMessage:null, requestStatus:"Approved" },
-    { id:"REQ-3004", documentTypeName:"First Communion Certificate", forMemberName:"Clara Rodrigues", purpose:"Confirmation preparation enrollment", submissionDate:"10 Jun 2026", requestReference:"DOC-REQ-2026-0079", paymentStatus:"Paid", documentVerificationStatus:"Verified", deliveryMethod:"In-app Download", uploadedDocuments:["baptism_cert_clara.pdf"],
-      verified:true, generatedFileName:"communion_cert_clara.pdf", approvalRequested:true, approvalNotes:'', approved:true, notified:false, deliveryActionDone:true, completed:true, clarificationMessage:null, requestStatus:"Completed" },
-    { id:"REQ-3005", documentTypeName:"Parish Transfer Certificate", forMemberName:"John Rodrigues", purpose:"Requested in error — family is not transferring parish", submissionDate:"2 May 2026", requestReference:"DOC-REQ-2026-0044", paymentStatus:"Not Required", documentVerificationStatus:"Pending", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
-      verified:false, generatedFileName:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, clarificationMessage:"Parishioner confirmed this was submitted by mistake; no transfer intended.", requestStatus:"Rejected" },
+    { id:"REQ-3002", documentTypeId:"DOC-TYPE-NOC", documentTypeName:"No Objection / Good Standing Certificate", forMemberName:"John Rodrigues", purpose:"Godparent eligibility for a relative's child", submissionDate:"24 Jul 2026", requestReference:"DOC-REQ-2026-0158", paymentStatus:"Paid", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
+      capturedFields:{ destination: "Diocese of Mysore — marriage documentation" },
+      verified:false, generatedFileName:null, certificateNumber:null, issueDate:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:null, requestStatus:"Submitted" },
+    { id:"REQ-3001", documentTypeId:"DOC-TYPE-BAPTISM-CERT", documentTypeName:"Baptism Certificate", forMemberName:"Clara Rodrigues", purpose:"School admission for Clara", submissionDate:"20 Jul 2026", requestReference:"DOC-REQ-2026-0142", paymentStatus:"Paid", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof.pdf"],
+      capturedFields:{ godfather: "Anthony Pinto", godmother: "Rose Pinto" },
+      verified:true, generatedFileName:"baptism_cert_clara_reissue.pdf", certificateNumber:"IJS/CERT/2026/0311", issueDate:"22 Jul 2026", approvalRequested:true, approvalNotes:"All documents verified, certificate ready for signature.", approved:false, notified:false, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:null, requestStatus:"Pending Approval" },
+    { id:"REQ-3003", documentTypeId:"DOC-TYPE-CONFIRMATION-CERT", documentTypeName:"Confirmation Certificate", forMemberName:"Kevin Rodrigues", purpose:"College admission documentation", submissionDate:"15 Jul 2026", requestReference:"DOC-REQ-2026-0121", paymentStatus:"Paid", deliveryMethod:"Collect at the Parish", uploadedDocuments:[],
+      capturedFields:{},
+      verified:false, generatedFileName:null, certificateNumber:null, issueDate:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:"The baptism certificate copy you uploaded is illegible — please upload a clearer scan.", requestStatus:"Awaiting Information" },
+    { id:"REQ-3006", documentTypeId:"DOC-TYPE-MARRIAGE-CERT", documentTypeName:"Marriage Certificate", forMemberName:"John & Grace Rodrigues", purpose:"Insurance documentation", submissionDate:"18 Jul 2026", requestReference:"DOC-REQ-2026-0139", paymentStatus:"Paid", deliveryMethod:"Post / Courier", mailingAddress:familyAddress, uploadedDocuments:["baptism_cert_john.pdf","baptism_cert_grace.pdf"],
+      capturedFields:{ witness1: "Michael Rodrigues", witness2: "Anthony Pinto", celebrant: "Fr. John Anthony" },
+      verified:true, generatedFileName:"marriage_cert_john_grace.pdf", certificateNumber:"IJS/CERT/2026/0298", issueDate:"19 Jul 2026", approvalRequested:true, approvalNotes:"Ready for review.", approved:true, notified:false, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:null, requestStatus:"Approved" },
+    { id:"REQ-3007", documentTypeId:"DOC-TYPE-BAPTISM-CERT", documentTypeName:"Baptism Certificate", forMemberName:"Kevin Rodrigues", purpose:"Passport application", submissionDate:"12 Jul 2026", requestReference:"DOC-REQ-2026-0110", paymentStatus:"Paid", deliveryMethod:"Collect at the Parish", uploadedDocuments:["id_proof_kevin.pdf"],
+      capturedFields:{ godfather: "Peter Fernandes", godmother: "Maria Fernandes" },
+      verified:true, generatedFileName:"baptism_cert_kevin.pdf", certificateNumber:"IJS/CERT/2026/0279", issueDate:"22 Jul 2026", approvalRequested:true, approvalNotes:'', approved:true, notified:true, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:null, requestStatus:"Approved" },
+    { id:"REQ-3004", documentTypeId:"DOC-TYPE-COMMUNION-CERT", documentTypeName:"First Communion Certificate", forMemberName:"Clara Rodrigues", purpose:"Confirmation preparation enrollment", submissionDate:"10 Jun 2026", requestReference:"DOC-REQ-2026-0079", paymentStatus:"Paid", deliveryMethod:"In-app Download", uploadedDocuments:["baptism_cert_clara.pdf"],
+      capturedFields:{},
+      verified:true, generatedFileName:"communion_cert_clara.pdf", certificateNumber:"IJS/CERT/2026/0203", issueDate:"12 Jun 2026", approvalRequested:true, approvalNotes:'', approved:true, notified:false, deliveryActionDone:true, completed:true, completedDate:"13 Jun 2026", clarificationMessage:null, requestStatus:"Completed" },
+    { id:"REQ-3005", documentTypeId:"DOC-TYPE-TRANSFER", documentTypeName:"Parish Transfer Certificate", forMemberName:"John Rodrigues", purpose:"Requested in error — family is not transferring parish", submissionDate:"2 May 2026", requestReference:"DOC-REQ-2026-0044", paymentStatus:"Not Required", deliveryMethod:"Email", recipientEmail:"john.rodrigues@example.com", uploadedDocuments:[],
+      capturedFields:{ destinationParish: "St Mary's Minor Basilica Church", transferDate: "1 May 2026" },
+      verified:false, generatedFileName:null, certificateNumber:null, issueDate:null, approvalRequested:false, approvalNotes:'', approved:false, notified:false, deliveryActionDone:false, completed:false, completedDate:null, clarificationMessage:"Parishioner confirmed this was submitted by mistake; no transfer intended.", requestStatus:"Rejected" },
   ];
+  let nextRequestSeq = 8;
 
   // Which staff-pipeline stage a request currently sits in.
   function pipelineStage(r) {
     if (r.requestStatus === 'Awaiting Information') return 'Exception';
     if (r.requestStatus === 'Rejected') return 'Exception';
-    if (r.completed) return 'Archive';
+    if (r.completed) return 'Completed';
     if (r.approved) return 'Deliver';
     if (r.approvalRequested) return 'Awaiting Approval';
     return 'Pending';
@@ -208,7 +306,7 @@
     'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
     'Awaiting Approval': ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
     'Deliver': ['bg-green/20', 'text-[#2f6b45]', 'fileCheck'],
-    'Archive': ['bg-section-bg', 'text-ink-muted', 'archive'],
+    'Completed': ['bg-section-bg', 'text-ink-muted', 'archive'],
     'Exception': ['bg-error-bg', 'text-error', 'alert'],
   };
 
@@ -217,21 +315,16 @@
     'Not Required': ['bg-section-bg', 'text-ink-muted', 'check'],
     'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
   };
-  const VERIFICATION_STYLE = {
-    'Verified': ['bg-green/20', 'text-[#2f6b45]', 'check'],
-    'Pending': ['bg-gold/20', 'text-[#8a5a10]', 'clock'],
-    'Rejected': ['bg-error-bg', 'text-error', 'alert'],
-  };
   function pill(label, styleMap) {
     const [bg, text, iconName] = styleMap[label] || ['bg-section-bg', 'text-ink-muted', 'clock'];
     return `<span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap inline-flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${label}</span>`;
   }
 
-  const TABS = ['All', 'Pending', 'Awaiting Approval', 'Deliver', 'Archive'];
+  const TABS = ['All', 'Pending', 'Awaiting Approval', 'Deliver', 'Completed'];
   let currentTab = 'All';
   let expandedId = null;
   let currentModule = 'documents';
-  let openPrompt = null; // { id, type: 'info' | 'reject' | 'approval' }
+  let openPrompt = null; // { id, type: 'info' | 'reject' }
 
   function setModule(m) {
     currentModule = m;
@@ -255,7 +348,13 @@
       return;
     }
     el.innerHTML = `
-      <div class="flex gap-2 mb-5 overflow-x-auto" id="stage-tabs"></div>
+      <div class="flex items-center justify-between mb-5 gap-3 flex-wrap">
+        <div class="flex gap-2 overflow-x-auto" id="stage-tabs"></div>
+        <button onclick="openNewRequestModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0">
+          <svg class="icon w-4 h-4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Request
+        </button>
+      </div>
       <div id="request-list" class="space-y-3"></div>
     `;
     renderStageTabs();
@@ -275,6 +374,7 @@
     currentTab = t;
     expandedId = null;
     openPrompt = null;
+    uploadFormOpenFor = null;
     renderStageTabs();
     renderList();
   }
@@ -282,6 +382,7 @@
   function toggleExpand(id) {
     expandedId = expandedId === id ? null : id;
     openPrompt = null;
+    uploadFormOpenFor = null;
     renderList();
   }
 
@@ -317,11 +418,14 @@
           <button onclick="toggleExpand('${r.id}')" class="w-full text-left p-5 flex items-start justify-between gap-3 min-h-[44px] transition-warm hover:bg-section-bg">
             <div class="min-w-0">
               <p class="text-sm font-semibold">${r.documentTypeName} <span class="text-ink-muted font-normal">— ${r.forMemberName}</span></p>
-              <p class="text-xs text-ink-muted mt-1">${r.requestReference} · Submitted ${r.submissionDate}</p>
+              <p class="text-xs text-ink-muted mt-1">${r.requestReference} · Submitted ${r.submissionDate}${stage === 'Completed' && r.completedDate ? ` · Completed ${r.completedDate}` : ''}</p>
               <p class="text-xs text-ink-muted mt-0.5">${r.purpose}</p>
             </div>
             <div class="flex flex-col items-end gap-2 flex-shrink-0">
-              <span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${stage === 'Exception' ? r.requestStatus : stage}</span>
+              <div class="flex items-center gap-1.5">
+                ${pill(r.paymentStatus, PAYMENT_STYLE)}
+                <span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${stage === 'Exception' ? r.requestStatus : stage}</span>
+              </div>
               <span class="text-ink-muted transition-warm" style="transform: rotate(${isOpen ? '180' : '0'}deg)">${icon('chevronDown', 'w-4 h-4')}</span>
             </div>
           </button>
@@ -332,16 +436,25 @@
   }
 
   function renderDetail(r, stage) {
+    const spec = FIELD_SPECS[r.documentTypeId] || { autoFields: [], inputFields: [] };
+    const member = memberByName(r.forMemberName);
     return `
       <div class="border-t border-divider px-5 py-4 space-y-4">
-        <div class="flex flex-wrap gap-2">
-          ${pill(r.paymentStatus, PAYMENT_STYLE)}
-          ${pill(r.documentVerificationStatus, VERIFICATION_STYLE)}
-        </div>
         <div class="grid grid-cols-2 gap-3 text-xs">
-          <div><p class="text-ink-muted">Delivery method</p><p class="font-medium mt-0.5">${r.deliveryMethod}</p></div>
+          <div><p class="text-ink-muted">Delivery method</p><p class="font-medium mt-0.5">${r.deliveryMethod}${r.recipientEmail ? ` — ${r.recipientEmail}` : ''}${r.mailingAddress ? ` — ${r.mailingAddress}` : ''}</p></div>
           <div><p class="text-ink-muted">Uploaded documents</p><p class="font-medium mt-0.5">${r.uploadedDocuments.length ? r.uploadedDocuments.join(', ') : '—'}</p></div>
         </div>
+
+        ${(spec.autoFields.length || spec.inputFields.length) ? `
+          <div>
+            <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Certificate details</p>
+            <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden">
+              ${spec.autoFields.map(key => `<div class="px-4 py-2.5 flex items-center justify-between gap-3"><span class="text-xs text-ink-muted">${FIELD_LABELS[key]}</span><span class="text-xs font-medium text-right">${resolveAutoField(key, member) || '—'}</span></div>`).join('')}
+              ${spec.inputFields.map(key => `<div class="px-4 py-2.5 flex items-center justify-between gap-3"><span class="text-xs text-ink-muted">${FIELD_LABELS[key]}</span><span class="text-xs font-medium text-right">${r.capturedFields[key] || '—'}</span></div>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+
         ${r.clarificationMessage ? `<div class="bg-error-bg rounded-card p-3"><p class="text-xs text-error font-semibold uppercase tracking-wide mb-1">${stage === 'Exception' && r.requestStatus === 'Rejected' ? 'Rejection reason sent to parishioner' : 'Message sent to parishioner'}</p><p class="text-xs text-error">${r.clarificationMessage}</p></div>` : ''}
         <div>
           <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Workflow</p>
@@ -374,8 +487,8 @@
     if (stage === 'Exception') {
       return `<p class="text-xs text-ink-muted">This request is paused — ${r.requestStatus === 'Rejected' ? 'it was rejected.' : 'awaiting the parishioner\'s response before staff work can continue.'}</p>`;
     }
-    if (stage === 'Archive') {
-      return `<p class="text-xs text-ink-muted">Completed and delivered — no further action needed.</p>`;
+    if (stage === 'Completed') {
+      return `<p class="text-xs text-ink-muted">Completed on ${r.completedDate || 'file'} — no further action needed.</p>`;
     }
 
     let html = '';
@@ -394,24 +507,27 @@
       `
     );
 
-    // Step 2: Prepare & upload certificate
+    // Step 2: Prepare & upload certificate (captures Certificate Number + Issue Date)
     html += workflowStep(
       'Prepare &amp; upload the certificate',
       r.generatedFileName ? 'done' : (r.verified ? 'current' : 'locked'),
       !r.verified ? '' : r.generatedFileName
-        ? `<p class="text-xs text-green mt-1">${icon('check','w-3.5 h-3.5 inline mb-0.5')} ${r.generatedFileName} <button onclick="doUpload('${r.id}')" class="text-primary font-semibold ml-1">Replace</button></p>`
-        : `<button onclick="doUpload('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Upload Generated Document</button>`
+        ? `<p class="text-xs text-green mt-1">${icon('check','w-3.5 h-3.5 inline mb-0.5')} ${r.generatedFileName} · Cert. No. ${r.certificateNumber} · Issued ${r.issueDate} <button onclick="openUploadForm('${r.id}')" class="text-primary font-semibold ml-1">Replace</button></p>`
+        : (uploadFormOpenFor === r.id ? renderUploadForm(r) : `<button onclick="openUploadForm('${r.id}')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Upload Generated Document</button>`)
     );
 
-    // Step 3: Request approval
+    // Step 3: Request approval — shows the note field directly, no extra reveal click
     html += workflowStep(
       `Request approval from Fr. John Anthony`,
       r.approvalRequested ? 'done' : (r.generatedFileName ? 'current' : 'locked'),
       !r.generatedFileName ? '' : r.approvalRequested
         ? (r.approvalNotes ? `<p class="text-xs text-ink-muted mt-1">Note: "${r.approvalNotes}"</p>` : '')
         : `
-          <button onclick="openPromptFor('${r.id}', 'approval')" class="mt-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request Approval</button>
-          ${openPrompt && openPrompt.id === r.id ? renderPrompt(r) : ''}
+          <div class="mt-2 space-y-2">
+            <textarea id="approval-note-${r.id}" rows="2" placeholder="Optional note for the priest…"
+              class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-section-bg focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+            <button onclick="doRequestApproval('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Request Approval</button>
+          </div>
         `
     );
 
@@ -426,6 +542,29 @@
     html += renderDeliveryStep(r);
 
     return `<div class="mt-1">${html}</div>`;
+  }
+
+  let uploadFormOpenFor = null;
+  function openUploadForm(id) {
+    uploadFormOpenFor = id;
+    renderList();
+  }
+
+  function renderUploadForm(r) {
+    const suggestedNumber = `IJS/CERT/2026/0${300 + Math.floor(Math.random() * 90)}`;
+    return `
+      <div class="mt-2 bg-section-bg rounded-card p-4 space-y-3">
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">Certificate number</label>
+          <input id="certnum-${r.id}" type="text" value="${suggestedNumber}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">Issue date</label>
+          <input id="issuedate-${r.id}" type="text" value="Today" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+        <button onclick="doUpload('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Attach &amp; Save</button>
+      </div>
+    `;
   }
 
   function renderDeliveryStep(r) {
@@ -466,7 +605,6 @@
     const config = {
       info: { label: 'What information do you need from the parishioner?', placeholder: 'e.g. Please upload a clearer scan of the baptism certificate.', confirmLabel: 'Send Request', confirmClass: 'bg-primary hover:bg-primary-hover text-white' },
       reject: { label: 'Let the parishioner know why this request is being rejected.', placeholder: 'e.g. This document type isn\'t applicable to your situation.', confirmLabel: 'Confirm Rejection', confirmClass: 'bg-error hover:bg-error text-white' },
-      approval: { label: 'Add an optional note for the parish priest.', placeholder: 'e.g. All documents verified, ready for signature.', confirmLabel: 'Request Approval', confirmClass: 'bg-primary hover:bg-primary-hover text-white' },
     }[type];
     return `
       <div class="mt-3 bg-section-bg rounded-card p-4 space-y-2">
@@ -501,12 +639,17 @@
       r.clarificationMessage = text;
       toast('Request rejected — parishioner notified.');
     }
-    if (openPrompt.type === 'approval') {
-      r.approvalRequested = true;
-      r.approvalNotes = text;
-      toast('Approval requested from Fr. John Anthony.');
-    }
     openPrompt = null;
+    renderStageTabs();
+    renderList();
+  }
+
+  function doRequestApproval(id) {
+    const r = findReq(id);
+    const text = document.getElementById(`approval-note-${id}`).value.trim();
+    r.approvalRequested = true;
+    r.approvalNotes = text;
+    toast('Approval requested from Fr. John Anthony.');
     renderStageTabs();
     renderList();
   }
@@ -516,14 +659,18 @@
   function doVerify(id) {
     const r = findReq(id);
     r.verified = true;
-    r.documentVerificationStatus = 'Verified';
     toast('Marked as verified.');
     renderList();
   }
 
   function doUpload(id) {
     const r = findReq(id);
+    const certInput = document.getElementById(`certnum-${id}`);
+    const dateInput = document.getElementById(`issuedate-${id}`);
+    r.certificateNumber = certInput ? certInput.value.trim() : `IJS/CERT/2026/0${300 + Math.floor(Math.random()*90)}`;
+    r.issueDate = (dateInput && dateInput.value.trim() && dateInput.value.trim() !== 'Today') ? dateInput.value.trim() : '26 Jul 2026';
     r.generatedFileName = r.documentTypeName.toLowerCase().replace(/[^a-z0-9]+/g, '_') + '.pdf';
+    uploadFormOpenFor = null;
     toast('Generated document attached.');
     renderList();
   }
@@ -548,10 +695,119 @@
     const r = findReq(id);
     r.deliveryActionDone = true;
     r.completed = true;
+    r.completedDate = '26 Jul 2026';
     r.requestStatus = 'Completed';
-    toast('Marked as delivered and archived.');
+    toast('Marked as completed.');
     renderStageTabs();
     renderList();
+  }
+
+  // ---------------- New Request modal (walk-in / offline requests, Parish Office) ----------------
+  const newRequestState = { documentTypeId: '', forMemberId: 'MEM-2001', purpose: '', deliveryMethod: '', recipientEmail: '', mailingAddress: familyAddress, paymentMethod: '' };
+
+  function openNewRequestModal() {
+    Object.assign(newRequestState, { documentTypeId: '', forMemberId: 'MEM-2001', purpose: '', deliveryMethod: '', recipientEmail: '', mailingAddress: familyAddress, paymentMethod: '' });
+    document.getElementById('new-request-modal').classList.remove('hidden');
+    renderNewRequestForm();
+  }
+  function closeNewRequestModal() {
+    document.getElementById('new-request-modal').classList.add('hidden');
+  }
+
+  function renderNewRequestForm() {
+    const docType = DOCUMENT_TYPES.find(d => d.id === newRequestState.documentTypeId);
+    document.getElementById('new-request-form').innerHTML = `
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Family</label>
+        <div class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg flex items-center text-ink-muted">Rodrigues Family (IJS/FAM/1001)</div>
+        <p class="text-[11px] text-ink-muted">In production this searches across all registered families.</p>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">For whom</label>
+        <select id="nr-member" onchange="newRequestState.forMemberId=this.value" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${familyMembers.map(m => `<option value="${m.id}" ${newRequestState.forMemberId===m.id?'selected':''}>${m.name} — ${m.relationship}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Document type</label>
+        <select id="nr-doctype" onchange="newRequestState.documentTypeId=this.value; newRequestState.deliveryMethod=''; renderNewRequestForm()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="">Select a document type…</option>
+          ${DOCUMENT_TYPES.map(d => `<option value="${d.id}" ${newRequestState.documentTypeId===d.id?'selected':''}>${d.name} ${d.adminCharge>0?'— ₹'+d.adminCharge:'— No charge'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Purpose</label>
+        <input id="nr-purpose" type="text" value="${newRequestState.purpose}" oninput="newRequestState.purpose=this.value" placeholder="e.g. School admission"
+          class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+      </div>
+      ${docType ? `
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">Delivery method</label>
+          <select id="nr-delivery" onchange="newRequestState.deliveryMethod=this.value; renderNewRequestForm()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option value="">Select delivery method…</option>
+            ${docType.deliveryOptions.map(o => `<option value="${o}" ${newRequestState.deliveryMethod===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        ${newRequestState.deliveryMethod === 'Email' ? `
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium">Recipient email</label>
+            <input type="email" value="${newRequestState.recipientEmail || (familyMembers.find(m=>m.id===newRequestState.forMemberId)||{}).email || ''}" oninput="newRequestState.recipientEmail=this.value" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          </div>
+        ` : ''}
+        ${newRequestState.deliveryMethod === 'Post / Courier' ? `
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium">Mailing address</label>
+            <textarea rows="2" oninput="newRequestState.mailingAddress=this.value" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${newRequestState.mailingAddress}</textarea>
+          </div>
+        ` : ''}
+        ${docType.adminCharge > 0 ? `
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium">Payment (₹${docType.adminCharge})</label>
+            <select id="nr-payment" onchange="newRequestState.paymentMethod=this.value" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              <option value="">Select payment method…</option>
+              <option value="Cash at Office" ${newRequestState.paymentMethod==='Cash at Office'?'selected':''}>Cash at Office</option>
+              <option value="UPI" ${newRequestState.paymentMethod==='UPI'?'selected':''}>UPI</option>
+              <option value="Card" ${newRequestState.paymentMethod==='Card'?'selected':''}>Card</option>
+            </select>
+          </div>
+        ` : ''}
+      ` : ''}
+    `;
+  }
+
+  function submitNewRequest() {
+    const s = newRequestState;
+    const docType = DOCUMENT_TYPES.find(d => d.id === s.documentTypeId);
+    const member = familyMembers.find(m => m.id === s.forMemberId);
+    if (!docType) { toast('Please select a document type.'); return; }
+    if (!s.purpose.trim()) { toast('Please enter a purpose.'); return; }
+    if (!s.deliveryMethod) { toast('Please select a delivery method.'); return; }
+    if (docType.adminCharge > 0 && !s.paymentMethod) { toast('Please select a payment method.'); return; }
+
+    nextRequestSeq++;
+    const newReq = {
+      id: `REQ-NEW-${nextRequestSeq}`,
+      documentTypeId: docType.id,
+      documentTypeName: docType.name,
+      forMemberName: member.name,
+      purpose: s.purpose,
+      submissionDate: '26 Jul 2026',
+      requestReference: `DOC-REQ-2026-0${200 + nextRequestSeq}`,
+      paymentStatus: docType.adminCharge > 0 ? 'Paid' : 'Not Required',
+      deliveryMethod: s.deliveryMethod,
+      recipientEmail: s.deliveryMethod === 'Email' ? s.recipientEmail : undefined,
+      mailingAddress: s.deliveryMethod === 'Post / Courier' ? s.mailingAddress : undefined,
+      uploadedDocuments: [],
+      capturedFields: {},
+      verified: false, generatedFileName: null, certificateNumber: null, issueDate: null,
+      approvalRequested: false, approvalNotes: '', approved: false, notified: false,
+      deliveryActionDone: false, completed: false, completedDate: null,
+      clarificationMessage: null, requestStatus: 'Submitted',
+    };
+    documentRequests.unshift(newReq);
+    closeNewRequestModal();
+    toast('Request created for ' + member.name + '.');
+    setTab('Pending');
   }
 
   renderModule();
