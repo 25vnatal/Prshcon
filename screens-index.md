@@ -20,6 +20,7 @@ Every screen below must:
 | `screen-parishioner-documents-myrequests.html` | Parishioner | Documents & Certificates → My Requests | ✅ Done | Status list with filter tabs (New/In Progress/Awaiting Action/Completed), expandable Activity Timeline per request using the granular→display status mapping from mock-data-schema.md |
 | `screen-parishioner-documents-mydocuments.html` | Parishioner | Documents & Certificates → My Documents | ✅ Done | Completed/delivered documents only, simulated download; empty state if none |
 | `screen-parish-requests-hub.html` | Parish | Requests hub → Documents & Certificates | ✅ Done | Mini-workflow checklist per request (Verify → Prepare & upload certificate [captures Certificate Number + Issue Date] → Request Approval [note shown directly, no extra reveal click] → Priest approval → method-specific delivery action). Tabs: All/Pending/Awaiting Approval/Deliver/**Completed** (renamed from Archive). Paid pill now sits in the card header; standalone Verification pill removed (conveyed via the Verify workflow step instead). Detail view shows per-document-type "Certificate details" (auto-filled + parishioner-provided fields). Completed requests show their completion date. One request (Marriage Certificate) demonstrates the Post/Courier delivery flow. **New Request** button opens a simple one-page form (not a wizard) for staff to capture walk-in/offline requests |
+| `screen-parish-familyrecords-search.html` | Parish | Family Records | ✅ Done | Master-detail layout: searchable/filterable family list (10 seeded families spanning Active/Temporarily Away/Transferred/Archived) + detail panel with Overview/Members/Subscription/Transfer tabs. Register Family (modal form), Add Member, Edit Family (placeholder), Print Family Record (simulated), and Initiate Transfer (using the real 130-parish directory as the destination picker) all functional. Family Records sidebar links now real across Dashboard and Requests hub |
 | `screen-parish-dashboard-home.html` | Parish | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav, session-aware; non-seeded parish logins render genuine Empty state, proving data isolation |
 | `screen-diocese-dashboard-home.html` | Diocese | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav; follows the locked Diocese Dashboard spec (Snapshot → Action Center → Parish Health → Upcoming → Announcements); Parish Health uses real parishes from the directory |
 
@@ -58,7 +59,7 @@ This entire set is built to be deployed to a static web host (Netlify/Vercel/Git
 | Parishioner | Me (hub) | `screen-parishioner-me-hub.html` | Planned |
 | Parish | Login | `screen-parish-login.html` | ✅ Built |
 | Parish | Dashboard (home) | `screen-parish-dashboard-home.html` | ✅ Built |
-| Parish | Family Records | `screen-parish-familyrecords-search.html` | Planned |
+| Parish | Family Records | `screen-parish-familyrecords-search.html` | ✅ Built |
 | Parish | Committees | `screen-parish-committees-hub.html` | Planned |
 | Parish | Requests (hub) | `screen-parish-requests-hub.html` | ✅ Built |
 | Parish | Masses | `screen-parish-masses-hub.html` | Planned |
