@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — My Documents</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          green: '#6CBF84',
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-10 relative">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="px-5 pt-5 pb-4 flex items-center gap-3">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <p class="font-heading font-bold text-lg">My Documents</p>
+    </header>
+
+    <main id="main-content" class="px-5 space-y-3"></main>
+
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+
+  // ---------------- Mock data (from mock-seed.json — only Completed/Delivered document requests appear here) ----------------
+  const documents = [
+    {
+      documentTypeName: "First Communion Certificate",
+      forMemberName: "Clara Rodrigues",
+      requestReference: "DOC-REQ-2026-0079",
+      generatedDate: "13 Jun 2026",
+      deliveredDate: "13 Jun 2026",
+    },
+  ];
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  function download(ref) {
+    toast(`Downloading ${ref}…`);
+  }
+
+  function renderEmpty() {
+    return `
+      <div class="bg-card-bg rounded-card shadow-card p-8 text-center space-y-3 mt-2">
+        <svg width="72" height="72" viewBox="0 0 120 120" fill="none" class="mx-auto">
+          <circle cx="90" cy="28" r="14" fill="#F6C453" opacity="0.35"/>
+          <path d="M40 100V56l20-16 20 16v44" stroke="#4F7CF5" stroke-width="3" stroke-linejoin="round" fill="#EEF4FF"/>
+          <rect x="55" y="72" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#4F7CF5" stroke-width="2.5"/>
+        </svg>
+        <p class="text-sm font-semibold">No documents yet</p>
+        <p class="text-sm text-ink-muted">Completed certificates and documents will appear here once the parish office processes your request.</p>
+      </div>
+    `;
+  }
+
+  function renderPopulated() {
+    return documents.map(d => `
+      <div class="bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold">${d.documentTypeName}</p>
+          <p class="text-xs text-ink-muted mt-1">For ${d.forMemberName} · ${d.requestReference}</p>
+          <p class="text-xs text-ink-muted mt-0.5">Delivered ${d.deliveredDate}</p>
+        </div>
+        <button onclick="download('${d.requestReference}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex-shrink-0 flex items-center gap-1.5">
+          <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Download
+        </button>
+      </div>
+    `).join('');
+  }
+
+  function renderLoading() {
+    document.getElementById('main-content').innerHTML = `
+      <div class="skeleton rounded-card" style="height:76px"></div>
+      <div class="skeleton rounded-card" style="height:76px"></div>
+    `;
+  }
+
+  renderLoading();
+  setTimeout(() => {
+    document.getElementById('main-content').innerHTML = documents.length ? renderPopulated() : renderEmpty();
+  }, 700);
+</script>
+
+</body>
+</html>

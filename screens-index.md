@@ -15,7 +15,10 @@ Every screen below must:
 | `screen-parishioner-login.html` | Parishioner | Login | ✅ Done (Community Heart) | Realistic email/password form, accepts any non-empty input |
 | `screen-parish-login.html` | Parish | Login | ✅ Done (Community Heart) | Parish picker (all 130 parishes); non-seeded parishes → empty dashboard, proving data isolation |
 | `screen-diocese-login.html` | Diocese | Login | ✅ Done (Community Heart) | Single diocese-admin account; brand panel uses deep blue, not black, per "no dark backgrounds" rule |
-| `screen-parishioner-dashboard-home.html` | Parishioner | Dashboard (home) | ✅ Done (Community Heart) | All 4 states, 5-item bottom nav, illustration in Empty state + header, session-aware header/logout |
+| `screen-parishioner-dashboard-home.html` | Parishioner | Dashboard (home) | ✅ Done (Community Heart) | All 4 states, 5-item bottom nav, illustration in Empty state + header, session-aware header/logout; "Request a Document" quick action and Baptism Certificate action-center item now link to the real screens below |
+| `screen-parishioner-documents-request.html` | Parishioner | Documents & Certificates → Request Document | ✅ Done | Guided multi-step flow (doc type → for whom → purpose → supporting docs [conditional] → delivery → payment [conditional] → review/submit); pre-fills family members from the Rodrigues family |
+| `screen-parishioner-documents-myrequests.html` | Parishioner | Documents & Certificates → My Requests | ✅ Done | Status list with filter tabs (New/In Progress/Awaiting Action/Completed), expandable Activity Timeline per request using the granular→display status mapping from mock-data-schema.md |
+| `screen-parishioner-documents-mydocuments.html` | Parishioner | Documents & Certificates → My Documents | ✅ Done | Completed/delivered documents only, simulated download; empty state if none |
 | `screen-parish-dashboard-home.html` | Parish | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav, session-aware; non-seeded parish logins render genuine Empty state, proving data isolation |
 | `screen-diocese-dashboard-home.html` | Diocese | Dashboard (home) | ✅ Done (Community Heart) | Sidebar nav; follows the locked Diocese Dashboard spec (Snapshot → Action Center → Parish Health → Upcoming → Announcements); Parish Health uses real parishes from the directory |
 
