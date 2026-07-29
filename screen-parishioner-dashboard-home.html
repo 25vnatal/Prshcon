@@ -163,7 +163,7 @@
       { name: "Education Support Fund", desc: "Scholarships for children from economically weaker families." },
     ],
     quickActions: [
-      { label: "Book a Mass", icon: "calendar" },
+      { label: "Book a Mass", icon: "calendar", href: "screen-parishioner-massbooking-request.html" },
       { label: "Register for a Sacrament", icon: "book" },
       { label: "Request a Document", icon: "file", href: "screen-parishioner-documents-request.html" },
       { label: "Request Home Service", icon: "home" },
@@ -341,6 +341,7 @@
       <section>
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-heading font-bold text-lg">Your schedule</h2>
+          <button onclick="goTo('screen-parishioner-massbooking-mybookings.html', 'My Bookings')" class="text-primary text-xs font-semibold">My Bookings</button>
         </div>
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
           ${seed.upcoming.map(u => `
@@ -354,6 +355,7 @@
       </section>
 
       <section>
+
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-heading font-bold text-lg">Announcements</h2>
           <button onclick="toast('All Announcements')" class="text-primary text-xs font-semibold">View all</button>

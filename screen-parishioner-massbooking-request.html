@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Book a Mass</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .option-card { border: 2px solid #E8EDF5; }
+  .option-card.selected { border-color: #4F7CF5; background: #EEF4FF; }
+  .option-card.full { opacity: 0.45; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative flex flex-col">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="px-5 pt-5 pb-3 flex items-center gap-3">
+      <button onclick="goBack()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="flex-1">
+        <p class="font-heading font-bold text-base leading-tight">Book a Mass</p>
+        <p id="step-label" class="text-xs text-ink-muted mt-0.5">Step 1 of 4</p>
+      </div>
+    </header>
+
+    <!-- ============ PROGRESS BAR ============ -->
+    <div class="px-5 pb-4">
+      <div class="h-1.5 bg-divider rounded-badge overflow-hidden">
+        <div id="progress-fill" class="h-full bg-primary rounded-badge transition-all duration-300" style="width: 25%"></div>
+      </div>
+    </div>
+
+    <!-- ============ STEP CONTENT ============ -->
+    <main id="step-content" class="px-5 flex-1 space-y-4"></main>
+
+    <!-- ============ FOOTER ACTIONS (thumb-reachable) ============ -->
+    <div id="footer-actions" class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto px-5 py-4 flex gap-3">
+      <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
+    </div>
+
+  </div>
+
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  // ---------------- Session ----------------
+  const sessionParams = new URLSearchParams(window.location.search);
+  const sessionName = sessionParams.get('name') || 'John Rodrigues';
+
+  // ---------------- Reference data (mirrors screen-parish-masses-hub.html's Mass Schedule) ----------------
+  const massSchedules = [
+    { id:"MASS-7001", name:"Sunday 6:30 AM Mass", time:"6:30 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
+    { id:"MASS-7002", name:"Sunday 8:00 AM Mass", time:"8:00 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
+    { id:"MASS-7003", name:"Sunday 10:00 AM Mass (Konkani)", time:"10:00 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
+    { id:"MASS-7004", name:"Weekday Mass", time:"6:45 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], suggestedOffering:50, maxIntentions:3 },
+    { id:"MASS-7005", name:"Saturday Vigil Mass", time:"6:00 PM", days:["Saturday"], suggestedOffering:100, maxIntentions:5 },
+  ];
+  // Existing bookings, so capacity/full states reflect what the parish office already has on record.
+  const existingBookingCounts = { "MASS-7002_2026-08-02": 2, "MASS-7001_2026-08-09": 1, "MASS-7005_2026-08-08": 1 };
+
+  const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const TODAY = new Date("2026-07-26T00:00:00");
+  const INTENTION_TYPES = ["Thanksgiving","Birthday","Wedding Anniversary","Memorial","Death Anniversary","Healing","Special Intention","Souls in Purgatory","Other"];
+
+  function generateInstances() {
+    const instances = [];
+    massSchedules.forEach(s => {
+      s.days.forEach(day => {
+        const targetDow = DAY_NAMES.indexOf(day);
+        for (let week = 0; week < 3; week++) {
+          const d = new Date(TODAY);
+          const diff = (targetDow - d.getDay() + 7) % 7 + week * 7;
+          d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff));
+          const iso = d.toISOString().slice(0,10);
+          const key = s.id + '_' + iso;
+          const booked = existingBookingCounts[key] || 0;
+          instances.push({ scheduleId: s.id, scheduleName: s.name, time: s.time, date: iso, maxIntentions: s.maxIntentions, suggestedOffering: s.suggestedOffering, booked });
+        }
+      });
+    });
+    instances.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    return instances;
+  }
+  function formatDateLabel(iso) {
+    const d = new Date(iso + "T00:00:00");
+    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  }
+
+  const state = {
+    instanceKey: null,
+    intentionType: '',
+    intentionFor: 'Rodrigues Family',
+    intentionMessage: '',
+    offeringAmount: 0,
+    paymentMethod: null,
+  };
+
+  const STEPS = ['mass', 'intention', 'payment', 'review'];
+  const STEP_LABELS = { mass: 'Choose Mass', intention: 'Intention', payment: 'Offering', review: 'Review' };
+  let stepIndex = 0;
+
+  function icon(paths, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${paths}</svg>`; }
+  const ICONS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+  };
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  function goBack() {
+    if (stepIndex === 0) { window.location.href = 'screen-parishioner-dashboard-home.html?' + sessionParams.toString(); return; }
+    stepIndex--;
+    render();
+  }
+
+  function handleContinue() {
+    const step = STEPS[stepIndex];
+    if (!validateStep(step)) return;
+    if (step === 'review') { submitBooking(); return; }
+    stepIndex++;
+    render();
+  }
+
+  function validateStep(step) {
+    if (step === 'mass' && !state.instanceKey) { toast('Please choose a Mass.'); return false; }
+    if (step === 'intention') {
+      if (!state.intentionType) { toast('Please choose an intention type.'); return false; }
+      if (!state.intentionFor.trim()) { toast('Please tell us who this intention is for.'); return false; }
+    }
+    if (step === 'payment' && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
+    return true;
+  }
+
+  function selectedInstance() {
+    const instances = generateInstances();
+    return instances.find(i => (i.scheduleId + '_' + i.date) === state.instanceKey);
+  }
+
+  function selectInstance(key, offering) {
+    const inst = generateInstances().find(i => (i.scheduleId + '_' + i.date) === key);
+    if (inst.maxIntentions && inst.booked >= inst.maxIntentions) { toast('This Mass is fully booked — please choose another.'); return; }
+    state.instanceKey = key;
+    state.offeringAmount = offering;
+    render();
+  }
+
+  // ---------------- Step renderers ----------------
+  function renderMass() {
+    const instances = generateInstances();
+    const byDate = {};
+    instances.forEach(i => { (byDate[i.date] = byDate[i.date] || []).push(i); });
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Which Mass would you like to book?</p>
+      <p class="text-ink-muted text-sm mb-4">Showing the next 3 weeks.</p>
+      <div class="space-y-5">
+        ${Object.keys(byDate).sort().map(date => `
+          <div>
+            <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">${formatDateLabel(date)}</p>
+            <div class="space-y-2.5">
+              ${byDate[date].map(i => {
+                const key = i.scheduleId + '_' + i.date;
+                const isFull = i.maxIntentions && i.booked >= i.maxIntentions;
+                const isSelected = state.instanceKey === key;
+                return `
+                <button ${isFull ? 'disabled' : `onclick="selectInstance('${key}', ${i.suggestedOffering})"`} class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${isFull ? 'full bg-card-bg' : isSelected ? 'selected' : 'bg-card-bg'}">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-semibold">${i.scheduleName}</p>
+                      <p class="text-xs text-ink-muted mt-0.5">${i.time}${i.suggestedOffering > 0 ? ' · ₹' + i.suggestedOffering + ' suggested offering' : ''}</p>
+                    </div>
+                    ${isFull
+                      ? `<span class="text-xs font-semibold text-error">Full</span>`
+                      : isSelected
+                        ? `<span class="text-primary">${icon(ICONS.check, 'w-5 h-5')}</span>`
+                        : i.maxIntentions ? `<span class="text-xs text-ink-muted flex items-center gap-1">${icon(ICONS.users,'w-3.5 h-3.5')}${i.booked}/${i.maxIntentions}</span>` : ''
+                    }
+                  </div>
+                </button>
+              `}).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderIntention() {
+    return `
+      <p class="font-heading font-bold text-xl mb-1">What's the intention?</p>
+      <p class="text-ink-muted text-sm mb-4">Let the parish know who or what this Mass is for.</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium">Intention type</label>
+          <select id="intention-type" onchange="state.intentionType=this.value" class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option value="">Select…</option>
+            ${INTENTION_TYPES.map(t => `<option value="${t}" ${state.intentionType===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium">Intention for</label>
+          <input id="intention-for" type="text" value="${state.intentionFor}" placeholder="e.g. Rodrigues Family, Late Michael Rodrigues"
+            class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
+            oninput="state.intentionFor = this.value">
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium">Message (optional)</label>
+          <textarea id="intention-message" rows="2" placeholder="Anything you'd like the priest to know…"
+            class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"
+            oninput="state.intentionMessage = this.value">${state.intentionMessage}</textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPayment() {
+    const methods = ['UPI', 'Card', 'Pay at Parish Office'];
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Mass offering</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-muted">Suggested offering</p>
+        <p class="font-heading font-bold text-xl">₹${state.offeringAmount}</p>
+      </div>
+      <p class="text-ink-muted text-sm mb-3">Choose a payment method.</p>
+      <div class="space-y-3">
+        ${methods.map(m => `
+          <button onclick="state.paymentMethod='${m}'; render()" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${state.paymentMethod === m ? 'selected' : 'bg-card-bg'}">
+            <span class="text-sm font-semibold">${m}</span>
+            ${state.paymentMethod === m ? `<span class="text-primary">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderReview() {
+    const inst = selectedInstance();
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Review your booking</p>
+      <p class="text-ink-muted text-sm mb-4">Please confirm the details before submitting.</p>
+      <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Mass</span><span class="text-sm font-semibold text-right">${inst.scheduleName}</span></div>
+        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Date &amp; time</span><span class="text-sm font-semibold">${formatDateLabel(inst.date)} · ${inst.time}</span></div>
+        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Intention</span><span class="text-sm font-semibold">${state.intentionType}</span></div>
+        <div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">For</span><span class="text-sm font-semibold text-right">${state.intentionFor}</span></div>
+        ${state.intentionMessage ? `<div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Message</span><span class="text-sm font-semibold text-right">${state.intentionMessage}</span></div>` : ''}
+        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Offering</span><span class="text-sm font-semibold">₹${state.offeringAmount} via ${state.paymentMethod}</span></div>
+      </div>
+    `;
+  }
+
+  const RENDERERS = { mass: renderMass, intention: renderIntention, payment: renderPayment, review: renderReview };
+
+  function render() {
+    const step = STEPS[stepIndex];
+    document.getElementById('step-content').innerHTML = RENDERERS[step]();
+    document.getElementById('step-label').textContent = `Step ${stepIndex + 1} of ${STEPS.length} · ${STEP_LABELS[step]}`;
+    document.getElementById('progress-fill').style.width = `${((stepIndex + 1) / STEPS.length) * 100}%`;
+    document.getElementById('continue-btn').textContent = step === 'review' ? 'Confirm Booking' : 'Continue';
+  }
+
+  function submitBooking() {
+    const btn = document.getElementById('continue-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    setTimeout(() => {
+      const ref = 'MASS-BOOK-2026-' + Math.floor(1000 + Math.random() * 8999);
+      const inst = selectedInstance();
+      document.getElementById('footer-actions').classList.add('hidden');
+      document.getElementById('step-content').innerHTML = `
+        <div class="pt-10 text-center space-y-4">
+          <span class="w-16 h-16 rounded-badge bg-green/20 text-[#2f6b45] flex items-center justify-center mx-auto">${icon(ICONS.check, 'w-8 h-8')}</span>
+          <p class="font-heading font-bold text-xl">Mass booked</p>
+          <p class="text-sm text-ink-muted max-w-xs mx-auto">Your intention for ${formatDateLabel(inst.date)} · ${inst.time} has been recorded. Reference: <span class="font-semibold text-ink">${ref}</span></p>
+          <div class="pt-4 space-y-3">
+            <button onclick="window.location.href='screen-parishioner-massbooking-mybookings.html?${sessionParams.toString()}'" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">View My Bookings</button>
+            <button onclick="window.location.href='screen-parishioner-dashboard-home.html?${sessionParams.toString()}'" class="w-full text-primary text-sm font-semibold py-2 min-h-[44px]">Back to Home</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('step-label').textContent = 'Done';
+      document.getElementById('progress-fill').style.width = '100%';
+    }, 900);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
