@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Masses</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="toast('Committees')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </a>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="toast('Finance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="toast('Administration')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Masses</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button aria-label="Search" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Masses</p>
+          <p class="text-ink-muted text-sm mt-1">Manage recurring Mass schedules and the intentions booked against them.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6">
+          <button onclick="setModule('schedule')" data-module="schedule" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Mass Schedule</button>
+          <button onclick="setModule('intentions')" data-module="intentions" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Mass Intentions</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ ADD MASS SCHEDULE MODAL ============ -->
+  <div id="schedule-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Add Mass Schedule</p>
+        <button onclick="closeScheduleModal()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="schedule-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitSchedule()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save Schedule</button>
+        <button onclick="closeScheduleModal()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ WALK-IN BOOKING MODAL ============ -->
+  <div id="booking-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <div>
+          <p class="font-heading font-bold text-lg">Record Mass Booking</p>
+          <p class="text-xs text-ink-muted mt-0.5">For a walk-in or phone request.</p>
+        </div>
+        <button onclick="closeBookingModal()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="booking-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitBooking()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save Booking</button>
+        <button onclick="closeBookingModal()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    print: '<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1"/><path d="M6 17v4h12v-4"/>',
+    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  // ---------------- Mock data: Mass Schedules ----------------
+  let massSchedules = [
+    { id:"MASS-7001", name:"Sunday 6:30 AM Mass", type:"Sunday", time:"6:30 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
+    { id:"MASS-7002", name:"Sunday 8:00 AM Mass", type:"Sunday", time:"8:00 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
+    { id:"MASS-7003", name:"Sunday 10:00 AM Mass (Konkani)", type:"Sunday", time:"10:00 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
+    { id:"MASS-7004", name:"Weekday Mass", type:"Regular", time:"6:45 AM", recurrence:"Weekly", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], suggestedOffering:50, maxIntentions:3, allowMultiple:true, onlineBooking:true, status:"Active" },
+    { id:"MASS-7005", name:"Saturday Vigil Mass", type:"Sunday", time:"6:00 PM", recurrence:"Weekly", days:["Saturday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
+    { id:"MASS-7006", name:"Feast of Infant Jesus Novena", type:"Novena", time:"6:00 PM", recurrence:"Daily (4–12 Jan)", days:[], suggestedOffering:0, maxIntentions:0, allowMultiple:false, onlineBooking:false, status:"Active" },
+  ];
+
+  // ---------------- Mock data: Mass Bookings (Intentions) ----------------
+  let massBookings = [
+    { id:"BOOK-7101", massScheduleId:"MASS-7002", date:"2026-08-02", familyName:"Rodrigues Family", requestedBy:"John Rodrigues", mobile:"9845012345",
+      intentionType:"Thanksgiving", intentionFor:"Rodrigues Family", intentionMessage:"In thanksgiving for good health", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0311" },
+    { id:"BOOK-7102", massScheduleId:"MASS-7002", date:"2026-08-02", familyName:"Pinto Family", requestedBy:"Michael Pinto", mobile:"9845019001",
+      intentionType:"Memorial", intentionFor:"Late Francis Pinto", intentionMessage:"1st death anniversary", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0312" },
+    { id:"BOOK-7103", massScheduleId:"MASS-7001", date:"2026-08-09", familyName:"D'Souza Family", requestedBy:"Anthony D'Souza", mobile:"9845019002",
+      intentionType:"Birthday", intentionFor:"Naomi D'Souza", intentionMessage:"18th birthday blessing", offeringAmount:100, paymentStatus:"Pending", bookingReference:"MASS-BOOK-2026-0318" },
+    { id:"BOOK-7104", massScheduleId:"MASS-7005", date:"2026-08-08", familyName:"Fernandes Family", requestedBy:"Peter Fernandes", mobile:"9845019003",
+      intentionType:"Healing", intentionFor:"Diana Fernandes", intentionMessage:"Recovery from surgery", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0320" },
+  ];
+
+  const INTENTION_TYPES = ["Thanksgiving","Birthday","Wedding Anniversary","Memorial","Death Anniversary","Healing","Special Intention","Souls in Purgatory","Other"];
+
+  // Generate upcoming instances (next 4 weeks) for weekly schedules, from "today" = 26 Jul 2026 (Sunday).
+  const TODAY = new Date("2026-07-26T00:00:00");
+  function generateInstances() {
+    const instances = [];
+    massSchedules.filter(s => s.recurrence === 'Weekly').forEach(s => {
+      s.days.forEach(day => {
+        const targetDow = DAY_NAMES.indexOf(day);
+        for (let week = 0; week < 4; week++) {
+          const d = new Date(TODAY);
+          const diff = (targetDow - d.getDay() + 7) % 7 + week * 7;
+          d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff)); // skip "today" itself, start from next occurrence
+          const iso = d.toISOString().slice(0,10);
+          instances.push({ scheduleId: s.id, scheduleName: s.name, time: s.time, date: iso, maxIntentions: s.maxIntentions });
+        }
+      });
+    });
+    instances.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    return instances;
+  }
+
+  function formatDateLabel(iso) {
+    const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const d = new Date(iso + "T00:00:00");
+    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  }
+
+  function bookingsFor(scheduleId, date) {
+    return massBookings.filter(b => b.massScheduleId === scheduleId && b.date === date);
+  }
+
+  let currentModule = 'schedule';
+  let expandedInstanceKey = null;
+
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'schedule') {
+      renderScheduleModule(el);
+    } else {
+      renderIntentionsModule(el);
+    }
+  }
+
+  // ---------------- Mass Schedule module ----------------
+  function renderScheduleModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openScheduleModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Mass Schedule</button>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        ${massSchedules.map(s => `
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div>
+                <p class="text-sm font-semibold">${s.name}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${s.type} · ${s.recurrence}${s.days.length ? ' · ' + s.days.map(d=>d.slice(0,3)).join('/') : ''}</p>
+              </div>
+              <span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1">${icon('check','w-3 h-3')}${s.status}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs mt-3">
+              <div><p class="text-ink-muted">Time</p><p class="font-medium mt-0.5">${s.time}</p></div>
+              <div><p class="text-ink-muted">Suggested offering</p><p class="font-medium mt-0.5">${s.suggestedOffering > 0 ? '₹'+s.suggestedOffering : '—'}</p></div>
+              <div><p class="text-ink-muted">Max intentions</p><p class="font-medium mt-0.5">${s.maxIntentions || '—'}</p></div>
+              <div><p class="text-ink-muted">Online booking</p><p class="font-medium mt-0.5">${s.onlineBooking ? 'Enabled' : 'Disabled'}</p></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function openScheduleModal() {
+    document.getElementById('schedule-modal').classList.remove('hidden');
+    document.getElementById('schedule-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Mass name</label><input id="sf-name" type="text" placeholder="e.g. Sunday 9:30 AM Mass" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Type</label>
+          <select id="sf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option>Sunday</option><option>Regular</option><option>Feast</option><option>Novena</option><option>Special</option>
+          </select>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Time</label><input id="sf-time" type="time" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Days of week</label>
+        <div class="flex flex-wrap gap-2">
+          ${DAY_NAMES.map(d => `<label class="flex items-center gap-1.5 text-xs bg-section-bg px-2.5 py-1.5 rounded-badge cursor-pointer"><input type="checkbox" value="${d}" class="sf-day"> ${d.slice(0,3)}</label>`).join('')}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Suggested offering (₹)</label><input id="sf-offering" type="number" value="100" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Max intentions</label><input id="sf-maxint" type="number" value="5" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <label class="flex items-center gap-2 text-sm"><input id="sf-online" type="checkbox" checked> Allow online booking by parishioners</label>
+    `;
+  }
+  function closeScheduleModal() { document.getElementById('schedule-modal').classList.add('hidden'); }
+
+  function submitSchedule() {
+    const name = document.getElementById('sf-name').value.trim();
+    const type = document.getElementById('sf-type').value;
+    const time = document.getElementById('sf-time').value;
+    const days = [...document.querySelectorAll('.sf-day:checked')].map(cb => cb.value);
+    const offering = parseInt(document.getElementById('sf-offering').value) || 0;
+    const maxint = parseInt(document.getElementById('sf-maxint').value) || 0;
+    const online = document.getElementById('sf-online').checked;
+    if (!name || !time || days.length === 0) { toast('Please fill in name, time, and at least one day.'); return; }
+
+    massSchedules.push({
+      id: 'MASS-' + Math.floor(7100 + Math.random()*800), name, type, time: formatTime(time), recurrence: 'Weekly', days,
+      suggestedOffering: offering, maxIntentions: maxint, allowMultiple: true, onlineBooking: online, status: 'Active',
+    });
+    closeScheduleModal();
+    toast(`${name} added to the Mass schedule.`);
+    renderModule();
+  }
+
+  function formatTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+  }
+
+  // ---------------- Mass Intentions module ----------------
+  function renderIntentionsModule(el) {
+    const instances = generateInstances();
+    el.innerHTML = `
+      <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-3">Upcoming Masses — next 4 weeks</p>
+      <div class="space-y-3">
+        ${instances.map(inst => {
+          const bookings = bookingsFor(inst.scheduleId, inst.date);
+          const key = inst.scheduleId + '_' + inst.date;
+          const isOpen = expandedInstanceKey === key;
+          return `
+            <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+              <button onclick="toggleInstance('${key}')" class="w-full text-left p-5 flex items-center justify-between gap-3 min-h-[44px] transition-warm hover:bg-section-bg">
+                <div>
+                  <p class="text-sm font-semibold">${formatDateLabel(inst.date)} · ${inst.time}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${inst.scheduleName}</p>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                  <span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('users','w-3 h-3')}${bookings.length}${inst.maxIntentions ? '/'+inst.maxIntentions : ''} booked</span>
+                  <span class="text-ink-muted transition-warm" style="transform: rotate(${isOpen ? '180' : '0'}deg)">${icon('chevronDown', 'w-4 h-4')}</span>
+                </div>
+              </button>
+              ${isOpen ? renderInstanceDetail(inst, bookings) : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function toggleInstance(key) {
+    expandedInstanceKey = expandedInstanceKey === key ? null : key;
+    renderModule();
+  }
+
+  function renderInstanceDetail(inst, bookings) {
+    return `
+      <div class="border-t border-divider px-5 py-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Intentions</p>
+          <div class="flex gap-2">
+            <button onclick="toast('Printing intention sheet for ${formatDateLabel(inst.date)} ${inst.time}')" class="bg-white border border-divider text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('print','icon w-3.5 h-3.5')}Print Sheet</button>
+            <button onclick="openBookingModal('${inst.scheduleId}', '${inst.date}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Add Booking</button>
+          </div>
+        </div>
+        ${bookings.length === 0 ? `<p class="text-sm text-ink-muted">No intentions booked yet for this Mass.</p>` : `
+          <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden">
+            ${bookings.map((b, i) => `
+              <div class="px-4 py-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold">${i+1}. ${b.intentionType} — ${b.intentionFor}</p>
+                    <p class="text-xs text-ink-muted mt-0.5">${b.intentionMessage}</p>
+                    <p class="text-xs text-ink-muted mt-0.5">Requested by ${b.requestedBy} (${b.familyName}) · ${b.bookingReference}</p>
+                  </div>
+                  <span class="${b.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1">${icon(b.paymentStatus==='Paid'?'check':'clock','w-3 h-3')}₹${b.offeringAmount} ${b.paymentStatus}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    `;
+  }
+
+  let bookingContext = null;
+  function openBookingModal(scheduleId, date) {
+    bookingContext = { scheduleId, date };
+    document.getElementById('booking-modal').classList.remove('hidden');
+    const schedule = massSchedules.find(s => s.id === scheduleId);
+    document.getElementById('booking-form').innerHTML = `
+      <div class="bg-section-bg rounded-card p-3 text-sm">
+        <p class="font-semibold">${formatDateLabel(date)} · ${schedule.time}</p>
+        <p class="text-xs text-ink-muted mt-0.5">${schedule.name}</p>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Requested by</label><input id="bf-requestedby" type="text" value="John Rodrigues" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Family</label><input id="bf-family" type="text" value="Rodrigues Family" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Mobile</label><input id="bf-mobile" type="text" value="9845012345" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Intention type</label>
+        <select id="bf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${INTENTION_TYPES.map(t => `<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Intention for</label><input id="bf-for" type="text" placeholder="e.g. Late Maria Fernandes" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Message</label><textarea id="bf-message" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Offering (₹)</label><input id="bf-offering" type="number" value="${schedule.suggestedOffering}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Payment</label>
+          <select id="bf-payment" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option>Cash at Office</option><option>UPI</option><option>Card</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+  function closeBookingModal() { document.getElementById('booking-modal').classList.add('hidden'); }
+
+  function submitBooking() {
+    const requestedBy = document.getElementById('bf-requestedby').value.trim();
+    const familyName = document.getElementById('bf-family').value.trim();
+    const mobile = document.getElementById('bf-mobile').value.trim();
+    const intentionType = document.getElementById('bf-type').value;
+    const intentionFor = document.getElementById('bf-for').value.trim();
+    const intentionMessage = document.getElementById('bf-message').value.trim();
+    const offeringAmount = parseInt(document.getElementById('bf-offering').value) || 0;
+    const paymentStatus = document.getElementById('bf-payment').value === 'Cash at Office' ? 'Paid' : 'Paid';
+    if (!requestedBy || !intentionFor) { toast('Please fill in requester name and intention.'); return; }
+
+    massBookings.push({
+      id: 'BOOK-' + Math.floor(7100 + Math.random()*800), massScheduleId: bookingContext.scheduleId, date: bookingContext.date,
+      familyName, requestedBy, mobile, intentionType, intentionFor, intentionMessage, offeringAmount, paymentStatus,
+      bookingReference: 'MASS-BOOK-2026-0' + Math.floor(300 + Math.random()*90),
+    });
+    expandedInstanceKey = bookingContext.scheduleId + '_' + bookingContext.date;
+    closeBookingModal();
+    toast(`Booking recorded for ${requestedBy}.`);
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>
