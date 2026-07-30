@@ -499,6 +499,8 @@
   let activeTab = 'overview';
   let editMode = false;
   let showTransferForm = false;
+  let showSuspendConfirm = false;
+  let showArchiveConfirm = false;
   let showAddMemberForm = false;
   let showPaymentHistory = false;
   let showPaymentForm = false;
@@ -579,6 +581,8 @@
     activeTab = 'overview';
     editMode = false;
     showTransferForm = false;
+    showSuspendConfirm = false;
+    showArchiveConfirm = false;
     showAddMemberForm = false;
     showPaymentHistory = false;
     showPaymentForm = false;
@@ -597,6 +601,8 @@
     activeTab = tab;
     editMode = false;
     showTransferForm = false;
+    showSuspendConfirm = false;
+    showArchiveConfirm = false;
     showAddMemberForm = false;
     showPaymentHistory = false;
     showPaymentForm = false;
@@ -616,9 +622,9 @@
     const el = document.getElementById('drawer-content');
     if (!f) { el.innerHTML = ''; return; }
 
-    const tabs = ['overview', 'members', 'subscription', 'transfer', 'updates'];
+    const tabs = ['overview', 'members', 'subscription', 'updates'];
     const pendingUpdates = updateRequestsFor(f.id).filter(r => r.status === 'Submitted').length;
-    const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', transfer: 'Transfer', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
+    const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
 
     el.innerHTML = `
       <div class="p-6 border-b border-divider sticky top-0 bg-card-bg z-10">
@@ -649,7 +655,6 @@
         ${activeTab === 'overview' ? (editMode ? renderOverviewEdit(f) : renderOverviewTab(f)) : ''}
         ${activeTab === 'members' ? renderMembersTab(f) : ''}
         ${activeTab === 'subscription' ? renderSubscriptionTab(f) : ''}
-        ${activeTab === 'transfer' ? renderTransferTab(f) : ''}
         ${activeTab === 'updates' ? renderUpdatesTab(f) : ''}
       </div>
     `;
@@ -670,7 +675,73 @@
         <svg class="icon w-4 h-4" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
         View Family Members
       </button>
+      ${renderFamilyActions(f)}
     `;
+  }
+
+  function renderFamilyActions(f) {
+    if (f.status === 'Transferred') {
+      return `<div class="pt-5 mt-5 border-t border-divider"><p class="text-sm text-ink-muted">This family has been transferred out of ${parishName}.</p></div>`;
+    }
+    if (f.status === 'Archived') {
+      return `<div class="pt-5 mt-5 border-t border-divider"><p class="text-sm text-ink-muted">This family record is archived.</p></div>`;
+    }
+    return `
+      <div class="pt-5 mt-5 border-t border-divider">
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">Family Actions</p>
+        <div class="flex flex-wrap gap-2">
+          ${!showTransferForm ? `<button onclick="showTransferForm=true; renderDrawer()" class="bg-white border border-divider text-ink text-xs font-semibold px-3.5 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('plane','icon w-3.5 h-3.5')}Initiate Transfer</button>` : ''}
+          ${f.status === 'Away'
+            ? `<button onclick="resumeFamily('${f.id}')" class="bg-white border border-divider text-ink text-xs font-semibold px-3.5 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('check','icon w-3.5 h-3.5')}Mark as Active Again</button>`
+            : !showSuspendConfirm ? `<button onclick="showSuspendConfirm=true; renderDrawer()" class="bg-white border border-divider text-ink text-xs font-semibold px-3.5 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('clock','icon w-3.5 h-3.5')}Request Temporary Suspension</button>` : ''
+          }
+          ${!showArchiveConfirm ? `<button onclick="showArchiveConfirm=true; renderDrawer()" class="bg-white border border-error/30 text-error text-xs font-semibold px-3.5 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg flex items-center gap-1.5">${icon('archive','icon w-3.5 h-3.5')}Archive Family Record</button>` : ''}
+        </div>
+        ${showTransferForm ? renderTransferForm(f) : ''}
+        ${showSuspendConfirm ? `
+          <div class="bg-gold/10 rounded-card p-4 mt-3 space-y-3">
+            <p class="text-sm">Mark this family as temporarily away? They'll stay in your records but show as inactive until reactivated.</p>
+            <div class="flex gap-2">
+              <button onclick="suspendFamily('${f.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm">Confirm Suspension</button>
+              <button onclick="showSuspendConfirm=false; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+            </div>
+          </div>
+        ` : ''}
+        ${showArchiveConfirm ? `
+          <div class="bg-error-bg rounded-card p-4 mt-3 space-y-3">
+            <p class="text-sm text-error">Archive this family record? It'll be hidden from active views. This can be reversed later.</p>
+            <div class="flex gap-2">
+              <button onclick="archiveFamily('${f.id}')" class="bg-error text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm">Confirm Archive</button>
+              <button onclick="showArchiveConfirm=false; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  function suspendFamily(id) {
+    const f = findFamily(id);
+    f.status = 'Away';
+    showSuspendConfirm = false;
+    toast(`${f.familyName} marked as temporarily away.`);
+    renderTable();
+    renderDrawer();
+  }
+  function resumeFamily(id) {
+    const f = findFamily(id);
+    f.status = 'Active';
+    toast(`${f.familyName} marked active again.`);
+    renderTable();
+    renderDrawer();
+  }
+  function archiveFamily(id) {
+    const f = findFamily(id);
+    f.status = 'Archived';
+    showArchiveConfirm = false;
+    toast(`${f.familyName} archived.`);
+    renderTable();
+    renderDrawer();
   }
 
   function renderOverviewEdit(f) {
@@ -901,16 +972,6 @@
     `;
     toast(`Payment recorded for ${f.familyName}.`);
     renderTable();
-  }
-
-  function renderTransferTab(f) {
-    if (f.status === 'Transferred') {
-      return `<p class="text-sm text-ink-muted">This family has already been transferred out of ${parishName}.</p>`;
-    }
-    return `
-      <p class="text-sm text-ink-muted mb-4">Currently registered at <strong class="text-ink">${parishName}</strong>.</p>
-      ${showTransferForm ? renderTransferForm(f) : `<button onclick="showTransferForm=true; renderDrawer()" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('plane','icon w-4 h-4')}Initiate Transfer to Another Parish</button>`}
-    `;
   }
 
   function renderTransferForm(f) {
