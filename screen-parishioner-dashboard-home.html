@@ -187,7 +187,7 @@
     ],
     upcoming: [
       { label: "Next Mass", value: "Sunday, 2 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar" },
-      { label: "Your Mass Intention", value: "Sunday, 2 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar", detail: "Thanksgiving Mass offered by Rodrigues family" },
+      { label: "Your Mass Intention", value: "Sunday, 9 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar", detail: "Thanksgiving Mass offered by Rodrigues family" },
     ],
     weeklyAnnouncements: {
       week: "Week of 27 Jul 2026 · Infant Jesus Shrine",
@@ -424,6 +424,25 @@
     `;
   }
 
+  function renderUpcomingTile(u) {
+    return `
+      <div class="px-5 py-3.5">
+        <p class="text-xs text-ink-muted uppercase tracking-wide">${u.label}</p>
+        <p class="text-sm font-semibold mt-1">${u.value}</p>
+        <p class="text-xs text-ink-muted mt-0.5">${u.church}</p>
+        ${u.detail ? `<p class="text-xs text-ink-muted mt-0.5">${u.detail}</p>` : ''}
+      </div>
+    `;
+  }
+
+  let upcomingExpanded = false;
+  function toggleUpcoming() {
+    upcomingExpanded = !upcomingExpanded;
+    document.getElementById('upcoming-more').classList.toggle('hidden', !upcomingExpanded);
+    document.getElementById('upcoming-toggle-label').textContent = upcomingExpanded ? 'Show less' : `Show ${seed.upcoming.length - 1} more`;
+    document.getElementById('upcoming-toggle-chevron').style.transform = `rotate(${upcomingExpanded ? '180' : '0'}deg)`;
+  }
+
   function myRequestsCard() {
     const r = seed.myRequests;
     return `
@@ -471,10 +490,10 @@
     return `
       <section>
         <h2 class="font-heading font-bold text-base mb-3">Quick actions</h2>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2.5">
           ${seed.quickActions.map(qa => `
-            <button onclick="goTo(${qa.href ? `'${qa.href}'` : 'null'}, '${qa.label}')" class="bg-card-bg rounded-card shadow-card p-4 flex flex-col items-center gap-2 min-h-[44px] transition-warm hover:shadow-card-hover">
-              <span class="w-10 h-10 rounded-badge bg-primary-light text-primary flex items-center justify-center">${icon(qa.icon)}</span>
+            <button onclick="goTo(${qa.href ? `'${qa.href}'` : 'null'}, '${qa.label}')" class="bg-card-bg rounded-card shadow-card p-3 flex flex-col items-center gap-1.5 min-h-[36px] transition-warm hover:shadow-card-hover">
+              <span class="w-8 h-8 rounded-badge bg-primary-light text-primary flex items-center justify-center">${icon(qa.icon, 'icon w-4 h-4')}</span>
               <span class="text-xs leading-tight text-center text-ink font-medium">${qa.label}</span>
             </button>
           `).join('')}
@@ -532,14 +551,16 @@
           <button onclick="goTo('screen-parishioner-massbooking-mybookings.html', 'My Bookings')" class="text-primary text-xs font-semibold">My Bookings</button>
         </div>
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-          ${seed.upcoming.map(u => `
-            <div class="px-5 py-3.5">
-              <p class="text-xs text-ink-muted uppercase tracking-wide">${u.label}</p>
-              <p class="text-sm font-semibold mt-1">${u.value}</p>
-              <p class="text-xs text-ink-muted mt-0.5">${u.church}</p>
-              ${u.detail ? `<p class="text-xs text-ink-muted mt-0.5">${u.detail}</p>` : ''}
+          ${renderUpcomingTile(seed.upcoming[0])}
+          ${seed.upcoming.length > 1 ? `
+            <div id="upcoming-more" class="hidden">
+              ${seed.upcoming.slice(1).map(renderUpcomingTile).join('')}
             </div>
-          `).join('')}
+            <button onclick="toggleUpcoming()" class="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-semibold text-primary min-h-[40px]">
+              <span id="upcoming-toggle-label">Show ${seed.upcoming.length - 1} more</span>
+              <span id="upcoming-toggle-chevron" class="inline-flex transition-warm">${icon('chevronDown','icon w-3.5 h-3.5')}</span>
+            </button>
+          ` : ''}
         </div>
       </section>
 

@@ -64,9 +64,35 @@
     <!-- ============ STEP CONTENT ============ -->
     <main id="step-content" class="px-5 flex-1 space-y-4 pb-4"></main>
 
-    <!-- ============ FOOTER ACTIONS ============ -->
-    <div id="footer-actions" class="sticky bottom-0 bg-card-bg border-t border-divider px-5 py-4 flex gap-3">
-      <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
+    <!-- ============ FOOTER ACTIONS + BOTTOM NAV (stacked, sticky) ============ -->
+    <div class="sticky bottom-0 bg-card-bg">
+      <div id="footer-actions" class="border-t border-divider px-5 py-4 flex gap-3">
+        <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
+      </div>
+      <nav class="border-t border-divider">
+        <div class="grid grid-cols-5">
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-2.5 text-ink-muted">
+            <svg class="icon w-[18px] h-[18px]" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+            <span class="text-[10px]">Home</span>
+          </button>
+          <button class="flex flex-col items-center gap-1 py-2.5 text-primary">
+            <svg class="icon w-[18px] h-[18px]" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
+            <span class="text-[10px] font-semibold">Services</span>
+          </button>
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-2.5 text-ink-muted">
+            <svg class="icon w-[18px] h-[18px]" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
+            <span class="text-[10px]">Give</span>
+          </button>
+          <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-2.5 text-ink-muted">
+            <svg class="icon w-[18px] h-[18px]" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+            <span class="text-[10px]">My Family</span>
+          </button>
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-2.5 text-ink-muted">
+            <svg class="icon w-[18px] h-[18px]" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+            <span class="text-[10px]">Menu</span>
+          </button>
+        </div>
+      </nav>
     </div>
 
   </div>
@@ -89,14 +115,14 @@
       { id:"MASS-7001", massName:"Sunday 6:30 AM Mass", massType:"Regular", time:"6:30 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
       { id:"MASS-7002", massName:"Sunday 8:00 AM Mass", massType:"Regular", time:"8:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
       { id:"MASS-7003", massName:"Sunday 10:00 AM Mass (Konkani)", massType:"Regular", time:"10:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
-      { id:"MASS-7004", massName:"Weekday Morning Mass", massType:"Regular", time:"6:45 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:50, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
-      { id:"MASS-7007", massName:"Weekday Evening Mass", massType:"Regular", time:"6:00 PM", days:["Monday","Tuesday","Wednesday","Thursday","Friday"], bookingFee:50, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7004", massName:"Weekday Morning Mass", massType:"Regular", time:"6:45 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:100, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7007", massName:"Weekday Evening Mass", massType:"Regular", time:"6:00 PM", days:["Monday","Tuesday","Wednesday","Thursday","Friday"], bookingFee:100, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
       { id:"MASS-7005", massName:"Saturday Vigil Mass", massType:"Regular", time:"6:00 PM", days:["Saturday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
     ],
     "PAR-0009": [
       { id:"MASS-8001", massName:"Sunday 7:00 AM Mass", massType:"Regular", time:"7:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
       { id:"MASS-8002", massName:"Sunday 9:30 AM Mass", massType:"Regular", time:"9:30 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
-      { id:"MASS-8003", massName:"Weekday Morning Mass", massType:"Regular", time:"7:00 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:50, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-8003", massName:"Weekday Morning Mass", massType:"Regular", time:"7:00 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:100, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
     ],
     "PAR-0010": [
       { id:"MASS-9001", massName:"Sunday 6:00 AM Mass", massType:"Regular", time:"6:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
@@ -126,6 +152,12 @@
     "": { placeholder: "Select an intention type first", help: "Choosing a type above will tailor this field." },
   };
 
+  // Local calendar date, not UTC — .toISOString() shifts the date back in any UTC+ timezone (e.g. IST),
+  // which was silently grouping Sunday Masses under a Saturday header for anyone testing from India.
+  function toLocalISODate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
   function formatDateLabel(iso) {
     const d = new Date(iso + "T00:00:00");
     return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
@@ -153,7 +185,7 @@
           let base = (targetDow - d.getDay() + 7) % 7;
           if (base === 0) base = 7; // never today itself — always the next occurrence onward
           d.setDate(d.getDate() + base + week * 7);
-          const iso = d.toISOString().slice(0,10);
+          const iso = toLocalISODate(d);
           const key = a.id + '_' + iso;
           const booked = existingIntentionCounts[key] || 0;
           instances.push({ massActivityId: a.id, massName: a.massName, massType: a.massType, time: a.time, date: iso, maxIntentions: a.maxIntentions, bookingFee: a.bookingFee, booked });
