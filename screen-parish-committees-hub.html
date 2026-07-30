@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Committees</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </a>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="toast('Finance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="toast('Administration')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Committees</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="flex items-center justify-between gap-3 flex-wrap mb-6">
+          <div>
+            <p class="font-heading font-bold text-2xl">Parish Committees</p>
+            <p class="text-ink-muted text-sm mt-1">Manage committees, office bearers, and members.</p>
+          </div>
+          <button onclick="openCommitteeModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm flex items-center gap-1.5 flex-shrink-0">
+            <svg class="icon w-4 h-4" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Committee
+          </button>
+        </div>
+
+        <div class="bg-card-bg rounded-card shadow-card p-4 mb-5 flex flex-wrap items-center gap-3">
+          <div class="relative flex-1 min-w-[220px]">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted"><svg class="icon w-4 h-4" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input id="cm-search" type="text" placeholder="Search committees or members…" oninput="renderCommitteeList()" class="w-full border border-divider rounded-input pl-10 pr-4 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          </div>
+          <select id="cm-status-filter" onchange="renderCommitteeList()" class="border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option value="All">All statuses</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div id="committee-list" class="grid md:grid-cols-2 gap-4"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ RIGHT SLIDE-IN DRAWER: COMMITTEE DETAIL ============ -->
+  <div id="drawer-backdrop" onclick="closeDrawer()" class="hidden fixed inset-0 bg-black/30 z-40"></div>
+  <div id="drawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-card-bg shadow-card z-50 translate-x-full transition-transform duration-300 overflow-y-auto">
+    <div id="drawer-content"></div>
+  </div>
+
+  <!-- ============ ADD/EDIT COMMITTEE MODAL ============ -->
+  <div id="committee-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="committee-modal-title" class="font-heading font-bold text-lg">Add Committee</p>
+        <button onclick="closeModal('committee-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="committee-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitCommittee()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="committee-modal-save-label">Save Committee</span></button>
+        <button onclick="closeModal('committee-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT COMMITTEE MEMBER MODAL ============ -->
+  <div id="member-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="member-modal-title" class="font-heading font-bold text-lg">Add Member</p>
+        <button onclick="closeModal('member-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="member-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitMember()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="member-modal-save-label">Add to Committee</span></button>
+        <button onclick="closeModal('member-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    star: '<path d="m12 2 3 6.5 7 1-5.2 5 1.2 7-6-3.5L6 21.5l1.2-7L2 9.5l7-1Z"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  const OFFICE_BEARER_ROLES = ["President", "Vice President", "Secretary", "Joint Secretary", "Treasurer"];
+  const ALL_ROLES = [...OFFICE_BEARER_ROLES, "Member"];
+  function isOfficeBearer(m) { return OFFICE_BEARER_ROLES.includes(m.role); }
+
+  // ---------------- Mock data: Committees ----------------
+  let committees = [
+    { id:"COM-001", name:"Parish Pastoral Council", description:"Advises the parish priest on pastoral matters and represents parishioner interests.", formedDate:"2022-01-15", status:"Active",
+      members:[
+        { id:"MEM-C001", name:"John Rodrigues", role:"President", phone:"9845012345", email:"john.rodrigues@example.com", joinedDate:"2022-01-15" },
+        { id:"MEM-C002", name:"Michael Pinto", role:"Secretary", phone:"9845019001", email:"michael.pinto@example.com", joinedDate:"2022-01-15" },
+        { id:"MEM-C003", name:"Anthony D'Souza", role:"Treasurer", phone:"9845019002", email:"anthony.dsouza@example.com", joinedDate:"2022-06-01" },
+        { id:"MEM-C004", name:"Grace Rodrigues", role:"Member", phone:"9845012346", email:"", joinedDate:"2023-02-10" },
+        { id:"MEM-C005", name:"Sandra Pinto", role:"Member", phone:"", email:"", joinedDate:"2023-02-10" },
+      ] },
+    { id:"COM-002", name:"Parish Finance Committee", description:"Oversees parish budgeting, accounts, and financial planning.", formedDate:"2021-08-01", status:"Active",
+      members:[
+        { id:"MEM-C006", name:"Peter Fernandes", role:"President", phone:"9845019003", email:"peter.fernandes@example.com", joinedDate:"2021-08-01" },
+        { id:"MEM-C007", name:"Simon Mascarenhas", role:"Treasurer", phone:"9845019005", email:"simon.mascarenhas@example.com", joinedDate:"2021-08-01" },
+        { id:"MEM-C008", name:"Francis Rebello", role:"Member", phone:"", email:"", joinedDate:"2022-03-15" },
+      ] },
+    { id:"COM-003", name:"Choir Committee", description:"Organizes and leads music ministry for Sunday and feast Masses.", formedDate:"2020-05-10", status:"Active",
+      members:[
+        { id:"MEM-C009", name:"Kevin Rodrigues", role:"President", phone:"9845012347", email:"kevin.rodrigues@example.com", joinedDate:"2020-05-10" },
+        { id:"MEM-C010", name:"Clara Rodrigues", role:"Secretary", phone:"", email:"", joinedDate:"2021-01-05" },
+        { id:"MEM-C011", name:"Naomi D'Souza", role:"Member", phone:"", email:"", joinedDate:"2021-06-20" },
+        { id:"MEM-C012", name:"Ethan D'Souza", role:"Member", phone:"", email:"", joinedDate:"2022-08-01" },
+      ] },
+    { id:"COM-004", name:"Ladies' Guild", description:"Supports parish charitable works, retreats, and women's fellowship.", formedDate:"2019-03-08", status:"Active",
+      members:[
+        { id:"MEM-C013", name:"Diana Fernandes", role:"President", phone:"", email:"", joinedDate:"2019-03-08" },
+        { id:"MEM-C014", name:"Lisa Colaco", role:"Vice President", phone:"", email:"", joinedDate:"2020-01-10" },
+        { id:"MEM-C015", name:"Nita Mascarenhas", role:"Secretary", phone:"", email:"", joinedDate:"2020-01-10" },
+        { id:"MEM-C016", name:"Teresa Almeida", role:"Member", phone:"", email:"", joinedDate:"2021-05-01" },
+      ] },
+    { id:"COM-005", name:"Youth Committee", description:"Engages young parishioners through fellowship, sports, and faith formation activities.", formedDate:"2023-01-20", status:"Active",
+      members:[
+        { id:"MEM-C017", name:"Ryan Pinto", role:"President", phone:"", email:"", joinedDate:"2023-01-20" },
+        { id:"MEM-C018", name:"Josh Almeida", role:"Member", phone:"", email:"", joinedDate:"2023-04-15" },
+      ] },
+    { id:"COM-006", name:"Building & Maintenance Committee", description:"Manages upkeep, repairs, and renovation projects for parish property.", formedDate:"2018-11-01", status:"Inactive",
+      members:[
+        { id:"MEM-C019", name:"Joseph Lobo", role:"President", phone:"", email:"", joinedDate:"2018-11-01" },
+        { id:"MEM-C020", name:"George Colaco", role:"Member", phone:"", email:"", joinedDate:"2019-02-01" },
+      ] },
+  ];
+
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function initials(name) { return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase(); }
+
+  let selectedCommitteeId = null;
+  let confirmingDeleteCommittee = false;
+
+  function findCommittee(id) { return committees.find(c => c.id === id); }
+
+  // ---------------- List ----------------
+  function renderCommitteeList() {
+    const q = (document.getElementById('cm-search').value || '').trim().toLowerCase();
+    const statusFilter = document.getElementById('cm-status-filter').value;
+
+    const filtered = committees.filter(c => {
+      const matchesStatus = statusFilter === 'All' || c.status === statusFilter;
+      const matchesSearch = !q || c.name.toLowerCase().includes(q) || c.members.some(m => m.name.toLowerCase().includes(q));
+      return matchesStatus && matchesSearch;
+    });
+
+    const listEl = document.getElementById('committee-list');
+    if (filtered.length === 0) {
+      listEl.innerHTML = `<div class="md:col-span-2 bg-card-bg rounded-card shadow-card p-8 text-center"><p class="text-sm font-semibold">No committees found</p><p class="text-xs text-ink-muted mt-1">Try a different search term or filter.</p></div>`;
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(c => {
+      const officeBearerCount = c.members.filter(isOfficeBearer).length;
+      const memberCount = c.members.length - officeBearerCount;
+      return `
+        <button onclick="openDrawer('${c.id}')" class="text-left bg-card-bg rounded-card shadow-card p-5 transition-warm hover:shadow-card-hover min-h-[44px]">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <p class="text-sm font-semibold">${c.name}</p>
+            <span class="${c.status==='Active' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">${c.status}</span>
+          </div>
+          <p class="text-xs text-ink-muted line-clamp-2">${c.description}</p>
+          <div class="flex items-center gap-3 mt-3 text-xs text-ink-muted">
+            <span class="flex items-center gap-1">${icon('star','w-3.5 h-3.5')}${officeBearerCount} office bearer${officeBearerCount!==1?'s':''}</span>
+            <span class="flex items-center gap-1">${icon('users','w-3.5 h-3.5')}${memberCount} member${memberCount!==1?'s':''}</span>
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  // ---------------- Drawer ----------------
+  function openDrawer(id) {
+    selectedCommitteeId = id;
+    confirmingDeleteCommittee = false;
+    document.getElementById('drawer').classList.remove('translate-x-full');
+    document.getElementById('drawer-backdrop').classList.remove('hidden');
+    renderDrawer();
+  }
+  function closeDrawer() {
+    document.getElementById('drawer').classList.add('translate-x-full');
+    document.getElementById('drawer-backdrop').classList.add('hidden');
+  }
+
+  function renderDrawer() {
+    const c = findCommittee(selectedCommitteeId);
+    const el = document.getElementById('drawer-content');
+    if (!c) { el.innerHTML = ''; return; }
+
+    const officeBearers = c.members.filter(isOfficeBearer).sort((a,b) => OFFICE_BEARER_ROLES.indexOf(a.role) - OFFICE_BEARER_ROLES.indexOf(b.role));
+    const regularMembers = c.members.filter(m => !isOfficeBearer(m));
+
+    el.innerHTML = `
+      <div class="p-6 border-b border-divider sticky top-0 bg-card-bg z-10">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="font-heading font-bold text-lg truncate">${c.name}</p>
+            <p class="text-xs text-ink-muted mt-0.5">Formed ${formatDate(c.formedDate)}</p>
+          </div>
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <button onclick="openCommitteeModal('${c.id}')" aria-label="Edit committee" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit')}</button>
+            <button onclick="closeDrawer()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('x')}</button>
+          </div>
+        </div>
+        <div class="mt-3"><span class="${c.status==='Active' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${c.status}</span></div>
+      </div>
+      <div class="p-6 space-y-6">
+        <div>
+          <p class="text-xs text-ink-muted uppercase tracking-wide mb-1">Description</p>
+          <p class="text-sm">${c.description}</p>
+        </div>
+
+        <div>
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Office Bearers</p>
+          ${officeBearers.length === 0 ? `<p class="text-sm text-ink-muted">No office bearers assigned yet.</p>` : `
+            <div class="space-y-2">
+              ${officeBearers.map(m => renderMemberRow(c, m)).join('')}
+            </div>
+          `}
+        </div>
+
+        <div>
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Members</p>
+          ${regularMembers.length === 0 ? `<p class="text-sm text-ink-muted">No members yet.</p>` : `
+            <div class="space-y-2">
+              ${regularMembers.map(m => renderMemberRow(c, m)).join('')}
+            </div>
+          `}
+        </div>
+
+        <button onclick="openMemberModal('${c.id}')" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 rounded-button min-h-[40px] transition-warm flex items-center justify-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Member</button>
+
+        <div class="pt-4 border-t border-divider">
+          ${confirmingDeleteCommittee ? `
+            <div class="bg-error-bg rounded-card p-4 space-y-3">
+              <p class="text-sm text-error font-semibold">Delete this committee? This can't be undone.</p>
+              <div class="flex gap-2">
+                <button onclick="deleteCommittee('${c.id}')" class="bg-error text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm">Confirm Delete</button>
+                <button onclick="confirmingDeleteCommittee=false; renderDrawer()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : `
+            <button onclick="confirmingDeleteCommittee=true; renderDrawer()" class="text-error text-xs font-semibold flex items-center gap-1.5">${icon('trash','w-3.5 h-3.5')}Delete Committee</button>
+          `}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMemberRow(c, m) {
+    return `
+      <div class="bg-section-bg rounded-card p-3.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.role}</span></p>
+            <p class="text-xs text-ink-muted mt-0.5 truncate">${m.phone || 'No phone'}${m.email ? ' · ' + m.email : ''}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button onclick="openMemberModal('${c.id}', '${m.id}')" aria-label="Edit member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm">${icon('edit','icon w-4 h-4')}</button>
+          <button onclick="removeMember('${c.id}', '${m.id}')" aria-label="Remove member" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-white transition-warm">${icon('trash','icon w-4 h-4')}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ---------------- Add/Edit Committee ----------------
+  let editingCommitteeId = null;
+
+  function openCommitteeModal(editId) {
+    editingCommitteeId = editId || null;
+    const c = editId ? findCommittee(editId) : null;
+    document.getElementById('committee-modal-title').textContent = c ? 'Edit Committee' : 'Add Committee';
+    document.getElementById('committee-modal-save-label').textContent = c ? 'Save Changes' : 'Save Committee';
+    document.getElementById('committee-modal').classList.remove('hidden');
+    document.getElementById('committee-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Committee name</label><input id="cf-name" type="text" placeholder="e.g. Building Committee" value="${c ? c.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Description</label><textarea id="cf-desc" rows="3" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${c ? c.description : ''}</textarea></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Formed date</label><input id="cf-formed" type="date" value="${c ? c.formedDate : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+          <select id="cf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option ${c && c.status==='Active' ? 'selected' : ''}>Active</option>
+            <option ${c && c.status==='Inactive' ? 'selected' : ''}>Inactive</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  function submitCommittee() {
+    const name = document.getElementById('cf-name').value.trim();
+    const description = document.getElementById('cf-desc').value.trim();
+    const formedDate = document.getElementById('cf-formed').value;
+    const status = document.getElementById('cf-status').value;
+    if (!name) { toast('Please enter a committee name.'); return; }
+
+    if (editingCommitteeId) {
+      const existing = findCommittee(editingCommitteeId);
+      Object.assign(existing, { name, description, formedDate, status });
+      toast(`${name} updated.`);
+    } else {
+      committees.unshift({ id: 'COM-' + Math.floor(100 + Math.random()*899), name, description, formedDate: formedDate || '2026-07-30', status, members: [] });
+      toast(`${name} added.`);
+    }
+    editingCommitteeId = null;
+    closeModal('committee-modal');
+    renderCommitteeList();
+    if (selectedCommitteeId) renderDrawer();
+  }
+
+  function deleteCommittee(id) {
+    const c = findCommittee(id);
+    committees = committees.filter(x => x.id !== id);
+    closeDrawer();
+    toast(`${c.name} deleted.`);
+    renderCommitteeList();
+  }
+
+  // ---------------- Add/Edit Committee Member ----------------
+  let memberModalContext = null; // { committeeId, memberId }
+
+  function openMemberModal(committeeId, memberId) {
+    memberModalContext = { committeeId, memberId: memberId || null };
+    const c = findCommittee(committeeId);
+    const m = memberId ? c.members.find(x => x.id === memberId) : null;
+    document.getElementById('member-modal-title').textContent = m ? 'Edit Member' : 'Add Member';
+    document.getElementById('member-modal-save-label').textContent = m ? 'Save Changes' : 'Add to Committee';
+    document.getElementById('member-modal').classList.remove('hidden');
+    document.getElementById('member-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Full name</label><input id="mf-name" type="text" placeholder="e.g. Maria Fernandes" value="${m ? m.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Role</label>
+        <select id="mf-role" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${ALL_ROLES.map(r => `<option ${m && m.role===r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Phone</label><input id="mf-phone" type="text" value="${m ? m.phone : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Joined date</label><input id="mf-joined" type="date" value="${m ? m.joinedDate : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Email</label><input id="mf-email" type="email" value="${m ? m.email : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+    `;
+  }
+
+  function submitMember() {
+    const name = document.getElementById('mf-name').value.trim();
+    const role = document.getElementById('mf-role').value;
+    const phone = document.getElementById('mf-phone').value.trim();
+    const joinedDate = document.getElementById('mf-joined').value;
+    const email = document.getElementById('mf-email').value.trim();
+    if (!name) { toast('Please enter a name.'); return; }
+
+    const c = findCommittee(memberModalContext.committeeId);
+    if (memberModalContext.memberId) {
+      const existing = c.members.find(x => x.id === memberModalContext.memberId);
+      Object.assign(existing, { name, role, phone, joinedDate, email });
+      toast(`${name} updated.`);
+    } else {
+      c.members.push({ id: 'MEM-C' + Math.floor(1000 + Math.random()*8999), name, role, phone, joinedDate: joinedDate || '2026-07-30', email });
+      toast(`${name} added to ${c.name}.`);
+    }
+    closeModal('member-modal');
+    renderCommitteeList();
+    renderDrawer();
+  }
+
+  function removeMember(committeeId, memberId) {
+    const c = findCommittee(committeeId);
+    const m = c.members.find(x => x.id === memberId);
+    c.members = c.members.filter(x => x.id !== memberId);
+    toast(`${m.name} removed from ${c.name}.`);
+    renderCommitteeList();
+    renderDrawer();
+  }
+
+  renderCommitteeList();
+</script>
+
+</body>
+</html>
