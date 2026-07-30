@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Finance</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </a>
+        <button onclick="toast('Administration')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Finance</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Parish Finance</p>
+          <p class="text-ink-muted text-sm mt-1">Track income and expenses, and manage categories and accounts.</p>
+        </div>
+
+        <div id="summary-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"></div>
+
+        <div class="flex gap-2 mb-6">
+          <button onclick="setModule('income')" data-module="income" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Income</button>
+          <button onclick="setModule('expenses')" data-module="expenses" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Expenses</button>
+          <button onclick="setModule('settings')" data-module="settings" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Categories &amp; Accounts</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ ADD/EDIT TRANSACTION MODAL ============ -->
+  <div id="txn-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="txn-modal-title" class="font-heading font-bold text-lg">Add Income</p>
+        <button onclick="closeModal('txn-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="txn-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitTransaction()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="txn-modal-save-label">Save</span></button>
+        <button onclick="closeModal('txn-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT CATEGORY MODAL ============ -->
+  <div id="category-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="category-modal-title" class="font-heading font-bold text-lg">Add Category</p>
+        <button onclick="closeModal('category-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="category-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitCategory()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="category-modal-save-label">Save</span></button>
+        <button onclick="closeModal('category-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT ACCOUNT MODAL ============ -->
+  <div id="account-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="account-modal-title" class="font-heading font-bold text-lg">Add Account</p>
+        <button onclick="closeModal('account-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="account-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitAccount()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="account-modal-save-label">Save</span></button>
+        <button onclick="closeModal('account-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  const staffName = sessionParams.get('name') || 'Parish Staff';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
+  function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + sessionParams.toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    arrowUp: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+    arrowDown: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+    scale: '<path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7 2 14a3 3 0 0 0 6 0Z"/><path d="M19 7l-3 7a3 3 0 0 0 6 0Z"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function formatMoney(n) { return '₹' + n.toLocaleString('en-IN'); }
+
+  // ---------------- Mock data: Categories ----------------
+  let categories = [
+    { id:"CAT-001", name:"Mass Offering", type:"Income", status:"Active" },
+    { id:"CAT-002", name:"Sunday Collection", type:"Income", status:"Active" },
+    { id:"CAT-003", name:"Subscription", type:"Income", status:"Active" },
+    { id:"CAT-004", name:"Facility Rental", type:"Income", status:"Active" },
+    { id:"CAT-005", name:"Donations", type:"Income", status:"Active" },
+    { id:"CAT-006", name:"Other Income", type:"Income", status:"Active" },
+    { id:"CAT-007", name:"Salaries", type:"Expense", status:"Active" },
+    { id:"CAT-008", name:"Utilities", type:"Expense", status:"Active" },
+    { id:"CAT-009", name:"Maintenance", type:"Expense", status:"Active" },
+    { id:"CAT-010", name:"Office Supplies", type:"Expense", status:"Active" },
+    { id:"CAT-011", name:"Charity & Outreach", type:"Expense", status:"Active" },
+    { id:"CAT-012", name:"Other Expense", type:"Expense", status:"Active" },
+  ];
+
+  // ---------------- Mock data: Accounts ----------------
+  let accounts = [
+    { id:"ACC-001", name:"Parish Bank Account", type:"Bank", openingBalance:250000, status:"Active" },
+    { id:"ACC-002", name:"Petty Cash", type:"Cash", openingBalance:5000, status:"Active" },
+  ];
+
+  // ---------------- Mock data: Transactions ----------------
+  let transactions = [
+    { id:"FIN-001", type:"Income", date:"2026-07-24", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"Sunday Mass intention offering — Rodrigues Family", referenceNumber:"MASS-BOOK-2026-0311", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-24" },
+    { id:"FIN-002", type:"Income", date:"2026-06-14", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"In memory of Michael Rodrigues", referenceNumber:"MASS-BOOK-2026-0204", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
+    { id:"FIN-003", type:"Income", date:"2026-07-26", amount:18500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-26" },
+    { id:"FIN-004", type:"Income", date:"2026-07-05", amount:400, accountId:"ACC-001", categoryId:"CAT-003", description:"Rodrigues Family — 2026-Q3 subscription", referenceNumber:"IJS/FAM/1001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-05" },
+    { id:"FIN-005", type:"Income", date:"2026-07-15", amount:3000, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-15" },
+    { id:"FIN-006", type:"Expense", date:"2026-07-01", amount:45000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — July", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-01" },
+    { id:"FIN-007", type:"Expense", date:"2026-07-10", amount:8500, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — July", referenceNumber:"BESCOM-JUL26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-10" },
+    { id:"FIN-008", type:"Expense", date:"2026-07-18", amount:12000, accountId:"ACC-001", categoryId:"CAT-009", description:"Roof repair — side chapel", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-18" },
+    { id:"FIN-009", type:"Expense", date:"2026-07-20", amount:5000, accountId:"ACC-002", categoryId:"CAT-011", description:"Poor Families Collection distribution", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-20" },
+    { id:"FIN-010", type:"Expense", date:"2026-07-08", amount:1200, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-08" },
+  ];
+
+  function findCategory(id) { return categories.find(c => c.id === id); }
+  function findAccount(id) { return accounts.find(a => a.id === id); }
+  function categoryName(id) { const c = findCategory(id); return c ? c.name : 'Uncategorized'; }
+  function accountName(id) { const a = findAccount(id); return a ? a.name : 'Unknown account'; }
+
+  let currentModule = 'income';
+
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+
+  function renderSummary() {
+    const totalIncome = transactions.filter(t => t.type === 'Income' && t.status === 'Posted').reduce((s,t) => s + t.amount, 0);
+    const totalExpense = transactions.filter(t => t.type === 'Expense' && t.status === 'Posted').reduce((s,t) => s + t.amount, 0);
+    const net = totalIncome - totalExpense;
+    document.getElementById('summary-cards').innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowDown','w-3.5 h-3.5 text-green')}Total Income</p>
+        <p class="font-heading font-bold text-2xl text-green">${formatMoney(totalIncome)}</p>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowUp','w-3.5 h-3.5 text-coral')}Total Expenses</p>
+        <p class="font-heading font-bold text-2xl text-coral">${formatMoney(totalExpense)}</p>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('scale','w-3.5 h-3.5 text-primary')}Net Balance</p>
+        <p class="font-heading font-bold text-2xl ${net >= 0 ? 'text-primary' : 'text-error'}">${formatMoney(net)}</p>
+      </div>
+    `;
+  }
+
+  function renderModule() {
+    renderSummary();
+    const el = document.getElementById('module-content');
+    if (currentModule === 'income') renderTransactionsModule(el, 'Income');
+    else if (currentModule === 'expenses') renderTransactionsModule(el, 'Expense');
+    else renderSettingsModule(el);
+  }
+
+  // =========================================================================
+  // Income / Expenses modules (shared renderer, filtered by type)
+  // =========================================================================
+  function renderTransactionsModule(el, type) {
+    const rows = transactions.filter(t => t.type === type).sort((a,b) => b.date.localeCompare(a.date));
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openTransactionModal('${type}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add ${type === 'Income' ? 'Income' : 'Expense'}</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Date</th>
+                <th class="px-4 py-3 font-medium">Category</th>
+                <th class="px-4 py-3 font-medium">Description</th>
+                <th class="px-4 py-3 font-medium">Account</th>
+                <th class="px-4 py-3 font-medium">Amount</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.length === 0 ? `<tr><td colspan="7" class="px-4 py-10 text-center text-sm text-ink-muted">No ${type.toLowerCase()} entries yet.</td></tr>` : rows.map(t => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(t.date)}</td>
+                  <td class="px-4 py-3">${categoryName(t.categoryId)}</td>
+                  <td class="px-4 py-3 text-ink-muted">
+                    <p>${t.description}</p>
+                    ${t.referenceNumber ? `<p class="text-xs mt-0.5">${t.referenceNumber}</p>` : ''}
+                  </td>
+                  <td class="px-4 py-3 text-ink-muted">${accountName(t.accountId)}</td>
+                  <td class="px-4 py-3 font-semibold ${type==='Income' ? 'text-green' : 'text-coral'}">${formatMoney(t.amount)}</td>
+                  <td class="px-4 py-3"><span class="${t.status==='Posted' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${t.status}</span></td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-1 justify-end">
+                      <button onclick="openTransactionModal('${type}', '${t.id}')" aria-label="Edit" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                      <button onclick="deleteTransaction('${t.id}')" aria-label="Delete" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  let editingTransactionId = null;
+
+  function openTransactionModal(type, editId) {
+    editingTransactionId = editId || null;
+    const t = editId ? transactions.find(x => x.id === editId) : null;
+    const effectiveType = t ? t.type : type;
+    document.getElementById('txn-modal-title').textContent = t ? `Edit ${effectiveType}` : `Add ${effectiveType}`;
+    document.getElementById('txn-modal-save-label').textContent = t ? 'Save Changes' : 'Save';
+    document.getElementById('txn-modal').classList.remove('hidden');
+
+    const relevantCategories = categories.filter(c => c.type === effectiveType && c.status === 'Active');
+
+    document.getElementById('txn-form').innerHTML = `
+      <input type="hidden" id="tf-type" value="${effectiveType}">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Date</label><input id="tf-date" type="date" value="${t ? t.date : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Amount (₹)</label><input id="tf-amount" type="number" value="${t ? t.amount : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Category</label>
+        <select id="tf-category" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${relevantCategories.map(c => `<option value="${c.id}" ${t && t.categoryId===c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Description</label><input id="tf-desc" type="text" value="${t ? t.description : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Account</label>
+          <select id="tf-account" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${accounts.filter(a => a.status === 'Active').map(a => `<option value="${a.id}" ${t && t.accountId===a.id ? 'selected' : ''}>${a.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Payment method</label>
+          <select id="tf-payment" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${["Cash","UPI","Card","Bank Transfer","Cheque","Other"].map(p => `<option ${t && t.paymentMethod===p ? 'selected' : ''}>${p}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Reference no. (optional)</label><input id="tf-ref" type="text" value="${t ? t.referenceNumber : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+          <select id="tf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option ${!t || t.status==='Posted' ? 'selected' : ''}>Posted</option>
+            <option ${t && t.status==='Voided' ? 'selected' : ''}>Voided</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  function submitTransaction() {
+    const type = document.getElementById('tf-type').value;
+    const date = document.getElementById('tf-date').value;
+    const amount = parseFloat(document.getElementById('tf-amount').value) || 0;
+    const categoryId = document.getElementById('tf-category').value;
+    const description = document.getElementById('tf-desc').value.trim();
+    const accountId = document.getElementById('tf-account').value;
+    const paymentMethod = document.getElementById('tf-payment').value;
+    const referenceNumber = document.getElementById('tf-ref').value.trim();
+    const status = document.getElementById('tf-status').value;
+    if (!date || amount <= 0 || !description) { toast('Please fill in date, amount, and description.'); return; }
+
+    if (editingTransactionId) {
+      const existing = transactions.find(t => t.id === editingTransactionId);
+      Object.assign(existing, { type, date, amount, categoryId, description, accountId, paymentMethod, referenceNumber, status });
+      toast('Entry updated.');
+    } else {
+      transactions.unshift({
+        id: 'FIN-' + Math.floor(100 + Math.random()*899), type, date, amount, categoryId, description, accountId,
+        paymentMethod, referenceNumber, status, createdBy: staffName, createdDate: '2026-07-30',
+      });
+      toast(`${type} entry added.`);
+    }
+    editingTransactionId = null;
+    closeModal('txn-modal');
+    renderModule();
+  }
+
+  function deleteTransaction(id) {
+    transactions = transactions.filter(t => t.id !== id);
+    toast('Entry deleted.');
+    renderModule();
+  }
+
+  // =========================================================================
+  // Categories & Accounts (settings) module
+  // =========================================================================
+  function renderSettingsModule(el) {
+    el.innerHTML = `
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-semibold">Categories</p>
+            <button onclick="openCategoryModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Category</button>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+            ${categories.map(c => `
+              <div class="px-4 py-3 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-sm font-medium truncate">${c.name}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${c.type} · ${c.status}</p>
+                </div>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                  <button onclick="openCategoryModal('${c.id}')" aria-label="Edit category" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                  <button onclick="deleteCategory('${c.id}')" aria-label="Delete category" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-semibold">Accounts</p>
+            <button onclick="openAccountModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Account</button>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+            ${accounts.map(a => `
+              <div class="px-4 py-3 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-sm font-medium truncate">${a.name}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${a.type} · Opening balance ${formatMoney(a.openingBalance)} · ${a.status}</p>
+                </div>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                  <button onclick="openAccountModal('${a.id}')" aria-label="Edit account" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                  <button onclick="deleteAccount('${a.id}')" aria-label="Delete account" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let editingCategoryId = null;
+
+  function openCategoryModal(editId) {
+    editingCategoryId = editId || null;
+    const c = editId ? findCategory(editId) : null;
+    document.getElementById('category-modal-title').textContent = c ? 'Edit Category' : 'Add Category';
+    document.getElementById('category-modal-save-label').textContent = c ? 'Save Changes' : 'Save';
+    document.getElementById('category-modal').classList.remove('hidden');
+    document.getElementById('category-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Category name</label><input id="cf-name" type="text" placeholder="e.g. Donations" value="${c ? c.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Type</label>
+        <select id="cf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!c || c.type==='Income' ? 'selected' : ''}>Income</option>
+          <option ${c && c.type==='Expense' ? 'selected' : ''}>Expense</option>
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+        <select id="cf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!c || c.status==='Active' ? 'selected' : ''}>Active</option>
+          <option ${c && c.status==='Inactive' ? 'selected' : ''}>Inactive</option>
+        </select>
+      </div>
+    `;
+  }
+
+  function submitCategory() {
+    const name = document.getElementById('cf-name').value.trim();
+    const type = document.getElementById('cf-type').value;
+    const status = document.getElementById('cf-status').value;
+    if (!name) { toast('Please enter a category name.'); return; }
+
+    if (editingCategoryId) {
+      Object.assign(findCategory(editingCategoryId), { name, type, status });
+      toast(`${name} updated.`);
+    } else {
+      categories.push({ id: 'CAT-' + Math.floor(100 + Math.random()*899), name, type, status });
+      toast(`${name} added.`);
+    }
+    editingCategoryId = null;
+    closeModal('category-modal');
+    renderModule();
+  }
+
+  function deleteCategory(id) {
+    const inUse = transactions.some(t => t.categoryId === id);
+    if (inUse) { toast(`Can't delete — this category is used by existing entries.`); return; }
+    const c = findCategory(id);
+    categories = categories.filter(x => x.id !== id);
+    toast(`${c.name} deleted.`);
+    renderModule();
+  }
+
+  let editingAccountId = null;
+
+  function openAccountModal(editId) {
+    editingAccountId = editId || null;
+    const a = editId ? findAccount(editId) : null;
+    document.getElementById('account-modal-title').textContent = a ? 'Edit Account' : 'Add Account';
+    document.getElementById('account-modal-save-label').textContent = a ? 'Save Changes' : 'Save';
+    document.getElementById('account-modal').classList.remove('hidden');
+    document.getElementById('account-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Account name</label><input id="af-name" type="text" placeholder="e.g. Parish Bank Account" value="${a ? a.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Type</label>
+        <select id="af-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!a || a.type==='Bank' ? 'selected' : ''}>Bank</option>
+          <option ${a && a.type==='Cash' ? 'selected' : ''}>Cash</option>
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Opening balance (₹)</label><input id="af-balance" type="number" value="${a ? a.openingBalance : 0}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+        <select id="af-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!a || a.status==='Active' ? 'selected' : ''}>Active</option>
+          <option ${a && a.status==='Inactive' ? 'selected' : ''}>Inactive</option>
+        </select>
+      </div>
+    `;
+  }
+
+  function submitAccount() {
+    const name = document.getElementById('af-name').value.trim();
+    const type = document.getElementById('af-type').value;
+    const openingBalance = parseFloat(document.getElementById('af-balance').value) || 0;
+    const status = document.getElementById('af-status').value;
+    if (!name) { toast('Please enter an account name.'); return; }
+
+    if (editingAccountId) {
+      Object.assign(findAccount(editingAccountId), { name, type, openingBalance, status });
+      toast(`${name} updated.`);
+    } else {
+      accounts.push({ id: 'ACC-' + Math.floor(100 + Math.random()*899), name, type, openingBalance, status });
+      toast(`${name} added.`);
+    }
+    editingAccountId = null;
+    closeModal('account-modal');
+    renderModule();
+  }
+
+  function deleteAccount(id) {
+    const inUse = transactions.some(t => t.accountId === id);
+    if (inUse) { toast(`Can't delete — this account is used by existing entries.`); return; }
+    const a = findAccount(id);
+    accounts = accounts.filter(x => x.id !== id);
+    toast(`${a.name} deleted.`);
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>

@@ -88,7 +88,7 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
         </button>
-        <button onclick="toast('Finance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+        <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
           Finance
         </button>
@@ -160,6 +160,7 @@
   function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + sessionParams.toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + sessionParams.toString(); return false; }
   function goRegisterFamily() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString() + '&openRegister=1'; return false; }
 
   function toggleSidebar() {
