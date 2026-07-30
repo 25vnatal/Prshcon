@@ -131,6 +131,7 @@
         <!-- Module tabs -->
         <div class="flex gap-2 mb-6 overflow-x-auto">
           <button onclick="setModule('documents')" data-module="documents" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Documents &amp; Certificates</button>
+          <button onclick="setModule('familyupdates')" data-module="familyupdates" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted flex items-center gap-1.5">Family Updates<span id="family-updates-badge" class="hidden bg-white/25 text-xs font-bold px-1.5 py-0.5 rounded-badge"></span></button>
           <button onclick="setModule('sacraments')" data-module="sacraments" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Sacraments</button>
           <button onclick="setModule('homeservices')" data-module="homeservices" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Home Services</button>
           <button onclick="setModule('facilities')" data-module="facilities" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Facility Bookings</button>
@@ -331,6 +332,12 @@
   let currentModule = 'documents';
   let openPrompt = null; // { id, type: 'info' | 'reject' }
 
+  // ---------------- Family Update Requests (mirrored from Family Records — same seed data, ----------------
+  // ---------------- surfaced here too so these are discoverable from the Requests hub). ----------------
+  const familyUpdateRequests = [
+    { id: "UPD-4001", familyId: "FAM-1001", familyName: "Rodrigues Family", type: "Add a Family Member", submittedBy: "John Rodrigues", submissionDate: "24 Jul 2026", status: "Submitted" },
+  ];
+
   function setModule(m) {
     currentModule = m;
     document.querySelectorAll('.module-tab').forEach(btn => {
@@ -342,6 +349,10 @@
 
   function renderModule() {
     const el = document.getElementById('module-content');
+    if (currentModule === 'familyupdates') {
+      renderFamilyUpdatesModule(el);
+      return;
+    }
     if (currentModule !== 'documents') {
       const labels = { sacraments: 'Sacraments', homeservices: 'Home Services', facilities: 'Facility Bookings' };
       el.innerHTML = `
@@ -365,6 +376,46 @@
     renderStageTabs();
     renderLoading();
     setTimeout(renderList, 600);
+  }
+
+  function renderFamilyUpdatesModule(el) {
+    if (familyUpdateRequests.length === 0) {
+      el.innerHTML = `
+        <div class="bg-card-bg rounded-card shadow-card p-12 text-center space-y-2">
+          <p class="text-sm font-semibold">No family update requests</p>
+          <p class="text-sm text-ink-muted">Changes families submit through "My Family" will appear here for review.</p>
+        </div>
+      `;
+      return;
+    }
+    el.innerHTML = `
+      <p class="text-xs text-ink-muted mb-4">Submitted by families through "My Family" — review and approve or reject in Family Records.</p>
+      <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+        ${familyUpdateRequests.map(r => {
+          const isPending = r.status === 'Submitted';
+          return `
+            <button onclick="window.location.href='screen-parish-familyrecords-search.html?' + sessionParams.toString() + '&family=${r.familyId}&tab=updates'" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 transition-warm hover:bg-section-bg min-h-[44px]">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold">${r.type} — ${r.familyName}</p>
+                <p class="text-xs text-ink-muted mt-0.5">Submitted by ${r.submittedBy} · ${r.submissionDate}</p>
+              </div>
+              <span class="${isPending ? 'bg-gold/20 text-[#8a5a10]' : r.status === 'Approved' ? 'bg-green/20 text-[#2f6b45]' : 'bg-error-bg text-error'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">${isPending ? 'Pending' : r.status}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function updateFamilyUpdatesBadge() {
+    const pendingCount = familyUpdateRequests.filter(r => r.status === 'Submitted').length;
+    const badge = document.getElementById('family-updates-badge');
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
   }
 
   function renderStageTabs() {
@@ -815,6 +866,7 @@
     setTab('Pending');
   }
 
+  updateFamilyUpdatesBadge();
   renderModule();
 </script>
 
