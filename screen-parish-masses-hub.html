@@ -306,8 +306,9 @@
         const targetDow = DAY_NAMES.indexOf(day);
         for (let week = 0; week < 4; week++) {
           const d = new Date(TODAY);
-          const diff = (targetDow - d.getDay() + 7) % 7 + week * 7;
-          d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff));
+          let base = (targetDow - d.getDay() + 7) % 7;
+          if (base === 0) base = 7;
+          d.setDate(d.getDate() + base + week * 7);
           const iso = d.toISOString().slice(0,10);
           instances.push({ massActivityId: a.id, massName: a.massName, time: a.time, date: iso, maxIntentions: a.maxIntentions,
             manuallyClosed: a.manuallyClosedDates.includes(iso) });
