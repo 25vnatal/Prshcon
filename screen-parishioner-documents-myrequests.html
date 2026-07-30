@@ -39,7 +39,7 @@
 </head>
 <body class="text-ink">
 
-  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-10 relative">
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative">
 
     <!-- ============ TOP BAR ============ -->
     <header class="px-5 pt-5 pb-3 flex items-center gap-3">
@@ -66,6 +66,32 @@
 
   </div>
 
+  <!-- ============ BOTTOM NAV (5 items) ============ -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
+    <div class="grid grid-cols-5">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+        <span class="text-[10.5px]">Home</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 py-3 text-primary">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
+        <span class="text-[10.5px] font-semibold">Services</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
+        <span class="text-[10.5px]">Give</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+        <span class="text-[10.5px]">My Family</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <span class="text-[10.5px]">Menu</span>
+      </button>
+    </div>
+  </nav>
+
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
 
@@ -73,35 +99,48 @@
   const requests = [
     {
       id: "REQ-3001", documentTypeName: "Baptism Certificate", forMemberName: "Clara Rodrigues",
-      purpose: "School admission for Clara", requestStatus: "Under Review", submissionDate: "20 Jul 2026",
+      purpose: "School admission for Clara", requestStatus: "Under Review", submissionDate: "20 Jul 2026", lastUpdated: "22 Jul 2026",
       requestReference: "DOC-REQ-2026-0142", paymentStatus: "Paid", deliveryStatus: "Not Ready",
       internalNotes: "",
     },
     {
       id: "REQ-3002", documentTypeName: "No Objection / Good Standing Certificate", forMemberName: "John Rodrigues",
-      purpose: "Godparent eligibility for a relative's child", requestStatus: "Submitted", submissionDate: "24 Jul 2026",
+      purpose: "Godparent eligibility for a relative's child", requestStatus: "Submitted", submissionDate: "24 Jul 2026", lastUpdated: "24 Jul 2026",
       requestReference: "DOC-REQ-2026-0158", paymentStatus: "Paid", deliveryStatus: "Not Ready",
       internalNotes: "",
     },
     {
       id: "REQ-3003", documentTypeName: "Confirmation Certificate", forMemberName: "Kevin Rodrigues",
-      purpose: "College admission documentation", requestStatus: "Awaiting Information", submissionDate: "15 Jul 2026",
+      purpose: "College admission documentation", requestStatus: "Awaiting Information", submissionDate: "15 Jul 2026", lastUpdated: "25 Jul 2026",
       requestReference: "DOC-REQ-2026-0121", paymentStatus: "Paid", deliveryStatus: "Not Ready",
       internalNotes: "The baptism certificate copy you uploaded is illegible — please upload a clearer scan.",
     },
     {
       id: "REQ-3004", documentTypeName: "First Communion Certificate", forMemberName: "Clara Rodrigues",
-      purpose: "Confirmation preparation enrollment", requestStatus: "Completed", submissionDate: "10 Jun 2026",
+      purpose: "Confirmation preparation enrollment", requestStatus: "Completed", submissionDate: "10 Jun 2026", lastUpdated: "13 Jun 2026",
       requestReference: "DOC-REQ-2026-0079", paymentStatus: "Paid", deliveryStatus: "Delivered", deliveredDate: "13 Jun 2026",
       internalNotes: "",
     },
     {
       id: "REQ-3005", documentTypeName: "Parish Transfer Certificate", forMemberName: "John Rodrigues",
-      purpose: "Requested in error — family is not transferring parish", requestStatus: "Rejected", submissionDate: "2 May 2026",
+      purpose: "Requested in error — family is not transferring parish", requestStatus: "Rejected", submissionDate: "2 May 2026", lastUpdated: "3 May 2026",
       requestReference: "DOC-REQ-2026-0044", paymentStatus: "Not Required", deliveryStatus: "Not Ready",
       internalNotes: "Parishioner confirmed this was submitted by mistake; no transfer intended.",
     },
   ];
+
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const TODAY = new Date(2026, 6, 26); // 26 Jul 2026
+  function parseDate(str) {
+    const [d, mon, y] = str.split(' ');
+    return new Date(Number(y), MONTH_NAMES.indexOf(mon), Number(d));
+  }
+  function daysAgo(str) {
+    return Math.round((TODAY - parseDate(str)) / 86400000);
+  }
+  function isRecentlyUpdated(r) {
+    return daysAgo(r.lastUpdated) <= 3;
+  }
 
   function displayStage(status) {
     if (['Draft','Submitted'].includes(status)) return 'New';
@@ -208,7 +247,9 @@
 
   function renderList() {
     const main = document.getElementById('main-content');
-    const filtered = requests.filter(r => currentFilter === 'All' || displayStage(r.requestStatus) === currentFilter);
+    const filtered = requests
+      .filter(r => currentFilter === 'All' || displayStage(r.requestStatus) === currentFilter)
+      .sort((a, b) => parseDate(b.lastUpdated) - parseDate(a.lastUpdated));
 
     if (filtered.length === 0) {
       main.innerHTML = `
@@ -224,13 +265,15 @@
       const stage = displayStage(r.requestStatus);
       const [bg, text, iconName] = STAGE_STYLE[stage];
       const isOpen = expandedId === r.id;
+      const recent = isRecentlyUpdated(r);
       return `
-        <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden ${recent ? 'border-l-4 border-primary' : ''}">
           <button onclick="toggleExpand('${r.id}')" class="w-full text-left p-5 flex items-start justify-between gap-3 min-h-[44px] transition-warm hover:bg-section-bg">
             <div class="min-w-0">
+              ${recent ? `<span class="bg-primary-light text-primary text-[10px] font-bold px-2 py-0.5 rounded-badge inline-block mb-1.5">UPDATED</span>` : ''}
               <p class="text-sm font-semibold">${r.documentTypeName}</p>
               <p class="text-xs text-ink-muted mt-1">For ${r.forMemberName} · ${r.requestReference}</p>
-              <p class="text-xs text-ink-muted mt-0.5">Submitted ${r.submissionDate}</p>
+              <p class="text-xs text-ink-muted mt-0.5">Last updated ${r.lastUpdated}</p>
             </div>
             <div class="flex flex-col items-end gap-2 flex-shrink-0">
               <span class="${bg} ${text} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex items-center gap-1.5">${icon(iconName, 'w-3 h-3')}${stage}</span>
