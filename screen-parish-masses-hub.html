@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Parish Connect — Masses</title>
+<title>Parish Connect — Mass Services</title>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,8 +34,6 @@
   :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
   .transition-warm { transition: all 200ms ease; }
   .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
-  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
 </style>
 </head>
 <body class="text-ink">
@@ -103,13 +101,10 @@
           </button>
           <div>
             <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
-            <p class="text-xs text-ink-muted">Masses</p>
+            <p class="text-xs text-ink-muted">Mass Services</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <button aria-label="Search" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">
-            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </button>
           <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
         </div>
         <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
@@ -124,13 +119,14 @@
       <main class="px-6 lg:px-10 py-8 max-w-content">
 
         <div class="mb-6">
-          <p class="font-heading font-bold text-2xl">Masses</p>
-          <p class="text-ink-muted text-sm mt-1">Manage recurring Mass schedules and the intentions booked against them.</p>
+          <p class="font-heading font-bold text-2xl">Mass Services</p>
+          <p class="text-ink-muted text-sm mt-1">Configure Masses, manage bookings and intentions, record payments.</p>
         </div>
 
         <div class="flex gap-2 mb-6">
           <button onclick="setModule('schedule')" data-module="schedule" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Mass Schedule</button>
-          <button onclick="setModule('intentions')" data-module="intentions" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Mass Intentions</button>
+          <button onclick="setModule('upcoming')" data-module="upcoming" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Upcoming Masses</button>
+          <button onclick="setModule('bookings')" data-module="bookings" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Bookings</button>
         </div>
 
         <div id="module-content"></div>
@@ -146,34 +142,69 @@
     <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
         <p class="font-heading font-bold text-lg">Add Mass Schedule</p>
-        <button onclick="closeScheduleModal()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+        <button onclick="closeModal('schedule-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
         </button>
       </div>
       <div id="schedule-form" class="px-6 py-5 space-y-4"></div>
       <div class="px-6 pb-6 pt-2 flex gap-3">
         <button onclick="submitSchedule()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save Schedule</button>
-        <button onclick="closeScheduleModal()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+        <button onclick="closeModal('schedule-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- ============ WALK-IN BOOKING MODAL ============ -->
-  <div id="booking-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+  <!-- ============ PARISH OFFICE BOOKING MODAL ============ -->
+  <div id="office-booking-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
     <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
         <div>
-          <p class="font-heading font-bold text-lg">Record Mass Booking</p>
-          <p class="text-xs text-ink-muted mt-0.5">For a walk-in or phone request.</p>
+          <p class="font-heading font-bold text-lg">Create Parish Office Booking</p>
+          <p class="text-xs text-ink-muted mt-0.5">For a walk-in or phone request. Payment is recorded before confirming.</p>
         </div>
-        <button onclick="closeBookingModal()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+        <button onclick="closeModal('office-booking-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
         </button>
       </div>
-      <div id="booking-form" class="px-6 py-5 space-y-4"></div>
+      <div id="office-booking-form" class="px-6 py-5 space-y-4"></div>
       <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitBooking()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save Booking</button>
-        <button onclick="closeBookingModal()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+        <button onclick="submitOfficeBooking()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Record Payment &amp; Confirm</button>
+        <button onclick="closeModal('office-booking-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INTENTION SHEET PREVIEW MODAL ============ -->
+  <div id="sheet-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-lg max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Intention Sheet</p>
+        <button onclick="closeModal('sheet-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="sheet-content" class="px-6 py-5"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-2 flex-wrap">
+        <button onclick="toast('Downloading intention sheet…')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm">Download</button>
+        <button onclick="toast('Sending to printer…')" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-section-bg">Print</button>
+        <button onclick="toast('Sheet sent to Fr. John Anthony')" class="bg-white border border-divider text-ink text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-section-bg">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RECORD PAYMENT MODAL ============ -->
+  <div id="payment-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Record Payment</p>
+        <button onclick="closeModal('payment-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="payment-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitPayment()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Confirm</button>
+        <button onclick="closeModal('payment-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
       </div>
     </div>
   </div>
@@ -181,6 +212,7 @@
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
   const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  const staffName = sessionParams.get('name') || 'Parish Staff';
   document.getElementById('sidebar-parish-name').textContent = parishName;
   document.getElementById('header-parish-name').textContent = parishName;
   document.getElementById('account-parish-name').textContent = parishName;
@@ -200,75 +232,105 @@
     clearTimeout(window._t);
     window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
   }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
   const ICON_PATHS = {
     check: '<path d="M20 6 9 17l-5-5"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
     plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
-    print: '<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1"/><path d="M6 17v4h12v-4"/>',
-    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
     users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
+    lock: '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
   const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-
-  // ---------------- Mock data: Mass Schedules ----------------
-  let massSchedules = [
-    { id:"MASS-7001", name:"Sunday 6:30 AM Mass", type:"Sunday", time:"6:30 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
-    { id:"MASS-7002", name:"Sunday 8:00 AM Mass", type:"Sunday", time:"8:00 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
-    { id:"MASS-7003", name:"Sunday 10:00 AM Mass (Konkani)", type:"Sunday", time:"10:00 AM", recurrence:"Weekly", days:["Sunday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
-    { id:"MASS-7004", name:"Weekday Mass", type:"Regular", time:"6:45 AM", recurrence:"Weekly", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], suggestedOffering:50, maxIntentions:3, allowMultiple:true, onlineBooking:true, status:"Active" },
-    { id:"MASS-7005", name:"Saturday Vigil Mass", type:"Sunday", time:"6:00 PM", recurrence:"Weekly", days:["Saturday"], suggestedOffering:100, maxIntentions:5, allowMultiple:true, onlineBooking:true, status:"Active" },
-    { id:"MASS-7006", name:"Feast of Infant Jesus Novena", type:"Novena", time:"6:00 PM", recurrence:"Daily (4–12 Jan)", days:[], suggestedOffering:0, maxIntentions:0, allowMultiple:false, onlineBooking:false, status:"Active" },
-  ];
-
-  // ---------------- Mock data: Mass Bookings (Intentions) ----------------
-  let massBookings = [
-    { id:"BOOK-7101", massScheduleId:"MASS-7002", date:"2026-08-02", familyName:"Rodrigues Family", requestedBy:"John Rodrigues", mobile:"9845012345",
-      intentionType:"Thanksgiving", intentionFor:"Rodrigues Family", intentionMessage:"In thanksgiving for good health", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0311" },
-    { id:"BOOK-7102", massScheduleId:"MASS-7002", date:"2026-08-02", familyName:"Pinto Family", requestedBy:"Michael Pinto", mobile:"9845019001",
-      intentionType:"Memorial", intentionFor:"Late Francis Pinto", intentionMessage:"1st death anniversary", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0312" },
-    { id:"BOOK-7103", massScheduleId:"MASS-7001", date:"2026-08-09", familyName:"D'Souza Family", requestedBy:"Anthony D'Souza", mobile:"9845019002",
-      intentionType:"Birthday", intentionFor:"Naomi D'Souza", intentionMessage:"18th birthday blessing", offeringAmount:100, paymentStatus:"Pending", bookingReference:"MASS-BOOK-2026-0318" },
-    { id:"BOOK-7104", massScheduleId:"MASS-7005", date:"2026-08-08", familyName:"Fernandes Family", requestedBy:"Peter Fernandes", mobile:"9845019003",
-      intentionType:"Healing", intentionFor:"Diana Fernandes", intentionMessage:"Recovery from surgery", offeringAmount:100, paymentStatus:"Paid", bookingReference:"MASS-BOOK-2026-0320" },
-  ];
-
-  const INTENTION_TYPES = ["Thanksgiving","Birthday","Wedding Anniversary","Memorial","Death Anniversary","Healing","Special Intention","Souls in Purgatory","Other"];
-
-  // Generate upcoming instances (next 4 weeks) for weekly schedules, from "today" = 26 Jul 2026 (Sunday).
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const TODAY = new Date("2026-07-26T00:00:00");
+  const INTENTION_TYPES = ["Thanksgiving", "Special Intentions", "In Memory Of", "For the Sick", "Anniversary", "Birthday"];
+
+  function formatDateLabel(iso) {
+    const d = new Date(iso + "T00:00:00");
+    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  }
+  function formatTime(t) {
+    const [h, m] = t.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+  }
+
+  // ---------------- Mock data: Mass Activities (schedule config) ----------------
+  let massActivities = [
+    { id:"MASS-7001", massName:"Sunday 6:30 AM Mass", massType:"Regular", time:"6:30 AM", recurrence:"Weekly", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7002", massName:"Sunday 8:00 AM Mass", massType:"Regular", time:"8:00 AM", recurrence:"Weekly", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7003", massName:"Sunday 10:00 AM Mass (Konkani)", massType:"Regular", time:"10:00 AM", recurrence:"Weekly", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7004", massName:"Weekday Mass", massType:"Regular", time:"6:45 AM", recurrence:"Weekly", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:50, maxIntentions:3, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7005", massName:"Saturday Vigil Mass", massType:"Regular", time:"6:00 PM", recurrence:"Weekly", days:["Saturday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7006", massName:"Feast of Infant Jesus Novena", massType:"Novena Day", time:"6:00 PM", recurrence:"One-Time", days:[], fromDate:"2027-01-04", toDate:"2027-01-12", bookingFee:0, maxIntentions:0, bookingCutoffHours:1, status:"Active", manuallyClosedDates:[] },
+  ];
+
+  // ---------------- Mock data: Bookings (each may contain 1+ intentions, per spec) ----------------
+  let bookings = [
+    { id:"BOOK-0311", bookingNumber:"MASS-BOOK-2026-0311", source:"ONLINE", createdBy:"John Rodrigues", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"UPI", createdAt:"2026-07-24", receiptNumber:"IJS/RCPT/2026/0311",
+      intentions:[ { massActivityId:"MASS-7002", date:"2026-08-02", intentionType:"Thanksgiving", intentionDescription:"In thanksgiving for good health", offeredBy:"John Rodrigues", stipend:100 } ] },
+    { id:"BOOK-0312", bookingNumber:"MASS-BOOK-2026-0312", source:"ONLINE", createdBy:"Michael Pinto", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"UPI", createdAt:"2026-07-20", receiptNumber:"IJS/RCPT/2026/0312",
+      intentions:[ { massActivityId:"MASS-7002", date:"2026-08-02", intentionType:"In Memory Of", intentionDescription:"1st death anniversary — Francis Pinto", offeredBy:"Michael Pinto", stipend:100 } ] },
+    { id:"BOOK-0318", bookingNumber:"MASS-BOOK-2026-0318", source:"ONLINE", createdBy:"Anthony D'Souza", bookingStatus:"Pending Payment", paymentStatus:"Pending", paymentMethod:null, createdAt:"2026-07-25", receiptNumber:null,
+      intentions:[ { massActivityId:"MASS-7001", date:"2026-08-09", intentionType:"Birthday", intentionDescription:"18th birthday blessing — Naomi D'Souza", offeredBy:"Anthony D'Souza", stipend:100 } ] },
+    { id:"BOOK-0320", bookingNumber:"MASS-BOOK-2026-0320", source:"ONLINE", createdBy:"Peter Fernandes", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"Card", createdAt:"2026-07-22", receiptNumber:"IJS/RCPT/2026/0320",
+      intentions:[ { massActivityId:"MASS-7005", date:"2026-08-08", intentionType:"For the Sick", intentionDescription:"Recovery from surgery — Diana Fernandes", offeredBy:"Peter Fernandes", stipend:100 } ] },
+    { id:"BOOK-0329", bookingNumber:"MASS-BOOK-2026-0329", source:"ONLINE", createdBy:"John Rodrigues", bookingStatus:"Pending Payment", paymentStatus:"Pending", paymentMethod:null, createdAt:"2026-07-25", receiptNumber:null,
+      intentions:[ { massActivityId:"MASS-7002", date:"2026-08-16", intentionType:"Birthday", intentionDescription:"23rd birthday blessing — Kevin Rodrigues", offeredBy:"John Rodrigues", stipend:100 } ] },
+    { id:"BOOK-0345", bookingNumber:"MASS-BOOK-2026-0345", source:"ONLINE", createdBy:"John Rodrigues", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"Card", createdAt:"2026-07-26", receiptNumber:"IJS/RCPT/2026/0345",
+      intentions:[
+        { massActivityId:"MASS-7001", date:"2026-08-23", intentionType:"Anniversary", intentionDescription:"Wedding anniversary blessing", offeredBy:"John Rodrigues", stipend:100 },
+        { massActivityId:"MASS-7005", date:"2026-08-29", intentionType:"For the Sick", intentionDescription:"Recovery for a family friend", offeredBy:"Grace Rodrigues", stipend:100 },
+      ] },
+    { id:"BOOK-0204", bookingNumber:"MASS-BOOK-2026-0204", source:"PARISH_OFFICE", createdBy:"Parish Staff", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"Cash", createdAt:"2026-06-12", receiptNumber:"IJS/RCPT/2026/0204",
+      intentions:[ { massActivityId:"MASS-7002", date:"2026-06-14", intentionType:"In Memory Of", intentionDescription:"5th death anniversary — Michael Rodrigues", offeredBy:"John Rodrigues", stipend:100 } ] },
+    { id:"BOOK-0350", bookingNumber:"MASS-BOOK-2026-0350", source:"PARISH_OFFICE", createdBy:"Parish Staff", bookingStatus:"Confirmed", paymentStatus:"Paid", paymentMethod:"Cash", createdAt:"2026-07-27", receiptNumber:"IJS/RCPT/2026/0350",
+      intentions:[ { massActivityId:"MASS-7004", date:"2026-07-29", intentionType:"Thanksgiving", intentionDescription:"Safe return from travel", offeredBy:"Simon Mascarenhas", stipend:50 } ] },
+  ];
+
+  function activityById(id) { return massActivities.find(a => a.id === id); }
+
+  // Generates bookable Mass Instances for the next 4 weeks from each active Weekly activity.
   function generateInstances() {
     const instances = [];
-    massSchedules.filter(s => s.recurrence === 'Weekly').forEach(s => {
-      s.days.forEach(day => {
+    massActivities.filter(a => a.recurrence === 'Weekly' && a.status === 'Active').forEach(a => {
+      a.days.forEach(day => {
         const targetDow = DAY_NAMES.indexOf(day);
         for (let week = 0; week < 4; week++) {
           const d = new Date(TODAY);
           const diff = (targetDow - d.getDay() + 7) % 7 + week * 7;
-          d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff)); // skip "today" itself, start from next occurrence
+          d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff));
           const iso = d.toISOString().slice(0,10);
-          instances.push({ scheduleId: s.id, scheduleName: s.name, time: s.time, date: iso, maxIntentions: s.maxIntentions });
+          instances.push({ massActivityId: a.id, massName: a.massName, time: a.time, date: iso, maxIntentions: a.maxIntentions,
+            manuallyClosed: a.manuallyClosedDates.includes(iso) });
         }
       });
     });
-    instances.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    instances.sort((x,y) => x.date.localeCompare(y.date) || x.time.localeCompare(y.time));
     return instances;
   }
 
-  function formatDateLabel(iso) {
-    const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const d = new Date(iso + "T00:00:00");
-    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
-  }
-
-  function bookingsFor(scheduleId, date) {
-    return massBookings.filter(b => b.massScheduleId === scheduleId && b.date === date);
+  function intentionsForInstance(massActivityId, date) {
+    const result = [];
+    bookings.forEach(b => {
+      b.intentions.forEach(it => {
+        if (it.massActivityId === massActivityId && it.date === date) {
+          result.push({ ...it, booking: b });
+        }
+      });
+    });
+    return result;
   }
 
   let currentModule = 'schedule';
-  let expandedInstanceKey = null;
 
   function setModule(m) {
     currentModule = m;
@@ -281,34 +343,34 @@
 
   function renderModule() {
     const el = document.getElementById('module-content');
-    if (currentModule === 'schedule') {
-      renderScheduleModule(el);
-    } else {
-      renderIntentionsModule(el);
-    }
+    if (currentModule === 'schedule') renderScheduleModule(el);
+    else if (currentModule === 'upcoming') renderUpcomingModule(el);
+    else renderBookingsModule(el);
   }
 
-  // ---------------- Mass Schedule module ----------------
+  // =========================================================================
+  // MODULE 1: Mass Schedule (MassActivity configuration)
+  // =========================================================================
   function renderScheduleModule(el) {
     el.innerHTML = `
       <div class="flex justify-end mb-4">
         <button onclick="openScheduleModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Mass Schedule</button>
       </div>
       <div class="grid md:grid-cols-2 gap-4">
-        ${massSchedules.map(s => `
+        ${massActivities.map(a => `
           <div class="bg-card-bg rounded-card shadow-card p-5">
             <div class="flex items-start justify-between gap-3 mb-2">
               <div>
-                <p class="text-sm font-semibold">${s.name}</p>
-                <p class="text-xs text-ink-muted mt-0.5">${s.type} · ${s.recurrence}${s.days.length ? ' · ' + s.days.map(d=>d.slice(0,3)).join('/') : ''}</p>
+                <p class="text-sm font-semibold">${a.massName}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${a.massType} · ${a.recurrence}${a.days.length ? ' · ' + a.days.map(d=>d.slice(0,3)).join('/') : ''}${a.fromDate ? ' · ' + a.fromDate + ' to ' + a.toDate : ''}</p>
               </div>
-              <span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1">${icon('check','w-3 h-3')}${s.status}</span>
+              <span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1">${icon('check','w-3 h-3')}${a.status}</span>
             </div>
             <div class="grid grid-cols-2 gap-2 text-xs mt-3">
-              <div><p class="text-ink-muted">Time</p><p class="font-medium mt-0.5">${s.time}</p></div>
-              <div><p class="text-ink-muted">Suggested offering</p><p class="font-medium mt-0.5">${s.suggestedOffering > 0 ? '₹'+s.suggestedOffering : '—'}</p></div>
-              <div><p class="text-ink-muted">Max intentions</p><p class="font-medium mt-0.5">${s.maxIntentions || '—'}</p></div>
-              <div><p class="text-ink-muted">Online booking</p><p class="font-medium mt-0.5">${s.onlineBooking ? 'Enabled' : 'Disabled'}</p></div>
+              <div><p class="text-ink-muted">Time</p><p class="font-medium mt-0.5">${a.time}</p></div>
+              <div><p class="text-ink-muted">Booking fee</p><p class="font-medium mt-0.5">${a.bookingFee > 0 ? '₹'+a.bookingFee : '—'}</p></div>
+              <div><p class="text-ink-muted">Max intentions</p><p class="font-medium mt-0.5">${a.maxIntentions || 'Unlimited'}</p></div>
+              <div><p class="text-ink-muted">Booking cut-off</p><p class="font-medium mt-0.5">${a.bookingCutoffHours} hr before</p></div>
             </div>
           </div>
         `).join('')}
@@ -321,77 +383,98 @@
     document.getElementById('schedule-form').innerHTML = `
       <div class="space-y-1.5"><label class="text-xs font-medium">Mass name</label><input id="sf-name" type="text" placeholder="e.g. Sunday 9:30 AM Mass" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1.5"><label class="text-xs font-medium">Type</label>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Mass type</label>
           <select id="sf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            <option>Sunday</option><option>Regular</option><option>Feast</option><option>Novena</option><option>Special</option>
+            <option>Regular</option><option>Novena Day</option><option>Feast</option><option>Special</option>
           </select>
         </div>
         <div class="space-y-1.5"><label class="text-xs font-medium">Time</label><input id="sf-time" type="time" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       </div>
       <div class="space-y-1.5">
+        <label class="text-xs font-medium">Recurrence</label>
+        <select id="sf-recurrence" onchange="toggleRecurrenceFields()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="Weekly">Weekly</option>
+          <option value="One-Time">One-Time / Date range</option>
+        </select>
+      </div>
+      <div id="sf-weekly-fields" class="space-y-1.5">
         <label class="text-xs font-medium">Days of week</label>
         <div class="flex flex-wrap gap-2">
           ${DAY_NAMES.map(d => `<label class="flex items-center gap-1.5 text-xs bg-section-bg px-2.5 py-1.5 rounded-badge cursor-pointer"><input type="checkbox" value="${d}" class="sf-day"> ${d.slice(0,3)}</label>`).join('')}
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1.5"><label class="text-xs font-medium">Suggested offering (₹)</label><input id="sf-offering" type="number" value="100" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-        <div class="space-y-1.5"><label class="text-xs font-medium">Max intentions</label><input id="sf-maxint" type="number" value="5" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div id="sf-onetime-fields" class="hidden grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">From date</label><input id="sf-fromdate" type="date" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">To date</label><input id="sf-todate" type="date" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       </div>
-      <label class="flex items-center gap-2 text-sm"><input id="sf-online" type="checkbox" checked> Allow online booking by parishioners</label>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Booking fee (₹)</label><input id="sf-fee" type="number" value="100" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Max intentions</label><input id="sf-maxint" type="number" value="999" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Booking cut-off (hours before Mass)</label><input id="sf-cutoff" type="number" value="1" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
     `;
   }
-  function closeScheduleModal() { document.getElementById('schedule-modal').classList.add('hidden'); }
+  function toggleRecurrenceFields() {
+    const isWeekly = document.getElementById('sf-recurrence').value === 'Weekly';
+    document.getElementById('sf-weekly-fields').classList.toggle('hidden', !isWeekly);
+    document.getElementById('sf-onetime-fields').classList.toggle('hidden', isWeekly);
+  }
 
   function submitSchedule() {
-    const name = document.getElementById('sf-name').value.trim();
-    const type = document.getElementById('sf-type').value;
+    const massName = document.getElementById('sf-name').value.trim();
+    const massType = document.getElementById('sf-type').value;
     const time = document.getElementById('sf-time').value;
-    const days = [...document.querySelectorAll('.sf-day:checked')].map(cb => cb.value);
-    const offering = parseInt(document.getElementById('sf-offering').value) || 0;
+    const recurrence = document.getElementById('sf-recurrence').value;
+    const fee = parseInt(document.getElementById('sf-fee').value) || 0;
     const maxint = parseInt(document.getElementById('sf-maxint').value) || 0;
-    const online = document.getElementById('sf-online').checked;
-    if (!name || !time || days.length === 0) { toast('Please fill in name, time, and at least one day.'); return; }
+    const cutoff = parseInt(document.getElementById('sf-cutoff').value) || 1;
+    if (!massName || !time) { toast('Please fill in name and time.'); return; }
 
-    massSchedules.push({
-      id: 'MASS-' + Math.floor(7100 + Math.random()*800), name, type, time: formatTime(time), recurrence: 'Weekly', days,
-      suggestedOffering: offering, maxIntentions: maxint, allowMultiple: true, onlineBooking: online, status: 'Active',
-    });
-    closeScheduleModal();
-    toast(`${name} added to the Mass schedule.`);
+    const newActivity = { id: 'MASS-' + Math.floor(7100 + Math.random()*800), massName, massType, time: formatTime(time), recurrence,
+      days: [], bookingFee: fee, maxIntentions: maxint, bookingCutoffHours: cutoff, status: 'Active', manuallyClosedDates: [] };
+
+    if (recurrence === 'Weekly') {
+      newActivity.days = [...document.querySelectorAll('.sf-day:checked')].map(cb => cb.value);
+      if (newActivity.days.length === 0) { toast('Please select at least one day.'); return; }
+    } else {
+      newActivity.fromDate = document.getElementById('sf-fromdate').value;
+      newActivity.toDate = document.getElementById('sf-todate').value;
+      if (!newActivity.fromDate || !newActivity.toDate) { toast('Please set a from/to date.'); return; }
+    }
+
+    massActivities.push(newActivity);
+    closeModal('schedule-modal');
+    toast(`${massName} added to the Mass schedule.`);
     renderModule();
   }
 
-  function formatTime(t) {
-    const [h, m] = t.split(':').map(Number);
-    const period = h >= 12 ? 'PM' : 'AM';
-    const h12 = h % 12 === 0 ? 12 : h % 12;
-    return `${h12}:${String(m).padStart(2,'0')} ${period}`;
-  }
+  // =========================================================================
+  // MODULE 2: Upcoming Masses → View Intentions (grouped by type) → Stop Bookings / Generate Sheet
+  // =========================================================================
+  let expandedInstanceKey = null;
 
-  // ---------------- Mass Intentions module ----------------
-  function renderIntentionsModule(el) {
+  function renderUpcomingModule(el) {
     const instances = generateInstances();
     el.innerHTML = `
       <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-3">Upcoming Masses — next 4 weeks</p>
       <div class="space-y-3">
         ${instances.map(inst => {
-          const bookings = bookingsFor(inst.scheduleId, inst.date);
-          const key = inst.scheduleId + '_' + inst.date;
+          const intentions = intentionsForInstance(inst.massActivityId, inst.date).filter(it => it.booking.paymentStatus !== 'Waived-Excluded');
+          const key = inst.massActivityId + '_' + inst.date;
           const isOpen = expandedInstanceKey === key;
           return `
             <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
               <button onclick="toggleInstance('${key}')" class="w-full text-left p-5 flex items-center justify-between gap-3 min-h-[44px] transition-warm hover:bg-section-bg">
                 <div>
                   <p class="text-sm font-semibold">${formatDateLabel(inst.date)} · ${inst.time}</p>
-                  <p class="text-xs text-ink-muted mt-0.5">${inst.scheduleName}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${inst.massName}${inst.manuallyClosed ? ' · <span class="text-error font-semibold">Bookings closed</span>' : ''}</p>
                 </div>
                 <div class="flex items-center gap-3 flex-shrink-0">
-                  <span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('users','w-3 h-3')}${bookings.length}${inst.maxIntentions ? '/'+inst.maxIntentions : ''} booked</span>
+                  <span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('users','w-3 h-3')}${intentions.length}${inst.maxIntentions ? '/'+inst.maxIntentions : ''} booked</span>
                   <span class="text-ink-muted transition-warm" style="transform: rotate(${isOpen ? '180' : '0'}deg)">${icon('chevronDown', 'w-4 h-4')}</span>
                 </div>
               </button>
-              ${isOpen ? renderInstanceDetail(inst, bookings) : ''}
+              ${isOpen ? renderInstanceDetail(inst, intentions) : ''}
             </div>
           `;
         }).join('')}
@@ -404,89 +487,332 @@
     renderModule();
   }
 
-  function renderInstanceDetail(inst, bookings) {
+  function renderInstanceDetail(inst, intentions) {
+    const grouped = {};
+    intentions.forEach(it => { (grouped[it.intentionType] = grouped[it.intentionType] || []).push(it); });
+    const activity = activityById(inst.massActivityId);
+
     return `
       <div class="border-t border-divider px-5 py-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Intentions</p>
-          <div class="flex gap-2">
-            <button onclick="toast('Printing intention sheet for ${formatDateLabel(inst.date)} ${inst.time}')" class="bg-white border border-divider text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('print','icon w-3.5 h-3.5')}Print Sheet</button>
-            <button onclick="openBookingModal('${inst.scheduleId}', '${inst.date}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Add Booking</button>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Intentions (grouped by type)</p>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="openOfficeBookingModal('${inst.massActivityId}', '${inst.date}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Add Office Booking</button>
+            <button onclick="openIntentionSheet('${inst.massActivityId}', '${inst.date}')" class="bg-white border border-divider text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-section-bg">Generate Sheet</button>
+            ${!inst.manuallyClosed ? `<button onclick="stopBookings('${inst.massActivityId}', '${inst.date}')" class="bg-white border border-error text-error text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-error-bg flex items-center gap-1.5">${icon('lock','icon w-3.5 h-3.5')}Stop Bookings</button>` : `<span class="text-xs text-error font-semibold px-3 py-2">Bookings closed</span>`}
           </div>
         </div>
-        ${bookings.length === 0 ? `<p class="text-sm text-ink-muted">No intentions booked yet for this Mass.</p>` : `
-          <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden">
-            ${bookings.map((b, i) => `
-              <div class="px-4 py-3">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <p class="text-sm font-semibold">${i+1}. ${b.intentionType} — ${b.intentionFor}</p>
-                    <p class="text-xs text-ink-muted mt-0.5">${b.intentionMessage}</p>
-                    <p class="text-xs text-ink-muted mt-0.5">Requested by ${b.requestedBy} (${b.familyName}) · ${b.bookingReference}</p>
-                  </div>
-                  <span class="${b.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1">${icon(b.paymentStatus==='Paid'?'check':'clock','w-3 h-3')}₹${b.offeringAmount} ${b.paymentStatus}</span>
+        ${intentions.length === 0 ? `<p class="text-sm text-ink-muted">No intentions booked yet for this Mass.</p>` : `
+          <div class="space-y-3">
+            ${Object.keys(grouped).map(type => `
+              <div>
+                <p class="text-xs font-semibold text-primary mb-1.5">${type} (${grouped[type].length})</p>
+                <div class="bg-section-bg rounded-card divide-y divide-divider overflow-hidden">
+                  ${grouped[type].map(it => `
+                    <div class="px-4 py-3 flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="text-sm">${it.intentionDescription}</p>
+                        <p class="text-xs text-ink-muted mt-0.5">Offered by ${it.offeredBy} · ${it.booking.bookingNumber} · ${it.booking.source === 'ONLINE' ? 'Online' : 'Parish Office'}</p>
+                      </div>
+                      <span class="${it.booking.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : it.booking.paymentStatus==='Waived' ? 'bg-lavender/20 text-[#5b3fc4]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">${it.booking.paymentStatus}</span>
+                    </div>
+                  `).join('')}
                 </div>
               </div>
             `).join('')}
           </div>
         `}
+        <p class="text-xs text-ink-muted">Booking fee ₹${activity.bookingFee} · Cuts off ${activity.bookingCutoffHours} hr before Mass · Pending-payment intentions are excluded from the intention sheet.</p>
       </div>
     `;
   }
 
-  let bookingContext = null;
-  function openBookingModal(scheduleId, date) {
-    bookingContext = { scheduleId, date };
-    document.getElementById('booking-modal').classList.remove('hidden');
-    const schedule = massSchedules.find(s => s.id === scheduleId);
-    document.getElementById('booking-form').innerHTML = `
-      <div class="bg-section-bg rounded-card p-3 text-sm">
-        <p class="font-semibold">${formatDateLabel(date)} · ${schedule.time}</p>
-        <p class="text-xs text-ink-muted mt-0.5">${schedule.name}</p>
+  function stopBookings(massActivityId, date) {
+    const activity = activityById(massActivityId);
+    if (!activity.manuallyClosedDates.includes(date)) activity.manuallyClosedDates.push(date);
+    toast(`Bookings closed for ${formatDateLabel(date)}.`);
+    renderModule();
+  }
+
+  function openIntentionSheet(massActivityId, date) {
+    const activity = activityById(massActivityId);
+    const intentions = intentionsForInstance(massActivityId, date).filter(it => it.booking.paymentStatus === 'Paid' || it.booking.paymentStatus === 'Waived');
+    const grouped = {};
+    intentions.forEach(it => { (grouped[it.intentionType] = grouped[it.intentionType] || []).push(it); });
+
+    document.getElementById('sheet-content').innerHTML = `
+      <div class="text-center mb-4 pb-4 border-b border-divider">
+        <p class="font-heading font-bold">${parishName}</p>
+        <p class="text-sm font-semibold mt-1">${activity.massName}</p>
+        <p class="text-xs text-ink-muted mt-0.5">${formatDateLabel(date)} · ${activity.time}</p>
       </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Requested by</label><input id="bf-requestedby" type="text" value="John Rodrigues" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Family</label><input id="bf-family" type="text" value="Rodrigues Family" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Mobile</label><input id="bf-mobile" type="text" value="9845012345" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      ${intentions.length === 0 ? `<p class="text-sm text-ink-muted text-center">No confirmed intentions to include yet.</p>` : Object.keys(grouped).map(type => `
+        <div class="mb-4">
+          <p class="text-xs font-semibold text-primary uppercase tracking-wide mb-2">${type}</p>
+          <ol class="list-decimal list-inside space-y-1.5 text-sm">
+            ${grouped[type].map(it => `<li>${it.intentionDescription} <span class="text-ink-muted">— offered by ${it.offeredBy}</span></li>`).join('')}
+          </ol>
+        </div>
+      `).join('')}
+      <p class="text-xs text-ink-muted italic mt-2">Pending-payment intentions are not included above.</p>
+    `;
+    document.getElementById('sheet-modal').classList.remove('hidden');
+  }
+
+  // ---- Create Parish Office Booking (from within an instance, or generically) ----
+  let officeBookingContext = null;
+  function openOfficeBookingModal(massActivityId, date) {
+    officeBookingContext = { massActivityId, date };
+    const instances = generateInstances();
+    document.getElementById('office-booking-modal').classList.remove('hidden');
+    document.getElementById('office-booking-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Requestor name</label><input id="ob-requestor" type="text" placeholder="e.g. Maria Fernandes" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Mass</label>
+        <select id="ob-mass" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${instances.map(i => `<option value="${i.massActivityId}_${i.date}" ${i.massActivityId===massActivityId && i.date===date ? 'selected' : ''}>${formatDateLabel(i.date)} · ${i.time} — ${i.massName}</option>`).join('')}
+        </select>
+      </div>
       <div class="space-y-1.5">
         <label class="text-xs font-medium">Intention type</label>
-        <select id="bf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+        <select id="ob-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
           ${INTENTION_TYPES.map(t => `<option>${t}</option>`).join('')}
         </select>
       </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Intention for</label><input id="bf-for" type="text" placeholder="e.g. Late Maria Fernandes" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Message</label><textarea id="bf-message" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Intention description</label><input id="ob-desc" type="text" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1.5"><label class="text-xs font-medium">Offering (₹)</label><input id="bf-offering" type="number" value="${schedule.suggestedOffering}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-        <div class="space-y-1.5"><label class="text-xs font-medium">Payment</label>
-          <select id="bf-payment" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            <option>Cash at Office</option><option>UPI</option><option>Card</option>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Amount (₹)</label><input id="ob-amount" type="number" value="100" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Payment method</label>
+          <select id="ob-payment" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option><option>Other</option>
           </select>
         </div>
       </div>
     `;
   }
-  function closeBookingModal() { document.getElementById('booking-modal').classList.add('hidden'); }
 
-  function submitBooking() {
-    const requestedBy = document.getElementById('bf-requestedby').value.trim();
-    const familyName = document.getElementById('bf-family').value.trim();
-    const mobile = document.getElementById('bf-mobile').value.trim();
-    const intentionType = document.getElementById('bf-type').value;
-    const intentionFor = document.getElementById('bf-for').value.trim();
-    const intentionMessage = document.getElementById('bf-message').value.trim();
-    const offeringAmount = parseInt(document.getElementById('bf-offering').value) || 0;
-    const paymentStatus = document.getElementById('bf-payment').value === 'Cash at Office' ? 'Paid' : 'Paid';
-    if (!requestedBy || !intentionFor) { toast('Please fill in requester name and intention.'); return; }
+  function submitOfficeBooking() {
+    const requestor = document.getElementById('ob-requestor').value.trim();
+    const [massActivityId, date] = document.getElementById('ob-mass').value.split('_');
+    const intentionType = document.getElementById('ob-type').value;
+    const desc = document.getElementById('ob-desc').value.trim();
+    const amount = parseInt(document.getElementById('ob-amount').value) || 0;
+    const method = document.getElementById('ob-payment').value;
+    if (!requestor || !desc) { toast('Please fill in requestor and intention.'); return; }
 
-    massBookings.push({
-      id: 'BOOK-' + Math.floor(7100 + Math.random()*800), massScheduleId: bookingContext.scheduleId, date: bookingContext.date,
-      familyName, requestedBy, mobile, intentionType, intentionFor, intentionMessage, offeringAmount, paymentStatus,
-      bookingReference: 'MASS-BOOK-2026-0' + Math.floor(300 + Math.random()*90),
+    // Per spec: Parish-office bookings are only created after payment confirmation (Confirmed immediately).
+    const bookingNum = 'MASS-BOOK-2026-' + Math.floor(1000 + Math.random()*8999);
+    bookings.push({
+      id: 'BOOK-' + Math.floor(1000 + Math.random()*8999), bookingNumber: bookingNum, source: 'PARISH_OFFICE',
+      createdBy: staffName, bookingStatus: 'Confirmed', paymentStatus: 'Paid', paymentMethod: method,
+      createdAt: '2026-07-30', receiptNumber: 'IJS/RCPT/2026/' + Math.floor(300 + Math.random()*90),
+      intentions: [{ massActivityId, date, intentionType, intentionDescription: desc, offeredBy: requestor, stipend: amount }],
     });
-    expandedInstanceKey = bookingContext.scheduleId + '_' + bookingContext.date;
-    closeBookingModal();
-    toast(`Booking recorded for ${requestedBy}.`);
+    closeModal('office-booking-modal');
+    toast(`Booking ${bookingNum} recorded for ${requestor}.`);
     renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 3: Bookings (master list across all Masses, with filters)
+  // =========================================================================
+  function renderBookingsModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+        <select id="bk-filter-mass" onchange="renderBookingsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="All">All Masses</option>
+          ${massActivities.map(a => `<option value="${a.id}">${a.massName}</option>`).join('')}
+        </select>
+        <select id="bk-filter-payment" onchange="renderBookingsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="All">All Payment Statuses</option>
+          <option>Pending</option><option>Paid</option><option>Waived</option>
+        </select>
+        <select id="bk-filter-source" onchange="renderBookingsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="All">All Sources</option>
+          <option value="ONLINE">Online</option><option value="PARISH_OFFICE">Parish Office</option>
+        </select>
+        <select id="bk-filter-status" onchange="renderBookingsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option value="All">All Booking Statuses</option>
+          <option>Pending Payment</option><option>Confirmed</option><option>Payment Failed</option>
+        </select>
+        <button onclick="openOfficeBookingModal(massActivities[0].id, generateInstances()[0].date)" class="ml-auto bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}New Office Booking</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Booking #</th>
+                <th class="px-4 py-3 font-medium">Mass Date</th>
+                <th class="px-4 py-3 font-medium">Intentions</th>
+                <th class="px-4 py-3 font-medium">Offered By</th>
+                <th class="px-4 py-3 font-medium">Stipend</th>
+                <th class="px-4 py-3 font-medium">Payment</th>
+                <th class="px-4 py-3 font-medium">Source</th>
+                <th class="px-4 py-3 font-medium">Created By</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="booking-detail-area" class="mt-4"></div>
+    `;
+    renderBookingsList();
+  }
+
+  function renderBookingsList() {
+    const massFilter = document.getElementById('bk-filter-mass').value;
+    const paymentFilter = document.getElementById('bk-filter-payment').value;
+    const sourceFilter = document.getElementById('bk-filter-source').value;
+    const statusFilter = document.getElementById('bk-filter-status').value;
+
+    const filtered = bookings.filter(b => {
+      const matchesMass = massFilter === 'All' || b.intentions.some(it => it.massActivityId === massFilter);
+      const matchesPayment = paymentFilter === 'All' || b.paymentStatus === paymentFilter;
+      const matchesSource = sourceFilter === 'All' || b.source === sourceFilter;
+      const matchesStatus = statusFilter === 'All' || b.bookingStatus === statusFilter;
+      return matchesMass && matchesPayment && matchesSource && matchesStatus;
+    }).sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+
+    const body = document.getElementById('bookings-table-body');
+    if (filtered.length === 0) {
+      body.innerHTML = `<tr><td colspan="9" class="px-4 py-10 text-center text-sm text-ink-muted">No bookings match these filters.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = filtered.map(b => {
+      const first = b.intentions[0];
+      const activity = activityById(first.massActivityId);
+      const totalStipend = b.intentions.reduce((s, it) => s + it.stipend, 0);
+      const dateLabel = b.intentions.length > 1 ? `${formatDateLabel(first.date)} +${b.intentions.length-1} more` : `${formatDateLabel(first.date)} · ${activity.time}`;
+      const paid = b.paymentStatus === 'Paid';
+      const waived = b.paymentStatus === 'Waived';
+      return `
+        <tr onclick="openBookingDetail('${b.id}')" class="border-b border-divider last:border-0 cursor-pointer hover:bg-section-bg transition-warm">
+          <td class="px-4 py-3 font-medium">${b.bookingNumber}</td>
+          <td class="px-4 py-3 text-ink-muted">${dateLabel}</td>
+          <td class="px-4 py-3 text-ink-muted">${b.intentions.length}</td>
+          <td class="px-4 py-3">${first.offeredBy}</td>
+          <td class="px-4 py-3">₹${totalStipend}</td>
+          <td class="px-4 py-3"><span class="${paid ? 'bg-green/20 text-[#2f6b45]' : waived ? 'bg-lavender/20 text-[#5b3fc4]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${b.paymentStatus}</span></td>
+          <td class="px-4 py-3 text-ink-muted">${b.source === 'ONLINE' ? 'Online' : 'Parish Office'}</td>
+          <td class="px-4 py-3 text-ink-muted">${b.createdBy}</td>
+          <td class="px-4 py-3"><span class="${b.bookingStatus==='Confirmed' ? 'bg-green/20 text-[#2f6b45]' : b.bookingStatus==='Payment Failed' ? 'bg-error-bg text-error' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${b.bookingStatus}</span></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  let editingIntentionIdx = null;
+
+  function openBookingDetail(bookingId) {
+    const b = bookings.find(x => x.id === bookingId);
+    editingIntentionIdx = null;
+    document.getElementById('booking-detail-area').innerHTML = renderBookingDetail(b);
+    document.getElementById('booking-detail-area').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function renderBookingDetail(b) {
+    return `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <p class="font-heading font-bold text-lg">${b.bookingNumber}</p>
+            <p class="text-xs text-ink-muted mt-0.5">${b.source === 'ONLINE' ? 'Booked online' : 'Booked at parish office'} by ${b.createdBy} · ${b.createdAt}</p>
+          </div>
+          <div class="flex gap-2">
+            ${b.paymentStatus !== 'Paid' ? `<button onclick="openPaymentModal('${b.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Record Payment</button>` : ''}
+            ${b.receiptNumber ? `<button onclick="toast('Printing receipt ${b.receiptNumber}')" class="bg-white border border-divider text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('receipt','icon w-3.5 h-3.5')}Receipt</button>` : ''}
+            <button onclick="document.getElementById('booking-detail-area').innerHTML=''" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">${icon('x')}</button>
+          </div>
+        </div>
+        <div class="space-y-3">
+          ${b.intentions.map((it, i) => editingIntentionIdx === i ? renderEditIntentionForm(b, it, i) : `
+            <div class="bg-section-bg rounded-card p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold">${activityById(it.massActivityId).massName} — ${formatDateLabel(it.date)}</p>
+                  <p class="text-xs mt-1"><span class="font-semibold">${it.intentionType}</span> — ${it.intentionDescription}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">Offered by ${it.offeredBy} · ₹${it.stipend}</p>
+                </div>
+                <button onclick="editingIntentionIdx=${i}; openBookingDetail('${b.id}')" aria-label="Edit intention" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm flex-shrink-0">${icon('edit','icon w-4 h-4')}</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderEditIntentionForm(b, it, i) {
+    return `
+      <div class="bg-section-bg rounded-card p-4 space-y-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Intention type</label>
+          <select id="ei-type-${i}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${INTENTION_TYPES.map(t => `<option ${it.intentionType===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Intention description</label><input id="ei-desc-${i}" type="text" value="${it.intentionDescription}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Offered by</label><input id="ei-offeredby-${i}" type="text" value="${it.offeredBy}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="flex gap-2">
+          <button onclick="saveIntentionEdit('${b.id}', ${i})" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] transition-warm">Save Changes</button>
+          <button onclick="editingIntentionIdx=null; openBookingDetail('${b.id}')" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveIntentionEdit(bookingId, i) {
+    const b = bookings.find(x => x.id === bookingId);
+    b.intentions[i].intentionType = document.getElementById(`ei-type-${i}`).value;
+    b.intentions[i].intentionDescription = document.getElementById(`ei-desc-${i}`).value.trim();
+    b.intentions[i].offeredBy = document.getElementById(`ei-offeredby-${i}`).value.trim();
+    editingIntentionIdx = null;
+    toast('Intention updated.');
+    renderBookingsList();
+    openBookingDetail(bookingId);
+  }
+
+  let paymentContext = null;
+  function openPaymentModal(bookingId) {
+    paymentContext = bookingId;
+    const b = bookings.find(x => x.id === bookingId);
+    const total = b.intentions.reduce((s, it) => s + it.stipend, 0);
+    document.getElementById('payment-modal').classList.remove('hidden');
+    document.getElementById('payment-form').innerHTML = `
+      <div class="bg-section-bg rounded-card p-3 flex items-center justify-between">
+        <span class="text-sm text-ink-muted">Amount due</span>
+        <span class="font-heading font-bold text-lg">₹${total}</span>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Payment status</label>
+        <select id="pf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option>Paid</option><option>Waived</option>
+        </select>
+      </div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Payment method</label>
+        <select id="pf-method" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option><option>Other</option>
+        </select>
+      </div>
+    `;
+  }
+
+  function submitPayment() {
+    const b = bookings.find(x => x.id === paymentContext);
+    const status = document.getElementById('pf-status').value;
+    const method = document.getElementById('pf-method').value;
+    b.paymentStatus = status;
+    b.paymentMethod = status === 'Waived' ? null : method;
+    b.bookingStatus = 'Confirmed';
+    if (!b.receiptNumber && status === 'Paid') b.receiptNumber = 'IJS/RCPT/2026/' + Math.floor(300 + Math.random()*90);
+    closeModal('payment-modal');
+    toast(`Payment ${status.toLowerCase()} for ${b.bookingNumber}.`);
+    renderBookingsList();
+    openBookingDetail(b.id);
   }
 
   renderModule();

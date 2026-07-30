@@ -49,21 +49,22 @@
       </button>
       <div class="flex-1">
         <p class="font-heading font-bold text-base leading-tight">Book a Mass</p>
-        <p id="step-label" class="text-xs text-ink-muted mt-0.5">Step 1 of 4</p>
+        <p id="step-label" class="text-xs text-ink-muted mt-0.5">Step 1 of 5</p>
       </div>
+      <div id="cart-badge" class="hidden bg-primary-light text-primary text-xs font-bold px-2.5 py-1 rounded-badge flex-shrink-0"></div>
     </header>
 
     <!-- ============ PROGRESS BAR ============ -->
     <div class="px-5 pb-4">
       <div class="h-1.5 bg-divider rounded-badge overflow-hidden">
-        <div id="progress-fill" class="h-full bg-primary rounded-badge transition-all duration-300" style="width: 25%"></div>
+        <div id="progress-fill" class="h-full bg-primary rounded-badge transition-all duration-300" style="width: 20%"></div>
       </div>
     </div>
 
     <!-- ============ STEP CONTENT ============ -->
     <main id="step-content" class="px-5 flex-1 space-y-4"></main>
 
-    <!-- ============ FOOTER ACTIONS (thumb-reachable) ============ -->
+    <!-- ============ FOOTER ACTIONS ============ -->
     <div id="footer-actions" class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto px-5 py-4 flex gap-3">
       <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
     </div>
@@ -73,67 +74,94 @@
   <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
 
 <script>
-  // ---------------- Session ----------------
   const sessionParams = new URLSearchParams(window.location.search);
   const sessionName = sessionParams.get('name') || 'John Rodrigues';
 
-  // ---------------- Reference data (mirrors screen-parish-masses-hub.html's Mass Schedule) ----------------
-  const massSchedules = [
-    { id:"MASS-7001", name:"Sunday 6:30 AM Mass", time:"6:30 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
-    { id:"MASS-7002", name:"Sunday 8:00 AM Mass", time:"8:00 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
-    { id:"MASS-7003", name:"Sunday 10:00 AM Mass (Konkani)", time:"10:00 AM", days:["Sunday"], suggestedOffering:100, maxIntentions:5 },
-    { id:"MASS-7004", name:"Weekday Mass", time:"6:45 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], suggestedOffering:50, maxIntentions:3 },
-    { id:"MASS-7005", name:"Saturday Vigil Mass", time:"6:00 PM", days:["Saturday"], suggestedOffering:100, maxIntentions:5 },
-  ];
-  // Existing bookings, so capacity/full states reflect what the parish office already has on record.
-  const existingBookingCounts = { "MASS-7002_2026-08-02": 2, "MASS-7001_2026-08-09": 1, "MASS-7005_2026-08-08": 1 };
+  // ---------------- Reference data: Parish directory (trimmed) ----------------
+  const PARISHES = [{"id": "PAR-0001", "name": "St Mary's Minor Basilica Church", "address": "Msgr. F. Noronha Road"}, {"id": "PAR-0002", "name": "Infant Jesus Shrine", "address": "Post Box 4712"}, {"id": "PAR-0003", "name": "St Francis Xavier Cathedral", "address": "Promenade Road"}, {"id": "PAR-0004", "name": "Holy Ghost Parish", "address": "No. 9/1"}, {"id": "PAR-0005", "name": "Our Lady of Lourdes Church", "address": "Whitefield"}, {"id": "PAR-0006", "name": "Sacred Heart Church", "address": "No. 62"}, {"id": "PAR-0007", "name": "Immaculate Conception Church", "address": "Doresanipalya"}, {"id": "PAR-0008", "name": "Immaculate Heart of Mary Church", "address": "Mt St Joseph's Campus"}, {"id": "PAR-0009", "name": "Our Lady of Sacred Heart Church", "address": "Haralur Road"}, {"id": "PAR-0010", "name": "Resurrection Church", "address": "Old Madras Road"}, {"id": "PAR-0011", "name": "St Anthony's Church", "address": "T. C. Palya"}, {"id": "PAR-0012", "name": "St Anthony's Friary Church", "address": "No. 85"}, {"id": "PAR-0013", "name": "St Francis De Sales Church", "address": "Mermier Nagara"}, {"id": "PAR-0014", "name": "St John The Evangelist Church", "address": "Church Road"}, {"id": "PAR-0015", "name": "St Peter's Church", "address": "Rustum Bagh (Behind Manipal Hospital)"}, {"id": "PAR-0016", "name": "Ascension Church", "address": "2nd Cross"}, {"id": "PAR-0017", "name": "Christha Prabhalaya Epiphany Church", "address": "16th Main"}, {"id": "PAR-0018", "name": "Don Bosco Church", "address": "No. 5/10"}, {"id": "PAR-0019", "name": "Holy Family Church", "address": "Ramamurthy Nagar Main Road"}, {"id": "PAR-0020", "name": "Holy Redeemer Church", "address": "Sadupadesha Vidyalaya"}, {"id": "PAR-0021", "name": "Immaculate Conception Church", "address": "M.G. Railway Colony"}, {"id": "PAR-0022", "name": "Our Lady of Fatima Church", "address": "Jalahalli"}, {"id": "PAR-0023", "name": "Our Lady of Lourdes Church", "address": "Lourdunagara"}, {"id": "PAR-0024", "name": "St Paul Church", "address": "8th Mile"}, {"id": "PAR-0025", "name": "St Pius X Church", "address": "Kammanahalli"}, {"id": "PAR-0026", "name": "Christ the King Church", "address": "8th Main Road"}, {"id": "PAR-0027", "name": "Good Shepherd Church", "address": "Thamarai Kannan Road"}, {"id": "PAR-0028", "name": "Holy Rosary Church", "address": "New Airport Road"}, {"id": "PAR-0029", "name": "Mother of Mines Shrine", "address": "Orgaum Post"}, {"id": "PAR-0030", "name": "Nativity Church", "address": "No. 431"}, {"id": "PAR-0031", "name": "Our Lady of Lourdes Church", "address": "No. 14"}, {"id": "PAR-0032", "name": "Our Lady of Mount Carmel Church", "address": "Mariapura"}, {"id": "PAR-0033", "name": "Our Lady of Victories Church", "address": "Champion Reefs"}, {"id": "PAR-0034", "name": "Sacred Heart Church", "address": "Siluvepura"}, {"id": "PAR-0035", "name": "Ss Peter and Paul Church", "address": "Jagajivan Ram Nagara"}, {"id": "PAR-0036", "name": "St Anthony's Church", "address": "St. Anthony's Church Street"}, {"id": "PAR-0037", "name": "St Ignatius Church", "address": "Begur"}, {"id": "PAR-0038", "name": "St Ignatius Church", "address": "Beguru"}, {"id": "PAR-0039", "name": "St James Church", "address": "Mariannapalya"}, {"id": "PAR-0040", "name": "St John Paul II Church", "address": "K. Channasandra Main Road"}, {"id": "PAR-0041", "name": "St John the Baptist Church", "address": "No. 95/12"}, {"id": "PAR-0042", "name": "St Joseph's Church", "address": "Briand Square"}, {"id": "PAR-0043", "name": "St Patrick's Church", "address": "15 K"}, {"id": "PAR-0044", "name": "St Theresa's Church", "address": "J. C. Road"}, {"id": "PAR-0045", "name": "Annunciation Church", "address": "No. 50"}, {"id": "PAR-0046", "name": "Assumption Church", "address": "2nd Block"}, {"id": "PAR-0047", "name": "Christ The King Church", "address": "Byrathi"}, {"id": "PAR-0048", "name": "Church of the Holy Name of Jesus", "address": "No. 912"}, {"id": "PAR-0049", "name": "Divine Mercy Church", "address": "Anagalapura"}, {"id": "PAR-0050", "name": "Holy Eucharist Church", "address": "Near Graffitti Garments"}, {"id": "PAR-0051", "name": "Holy Trinity Church", "address": "Mylasandra"}, {"id": "PAR-0052", "name": "Holy Trinity Church", "address": "No. 7"}, {"id": "PAR-0053", "name": "Immaculate Heart of Mary Church", "address": "Sanyasa Institute Campus"}, {"id": "PAR-0054", "name": "Infant Jesus Church", "address": "5th Cross"}, {"id": "PAR-0055", "name": "Krista Krupalaya Church", "address": "Hosakerehalli"}, {"id": "PAR-0056", "name": "Kristha Karunalaya Church", "address": "Kanakapura Main Road"}, {"id": "PAR-0057", "name": "Mother of Perpetual Help Church", "address": "Akashnagar"}, {"id": "PAR-0058", "name": "Our Lady of Good Health Church", "address": "Anekal"}, {"id": "PAR-0059", "name": "Our Lady of Lourdes Church", "address": "Karubele"}, {"id": "PAR-0060", "name": "Our Lady of Vailankanni Church", "address": "23/A C.A. Site"}, {"id": "PAR-0061", "name": "Sacred Heart Church", "address": "No. 3069"}, {"id": "PAR-0062", "name": "St Anne's Church", "address": "H.A.L. Colony"}, {"id": "PAR-0063", "name": "St Anne's Church", "address": "Dr. Shivaram Karanth Nagara Post"}, {"id": "PAR-0064", "name": "St Anthony's Church", "address": "Gangondanahalli"}, {"id": "PAR-0065", "name": "St Anthony's Church", "address": "Uttarahalli"}, {"id": "PAR-0066", "name": "St Anthony's Church", "address": "A' Street"}, {"id": "PAR-0067", "name": "St Anthony's Church", "address": "No. 225"}, {"id": "PAR-0068", "name": "St Anthony's Church", "address": "3rd Main Road"}, {"id": "PAR-0069", "name": "St Anthony's Church", "address": "Gottigere Post"}, {"id": "PAR-0070", "name": "St Anthony's Church", "address": "N.H. 4"}, {"id": "PAR-0071", "name": "St Anthony's Church", "address": "Munnekolala"}, {"id": "PAR-0072", "name": "St Benedict's Church", "address": "Asirvanam"}, {"id": "PAR-0073", "name": "St Francis of Assisi Church", "address": "No. 26/1"}, {"id": "PAR-0074", "name": "St Francis Xavier's Church", "address": "Chikkakammanahalli"}, {"id": "PAR-0075", "name": "St Francis Xavier's Church", "address": "Somanahalli Post"}, {"id": "PAR-0076", "name": "St Gaspar's Church", "address": "Precious Blood Missionaries"}, {"id": "PAR-0077", "name": "St John Marie Vianney Semi Public Church", "address": "83"}, {"id": "PAR-0078", "name": "St John the Britto Church", "address": "Laggere Main Road (Near Old Bus Stop)"}, {"id": "PAR-0079", "name": "St Joseph Vaz Church", "address": "1st Block"}, {"id": "PAR-0080", "name": "St Joseph's Church", "address": "Adigondanahally"}, {"id": "PAR-0081", "name": "St Joseph's Church", "address": "Soluru Post"}, {"id": "PAR-0082", "name": "St Joseph's Church", "address": "Susaipalayam"}, {"id": "PAR-0083", "name": "St Joseph's Church", "address": "Church Street"}, {"id": "PAR-0084", "name": "St Jude's Church", "address": "Karahalli Post"}, {"id": "PAR-0085", "name": "St Jude's Church", "address": "7th Main"}, {"id": "PAR-0086", "name": "St Jude's Church", "address": "Dr. S. Kumara Layout"}, {"id": "PAR-0087", "name": "St Mary's Church", "address": "Ramakrishna Hegde Nagar"}, {"id": "PAR-0088", "name": "St Michael's Church", "address": "Church Road"}, {"id": "PAR-0089", "name": "St Paul the Hermit Church", "address": "Nagenahalli"}, {"id": "PAR-0090", "name": "St Rock's Church", "address": "Amruthnagar"}, {"id": "PAR-0091", "name": "St Teresa of Kolkata Church", "address": "Kalpana Chawla Road"}, {"id": "PAR-0092", "name": "St Theresa of Child Jesus Church, Singasandra", "address": "Manipal County Rd"}, {"id": "PAR-0093", "name": "St Theresa's Church", "address": "2nd Cross Road"}, {"id": "PAR-0094", "name": "St Thomas Church", "address": "Jeevanbhima Nagara (HAL)"}, {"id": "PAR-0095", "name": "St Thomas Church", "address": "7th cross"}, {"id": "PAR-0096", "name": "Church of Our Lady of Compassion", "address": "Nugilubande"}, {"id": "PAR-0097", "name": "Holy Cross Church", "address": "B.E.M.L. Nagar"}, {"id": "PAR-0098", "name": "Holy Rosary Church", "address": "Harobale"}, {"id": "PAR-0099", "name": "Holy Rosary Church", "address": "Bidadi Hobali"}, {"id": "PAR-0100", "name": "Immaculate Heart of Mary Church", "address": "M. B. Road"}, {"id": "PAR-0101", "name": "Infant Jesus Church", "address": "Sidlaghatta Road"}, {"id": "PAR-0102", "name": "Nithyadhara Mathe Church", "address": "Rajaji Road"}, {"id": "PAR-0103", "name": "Our Lady of Divine Providence Semi Public Church", "address": "Kannuru Village Post"}, {"id": "PAR-0104", "name": "Our Lady of Fathima Church", "address": "Old Madras Road"}, {"id": "PAR-0105", "name": "Our Lady of Lourdes Church", "address": "Horapete Post"}, {"id": "PAR-0106", "name": "Our Lady of Lourdes Church", "address": "Ramanagara Post"}, {"id": "PAR-0107", "name": "Sacred Heart Church", "address": "K. R. Extension"}, {"id": "PAR-0108", "name": "Sacred Heart Church", "address": "Chintamani Road"}, {"id": "PAR-0109", "name": "St Anthony's Church", "address": "Kadisenahalli"}, {"id": "PAR-0110", "name": "St Anthony's Church", "address": "Bettada Halasuru"}, {"id": "PAR-0111", "name": "St Anthony's Church", "address": "Hospete Circle"}, {"id": "PAR-0112", "name": "St Anthony's Church", "address": "Yedavanahalli"}, {"id": "PAR-0113", "name": "St Anthony's Church", "address": "Amalagondi"}, {"id": "PAR-0114", "name": "St Francis de Sales Church", "address": "J.J. Nagara"}, {"id": "PAR-0115", "name": "St Francis Xavier's Church", "address": "Gokunte"}, {"id": "PAR-0116", "name": "St Francis Xavier's Church", "address": "B. B. Road"}, {"id": "PAR-0117", "name": "St Joseph's Church", "address": "Church Road"}, {"id": "PAR-0118", "name": "St Joseph's Church", "address": "Sannenahalli"}, {"id": "PAR-0119", "name": "St Joseph's Church", "address": "Channapatna"}, {"id": "PAR-0120", "name": "St Joseph's Church", "address": "Soosaipalya"}, {"id": "PAR-0121", "name": "St Joseph's Church", "address": "M. G. Road"}, {"id": "PAR-0122", "name": "St Joseph's Church", "address": "Jyothi Nagar"}, {"id": "PAR-0123", "name": "St Paul's Church", "address": "Marikuppa"}, {"id": "PAR-0124", "name": "St Peter's Church", "address": "Court Road"}, {"id": "PAR-0125", "name": "St Rita's Church", "address": "Church Street"}, {"id": "PAR-0126", "name": "St Rita's Church", "address": "Kunigal"}, {"id": "PAR-0127", "name": "St Rita's Church", "address": "Kaggalahalli Village and Post"}, {"id": "PAR-0128", "name": "St Sebastian's Church", "address": "Coramandel Post"}, {"id": "PAR-0129", "name": "St Theresa of Child Jesus Church", "address": "T.C. Halli"}, {"id": "PAR-0130", "name": "St Theresa's Church", "address": "Theresapura"}];
+  const HOME_PARISH_ID = "PAR-0002";
+
+  // ---------------- Reference data: this parish's Mass Schedule (MassActivity records) ----------------
+  // Mirrors screen-parish-masses-hub.html. maxIntentions default per spec is 999; a few Masses
+  // here are deliberately configured lower by staff to demonstrate capacity/Full states.
+  const massActivitiesByParish = {
+    "PAR-0002": [
+      { id:"MASS-7001", massName:"Sunday 6:30 AM Mass", massType:"Regular", time:"6:30 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7002", massName:"Sunday 8:00 AM Mass", massType:"Regular", time:"8:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7003", massName:"Sunday 10:00 AM Mass (Konkani)", massType:"Regular", time:"10:00 AM", days:["Sunday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7004", massName:"Weekday Mass", massType:"Regular", time:"6:45 AM", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], bookingFee:50, maxIntentions:3, bookingCutoffHours:1, status:"Active" },
+      { id:"MASS-7005", massName:"Saturday Vigil Mass", massType:"Regular", time:"6:00 PM", days:["Saturday"], bookingFee:100, maxIntentions:5, bookingCutoffHours:1, status:"Active" },
+    ],
+  };
+  // Bookings that already exist against upcoming instances, so capacity/Full states are real.
+  const existingIntentionCounts = { "MASS-7002_2026-08-02": 2, "MASS-7001_2026-08-09": 1, "MASS-7005_2026-08-08": 1 };
 
   const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const TODAY = new Date("2026-07-26T00:00:00");
-  const INTENTION_TYPES = ["Thanksgiving","Birthday","Wedding Anniversary","Memorial","Death Anniversary","Healing","Special Intention","Souls in Purgatory","Other"];
+  const INTENTION_TYPES = ["Thanksgiving", "Special Intentions", "In Memory Of", "For the Sick", "Anniversary", "Birthday"];
 
-  function generateInstances() {
+  function formatDateLabel(iso) {
+    const d = new Date(iso + "T00:00:00");
+    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+  }
+
+  // Generates bookable Mass Instances for a parish over the next 3 weeks, respecting the
+  // booking cut-off and capacity rules (only Active masses, not yet full, within window).
+  function generateInstances(parishId) {
+    const activities = massActivitiesByParish[parishId] || [];
     const instances = [];
-    massSchedules.forEach(s => {
-      s.days.forEach(day => {
+    activities.filter(a => a.status === 'Active').forEach(a => {
+      a.days.forEach(day => {
         const targetDow = DAY_NAMES.indexOf(day);
         for (let week = 0; week < 3; week++) {
           const d = new Date(TODAY);
           const diff = (targetDow - d.getDay() + 7) % 7 + week * 7;
           d.setDate(d.getDate() + (diff === 0 && week === 0 ? 7 : diff));
           const iso = d.toISOString().slice(0,10);
-          const key = s.id + '_' + iso;
-          const booked = existingBookingCounts[key] || 0;
-          instances.push({ scheduleId: s.id, scheduleName: s.name, time: s.time, date: iso, maxIntentions: s.maxIntentions, suggestedOffering: s.suggestedOffering, booked });
+          const key = a.id + '_' + iso;
+          const booked = existingIntentionCounts[key] || 0;
+          instances.push({ massActivityId: a.id, massName: a.massName, massType: a.massType, time: a.time, date: iso, maxIntentions: a.maxIntentions, bookingFee: a.bookingFee, booked });
         }
       });
     });
-    instances.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    instances.sort((x,y) => x.date.localeCompare(y.date) || x.time.localeCompare(y.time));
     return instances;
   }
-  function formatDateLabel(iso) {
-    const d = new Date(iso + "T00:00:00");
-    return `${DAY_NAMES[d.getDay()].slice(0,3)}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
-  }
 
+  function instanceKey(i) { return i.massActivityId + '_' + i.date; }
+
+  // ---------------- Wizard state ----------------
+  // A booking = one or more intentions. Each intention carries its own Mass Instance selection,
+  // per the spec's "each intention may have its own Mass selection" rule.
   const state = {
-    instanceKey: null,
-    intentionType: '',
-    intentionFor: 'Rodrigues Family',
-    intentionMessage: '',
-    offeringAmount: 0,
+    parishId: null,
+    parishName: null,
+    intentions: [],       // committed intentions for this booking
+    draft: {               // the intention currently being built
+      instanceKey: null,
+      intentionType: '',
+      intentionDescription: '',
+      offeredBy: sessionName,
+      stipend: 0,
+    },
     paymentMethod: null,
   };
 
-  const STEPS = ['mass', 'intention', 'payment', 'review'];
-  const STEP_LABELS = { mass: 'Choose Mass', intention: 'Intention', payment: 'Offering', review: 'Review' };
+  const STEPS = ['parish', 'date', 'mass', 'intention', 'review', 'payment', 'confirmation'];
+  // 'confirmation' is rendered specially (not part of the normal step flow / progress bar).
+  const WIZARD_STEPS = ['parish', 'date', 'mass', 'intention', 'review', 'payment'];
+  const STEP_LABELS = { parish: 'Parish', date: 'Date', mass: 'Choose Mass', intention: 'Intention', review: 'Review', payment: 'Payment' };
   let stepIndex = 0;
+  let selectedDate = null;
 
   function icon(paths, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${paths}</svg>`; }
   const ICONS = {
     check: '<path d="M20 6 9 17l-5-5"/>',
     users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
   };
 
   function toast(msg) {
@@ -144,118 +172,263 @@
     window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
   }
 
+  function updateCartBadge() {
+    const badge = document.getElementById('cart-badge');
+    if (state.intentions.length > 0) {
+      badge.textContent = `${state.intentions.length} intention${state.intentions.length>1?'s':''}`;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
   function goBack() {
     if (stepIndex === 0) { window.location.href = 'screen-parishioner-dashboard-home.html?' + sessionParams.toString(); return; }
+    // Stepping back from 'mass' or 'date' while mid-intention just retreats one step.
     stepIndex--;
     render();
   }
 
   function handleContinue() {
-    const step = STEPS[stepIndex];
+    const step = WIZARD_STEPS[stepIndex];
     if (!validateStep(step)) return;
-    if (step === 'review') { submitBooking(); return; }
+    if (step === 'payment') { submitBooking(); return; }
     stepIndex++;
     render();
   }
 
   function validateStep(step) {
-    if (step === 'mass' && !state.instanceKey) { toast('Please choose a Mass.'); return false; }
+    if (step === 'parish' && !state.parishId) { toast('Please select a parish.'); return false; }
+    if (step === 'date' && !selectedDate) { toast('Please select a date.'); return false; }
+    if (step === 'mass' && !state.draft.instanceKey) { toast('Please choose a Mass.'); return false; }
     if (step === 'intention') {
-      if (!state.intentionType) { toast('Please choose an intention type.'); return false; }
-      if (!state.intentionFor.trim()) { toast('Please tell us who this intention is for.'); return false; }
+      if (!state.draft.intentionType) { toast('Please choose an intention type.'); return false; }
+      if (!state.draft.intentionDescription.trim()) { toast('Please describe the intention.'); return false; }
+      if (!state.draft.offeredBy.trim()) { toast('Please enter who this is offered by.'); return false; }
     }
+    if (step === 'review' && state.intentions.length === 0) { toast('Please add at least one intention.'); return false; }
     if (step === 'payment' && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
     return true;
   }
 
-  function selectedInstance() {
-    const instances = generateInstances();
-    return instances.find(i => (i.scheduleId + '_' + i.date) === state.instanceKey);
+  function selectParish(parishId, parishName) {
+    state.parishId = parishId;
+    state.parishName = parishName;
+    render();
   }
 
-  function selectInstance(key, offering) {
-    const inst = generateInstances().find(i => (i.scheduleId + '_' + i.date) === key);
+  function selectDate(iso) {
+    selectedDate = iso;
+    render();
+  }
+
+  function selectMass(key, fee) {
+    const inst = generateInstances(state.parishId).find(i => instanceKey(i) === key);
     if (inst.maxIntentions && inst.booked >= inst.maxIntentions) { toast('This Mass is fully booked — please choose another.'); return; }
-    state.instanceKey = key;
-    state.offeringAmount = offering;
+    state.draft.instanceKey = key;
+    state.draft.stipend = fee;
+    stepIndex = WIZARD_STEPS.indexOf('intention');
+    render();
+  }
+
+  function commitIntentionAndAddAnother() {
+    if (!validateStep('intention')) return;
+    state.intentions.push({ ...state.draft, instanceKey: state.draft.instanceKey });
+    resetDraft();
+    selectedDate = null;
+    stepIndex = WIZARD_STEPS.indexOf('date');
+    updateCartBadge();
+    render();
+  }
+
+  function commitIntentionAndReview() {
+    if (!validateStep('intention')) return;
+    state.intentions.push({ ...state.draft, instanceKey: state.draft.instanceKey });
+    resetDraft();
+    selectedDate = null;
+    stepIndex = WIZARD_STEPS.indexOf('review');
+    updateCartBadge();
+    render();
+  }
+
+  function resetDraft() {
+    state.draft = { instanceKey: null, intentionType: '', intentionDescription: '', offeredBy: sessionName, stipend: 0 };
+  }
+
+  function removeIntention(idx) {
+    state.intentions.splice(idx, 1);
+    updateCartBadge();
+    if (state.intentions.length === 0) { stepIndex = WIZARD_STEPS.indexOf('date'); }
+    render();
+  }
+
+  function addAnotherFromReview() {
+    stepIndex = WIZARD_STEPS.indexOf('date');
     render();
   }
 
   // ---------------- Step renderers ----------------
-  function renderMass() {
-    const instances = generateInstances();
-    const byDate = {};
-    instances.forEach(i => { (byDate[i.date] = byDate[i.date] || []).push(i); });
+  function renderParish() {
+    const others = PARISHES.filter(p => p.id !== HOME_PARISH_ID);
     return `
-      <p class="font-heading font-bold text-xl mb-1">Which Mass would you like to book?</p>
-      <p class="text-ink-muted text-sm mb-4">Showing the next 3 weeks.</p>
-      <div class="space-y-5">
-        ${Object.keys(byDate).sort().map(date => `
-          <div>
-            <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">${formatDateLabel(date)}</p>
-            <div class="space-y-2.5">
-              ${byDate[date].map(i => {
-                const key = i.scheduleId + '_' + i.date;
-                const isFull = i.maxIntentions && i.booked >= i.maxIntentions;
-                const isSelected = state.instanceKey === key;
-                return `
-                <button ${isFull ? 'disabled' : `onclick="selectInstance('${key}', ${i.suggestedOffering})"`} class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${isFull ? 'full bg-card-bg' : isSelected ? 'selected' : 'bg-card-bg'}">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <p class="text-sm font-semibold">${i.scheduleName}</p>
-                      <p class="text-xs text-ink-muted mt-0.5">${i.time}${i.suggestedOffering > 0 ? ' · ₹' + i.suggestedOffering + ' suggested offering' : ''}</p>
-                    </div>
-                    ${isFull
-                      ? `<span class="text-xs font-semibold text-error">Full</span>`
-                      : isSelected
-                        ? `<span class="text-primary">${icon(ICONS.check, 'w-5 h-5')}</span>`
-                        : i.maxIntentions ? `<span class="text-xs text-ink-muted flex items-center gap-1">${icon(ICONS.users,'w-3.5 h-3.5')}${i.booked}/${i.maxIntentions}</span>` : ''
-                    }
-                  </div>
-                </button>
-              `}).join('')}
-            </div>
-          </div>
-        `).join('')}
+      <p class="font-heading font-bold text-xl mb-1">Find a parish</p>
+      <p class="text-ink-muted text-sm mb-4">Search for the parish whose Mass you'd like to book.</p>
+      <div class="relative mb-3">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted">${icon(ICONS.search,'icon w-4 h-4')}</span>
+        <input id="parish-search" type="text" list="parish-options" placeholder="Search for a parish…"
+          oninput="onParishTyped(this.value)"
+          class="w-full border border-divider rounded-input pl-10 pr-4 h-12 text-sm bg-card-bg focus:ring-2 focus:ring-primary-light focus:outline-none">
+        <datalist id="parish-options">${PARISHES.map(p => `<option value="${p.name}">`).join('')}</datalist>
+      </div>
+      <button onclick="selectParish('${HOME_PARISH_ID}', 'Infant Jesus Shrine')" class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${state.parishId===HOME_PARISH_ID ? 'selected' : 'bg-card-bg'}">
+        <div class="flex items-center justify-between">
+          <div><p class="text-sm font-semibold">Infant Jesus Shrine</p><p class="text-xs text-ink-muted mt-0.5">Viveknagar, Bengaluru · Your home parish</p></div>
+          ${state.parishId===HOME_PARISH_ID ? `<span class="text-primary">${icon(ICONS.check,'w-5 h-5')}</span>` : ''}
+        </div>
+      </button>
+    `;
+  }
+
+  function onParishTyped(name) {
+    const match = PARISHES.find(p => p.name === name);
+    if (match) selectParish(match.id, match.name);
+  }
+
+  function renderDate() {
+    const instances = generateInstances(state.parishId);
+    if (instances.length === 0) {
+      return `
+        <p class="font-heading font-bold text-xl mb-1">Select a date</p>
+        <div class="bg-card-bg rounded-card shadow-card p-8 text-center mt-4">
+          <p class="text-sm font-semibold">No Masses configured</p>
+          <p class="text-sm text-ink-muted mt-1">${state.parishName} hasn't set up online Mass booking yet.</p>
+        </div>
+      `;
+    }
+    const dates = [...new Set(instances.map(i => i.date))].sort();
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Select a date</p>
+      <p class="text-ink-muted text-sm mb-4">${state.parishName} · showing the next 3 weeks</p>
+      <div class="space-y-2.5">
+        ${dates.map(d => {
+          const count = instances.filter(i => i.date === d).length;
+          const isSelected = selectedDate === d;
+          return `
+            <button onclick="selectDate('${d}')" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${isSelected ? 'selected' : 'bg-card-bg'}">
+              <span class="text-sm font-semibold">${formatDateLabel(d)}</span>
+              <span class="text-xs text-ink-muted">${count} Mass${count>1?'es':''}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderMass() {
+    const instances = generateInstances(state.parishId).filter(i => i.date === selectedDate);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">${formatDateLabel(selectedDate)}</p>
+      <p class="text-ink-muted text-sm mb-4">Choose a Mass for this intention.</p>
+      <div class="space-y-2.5">
+        ${instances.map(i => {
+          const key = instanceKey(i);
+          const isFull = i.maxIntentions && i.booked >= i.maxIntentions;
+          const isSelected = state.draft.instanceKey === key;
+          return `
+            <button ${isFull ? 'disabled' : `onclick="selectMass('${key}', ${i.bookingFee})"`} class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${isFull ? 'full bg-card-bg' : isSelected ? 'selected' : 'bg-card-bg'}">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold">${i.massName}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${i.time} · ₹${i.bookingFee} booking fee</p>
+                </div>
+                ${isFull
+                  ? `<span class="text-xs font-semibold text-error">Full</span>`
+                  : `<span class="text-xs text-ink-muted flex items-center gap-1">${icon(ICONS.users,'w-3.5 h-3.5')}${i.booked}/${i.maxIntentions}</span>`
+                }
+              </div>
+            </button>
+          `;
+        }).join('')}
       </div>
     `;
   }
 
   function renderIntention() {
     return `
-      <p class="font-heading font-bold text-xl mb-1">What's the intention?</p>
-      <p class="text-ink-muted text-sm mb-4">Let the parish know who or what this Mass is for.</p>
+      <p class="font-heading font-bold text-xl mb-1">Intention details</p>
+      <p class="text-ink-muted text-sm mb-4">Tell us who or what this Mass is for.</p>
       <div class="bg-card-bg rounded-card shadow-card p-5 space-y-4">
         <div class="space-y-1.5">
           <label class="text-sm font-medium">Intention type</label>
-          <select id="intention-type" onchange="state.intentionType=this.value" class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <select id="in-type" onchange="state.draft.intentionType=this.value" class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
             <option value="">Select…</option>
-            ${INTENTION_TYPES.map(t => `<option value="${t}" ${state.intentionType===t?'selected':''}>${t}</option>`).join('')}
+            ${INTENTION_TYPES.map(t => `<option value="${t}" ${state.draft.intentionType===t?'selected':''}>${t}</option>`).join('')}
           </select>
         </div>
         <div class="space-y-1.5">
-          <label class="text-sm font-medium">Intention for</label>
-          <input id="intention-for" type="text" value="${state.intentionFor}" placeholder="e.g. Rodrigues Family, Late Michael Rodrigues"
-            class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
-            oninput="state.intentionFor = this.value">
+          <label class="text-sm font-medium">Intention description</label>
+          <textarea id="in-desc" rows="2" placeholder="e.g. In thanksgiving for good health"
+            class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"
+            oninput="state.draft.intentionDescription=this.value">${state.draft.intentionDescription}</textarea>
         </div>
         <div class="space-y-1.5">
-          <label class="text-sm font-medium">Message (optional)</label>
-          <textarea id="intention-message" rows="2" placeholder="Anything you'd like the priest to know…"
-            class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"
-            oninput="state.intentionMessage = this.value">${state.intentionMessage}</textarea>
+          <label class="text-sm font-medium">Offered by</label>
+          <input id="in-offeredby" type="text" value="${state.draft.offeredBy}"
+            class="w-full border border-divider rounded-input px-4 h-12 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"
+            oninput="state.draft.offeredBy=this.value">
+        </div>
+        <div class="flex items-center justify-between bg-section-bg rounded-card p-3">
+          <span class="text-xs text-ink-muted">Stipend</span>
+          <span class="text-sm font-semibold">₹${state.draft.stipend}</span>
         </div>
       </div>
     `;
   }
 
-  function renderPayment() {
-    const methods = ['UPI', 'Card', 'Pay at Parish Office'];
+  function renderReview() {
     return `
-      <p class="font-heading font-bold text-xl mb-1">Mass offering</p>
+      <p class="font-heading font-bold text-xl mb-1">Review your booking</p>
+      <p class="text-ink-muted text-sm mb-4">${state.intentions.length} intention${state.intentions.length>1?'s':''} · ${state.parishName}</p>
+      <div class="space-y-3 mb-4">
+        ${state.intentions.map((it, idx) => {
+          const inst = generateInstances(state.parishId).find(i => instanceKey(i) === it.instanceKey);
+          return `
+            <div class="bg-card-bg rounded-card shadow-card p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold">${inst.massName}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${formatDateLabel(inst.date)} · ${inst.time}</p>
+                  <p class="text-xs mt-2"><span class="font-semibold">${it.intentionType}</span> — ${it.intentionDescription}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">Offered by ${it.offeredBy}</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <p class="text-sm font-semibold">₹${it.stipend}</p>
+                  <button onclick="removeIntention(${idx})" class="text-error mt-1">${icon(ICONS.trash,'w-4 h-4')}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <button onclick="addAnotherFromReview()" class="w-full bg-white border-2 border-primary text-primary text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm flex items-center justify-center gap-1.5 mb-4">${icon(ICONS.plus,'icon w-4 h-4')}Add Another Intention</button>
+      <div class="bg-section-bg rounded-card p-4 flex items-center justify-between">
+        <span class="text-sm font-semibold">Total (${state.intentions.length} intention${state.intentions.length>1?'s':''})</span>
+        <span class="font-heading font-bold text-lg">₹${totalAmount()}</span>
+      </div>
+    `;
+  }
+
+  function totalAmount() {
+    return state.intentions.reduce((sum, it) => sum + it.stipend, 0);
+  }
+
+  function renderPayment() {
+    const methods = ['UPI', 'Card', 'Net Banking'];
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Payment</p>
       <div class="bg-card-bg rounded-card shadow-card p-5 mb-4 flex items-center justify-between">
-        <p class="text-sm text-ink-muted">Suggested offering</p>
-        <p class="font-heading font-bold text-xl">₹${state.offeringAmount}</p>
+        <p class="text-sm text-ink-muted">Total payable</p>
+        <p class="font-heading font-bold text-xl">₹${totalAmount()}</p>
       </div>
       <p class="text-ink-muted text-sm mb-3">Choose a payment method.</p>
       <div class="space-y-3">
@@ -269,45 +442,45 @@
     `;
   }
 
-  function renderReview() {
-    const inst = selectedInstance();
-    return `
-      <p class="font-heading font-bold text-xl mb-1">Review your booking</p>
-      <p class="text-ink-muted text-sm mb-4">Please confirm the details before submitting.</p>
-      <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Mass</span><span class="text-sm font-semibold text-right">${inst.scheduleName}</span></div>
-        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Date &amp; time</span><span class="text-sm font-semibold">${formatDateLabel(inst.date)} · ${inst.time}</span></div>
-        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Intention</span><span class="text-sm font-semibold">${state.intentionType}</span></div>
-        <div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">For</span><span class="text-sm font-semibold text-right">${state.intentionFor}</span></div>
-        ${state.intentionMessage ? `<div class="px-5 py-4 flex justify-between gap-4"><span class="text-sm text-ink-muted flex-shrink-0">Message</span><span class="text-sm font-semibold text-right">${state.intentionMessage}</span></div>` : ''}
-        <div class="px-5 py-4 flex justify-between"><span class="text-sm text-ink-muted">Offering</span><span class="text-sm font-semibold">₹${state.offeringAmount} via ${state.paymentMethod}</span></div>
-      </div>
-    `;
-  }
-
-  const RENDERERS = { mass: renderMass, intention: renderIntention, payment: renderPayment, review: renderReview };
+  const RENDERERS = { parish: renderParish, date: renderDate, mass: renderMass, intention: renderIntention, review: renderReview, payment: renderPayment };
 
   function render() {
-    const step = STEPS[stepIndex];
+    const step = WIZARD_STEPS[stepIndex];
     document.getElementById('step-content').innerHTML = RENDERERS[step]();
-    document.getElementById('step-label').textContent = `Step ${stepIndex + 1} of ${STEPS.length} · ${STEP_LABELS[step]}`;
-    document.getElementById('progress-fill').style.width = `${((stepIndex + 1) / STEPS.length) * 100}%`;
-    document.getElementById('continue-btn').textContent = step === 'review' ? 'Confirm Booking' : 'Continue';
+    document.getElementById('step-label').textContent = `Step ${stepIndex + 1} of ${WIZARD_STEPS.length} · ${STEP_LABELS[step]}`;
+    document.getElementById('progress-fill').style.width = `${((stepIndex + 1) / WIZARD_STEPS.length) * 100}%`;
+    updateCartBadge();
+
+    const footer = document.getElementById('footer-actions');
+    if (step === 'intention') {
+      footer.innerHTML = `
+        <button onclick="commitIntentionAndAddAnother()" class="flex-1 bg-white border-2 border-primary text-primary text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">Add Another</button>
+        <button onclick="commitIntentionAndReview()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">Continue to Review</button>
+      `;
+    } else {
+      footer.innerHTML = `<button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">${step === 'payment' ? 'Pay ₹' + totalAmount() : 'Continue'}</button>`;
+    }
   }
 
   function submitBooking() {
     const btn = document.getElementById('continue-btn');
-    btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    if (btn) { btn.disabled = true; btn.textContent = 'Processing payment…'; }
+    // Payment starts Pending and only becomes Paid on confirmed gateway response — simulated here with a delay,
+    // never inferred just from the user reaching this screen.
     setTimeout(() => {
-      const ref = 'MASS-BOOK-2026-' + Math.floor(1000 + Math.random() * 8999);
-      const inst = selectedInstance();
+      const bookingNumber = 'MASS-BOOK-2026-' + Math.floor(1000 + Math.random() * 8999);
       document.getElementById('footer-actions').classList.add('hidden');
       document.getElementById('step-content').innerHTML = `
-        <div class="pt-10 text-center space-y-4">
+        <div class="pt-6 text-center space-y-4">
           <span class="w-16 h-16 rounded-badge bg-green/20 text-[#2f6b45] flex items-center justify-center mx-auto">${icon(ICONS.check, 'w-8 h-8')}</span>
-          <p class="font-heading font-bold text-xl">Mass booked</p>
-          <p class="text-sm text-ink-muted max-w-xs mx-auto">Your intention for ${formatDateLabel(inst.date)} · ${inst.time} has been recorded. Reference: <span class="font-semibold text-ink">${ref}</span></p>
+          <p class="font-heading font-bold text-xl">Booking confirmed</p>
+          <p class="text-sm text-ink-muted max-w-xs mx-auto">Booking <span class="font-semibold text-ink">${bookingNumber}</span> · ${state.intentions.length} intention${state.intentions.length>1?'s':''} · ₹${totalAmount()} paid via ${state.paymentMethod}</p>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden text-left mt-4">
+            ${state.intentions.map(it => {
+              const inst = generateInstances(state.parishId).find(i => instanceKey(i) === it.instanceKey);
+              return `<div class="px-4 py-3"><p class="text-sm font-semibold">${inst.massName} — ${formatDateLabel(inst.date)}</p><p class="text-xs text-ink-muted mt-0.5">${it.intentionType}: ${it.intentionDescription}</p></div>`;
+            }).join('')}
+          </div>
           <div class="pt-4 space-y-3">
             <button onclick="window.location.href='screen-parishioner-massbooking-mybookings.html?${sessionParams.toString()}'" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">View My Bookings</button>
             <button onclick="window.location.href='screen-parishioner-dashboard-home.html?${sessionParams.toString()}'" class="w-full text-primary text-sm font-semibold py-2 min-h-[44px]">Back to Home</button>
