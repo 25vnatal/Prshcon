@@ -641,7 +641,7 @@
           ${subPill(computeSubscription(f).status)}
           ${pendingUpdates > 0 ? `<span class="bg-coral/20 text-[#b1402f] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('alert','w-3 h-3')}${pendingUpdates} update request${pendingUpdates>1?'s':''} pending</span>` : ''}
         </div>
-        <div class="flex gap-1 mt-4 -mb-6 overflow-x-auto">
+        <div class="flex flex-wrap gap-x-1 gap-y-1 mt-4 pb-1">
           ${tabs.map(t => `<button onclick="setTab('${t}')" class="px-3 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-warm ${activeTab===t ? 'border-primary text-primary' : 'border-transparent text-ink-muted hover:text-ink'}">${tabLabels[t]}</button>`).join('')}
         </div>
       </div>
