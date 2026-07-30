@@ -191,18 +191,28 @@
 
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
+  // Only these identity params should ever propagate between pages via navigation —
+  // page-specific deep-link params (family, tab, module, openRegister, etc.) must NOT
+  // leak forward, or every subsequent "go somewhere" link keeps re-opening whatever
+  // deep link the user originally arrived on (e.g. Family Records always reopening
+  // a specific family's Updates tab instead of showing the plain list).
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['parish', 'parishName', 'name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
   const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
   document.getElementById('sidebar-parish-name').textContent = parishName;
   document.getElementById('header-parish-name').textContent = parishName;
   document.getElementById('account-parish-name').textContent = parishName;
   document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
 
-  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
-  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
-  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
-  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
-  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + sessionParams.toString(); return false; }
-  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + sessionParams.toString(); return false; }
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
+  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
     document.getElementById('sidebar-backdrop').classList.toggle('hidden');
