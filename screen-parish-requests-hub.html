@@ -867,7 +867,8 @@
   }
 
   updateFamilyUpdatesBadge();
-  renderModule();
+  const initialModule = sessionParams.get('module');
+  if (initialModule === 'familyupdates') { setModule('familyupdates'); } else { renderModule(); }
 </script>
 
 </body>

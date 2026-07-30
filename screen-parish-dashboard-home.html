@@ -164,7 +164,7 @@
   function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + sessionParams.toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + sessionParams.toString(); return false; }
   function goRegisterFamily() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString() + '&openRegister=1'; return false; }
-  function goFamilyUpdates() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString() + '&family=FAM-1001&tab=updates'; return false; }
+  function goFamilyUpdates() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString() + '&module=familyupdates'; return false; }
 
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
