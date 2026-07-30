@@ -79,7 +79,7 @@
     <!-- ============ TOP BAR ============ -->
     <header class="px-5 pt-5 pb-2 flex items-center justify-between relative">
       <div class="flex items-center gap-2">
-        <img src="assets/pc-logo.png" alt="Parish Connect" class="w-7 h-7 rounded-badge object-cover flex-shrink-0">
+        <img src="assets/pc-logo.jpg" alt="Parish Connect" class="w-8 h-8 rounded-badge object-cover flex-shrink-0">
         <p class="font-heading font-bold text-base leading-none">Parish Connect</p>
       </div>
       <div class="flex items-center gap-2">
@@ -176,7 +176,7 @@
       title: "St. Mary's Basilica Feast",
       date: "8 Sep 2026",
       sub: "Novena begins 30 Aug at the Basilica",
-      cta: "View Novena",
+      cta: "View Details",
     },
     myRequests: {
       count: 2,
@@ -186,8 +186,8 @@
       { label: "Subscription payment reminder", sub: "Next payment due 1 Oct 2026", cta: "Pay Now" },
     ],
     upcoming: [
-      { label: "Next Mass", value: "Sunday, 2 Aug · 8:00 AM", sub: "Infant Jesus Shrine, Viveknagar" },
-      { label: "Your Mass Intention", value: "Sunday, 2 Aug · 8:00 AM", sub: "Thanksgiving Mass offered by Rodrigues family · Infant Jesus Shrine, Viveknagar" },
+      { label: "Next Mass", value: "Sunday, 2 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar" },
+      { label: "Your Mass Intention", value: "Sunday, 2 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar", detail: "Thanksgiving Mass offered by Rodrigues family" },
     ],
     weeklyAnnouncements: {
       week: "Week of 27 Jul 2026 · Infant Jesus Shrine",
@@ -427,12 +427,9 @@
   function myRequestsCard() {
     const r = seed.myRequests;
     return `
-      <button onclick="goTo('screen-parishioner-documents-myrequests.html', 'My Requests')" class="w-full bg-card-bg rounded-card shadow-card px-4 py-3.5 flex items-center justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <span class="text-coral flex-shrink-0">${icon('bell','icon w-4 h-4')}</span>
-          <p class="text-sm font-semibold truncate">${r.count} request${r.count===1?'':'s'} updated</p>
-        </div>
-        <span class="text-primary text-xs font-semibold flex items-center gap-1 flex-shrink-0">View updates${icon('chevron','icon w-3.5 h-3.5')}</span>
+      <button onclick="goTo('screen-parishioner-documents-myrequests.html', 'My Requests')" class="w-full bg-card-bg rounded-card shadow-card p-4 flex items-center justify-between text-left transition-warm hover:shadow-card-hover min-h-[36px]">
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">My Requests</p>
+        <span class="text-primary text-xs font-semibold flex items-center gap-1 flex-shrink-0">${r.count} update${r.count===1?'':'s'}${icon('chevron','icon w-3.5 h-3.5')}</span>
       </button>
     `;
   }
@@ -542,7 +539,8 @@
             <div class="px-5 py-3.5">
               <p class="text-xs text-ink-muted uppercase tracking-wide">${u.label}</p>
               <p class="text-sm font-semibold mt-1">${u.value}</p>
-              <p class="text-xs text-ink-muted mt-0.5">${u.sub}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${u.church}</p>
+              ${u.detail ? `<p class="text-xs text-ink-muted mt-0.5">${u.detail}</p>` : ''}
             </div>
           `).join('')}
         </div>
