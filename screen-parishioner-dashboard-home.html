@@ -439,12 +439,9 @@
     const items = seed.otherActions;
     return `
       <div class="bg-card-bg rounded-card shadow-card p-4">
-        <button onclick="toggleOtherActions()" class="w-full flex items-center justify-between text-left min-h-[36px]">
+        <button onclick="toggleOtherActions()" class="w-full flex items-center justify-between text-left">
           <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Other Actions</p>
-          <div class="flex items-center gap-1.5">
-            <span class="bg-coral/20 text-[#b1402f] text-xs font-semibold px-2 py-1 rounded-badge flex-shrink-0 whitespace-nowrap">${items.length} pending</span>
-            <span id="other-actions-chevron" class="text-ink-muted transition-warm" style="transform: rotate(${otherActionsOpen ? '180' : '0'}deg)">${icon('chevronDown','w-4 h-4')}</span>
-          </div>
+          <span class="text-primary text-xs font-semibold flex items-center gap-1 flex-shrink-0">${items.length} pending<span id="other-actions-chevron" class="inline-flex transition-warm" style="transform: rotate(${otherActionsOpen ? '180' : '0'}deg)">${icon('chevronDown','icon w-3.5 h-3.5')}</span></span>
         </button>
         <div id="other-actions-body" class="${otherActionsOpen ? '' : 'hidden'} mt-3 space-y-2.5">
           ${items.map(i => `
