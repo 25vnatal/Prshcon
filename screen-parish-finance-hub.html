@@ -75,7 +75,7 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
           Finance
         </a>
-        <button onclick="toast('Administration')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+        <button onclick="return goAdministration()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
           Administration
         </button>
@@ -204,6 +204,7 @@
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + sessionParams.toString(); return false; }
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
+  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + sessionParams.toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
     document.getElementById('sidebar-backdrop').classList.toggle('hidden');

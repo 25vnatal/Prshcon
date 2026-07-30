@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Administration</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </a>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </a>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Administration</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Administration</p>
+          <p class="text-ink-muted text-sm mt-1">Parish profile, document templates, inventory, and staff.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('profile')" data-module="profile" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Parish Profile</button>
+          <button onclick="setModule('templates')" data-module="templates" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Document Templates</button>
+          <button onclick="setModule('inventory')" data-module="inventory" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Inventory</button>
+          <button onclick="setModule('staff')" data-module="staff" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Staff &amp; Payroll</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ ADD/EDIT CLERGY MODAL ============ -->
+  <div id="clergy-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="clergy-modal-title" class="font-heading font-bold text-lg">Add Clergy</p>
+        <button onclick="closeModal('clergy-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="clergy-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitClergy()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="clergy-modal-save-label">Save</span></button>
+        <button onclick="closeModal('clergy-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT WORSHIP LOCATION MODAL ============ -->
+  <div id="worship-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="worship-modal-title" class="font-heading font-bold text-lg">Add Worship Location</p>
+        <button onclick="closeModal('worship-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="worship-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitWorship()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="worship-modal-save-label">Save</span></button>
+        <button onclick="closeModal('worship-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT DOCUMENT TEMPLATE MODAL ============ -->
+  <div id="template-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="template-modal-title" class="font-heading font-bold text-lg">Add Template</p>
+        <button onclick="closeModal('template-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="template-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitTemplate()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="template-modal-save-label">Save</span></button>
+        <button onclick="closeModal('template-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT INVENTORY ITEM MODAL ============ -->
+  <div id="inventory-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="inventory-modal-title" class="font-heading font-bold text-lg">Add Inventory Item</p>
+        <button onclick="closeModal('inventory-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="inventory-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitInventoryItem()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="inventory-modal-save-label">Save</span></button>
+        <button onclick="closeModal('inventory-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT STAFF MODAL ============ -->
+  <div id="staff-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-sm">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="staff-modal-title" class="font-heading font-bold text-lg">Add Staff Member</p>
+        <button onclick="closeModal('staff-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="staff-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitStaff()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="staff-modal-save-label">Save</span></button>
+        <button onclick="closeModal('staff-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  const staffName = sessionParams.get('name') || 'Parish Staff';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + sessionParams.toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + sessionParams.toString(); return false; }
+  function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + sessionParams.toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + sessionParams.toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + sessionParams.toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + sessionParams.toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
+    box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+    mapPin: '<path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  function formatMoney(n) { return '₹' + n.toLocaleString('en-IN'); }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+
+  // ---------------- Mock data: Parish Profile (schema section 4.10) ----------------
+  let parishProfile = {
+    name: "Infant Jesus Shrine",
+    shortName: "Infant Jesus Shrine, Viveknagar",
+    patronSaint: "Infant Jesus",
+    feastDay: "13 January",
+    yearEstablished: 1971,
+    motto: "One Faith. One Community. One Family.",
+    phone: "25301206",
+    whatsapp: "",
+    email: "",
+    website: "",
+    address: "Post Box 4712, Viveknagar, Bengaluru 560 047",
+    officeHours: { weekday: "9:00 AM - 5:30 PM", saturday: "9:00 AM - 1:00 PM", sunday: "Closed (Mass timings only)", weeklyHoliday: "Monday" },
+    aboutParish: "Infant Jesus Shrine has served the Viveknagar community since 1971, growing into one of Bangalore's largest and most active parishes.",
+  };
+  let clergy = [
+    { id:"CLG-001", name:"Fr. John Anthony", role:"Parish Priest", phone:"9845000001", email:"" },
+    { id:"CLG-002", name:"Fr. Francis Billemane", role:"Assistant Priest", phone:"9845000002", email:"" },
+  ];
+  let worshipLocations = [
+    { id:"WL-001", name:"Main Church", address:"Post Box 4712, Viveknagar, Bengaluru 560 047", status:"Active" },
+  ];
+
+  // ---------------- Mock data: Document Templates ----------------
+  let documentTemplates = [
+    { id:"TPL-001", name:"Baptism Certificate Template", documentType:"Baptism Certificate", lastUpdated:"2026-05-10", status:"Active" },
+    { id:"TPL-002", name:"First Communion Certificate Template", documentType:"First Communion Certificate", lastUpdated:"2026-05-10", status:"Active" },
+    { id:"TPL-003", name:"Confirmation Certificate Template", documentType:"Confirmation Certificate", lastUpdated:"2026-05-10", status:"Active" },
+    { id:"TPL-004", name:"Marriage Certificate Template", documentType:"Marriage Certificate", lastUpdated:"2026-05-12", status:"Active" },
+    { id:"TPL-005", name:"NOC Template", documentType:"No Objection Certificate", lastUpdated:"2026-06-01", status:"Active" },
+    { id:"TPL-006", name:"Parish Transfer Certificate Template", documentType:"Parish Transfer Certificate", lastUpdated:"2026-06-01", status:"Active" },
+  ];
+
+  // ---------------- Mock data: Inventory ----------------
+  let inventoryItems = [
+    { id:"INV-001", name:"Foldable Chairs", category:"Furniture", quantity:200, condition:"Good", location:"Parish Hall Store", lastUpdated:"2026-04-01" },
+    { id:"INV-002", name:"Altar Vestments (Green)", category:"Liturgical", quantity:6, condition:"Good", location:"Sacristy", lastUpdated:"2026-01-15" },
+    { id:"INV-003", name:"PA Sound System", category:"Electronics", quantity:1, condition:"Needs Repair", location:"Main Church", lastUpdated:"2026-06-20" },
+    { id:"INV-004", name:"Parish Van", category:"Vehicle", quantity:1, condition:"Good", location:"Parish Garage", lastUpdated:"2026-03-10" },
+    { id:"INV-005", name:"Projector", category:"Electronics", quantity:2, condition:"Good", location:"Parish Hall", lastUpdated:"2026-02-05" },
+  ];
+
+  // ---------------- Mock data: Staff & Payroll ----------------
+  let staffMembers = [
+    { id:"STF-001", name:"Grace Almeida", role:"Parish Secretary", phone:"9845020001", email:"", joinedDate:"2020-01-06", monthlySalary:25000, paymentStatus:"Paid" },
+    { id:"STF-002", name:"Thomas Rebello", role:"Accountant", phone:"9845020002", email:"", joinedDate:"2019-06-15", monthlySalary:28000, paymentStatus:"Paid" },
+    { id:"STF-003", name:"Peter Vaz", role:"Sacristan", phone:"9845020003", email:"", joinedDate:"2015-03-01", monthlySalary:18000, paymentStatus:"Pending" },
+    { id:"STF-004", name:"Anil Kumar", role:"Groundskeeper", phone:"9845020004", email:"", joinedDate:"2021-09-10", monthlySalary:15000, paymentStatus:"Paid" },
+    { id:"STF-005", name:"Sunitha D'Souza", role:"Choir Director", phone:"9845020005", email:"", joinedDate:"2018-02-01", monthlySalary:12000, paymentStatus:"Pending" },
+  ];
+
+  let currentModule = 'profile';
+
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'profile') renderProfileModule(el);
+    else if (currentModule === 'templates') renderTemplatesModule(el);
+    else if (currentModule === 'inventory') renderInventoryModule(el);
+    else renderStaffModule(el);
+  }
+
+  // =========================================================================
+  // MODULE 1: Parish Profile
+  // =========================================================================
+  let profileEditing = false;
+
+  function renderProfileModule(el) {
+    el.innerHTML = `
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <p class="text-sm font-semibold">Basic &amp; Contact Information</p>
+              ${profileEditing
+                ? `<div class="flex gap-2"><button onclick="saveProfile()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Save Changes</button><button onclick="profileEditing=false; renderModule()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button></div>`
+                : `<button onclick="profileEditing=true; renderModule()" class="text-primary text-xs font-semibold flex items-center gap-1.5">${icon('edit','w-3.5 h-3.5')}Edit Profile</button>`
+              }
+            </div>
+            ${profileEditing ? renderProfileForm() : renderProfileView()}
+          </div>
+
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <p class="text-sm font-semibold mb-1">About the Parish</p>
+            ${profileEditing
+              ? `<textarea id="pf-about" rows="4" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none mt-2">${parishProfile.aboutParish}</textarea>`
+              : `<p class="text-sm text-ink-muted mt-2">${parishProfile.aboutParish || 'Not set yet.'}</p>`
+            }
+          </div>
+
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm font-semibold">Clergy</p>
+              <button onclick="openClergyModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Clergy</button>
+            </div>
+            <div class="space-y-2">
+              ${clergy.map(c => `
+                <div class="bg-section-bg rounded-card p-3.5 flex items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-sm font-semibold truncate">${c.name} <span class="text-ink-muted font-normal">· ${c.role}</span></p>
+                    <p class="text-xs text-ink-muted mt-0.5">${c.phone || 'No phone'}</p>
+                  </div>
+                  <div class="flex items-center gap-1 flex-shrink-0">
+                    <button onclick="openClergyModal('${c.id}')" aria-label="Edit clergy" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                    <button onclick="removeClergy('${c.id}')" aria-label="Remove clergy" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-white transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm font-semibold">Worship Locations</p>
+              <button onclick="openWorshipModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Location</button>
+            </div>
+            <div class="space-y-2">
+              ${worshipLocations.map(w => `
+                <div class="bg-section-bg rounded-card p-3.5 flex items-center justify-between gap-3">
+                  <div class="min-w-0 flex items-start gap-2">
+                    <span class="text-ink-muted mt-0.5 flex-shrink-0">${icon('mapPin','w-3.5 h-3.5')}</span>
+                    <div class="min-w-0">
+                      <p class="text-sm font-semibold truncate">${w.name}</p>
+                      <p class="text-xs text-ink-muted mt-0.5">${w.address}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 flex-shrink-0">
+                    <span class="${w.status==='Active' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${w.status}</span>
+                    <button onclick="openWorshipModal('${w.id}')" aria-label="Edit location" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                    <button onclick="removeWorship('${w.id}')" aria-label="Remove location" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-white transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">At a glance <span class="normal-case font-normal">(read-only, from other modules)</span></p>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">This Week's Masses</p>
+            <p class="text-sm">3 Sunday Masses (English, Tamil, Konkani) · 2 Weekday Masses · 1 Saturday Vigil</p>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">Recent Announcements</p>
+            <p class="text-sm">"Feast of Infant Jesus - Novena Begins"</p>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">Ministries</p>
+            <p class="text-sm">6 active committees — Pastoral Council, Finance, Choir, Ladies' Guild, Youth, Building &amp; Maintenance</p>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">Upcoming Events</p>
+            <p class="text-sm">Feast Day Celebration — 13 Jan 2027</p>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">Home Services</p>
+            <p class="text-sm">House Blessing, Home Communion, Sick Visit, Family Prayer</p>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card p-4">
+            <p class="text-xs text-ink-muted uppercase tracking-wide mb-1.5">Giving Options</p>
+            <p class="text-sm">Church Renovation Fund, Education Support Fund</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderProfileView() {
+    const p = parishProfile;
+    return `
+      <div class="grid sm:grid-cols-2 gap-4 text-sm">
+        <div><p class="text-xs text-ink-muted">Parish name</p><p class="font-medium mt-0.5">${p.name}</p></div>
+        <div><p class="text-xs text-ink-muted">Short name</p><p class="font-medium mt-0.5">${p.shortName}</p></div>
+        <div><p class="text-xs text-ink-muted">Patron saint</p><p class="font-medium mt-0.5">${p.patronSaint}</p></div>
+        <div><p class="text-xs text-ink-muted">Feast day</p><p class="font-medium mt-0.5">${p.feastDay}</p></div>
+        <div><p class="text-xs text-ink-muted">Year established</p><p class="font-medium mt-0.5">${p.yearEstablished}</p></div>
+        <div><p class="text-xs text-ink-muted">Motto</p><p class="font-medium mt-0.5">${p.motto || '—'}</p></div>
+        <div><p class="text-xs text-ink-muted">Phone</p><p class="font-medium mt-0.5">${p.phone || '—'}</p></div>
+        <div><p class="text-xs text-ink-muted">Email</p><p class="font-medium mt-0.5">${p.email || '—'}</p></div>
+        <div><p class="text-xs text-ink-muted">Website</p><p class="font-medium mt-0.5">${p.website || '—'}</p></div>
+        <div><p class="text-xs text-ink-muted">Address</p><p class="font-medium mt-0.5">${p.address}</p></div>
+        <div class="sm:col-span-2">
+          <p class="text-xs text-ink-muted mb-1">Office hours</p>
+          <p class="font-medium">Weekdays: ${p.officeHours.weekday} · Saturday: ${p.officeHours.saturday}</p>
+          <p class="font-medium mt-0.5">Sunday: ${p.officeHours.sunday} · Weekly holiday: ${p.officeHours.weeklyHoliday}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderProfileForm() {
+    const p = parishProfile;
+    return `
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Parish name</label><input id="pf-name" type="text" value="${p.name}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Short name</label><input id="pf-shortname" type="text" value="${p.shortName}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Patron saint</label><input id="pf-patron" type="text" value="${p.patronSaint}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Feast day</label><input id="pf-feast" type="text" value="${p.feastDay}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Year established</label><input id="pf-year" type="number" value="${p.yearEstablished}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Motto</label><input id="pf-motto" type="text" value="${p.motto}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Phone</label><input id="pf-phone" type="text" value="${p.phone}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Email</label><input id="pf-email" type="email" value="${p.email}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Website</label><input id="pf-website" type="text" value="${p.website}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5 sm:col-span-2"><label class="text-xs font-medium">Address</label><input id="pf-address" type="text" value="${p.address}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Weekday hours</label><input id="pf-oh-weekday" type="text" value="${p.officeHours.weekday}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Saturday hours</label><input id="pf-oh-saturday" type="text" value="${p.officeHours.saturday}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Sunday hours</label><input id="pf-oh-sunday" type="text" value="${p.officeHours.sunday}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Weekly holiday</label><input id="pf-oh-holiday" type="text" value="${p.officeHours.weeklyHoliday}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+    `;
+  }
+
+  function saveProfile() {
+    parishProfile = {
+      ...parishProfile,
+      name: document.getElementById('pf-name').value.trim(),
+      shortName: document.getElementById('pf-shortname').value.trim(),
+      patronSaint: document.getElementById('pf-patron').value.trim(),
+      feastDay: document.getElementById('pf-feast').value.trim(),
+      yearEstablished: parseInt(document.getElementById('pf-year').value) || parishProfile.yearEstablished,
+      motto: document.getElementById('pf-motto').value.trim(),
+      phone: document.getElementById('pf-phone').value.trim(),
+      email: document.getElementById('pf-email').value.trim(),
+      website: document.getElementById('pf-website').value.trim(),
+      address: document.getElementById('pf-address').value.trim(),
+      aboutParish: document.getElementById('pf-about') ? document.getElementById('pf-about').value.trim() : parishProfile.aboutParish,
+      officeHours: {
+        weekday: document.getElementById('pf-oh-weekday').value.trim(),
+        saturday: document.getElementById('pf-oh-saturday').value.trim(),
+        sunday: document.getElementById('pf-oh-sunday').value.trim(),
+        weeklyHoliday: document.getElementById('pf-oh-holiday').value.trim(),
+      },
+    };
+    profileEditing = false;
+    toast('Parish profile updated.');
+    renderModule();
+  }
+
+  // ---- Clergy CRUD ----
+  let editingClergyId = null;
+  function openClergyModal(editId) {
+    editingClergyId = editId || null;
+    const c = editId ? clergy.find(x => x.id === editId) : null;
+    document.getElementById('clergy-modal-title').textContent = c ? 'Edit Clergy' : 'Add Clergy';
+    document.getElementById('clergy-modal-save-label').textContent = c ? 'Save Changes' : 'Save';
+    document.getElementById('clergy-modal').classList.remove('hidden');
+    document.getElementById('clergy-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Name</label><input id="clf-name" type="text" placeholder="e.g. Fr. Anthony Rodrigues" value="${c ? c.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Role</label>
+        <select id="clf-role" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${c && c.role==='Parish Priest' ? 'selected' : ''}>Parish Priest</option>
+          <option ${!c || c.role==='Assistant Priest' ? 'selected' : ''}>Assistant Priest</option>
+          <option ${c && c.role==='Deacon' ? 'selected' : ''}>Deacon</option>
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Phone</label><input id="clf-phone" type="text" value="${c ? c.phone : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+    `;
+  }
+  function submitClergy() {
+    const name = document.getElementById('clf-name').value.trim();
+    const role = document.getElementById('clf-role').value;
+    const phone = document.getElementById('clf-phone').value.trim();
+    if (!name) { toast('Please enter a name.'); return; }
+    if (editingClergyId) {
+      Object.assign(clergy.find(x => x.id === editingClergyId), { name, role, phone });
+      toast(`${name} updated.`);
+    } else {
+      clergy.push({ id: 'CLG-' + Math.floor(100 + Math.random()*899), name, role, phone, email: '' });
+      toast(`${name} added.`);
+    }
+    editingClergyId = null;
+    closeModal('clergy-modal');
+    renderModule();
+  }
+  function removeClergy(id) {
+    const c = clergy.find(x => x.id === id);
+    clergy = clergy.filter(x => x.id !== id);
+    toast(`${c.name} removed.`);
+    renderModule();
+  }
+
+  // ---- Worship Location CRUD ----
+  let editingWorshipId = null;
+  function openWorshipModal(editId) {
+    editingWorshipId = editId || null;
+    const w = editId ? worshipLocations.find(x => x.id === editId) : null;
+    document.getElementById('worship-modal-title').textContent = w ? 'Edit Worship Location' : 'Add Worship Location';
+    document.getElementById('worship-modal-save-label').textContent = w ? 'Save Changes' : 'Save';
+    document.getElementById('worship-modal').classList.remove('hidden');
+    document.getElementById('worship-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Name</label><input id="wf-name" type="text" placeholder="e.g. St Joseph's Chapel" value="${w ? w.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Address</label><input id="wf-address" type="text" value="${w ? w.address : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+        <select id="wf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!w || w.status==='Active' ? 'selected' : ''}>Active</option>
+          <option ${w && w.status==='Inactive' ? 'selected' : ''}>Inactive</option>
+        </select>
+      </div>
+    `;
+  }
+  function submitWorship() {
+    const name = document.getElementById('wf-name').value.trim();
+    const address = document.getElementById('wf-address').value.trim();
+    const status = document.getElementById('wf-status').value;
+    if (!name) { toast('Please enter a name.'); return; }
+    if (editingWorshipId) {
+      Object.assign(worshipLocations.find(x => x.id === editingWorshipId), { name, address, status });
+      toast(`${name} updated.`);
+    } else {
+      worshipLocations.push({ id: 'WL-' + Math.floor(100 + Math.random()*899), name, address, status });
+      toast(`${name} added.`);
+    }
+    editingWorshipId = null;
+    closeModal('worship-modal');
+    renderModule();
+  }
+  function removeWorship(id) {
+    const w = worshipLocations.find(x => x.id === id);
+    worshipLocations = worshipLocations.filter(x => x.id !== id);
+    toast(`${w.name} removed.`);
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 2: Document Templates
+  // =========================================================================
+  const DOCUMENT_TYPES = ["Baptism Certificate", "First Communion Certificate", "Confirmation Certificate", "Marriage Certificate", "No Objection Certificate", "Parish Transfer Certificate"];
+
+  function renderTemplatesModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openTemplateModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Template</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Template Name</th>
+                <th class="px-4 py-3 font-medium">Document Type</th>
+                <th class="px-4 py-3 font-medium">Last Updated</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${documentTemplates.map(t => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${t.name}</td>
+                  <td class="px-4 py-3 text-ink-muted">${t.documentType}</td>
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(t.lastUpdated)}</td>
+                  <td class="px-4 py-3"><span class="${t.status==='Active' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${t.status}</span></td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-1 justify-end">
+                      <button onclick="openTemplateModal('${t.id}')" aria-label="Edit template" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                      <button onclick="deleteTemplate('${t.id}')" aria-label="Delete template" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  let editingTemplateId = null;
+  function openTemplateModal(editId) {
+    editingTemplateId = editId || null;
+    const t = editId ? documentTemplates.find(x => x.id === editId) : null;
+    document.getElementById('template-modal-title').textContent = t ? 'Edit Template' : 'Add Template';
+    document.getElementById('template-modal-save-label').textContent = t ? 'Save Changes' : 'Save';
+    document.getElementById('template-modal').classList.remove('hidden');
+    document.getElementById('template-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Template name</label><input id="tpf-name" type="text" placeholder="e.g. Baptism Certificate Template" value="${t ? t.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Document type</label>
+        <select id="tpf-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${DOCUMENT_TYPES.map(dt => `<option ${t && t.documentType===dt ? 'selected' : ''}>${dt}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
+        <select id="tpf-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!t || t.status==='Active' ? 'selected' : ''}>Active</option>
+          <option ${t && t.status==='Inactive' ? 'selected' : ''}>Inactive</option>
+        </select>
+      </div>
+    `;
+  }
+  function submitTemplate() {
+    const name = document.getElementById('tpf-name').value.trim();
+    const documentType = document.getElementById('tpf-type').value;
+    const status = document.getElementById('tpf-status').value;
+    if (!name) { toast('Please enter a template name.'); return; }
+    if (editingTemplateId) {
+      Object.assign(documentTemplates.find(x => x.id === editingTemplateId), { name, documentType, status, lastUpdated: '2026-07-31' });
+      toast(`${name} updated.`);
+    } else {
+      documentTemplates.push({ id: 'TPL-' + Math.floor(100 + Math.random()*899), name, documentType, status, lastUpdated: '2026-07-31' });
+      toast(`${name} added.`);
+    }
+    editingTemplateId = null;
+    closeModal('template-modal');
+    renderModule();
+  }
+  function deleteTemplate(id) {
+    const t = documentTemplates.find(x => x.id === id);
+    documentTemplates = documentTemplates.filter(x => x.id !== id);
+    toast(`${t.name} deleted.`);
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 3: Inventory
+  // =========================================================================
+  function renderInventoryModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openInventoryModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Item</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Item</th>
+                <th class="px-4 py-3 font-medium">Category</th>
+                <th class="px-4 py-3 font-medium">Qty</th>
+                <th class="px-4 py-3 font-medium">Condition</th>
+                <th class="px-4 py-3 font-medium">Location</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${inventoryItems.map(i => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${i.name}</td>
+                  <td class="px-4 py-3 text-ink-muted">${i.category}</td>
+                  <td class="px-4 py-3 text-ink-muted">${i.quantity}</td>
+                  <td class="px-4 py-3"><span class="${i.condition==='Good' ? 'bg-green/20 text-[#2f6b45]' : i.condition==='Needs Repair' ? 'bg-gold/20 text-[#8a5a10]' : 'bg-error-bg text-error'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${i.condition}</span></td>
+                  <td class="px-4 py-3 text-ink-muted">${i.location}</td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-1 justify-end">
+                      <button onclick="openInventoryModal('${i.id}')" aria-label="Edit item" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                      <button onclick="deleteInventoryItem('${i.id}')" aria-label="Delete item" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  let editingInventoryId = null;
+  function openInventoryModal(editId) {
+    editingInventoryId = editId || null;
+    const i = editId ? inventoryItems.find(x => x.id === editId) : null;
+    document.getElementById('inventory-modal-title').textContent = i ? 'Edit Inventory Item' : 'Add Inventory Item';
+    document.getElementById('inventory-modal-save-label').textContent = i ? 'Save Changes' : 'Save';
+    document.getElementById('inventory-modal').classList.remove('hidden');
+    document.getElementById('inventory-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Item name</label><input id="invf-name" type="text" placeholder="e.g. Foldable Chairs" value="${i ? i.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Category</label>
+          <select id="invf-category" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${["Furniture","Liturgical","Electronics","Vehicle","Other"].map(c => `<option ${i && i.category===c ? 'selected' : ''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Quantity</label><input id="invf-qty" type="number" value="${i ? i.quantity : 1}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Condition</label>
+        <select id="invf-condition" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option ${!i || i.condition==='Good' ? 'selected' : ''}>Good</option>
+          <option ${i && i.condition==='Needs Repair' ? 'selected' : ''}>Needs Repair</option>
+          <option ${i && i.condition==='Damaged' ? 'selected' : ''}>Damaged</option>
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Location</label><input id="invf-location" type="text" value="${i ? i.location : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+    `;
+  }
+  function submitInventoryItem() {
+    const name = document.getElementById('invf-name').value.trim();
+    const category = document.getElementById('invf-category').value;
+    const quantity = parseInt(document.getElementById('invf-qty').value) || 0;
+    const condition = document.getElementById('invf-condition').value;
+    const location = document.getElementById('invf-location').value.trim();
+    if (!name) { toast('Please enter an item name.'); return; }
+    if (editingInventoryId) {
+      Object.assign(inventoryItems.find(x => x.id === editingInventoryId), { name, category, quantity, condition, location, lastUpdated: '2026-07-31' });
+      toast(`${name} updated.`);
+    } else {
+      inventoryItems.push({ id: 'INV-' + Math.floor(100 + Math.random()*899), name, category, quantity, condition, location, lastUpdated: '2026-07-31' });
+      toast(`${name} added.`);
+    }
+    editingInventoryId = null;
+    closeModal('inventory-modal');
+    renderModule();
+  }
+  function deleteInventoryItem(id) {
+    const i = inventoryItems.find(x => x.id === id);
+    inventoryItems = inventoryItems.filter(x => x.id !== id);
+    toast(`${i.name} deleted.`);
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 4: Staff & Payroll
+  // =========================================================================
+  function renderStaffModule(el) {
+    const totalPayroll = staffMembers.reduce((s, m) => s + m.monthlySalary, 0);
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <p class="text-xs text-ink-muted uppercase tracking-wide">Total monthly payroll</p>
+          <p class="font-heading font-bold text-2xl mt-1">${formatMoney(totalPayroll)}</p>
+        </div>
+        <button onclick="openStaffModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Staff Member</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Role</th>
+                <th class="px-4 py-3 font-medium">Joined</th>
+                <th class="px-4 py-3 font-medium">Monthly Salary</th>
+                <th class="px-4 py-3 font-medium">This Month</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${staffMembers.map(m => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${m.name}</td>
+                  <td class="px-4 py-3 text-ink-muted">${m.role}</td>
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(m.joinedDate)}</td>
+                  <td class="px-4 py-3">${formatMoney(m.monthlySalary)}</td>
+                  <td class="px-4 py-3">
+                    <button onclick="togglePaymentStatus('${m.id}')" class="${m.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap transition-warm">${m.paymentStatus}</button>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-1 justify-end">
+                      <button onclick="openStaffModal('${m.id}')" aria-label="Edit staff member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                      <button onclick="deleteStaff('${m.id}')" aria-label="Delete staff member" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-ink-muted mt-3">Tap a payment pill to toggle it between Paid and Pending for the current month.</p>
+    `;
+  }
+
+  function togglePaymentStatus(id) {
+    const m = staffMembers.find(x => x.id === id);
+    m.paymentStatus = m.paymentStatus === 'Paid' ? 'Pending' : 'Paid';
+    renderModule();
+  }
+
+  let editingStaffId = null;
+  function openStaffModal(editId) {
+    editingStaffId = editId || null;
+    const m = editId ? staffMembers.find(x => x.id === editId) : null;
+    document.getElementById('staff-modal-title').textContent = m ? 'Edit Staff Member' : 'Add Staff Member';
+    document.getElementById('staff-modal-save-label').textContent = m ? 'Save Changes' : 'Save';
+    document.getElementById('staff-modal').classList.remove('hidden');
+    document.getElementById('staff-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Full name</label><input id="stf-name" type="text" placeholder="e.g. Grace Almeida" value="${m ? m.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Role</label><input id="stf-role" type="text" placeholder="e.g. Parish Secretary" value="${m ? m.role : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Phone</label><input id="stf-phone" type="text" value="${m ? m.phone : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Joined date</label><input id="stf-joined" type="date" value="${m ? m.joinedDate : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Monthly salary (₹)</label><input id="stf-salary" type="number" value="${m ? m.monthlySalary : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+    `;
+  }
+  function submitStaff() {
+    const name = document.getElementById('stf-name').value.trim();
+    const role = document.getElementById('stf-role').value.trim();
+    const phone = document.getElementById('stf-phone').value.trim();
+    const joinedDate = document.getElementById('stf-joined').value;
+    const monthlySalary = parseFloat(document.getElementById('stf-salary').value) || 0;
+    if (!name || !role) { toast('Please enter a name and role.'); return; }
+    if (editingStaffId) {
+      Object.assign(staffMembers.find(x => x.id === editingStaffId), { name, role, phone, joinedDate, monthlySalary });
+      toast(`${name} updated.`);
+    } else {
+      staffMembers.push({ id: 'STF-' + Math.floor(100 + Math.random()*899), name, role, phone, email: '', joinedDate: joinedDate || '2026-07-31', monthlySalary, paymentStatus: 'Pending' });
+      toast(`${name} added.`);
+    }
+    editingStaffId = null;
+    closeModal('staff-modal');
+    renderModule();
+  }
+  function deleteStaff(id) {
+    const m = staffMembers.find(x => x.id === id);
+    staffMembers = staffMembers.filter(x => x.id !== id);
+    toast(`${m.name} removed.`);
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>
