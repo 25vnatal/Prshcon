@@ -112,7 +112,7 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
         <span class="text-[10.5px] font-semibold">Home</span>
       </button>
-      <button onclick="toast('Services')" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
         <span class="text-[10.5px]">Services</span>
       </button>
@@ -204,9 +204,9 @@
     ],
     quickActions: [
       { label: "Book a Mass", icon: "calendar", href: "screen-parishioner-massbooking-request.html" },
-      { label: "Register for a Sacrament", icon: "book" },
+      { label: "Register for a Sacrament", icon: "book", href: "screen-parishioner-sacraments-register.html" },
       { label: "Request a Document", icon: "file", href: "screen-parishioner-documents-request.html" },
-      { label: "Request Home Service", icon: "home" },
+      { label: "Request Home Service", icon: "home", href: "screen-parishioner-homeservices-request.html" },
     ],
   };
 

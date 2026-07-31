@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Register for a Sacrament</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .option-card { border: 2px solid #E8EDF5; }
+  .option-card.selected { border-color: #4F7CF5; background: #EEF4FF; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-[100dvh] bg-bg-warm relative flex flex-col">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="px-5 pt-5 pb-3 flex items-center gap-3">
+      <button onclick="goBack()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="flex-1">
+        <p class="font-heading font-bold text-base leading-tight">Register for a Sacrament</p>
+        <p id="step-label" class="text-xs text-ink-muted mt-0.5">Step 1 of 5</p>
+      </div>
+    </header>
+
+    <!-- ============ PROGRESS BAR ============ -->
+    <div class="px-5 pb-4">
+      <div class="h-1.5 bg-divider rounded-badge overflow-hidden">
+        <div id="progress-fill" class="h-full bg-primary rounded-badge transition-all duration-300" style="width: 20%"></div>
+      </div>
+    </div>
+
+    <!-- ============ STEP CONTENT ============ -->
+    <main id="step-content" class="px-5 flex-1 space-y-4 pb-4"></main>
+
+    <!-- ============ FOOTER ============ -->
+    <div class="sticky bottom-0 bg-card-bg border-t border-divider px-5 py-4 flex gap-3">
+      <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">Continue</button>
+    </div>
+
+  </div>
+
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+
+  // ---------------- Reference data: Sacraments offered by this parish (mirrors Parish Services config) ----------------
+  const SACRAMENTS = [
+    { id:"SAC-001", name:"Baptism", description:"Sacrament of initiation into the Christian faith.", registrationMode:"Always Open", minAge:0, requiredDocuments:["Birth Certificate", "Parents' Marriage Certificate"], fee:200, instructions:"Schedule at least 2 weeks in advance. Godparents must be practicing Catholics." },
+    { id:"SAC-002", name:"First Communion", description:"First reception of the Holy Eucharist, typically for children.", registrationMode:"Registration Window", registrationCloses:"2027-02-28", celebrationDate:"2027-04-10", venue:"Main Church", minAge:7, requiredDocuments:["Baptism Certificate"], fee:150, instructions:"Candidates must complete catechism classes on Saturdays, Jan–Mar." },
+    { id:"SAC-003", name:"Confirmation", description:"Sacrament of strengthening in the Holy Spirit.", registrationMode:"Registration Window", registrationCloses:"2026-07-15", celebrationDate:"2026-09-20", venue:"Main Church", minAge:13, requiredDocuments:["Baptism Certificate", "First Communion Certificate"], fee:200, instructions:"Requires a sponsor and completion of the preparation programme." },
+    { id:"SAC-004", name:"Marriage", description:"Sacrament of matrimony.", registrationMode:"Always Open", minAge:21, requiredDocuments:["Baptism Certificate (both parties)", "Pre-Cana Certificate"], fee:2000, instructions:"Contact the parish office at least 3 months before the intended date." },
+  ];
+
+  // ---------------- Reference data: Rodrigues family members ----------------
+  const FAMILY_MEMBERS = [
+    { id:"MEM-2001", name:"John Rodrigues", relationship:"Head" },
+    { id:"MEM-2002", name:"Grace Rodrigues", relationship:"Spouse" },
+    { id:"MEM-2003", name:"Kevin Rodrigues", relationship:"Son" },
+    { id:"MEM-2004", name:"Clara Rodrigues", relationship:"Daughter" },
+  ];
+
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+
+  const WIZARD_STEPS = ['sacrament', 'candidate', 'documents', 'review', 'payment'];
+  const STEP_LABELS = { sacrament: 'Sacrament', candidate: 'Candidate', documents: 'Documents', review: 'Review', payment: 'Payment' };
+  let stepIndex = 0;
+
+  const state = {
+    sacramentId: null,
+    candidateId: null,
+    uploadedDocs: {},
+    additionalInfo: '',
+    paymentMethod: null,
+  };
+
+  function icon(paths, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${paths}</svg>`; }
+  const ICONS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    upload: '<path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+  };
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  function sacramentById(id) { return SACRAMENTS.find(s => s.id === id); }
+  function memberById(id) { return FAMILY_MEMBERS.find(m => m.id === id); }
+
+  function goBack() {
+    if (stepIndex === 0) { window.location.href = 'screen-parishioner-services-hub.html?' + sessionParams.toString(); return; }
+    stepIndex--;
+    render();
+  }
+
+  function handleContinue() {
+    const step = WIZARD_STEPS[stepIndex];
+    if (!validateStep(step)) return;
+    if (step === 'payment') { submitRegistration(); return; }
+    stepIndex++;
+    // Skip Documents step if the chosen sacrament needs no documents (shouldn't happen here, but keep it safe)
+    if (WIZARD_STEPS[stepIndex] === 'documents' && sacramentById(state.sacramentId).requiredDocuments.length === 0) stepIndex++;
+    render();
+  }
+
+  function validateStep(step) {
+    if (step === 'sacrament' && !state.sacramentId) { toast('Please choose a sacrament.'); return false; }
+    if (step === 'candidate' && !state.candidateId) { toast('Please choose who this is for.'); return false; }
+    if (step === 'documents') {
+      const s = sacramentById(state.sacramentId);
+      const missing = s.requiredDocuments.filter(d => !state.uploadedDocs[d]);
+      if (missing.length > 0) { toast('Please upload all required documents.'); return false; }
+    }
+    if (step === 'payment' && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
+    return true;
+  }
+
+  function selectSacrament(id) {
+    state.sacramentId = id;
+    render();
+  }
+  function selectCandidate(id) {
+    state.candidateId = id;
+    render();
+  }
+  function toggleDoc(name) {
+    state.uploadedDocs[name] = !state.uploadedDocs[name];
+    render();
+  }
+
+  function renderSacramentStep() {
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Which sacrament?</p>
+      <p class="text-ink-muted text-sm mb-4">Choose the sacrament you'd like to register for.</p>
+      <div class="space-y-2.5">
+        ${SACRAMENTS.map(s => {
+          const isSelected = state.sacramentId === s.id;
+          return `
+            <button onclick="selectSacrament('${s.id}')" class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${isSelected ? 'selected' : 'bg-card-bg'}">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold">${s.name}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${s.description}</p>
+                  ${s.registrationMode === 'Registration Window' ? `<p class="text-xs text-primary font-medium mt-1.5">Registration closes ${formatDate(s.registrationCloses)}</p>` : ''}
+                </div>
+                ${isSelected ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check,'w-5 h-5')}</span>` : ''}
+              </div>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderCandidateStep() {
+    const s = sacramentById(state.sacramentId);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Who is this for?</p>
+      <p class="text-ink-muted text-sm mb-4">Choose a family member to register for ${s.name}.</p>
+      <div class="space-y-2.5">
+        ${FAMILY_MEMBERS.map(m => {
+          const isSelected = state.candidateId === m.id;
+          return `
+            <button onclick="selectCandidate('${m.id}')" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${isSelected ? 'selected' : 'bg-card-bg'}">
+              <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center">${m.name.split(' ').map(w=>w[0]).join('')}</span>
+                <span class="text-sm font-medium">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></span>
+              </div>
+              ${isSelected ? `<span class="text-primary">${icon(ICONS.check,'w-5 h-5')}</span>` : ''}
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderDocumentsStep() {
+    const s = sacramentById(state.sacramentId);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Required documents</p>
+      <p class="text-ink-muted text-sm mb-4">${s.name} requires the following. Tap to simulate an upload.</p>
+      <div class="space-y-2.5">
+        ${s.requiredDocuments.map(doc => {
+          const uploaded = !!state.uploadedDocs[doc];
+          return `
+            <button onclick="toggleDoc('${doc.replace(/'/g,"\\'")}')" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${uploaded ? 'selected' : 'bg-card-bg'}">
+              <span class="text-sm font-medium">${doc}</span>
+              ${uploaded ? `<span class="text-primary flex items-center gap-1 text-xs font-semibold">${icon(ICONS.check,'w-4 h-4')}Uploaded</span>` : `<span class="text-ink-muted flex items-center gap-1 text-xs font-semibold">${icon(ICONS.upload,'w-4 h-4')}Upload</span>`}
+            </button>
+          `;
+        }).join('')}
+      </div>
+      ${s.instructions ? `<div class="bg-primary-light rounded-card p-3.5 mt-4"><p class="text-xs text-primary">${s.instructions}</p></div>` : ''}
+    `;
+  }
+
+  function renderReviewStep() {
+    const s = sacramentById(state.sacramentId);
+    const m = memberById(state.candidateId);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Review your registration</p>
+      <p class="text-ink-muted text-sm mb-4">Check the details below before payment.</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 space-y-3">
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Sacrament</span><span class="text-sm font-semibold">${s.name}</span></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Candidate</span><span class="text-sm font-semibold">${m.name}</span></div>
+        ${s.celebrationDate ? `<div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Celebration date</span><span class="text-sm font-semibold">${formatDate(s.celebrationDate)}</span></div>` : ''}
+        ${s.venue ? `<div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Venue</span><span class="text-sm font-semibold">${s.venue}</span></div>` : ''}
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Documents</span><span class="text-sm font-semibold">${s.requiredDocuments.length} uploaded</span></div>
+      </div>
+      <div class="space-y-1.5 mt-4">
+        <label class="text-sm font-medium">Additional information (optional)</label>
+        <textarea id="additional-info" rows="2" oninput="state.additionalInfo=this.value" class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-card-bg focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${state.additionalInfo}</textarea>
+      </div>
+      <div class="bg-section-bg rounded-card p-4 flex items-center justify-between mt-4">
+        <span class="text-sm font-semibold">Registration fee</span>
+        <span class="font-heading font-bold text-lg">₹${s.fee}</span>
+      </div>
+    `;
+  }
+
+  function renderPaymentStep() {
+    const s = sacramentById(state.sacramentId);
+    const methods = ['UPI', 'Card', 'Net Banking'];
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Payment</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-muted">Total payable</p>
+        <p class="font-heading font-bold text-xl">₹${s.fee}</p>
+      </div>
+      <p class="text-ink-muted text-sm mb-3">Choose a payment method.</p>
+      <div class="space-y-3">
+        ${methods.map(m => `
+          <button onclick="state.paymentMethod='${m}'; render()" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${state.paymentMethod === m ? 'selected' : 'bg-card-bg'}">
+            <span class="text-sm font-semibold">${m}</span>
+            ${state.paymentMethod === m ? `<span class="text-primary">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  const RENDERERS = { sacrament: renderSacramentStep, candidate: renderCandidateStep, documents: renderDocumentsStep, review: renderReviewStep, payment: renderPaymentStep };
+
+  function render() {
+    const step = WIZARD_STEPS[stepIndex];
+    document.getElementById('step-content').innerHTML = RENDERERS[step]();
+    document.getElementById('step-label').textContent = `Step ${stepIndex + 1} of ${WIZARD_STEPS.length} · ${STEP_LABELS[step]}`;
+    document.getElementById('progress-fill').style.width = `${((stepIndex + 1) / WIZARD_STEPS.length) * 100}%`;
+    document.getElementById('continue-btn').textContent = step === 'payment' ? `Pay ₹${sacramentById(state.sacramentId).fee}` : 'Continue';
+  }
+
+  function submitRegistration() {
+    const btn = document.getElementById('continue-btn');
+    btn.disabled = true; btn.textContent = 'Processing payment…';
+    setTimeout(() => {
+      const s = sacramentById(state.sacramentId);
+      const m = memberById(state.candidateId);
+      const ref = 'SAC-REG-2026-' + Math.floor(1000 + Math.random() * 8999);
+      document.getElementById('step-content').innerHTML = `
+        <div class="pt-6 text-center space-y-4">
+          <span class="w-16 h-16 rounded-badge bg-green/20 text-[#2f6b45] flex items-center justify-center mx-auto">${icon(ICONS.check, 'w-8 h-8')}</span>
+          <p class="font-heading font-bold text-xl">Registration submitted</p>
+          <p class="text-sm text-ink-muted max-w-xs mx-auto">${ref} · ${s.name} for ${m.name} · ₹${s.fee} paid via ${state.paymentMethod}</p>
+          <p class="text-xs text-ink-muted max-w-xs mx-auto">The parish office will review your documents and confirm next steps.</p>
+          <div class="pt-4 space-y-3">
+            <button onclick="window.location.href='screen-parishioner-sacraments-myregistrations.html?${sessionParams.toString()}'" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">View My Registrations</button>
+            <button onclick="window.location.href='screen-parishioner-services-hub.html?${sessionParams.toString()}'" class="w-full text-primary text-sm font-semibold py-2 min-h-[44px]">Back to Services</button>
+          </div>
+        </div>
+      `;
+      document.querySelector('.sticky').classList.add('hidden');
+      document.getElementById('step-label').textContent = 'Done';
+      document.getElementById('progress-fill').style.width = '100%';
+    }, 900);
+  }
+
+  render();
+</script>
+
+</body>
+</html>

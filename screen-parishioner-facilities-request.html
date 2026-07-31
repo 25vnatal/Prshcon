@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Book a Facility</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .option-card { border: 2px solid #E8EDF5; }
+  .option-card.selected { border-color: #4F7CF5; background: #EEF4FF; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-[100dvh] bg-bg-warm relative flex flex-col">
+
+    <header class="px-5 pt-5 pb-3 flex items-center gap-3">
+      <button onclick="goBack()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="flex-1">
+        <p class="font-heading font-bold text-base leading-tight">Book a Facility</p>
+        <p id="step-label" class="text-xs text-ink-muted mt-0.5">Step 1 of 4</p>
+      </div>
+    </header>
+
+    <div class="px-5 pb-4">
+      <div class="h-1.5 bg-divider rounded-badge overflow-hidden">
+        <div id="progress-fill" class="h-full bg-primary rounded-badge transition-all duration-300" style="width: 25%"></div>
+      </div>
+    </div>
+
+    <main id="step-content" class="px-5 flex-1 space-y-4 pb-4"></main>
+
+    <div class="sticky bottom-0 bg-card-bg border-t border-divider px-5 py-4 flex gap-3">
+      <button id="continue-btn" onclick="handleContinue()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">Continue</button>
+    </div>
+
+  </div>
+
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+
+  // ---------------- Reference data: Facilities offered by this parish (mirrors Parish Services config) ----------------
+  const FACILITIES = [
+    { id:"FAC-001", name:"Parish Hall", type:"Hall", capacity:200, bookingFee:2000, availability:"All days, 8 AM – 9 PM" },
+    { id:"FAC-002", name:"Meeting Room A", type:"Room", capacity:20, bookingFee:300, availability:"Weekdays, 9 AM – 6 PM" },
+    { id:"FAC-003", name:"Outdoor Grounds", type:"Ground", capacity:500, bookingFee:3000, availability:"By special request" },
+  ];
+
+  const WIZARD_STEPS = ['facility', 'details', 'review', 'payment'];
+  const STEP_LABELS = { facility: 'Facility', details: 'Details', review: 'Review', payment: 'Payment' };
+  let stepIndex = 0;
+
+  const state = { facilityId: null, date: '', startTime: '', endTime: '', purpose: '', attendees: '', paymentMethod: null };
+
+  function icon(paths, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${paths}</svg>`; }
+  const ICONS = { check: '<path d="M20 6 9 17l-5-5"/>' };
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  function facilityById(id) { return FACILITIES.find(f => f.id === id); }
+
+  function goBack() {
+    if (stepIndex === 0) { window.location.href = 'screen-parishioner-services-hub.html?' + sessionParams.toString(); return; }
+    stepIndex--;
+    render();
+  }
+
+  function handleContinue() {
+    const step = WIZARD_STEPS[stepIndex];
+    if (!validateStep(step)) return;
+    if (step === 'payment') { submitBooking(); return; }
+    stepIndex++;
+    render();
+  }
+
+  function validateStep(step) {
+    if (step === 'facility' && !state.facilityId) { toast('Please choose a facility.'); return false; }
+    if (step === 'details') {
+      if (!state.date) { toast('Please choose a date.'); return false; }
+      if (!state.startTime || !state.endTime) { toast('Please choose a start and end time.'); return false; }
+      if (!state.purpose.trim()) { toast('Please describe the purpose of your booking.'); return false; }
+    }
+    if (step === 'payment' && !state.paymentMethod) { toast('Please choose a payment method.'); return false; }
+    return true;
+  }
+
+  function selectFacility(id) {
+    state.facilityId = id;
+    stepIndex = WIZARD_STEPS.indexOf('details');
+    render();
+  }
+
+  function renderFacilityStep() {
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Which facility?</p>
+      <p class="text-ink-muted text-sm mb-4">Choose a space for your event or gathering.</p>
+      <div class="space-y-2.5">
+        ${FACILITIES.map(f => `
+          <button onclick="selectFacility('${f.id}')" class="option-card w-full rounded-card p-4 text-left transition-warm min-h-[44px] ${state.facilityId===f.id ? 'selected' : 'bg-card-bg'}">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-semibold">${f.name}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${f.type} · Capacity ${f.capacity} · ₹${f.bookingFee}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${f.availability}</p>
+              </div>
+              ${state.facilityId===f.id ? `<span class="text-primary flex-shrink-0">${icon(ICONS.check,'w-5 h-5')}</span>` : ''}
+            </div>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderDetailsStep() {
+    const f = facilityById(state.facilityId);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">${f.name}</p>
+      <p class="text-ink-muted text-sm mb-4">${f.availability}</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 space-y-4">
+        <div class="space-y-1.5"><label class="text-sm font-medium">Date</label><input id="in-date" type="date" value="${state.date}" oninput="state.date=this.value" class="w-full border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5"><label class="text-sm font-medium">Start time</label><input id="in-start" type="time" value="${state.startTime}" oninput="state.startTime=this.value" class="w-full border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+          <div class="space-y-1.5"><label class="text-sm font-medium">End time</label><input id="in-end" type="time" value="${state.endTime}" oninput="state.endTime=this.value" class="w-full border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        </div>
+        <div class="space-y-1.5"><label class="text-sm font-medium">Expected attendees</label><input id="in-attendees" type="number" value="${state.attendees}" max="${f.capacity}" oninput="state.attendees=this.value" class="w-full border border-divider rounded-input px-3 h-11 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium">Purpose</label>
+          <textarea id="in-purpose" rows="2" placeholder="e.g. Family gathering, parish group meeting" oninput="state.purpose=this.value" class="w-full border border-divider rounded-input px-4 py-3 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${state.purpose}</textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReviewStep() {
+    const f = facilityById(state.facilityId);
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Review your booking</p>
+      <p class="text-ink-muted text-sm mb-4">Confirm the details below before payment.</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 space-y-3">
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Facility</span><span class="text-sm font-semibold">${f.name}</span></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Date</span><span class="text-sm font-semibold">${state.date}</span></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Time</span><span class="text-sm font-semibold">${state.startTime} – ${state.endTime}</span></div>
+        ${state.attendees ? `<div class="flex items-center justify-between"><span class="text-xs text-ink-muted">Attendees</span><span class="text-sm font-semibold">${state.attendees}</span></div>` : ''}
+        <div><span class="text-xs text-ink-muted">Purpose</span><p class="text-sm mt-1">${state.purpose}</p></div>
+      </div>
+      <div class="bg-section-bg rounded-card p-4 flex items-center justify-between mt-4">
+        <span class="text-sm font-semibold">Booking fee</span>
+        <span class="font-heading font-bold text-lg">₹${f.bookingFee}</span>
+      </div>
+    `;
+  }
+
+  function renderPaymentStep() {
+    const f = facilityById(state.facilityId);
+    const methods = ['UPI', 'Card', 'Net Banking'];
+    return `
+      <p class="font-heading font-bold text-xl mb-1">Payment</p>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-4 flex items-center justify-between">
+        <p class="text-sm text-ink-muted">Total payable</p>
+        <p class="font-heading font-bold text-xl">₹${f.bookingFee}</p>
+      </div>
+      <p class="text-ink-muted text-sm mb-3">Choose a payment method.</p>
+      <div class="space-y-3">
+        ${methods.map(m => `
+          <button onclick="state.paymentMethod='${m}'; render()" class="option-card w-full rounded-card p-4 flex items-center justify-between text-left transition-warm min-h-[44px] ${state.paymentMethod === m ? 'selected' : 'bg-card-bg'}">
+            <span class="text-sm font-semibold">${m}</span>
+            ${state.paymentMethod === m ? `<span class="text-primary">${icon(ICONS.check, 'w-5 h-5')}</span>` : ''}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  const RENDERERS = { facility: renderFacilityStep, details: renderDetailsStep, review: renderReviewStep, payment: renderPaymentStep };
+
+  function render() {
+    const step = WIZARD_STEPS[stepIndex];
+    document.getElementById('step-content').innerHTML = RENDERERS[step]();
+    document.getElementById('step-label').textContent = `Step ${stepIndex + 1} of ${WIZARD_STEPS.length} · ${STEP_LABELS[step]}`;
+    document.getElementById('progress-fill').style.width = `${((stepIndex + 1) / WIZARD_STEPS.length) * 100}%`;
+    document.getElementById('continue-btn').textContent = step === 'payment' ? `Pay ₹${facilityById(state.facilityId).bookingFee}` : 'Continue';
+  }
+
+  function submitBooking() {
+    const btn = document.getElementById('continue-btn');
+    btn.disabled = true; btn.textContent = 'Processing payment…';
+    setTimeout(() => {
+      const f = facilityById(state.facilityId);
+      const ref = 'FAC-BOOK-2026-' + Math.floor(1000 + Math.random() * 8999);
+      document.getElementById('step-content').innerHTML = `
+        <div class="pt-6 text-center space-y-4">
+          <span class="w-16 h-16 rounded-badge bg-green/20 text-[#2f6b45] flex items-center justify-center mx-auto">${icon(ICONS.check, 'w-8 h-8')}</span>
+          <p class="font-heading font-bold text-xl">Booking confirmed</p>
+          <p class="text-sm text-ink-muted max-w-xs mx-auto">${ref} · ${f.name} · ${state.date} · ₹${f.bookingFee} paid via ${state.paymentMethod}</p>
+          <div class="pt-4 space-y-3">
+            <button onclick="window.location.href='screen-parishioner-facilities-mybookings.html?${sessionParams.toString()}'" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[48px] transition-warm">View My Bookings</button>
+            <button onclick="window.location.href='screen-parishioner-services-hub.html?${sessionParams.toString()}'" class="w-full text-primary text-sm font-semibold py-2 min-h-[44px]">Back to Services</button>
+          </div>
+        </div>
+      `;
+      document.querySelector('.sticky').classList.add('hidden');
+      document.getElementById('step-label').textContent = 'Done';
+      document.getElementById('progress-fill').style.width = '100%';
+    }, 900);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
