@@ -76,6 +76,10 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
           Committees
         </button>
+        <button onclick="return goServices()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+          Services
+        </button>
         <a href="#" onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           Requests
@@ -170,6 +174,7 @@
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
   function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goServices() { window.location.href = 'screen-parish-services-hub.html?' + baseParams().toString(); return false; }
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
   function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
@@ -221,11 +226,11 @@
   // ---------------- Mock data (Infant Jesus Shrine, from mock-seed.json) ----------------
   const seed = {
     actionCenter: [
-      { count: 3, label: "Document requests", status: "Awaiting", tone: "lavender", icon: "file", go: "goRequests" },
-      { count: 2, label: "Sacrament approvals", status: "Awaiting", tone: "green", icon: "check", go: null },
-      { count: 1, label: "Family updates", status: "Awaiting", tone: "coral", icon: "users", go: "goFamilyUpdates" },
-      { count: 2, label: "Home service requests", status: "New", tone: "primary", icon: "home", go: null },
-      { count: 1, label: "Payments awaiting", status: "Verification", tone: "error", icon: "cash", go: null },
+      { count: 3, label: "Document requests", status: "Awaiting review", tone: "lavender", icon: "file", go: "goRequests" },
+      { count: 2, label: "Sacrament approvals", status: "Awaiting your approval", tone: "green", icon: "check", go: null },
+      { count: 1, label: "Family updates", status: "Awaiting review", tone: "coral", icon: "users", go: "goFamilyUpdates" },
+      { count: 2, label: "Home service requests", status: "Just came in", tone: "primary", icon: "home", go: null },
+      { count: 1, label: "Payments", status: "Needs verification", tone: "error", icon: "cash", go: null },
     ],
     quickActions: [
       { label: "Approve Requests", icon: "check" },
@@ -319,18 +324,18 @@
       error: ['bg-error-bg', 'text-error'],
     };
     return `
-      <section class="flex items-start justify-between gap-3">
+      <section class="bg-gradient-to-br from-primary-light via-primary-light to-gold/10 rounded-card p-6 sm:p-8 flex items-center justify-between gap-4">
         <div>
-          <p class="font-heading font-bold text-2xl">Good morning, Parish Office 👋</p>
-          <p class="text-ink-muted text-sm mt-1">Thursday, 31 July 2026 · ${parishName}</p>
+          <p class="font-heading font-bold text-2xl sm:text-3xl">Good morning, Parish Office 👋</p>
+          <p class="text-ink-muted text-sm mt-1.5">Thursday, 31 July 2026 · ${parishName}</p>
         </div>
-        <div class="hidden sm:block flex-shrink-0">${chapelIllustration(56)}</div>
+        <div class="hidden sm:block flex-shrink-0">${chapelIllustration(96)}</div>
       </section>
 
       <section>
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-heading font-bold text-base">Action Center</h2>
-          <button onclick="goRequests()" class="text-primary text-xs font-semibold flex items-center gap-0.5">View all${icon('chevronRight','w-3.5 h-3.5')}</button>
+          <button onclick="goRequests()" class="text-primary text-xs font-semibold flex items-center gap-0.5">View all${icon('chevronRight','icon w-3.5 h-3.5')}</button>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
           ${seed.actionCenter.map(a => {
@@ -338,8 +343,8 @@
             return `
             <button onclick="${a.go ? a.go + '()' : `toast('${a.label}')`}" class="bg-card-bg rounded-card shadow-card p-4 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
               <div class="flex items-start justify-between mb-2">
-                <span class="w-10 h-10 rounded-badge ${bg} ${text} flex items-center justify-center">${icon(a.icon, 'w-4 h-4')}</span>
-                <span class="text-ink-muted mt-1">${icon('chevronRight','w-3.5 h-3.5')}</span>
+                <span class="w-10 h-10 rounded-badge ${bg} ${text} flex items-center justify-center">${icon(a.icon, 'icon w-4 h-4')}</span>
+                <span class="text-ink-muted mt-1">${icon('chevronRight','icon w-3.5 h-3.5')}</span>
               </div>
               <p class="font-heading font-bold text-xl">${a.count}</p>
               <p class="text-xs text-ink-muted mt-0.5">${a.label}</p>
@@ -356,13 +361,13 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               ${seed.snapshot.map(s => `
                 <div class="bg-section-bg rounded-card p-4">
-                  <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center mb-2">${icon(s.icon,'w-4 h-4')}</span>
+                  <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center mb-2">${icon(s.icon,'icon w-4 h-4')}</span>
                   <p class="font-heading font-bold text-xl">${s.value}</p>
                   <p class="text-xs text-ink-muted mt-0.5">${s.label}</p>
                 </div>
               `).join('')}
             </div>
-            <button onclick="toast('Insights')" class="text-primary text-xs font-semibold flex items-center gap-0.5 mt-4">View all insights${icon('chevronRight','w-3.5 h-3.5')}</button>
+            <button onclick="toast('Insights')" class="text-primary text-xs font-semibold flex items-center gap-0.5 mt-4">View all insights${icon('chevronRight','icon w-3.5 h-3.5')}</button>
           </section>
 
           ${quickActionsSection()}
@@ -384,7 +389,7 @@
                   <p class="text-sm font-semibold">${s.title}</p>
                   <p class="text-xs text-ink-muted mt-0.5">${s.sub}</p>
                 </div>
-                <span class="text-ink-muted flex-shrink-0">${icon('chevronRight','w-3.5 h-3.5')}</span>
+                <span class="text-ink-muted flex-shrink-0">${icon('chevronRight','icon w-3.5 h-3.5')}</span>
               </button>
             `}).join('')}
           </div>
@@ -394,7 +399,7 @@
       <section>
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-heading font-bold text-base">Recent activity</h2>
-          <button onclick="toast('Activity history')" class="text-primary text-xs font-semibold flex items-center gap-0.5">View all${icon('chevronRight','w-3.5 h-3.5')}</button>
+          <button onclick="toast('Activity history')" class="text-primary text-xs font-semibold flex items-center gap-0.5">View all${icon('chevronRight','icon w-3.5 h-3.5')}</button>
         </div>
         <div class="bg-card-bg rounded-card shadow-card p-5">
           <div class="grid sm:grid-cols-3 gap-5">
@@ -402,7 +407,7 @@
               const [bg, text] = toneMap[a.tone];
               return `
               <div class="flex items-start gap-3">
-                <span class="w-9 h-9 rounded-badge ${bg} ${text} flex items-center justify-center flex-shrink-0">${icon(a.icon,'w-4 h-4')}</span>
+                <span class="w-9 h-9 rounded-badge ${bg} ${text} flex items-center justify-center flex-shrink-0">${icon(a.icon,'icon w-4 h-4')}</span>
                 <div class="min-w-0">
                   <p class="text-sm font-medium">${a.text}</p>
                   <p class="text-xs text-ink-muted mt-0.5">${a.sub} · ${a.time}</p>
