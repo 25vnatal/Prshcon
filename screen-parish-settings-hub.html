@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Settings</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .toggle { width: 40px; height: 24px; border-radius: 999px; position: relative; transition: background 200ms ease; flex-shrink: 0; }
+  .toggle-knob { width: 18px; height: 18px; border-radius: 999px; background: white; position: absolute; top: 3px; left: 3px; transition: left 200ms ease; }
+  .toggle.on { background: #4F7CF5; }
+  .toggle.on .toggle-knob { left: 19px; }
+  .toggle.off { background: #E8EDF5; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="return goCalendar()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          Parish Calendar
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <button onclick="return goDocuments()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Documents
+        </button>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="return goFaithFormation()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          Faith Formation
+        </button>
+        <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="return goAdministration()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </a>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Settings</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Settings</p>
+          <p class="text-ink-muted text-sm mt-1">Users, notifications, payments, and general configuration for this parish.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('users')" data-module="users" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Users &amp; Roles</button>
+          <button onclick="setModule('notifications')" data-module="notifications" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Notifications</button>
+          <button onclick="setModule('payments')" data-module="payments" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Payments</button>
+          <button onclick="setModule('system')" data-module="system" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">System Configuration</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ ADD/EDIT USER MODAL ============ -->
+  <div id="user-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="user-modal-title" class="font-heading font-bold text-lg">Invite User</p>
+        <button onclick="closeModal('user-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="user-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitUser()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="user-modal-save-label">Save</span></button>
+        <button onclick="closeModal('user-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['parish', 'parishName', 'name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
+  function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goCalendar() { window.location.href = 'screen-parish-calendar-hub.html?' + baseParams().toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
+  function goDocuments() { window.location.href = 'screen-parish-documents-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-parish-communication-hub.html?' + baseParams().toString(); return false; }
+  function goFaithFormation() { window.location.href = 'screen-parish-faithformation-hub.html?' + baseParams().toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
+  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
+  function goReports() { window.location.href = 'screen-parish-reports-hub.html?' + baseParams().toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    kebab: '<circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  function statusPill(status) {
+    const map = { 'Active':['bg-green/20','text-[#2f6b45]'], 'Invited':['bg-gold/20','text-[#8a5a10]'], 'Disabled':['bg-error-bg','text-error'] };
+    const [bg, text] = map[status] || map['Active'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
+  }
+  function toggleEl(on, onclickFn) {
+    return `<button onclick="${onclickFn}" class="toggle ${on ? 'on' : 'off'}" role="switch" aria-checked="${on}"><span class="toggle-knob"></span></button>`;
+  }
+
+  let currentModule = 'users';
+  function setModule(m) {
+    closeUserKebab();
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'users') renderUsersModule(el);
+    else if (currentModule === 'notifications') renderNotificationsModule(el);
+    else if (currentModule === 'payments') renderPaymentsModule(el);
+    else renderSystemModule(el);
+  }
+
+  // =========================================================================
+  // MODULE 1: Users & Roles & Permissions
+  // =========================================================================
+  const ROLES = ["Parish Priest", "Assistant Priest", "Parish Secretary", "Accountant", "Office Staff"];
+  const PERMISSION_LEVELS = ["Full Access", "Staff Access", "Finance Access", "Limited Access"];
+  let users = [
+    { id:"USR-001", name:"Fr. John Anthony", email:"john.anthony@ijs-viveknagar.org", role:"Parish Priest", permission:"Full Access", status:"Active" },
+    { id:"USR-002", name:"Fr. Francis Billemane", email:"francis.b@ijs-viveknagar.org", role:"Assistant Priest", permission:"Full Access", status:"Active" },
+    { id:"USR-003", name:"Grace Almeida", email:"grace.almeida@ijs-viveknagar.org", role:"Parish Secretary", permission:"Staff Access", status:"Active" },
+    { id:"USR-004", name:"Thomas Rebello", email:"thomas.rebello@ijs-viveknagar.org", role:"Accountant", permission:"Finance Access", status:"Active" },
+    { id:"USR-005", name:"Peter Vaz", email:"peter.vaz@ijs-viveknagar.org", role:"Office Staff", permission:"Limited Access", status:"Invited" },
+  ];
+
+  function renderUsersModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openUserModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Invite User</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Email</th>
+                <th class="px-4 py-3 font-medium">Role</th>
+                <th class="px-4 py-3 font-medium">Permission Level</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(u => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${u.name}</td>
+                  <td class="px-4 py-3 text-ink-muted">${u.email}</td>
+                  <td class="px-4 py-3 text-ink-muted">${u.role}</td>
+                  <td class="px-4 py-3 text-ink-muted">${u.permission}</td>
+                  <td class="px-4 py-3">${statusPill(u.status)}</td>
+                  <td class="px-4 py-3 text-right relative">${renderUserActionsCell(u)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-ink-muted mt-3">Permission levels control what a user can see and do across Parish Connect \u2014 Full Access includes Administration and Finance, Limited Access is read-mostly.</p>
+    `;
+  }
+
+  let userConfirmContext = null; // { id, action: 'Disabled' | 'Active' }
+  let openUserKebabId = null;
+  let kebabMenuPos = { top: 0, left: 0 };
+
+  function renderUserActionsCell(u) {
+    if (userConfirmContext && userConfirmContext.id === u.id) {
+      return `
+        <div class="flex items-center justify-end gap-1.5">
+          <span class="text-xs text-ink-muted mr-1">Mark as ${userConfirmContext.action}?</span>
+          <button onclick="confirmUserStatusChange()" class="text-error text-xs font-semibold px-2 py-1 rounded-button hover:bg-error-bg">Confirm</button>
+          <button onclick="userConfirmContext=null; renderModule()" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        </div>
+      `;
+    }
+    return `<button onclick="toggleUserKebab('${u.id}', this)" aria-label="More actions" aria-haspopup="true" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('kebab','icon w-4 h-4')}</button>`;
+  }
+  function renderUserKebabMenu(u) {
+    return `
+      <div id="user-kebab-menu" style="position:fixed; top:${kebabMenuPos.top}px; left:${kebabMenuPos.left}px;" class="w-48 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-50">
+        <button onclick="editUserFromKebab('${u.id}')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm flex items-center gap-2">${icon('edit','icon w-3.5 h-3.5')}Edit role &amp; permissions</button>
+        ${u.status === 'Disabled'
+          ? `<button onclick="promptUserStatusChange('${u.id}','Active')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Re-enable</button>`
+          : `<button onclick="promptUserStatusChange('${u.id}','Disabled')" class="w-full text-left px-3.5 py-2.5 text-sm text-error hover:bg-error-bg transition-warm">Disable access</button>`
+        }
+      </div>
+    `;
+  }
+  function closeUserKebab() {
+    const existing = document.getElementById('user-kebab-menu');
+    if (existing) existing.remove();
+    openUserKebabId = null;
+  }
+  function toggleUserKebab(id, btnEl) {
+    const wasOpen = openUserKebabId === id;
+    closeUserKebab();
+    if (wasOpen) return;
+    openUserKebabId = id;
+    const rect = btnEl.getBoundingClientRect();
+    kebabMenuPos = { top: rect.bottom + 4, left: Math.max(8, rect.right - 192) };
+    document.body.insertAdjacentHTML('beforeend', renderUserKebabMenu(users.find(x => x.id === id)));
+  }
+  function editUserFromKebab(id) {
+    closeUserKebab();
+    openUserModal(id);
+  }
+  function promptUserStatusChange(id, action) {
+    closeUserKebab();
+    userConfirmContext = { id, action };
+    renderModule();
+  }
+  function confirmUserStatusChange() {
+    const u = users.find(x => x.id === userConfirmContext.id);
+    u.status = userConfirmContext.action;
+    toast(`${u.name} ${userConfirmContext.action === 'Disabled' ? 'access disabled' : 're-enabled'}.`);
+    userConfirmContext = null;
+    renderModule();
+  }
+
+  let editingUserId = null;
+  function openUserModal(editId) {
+    editingUserId = editId || null;
+    const u = editId ? users.find(x => x.id === editId) : null;
+    document.getElementById('user-modal-title').textContent = u ? 'Edit User' : 'Invite User';
+    document.getElementById('user-modal-save-label').textContent = u ? 'Save Changes' : 'Send Invite';
+    document.getElementById('user-modal').classList.remove('hidden');
+    document.getElementById('user-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Full name</label><input id="uf-name" type="text" value="${u ? u.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Email</label><input id="uf-email" type="email" value="${u ? u.email : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Role</label>
+        <select id="uf-role" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${ROLES.map(r => `<option ${u && u.role===r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Permission level</label>
+        <select id="uf-permission" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${PERMISSION_LEVELS.map(p => `<option ${u && u.permission===p ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+      </div>
+    `;
+  }
+  function submitUser() {
+    const name = document.getElementById('uf-name').value.trim();
+    const email = document.getElementById('uf-email').value.trim();
+    if (!name || !email) { toast('Please enter a name and email.'); return; }
+    const role = document.getElementById('uf-role').value;
+    const permission = document.getElementById('uf-permission').value;
+    if (editingUserId) {
+      Object.assign(users.find(x => x.id === editingUserId), { name, email, role, permission });
+      toast(`${name} updated.`);
+    } else {
+      users.push({ id:'USR-'+Math.floor(100+Math.random()*899), name, email, role, permission, status:'Invited' });
+      toast(`Invite sent to ${email}.`);
+    }
+    editingUserId = null;
+    closeModal('user-modal');
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 2: Notification Settings
+  // =========================================================================
+  let notificationChannels = { inApp: true, email: true, whatsapp: false, sms: false };
+  let notificationEvents = [
+    { key:'requestSubmitted', label:'Request Submitted', channels:{ inApp:true, email:true, whatsapp:false, sms:false } },
+    { key:'requestApproved', label:'Request Approved', channels:{ inApp:true, email:true, whatsapp:false, sms:false } },
+    { key:'requestRejected', label:'Request Rejected', channels:{ inApp:true, email:true, whatsapp:false, sms:false } },
+    { key:'documentReady', label:'Document Ready', channels:{ inApp:true, email:true, whatsapp:false, sms:false } },
+    { key:'paymentReceived', label:'Payment Received', channels:{ inApp:true, email:false, whatsapp:false, sms:false } },
+    { key:'announcementPublished', label:'Announcement Published', channels:{ inApp:true, email:false, whatsapp:false, sms:false } },
+  ];
+  function renderNotificationsModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6">
+        <p class="text-sm font-semibold mb-4">Channels</p>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">In-App</p><p class="text-xs text-ink-muted">Always enabled \u2014 the primary channel for all parishioners</p></div>
+            ${toggleEl(true, 'notifyInAppLocked()')}
+          </div>
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">Email</p><p class="text-xs text-ink-muted">Sent via the parish's configured email service</p></div>
+            ${toggleEl(notificationChannels.email, "toggleChannel('email')")}
+          </div>
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">WhatsApp</p><p class="text-xs text-ink-muted">Requires a connected WhatsApp Business number</p></div>
+            ${toggleEl(notificationChannels.whatsapp, "toggleChannel('whatsapp')")}
+          </div>
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">SMS</p><p class="text-xs text-ink-muted">Charged per message by the parish's SMS provider</p></div>
+            ${toggleEl(notificationChannels.sms, "toggleChannel('sms')")}
+          </div>
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Event</th>
+                <th class="px-4 py-3 font-medium text-center">In-App</th>
+                <th class="px-4 py-3 font-medium text-center">Email</th>
+                <th class="px-4 py-3 font-medium text-center">WhatsApp</th>
+                <th class="px-4 py-3 font-medium text-center">SMS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${notificationEvents.map(ev => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${ev.label}</td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" checked disabled class="w-4 h-4 opacity-60"></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.email ? 'checked' : ''} onchange="toggleEventChannel('${ev.key}','email')" class="w-4 h-4" ${notificationChannels.email ? '' : 'disabled'}></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.whatsapp ? 'checked' : ''} onchange="toggleEventChannel('${ev.key}','whatsapp')" class="w-4 h-4" ${notificationChannels.whatsapp ? '' : 'disabled'}></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.sms ? 'checked' : ''} onchange="toggleEventChannel('${ev.key}','sms')" class="w-4 h-4" ${notificationChannels.sms ? '' : 'disabled'}></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-ink-muted mt-3">A channel must be turned on above before it can be enabled for individual events.</p>
+    `;
+  }
+  function toggleChannel(ch) {
+    notificationChannels[ch] = !notificationChannels[ch];
+    renderModule();
+  }
+  function notifyInAppLocked() {
+    toast('In-App notifications cannot be disabled.');
+  }
+  function toggleEventChannel(eventKey, ch) {
+    const ev = notificationEvents.find(e => e.key === eventKey);
+    ev.channels[ch] = !ev.channels[ch];
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 3: Payment Settings
+  // =========================================================================
+  let paymentMethods = { upi: true, card: true, netBanking: true, cash: true, bankTransfer: false, cheque: false };
+  let onlinePaymentRequired = true;
+  function renderPaymentsModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6">
+        <p class="text-sm font-semibold mb-4">Accepted payment methods</p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          ${Object.entries({ upi:'UPI', card:'Card', netBanking:'Net Banking', cash:'Cash (offline)', bankTransfer:'Bank Transfer (offline)', cheque:'Cheque (offline)' }).map(([key, label]) => `
+            <label class="flex items-center gap-2.5 text-sm bg-section-bg px-3.5 py-2.5 rounded-badge cursor-pointer">
+              <input type="checkbox" ${paymentMethods[key] ? 'checked' : ''} onchange="togglePaymentMethod('${key}')" class="w-4 h-4"> ${label}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6 flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold">Require online payment before submission</p>
+          <p class="text-xs text-ink-muted mt-0.5">When on, requests with a fee cannot be submitted until payment is completed</p>
+        </div>
+        ${toggleEl(onlinePaymentRequired, 'toggleOnlinePaymentRequired()')}
+      </div>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-card-bg rounded-card shadow-card p-5">
+          <p class="text-sm font-semibold mb-4">Payment gateway</p>
+          <div class="space-y-3">
+            <div class="space-y-1.5"><label class="text-xs font-medium">Provider</label>
+              <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <option>Razorpay</option><option>PayU</option><option>Stripe</option>
+              </select>
+            </div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Merchant ID</label><input type="text" value="rzp_live_\u2022\u2022\u2022\u2022\u20228821" readonly class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg text-ink-muted"></div>
+            <div class="flex items-center gap-2">${statusPill('Active')}<span class="text-xs text-ink-muted">Connected</span></div>
+          </div>
+        </div>
+        <div class="bg-card-bg rounded-card shadow-card p-5">
+          <p class="text-sm font-semibold mb-4">Bank account (offline reconciliation)</p>
+          <div class="space-y-3">
+            <div class="space-y-1.5"><label class="text-xs font-medium">Account name</label><input type="text" value="Infant Jesus Shrine, Viveknagar" readonly class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg text-ink-muted"></div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Account number</label><input type="text" value="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20225512" readonly class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg text-ink-muted"></div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">IFSC</label><input type="text" value="HDFC0001234" readonly class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg text-ink-muted"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function togglePaymentMethod(key) {
+    paymentMethods[key] = !paymentMethods[key];
+    renderModule();
+  }
+  function toggleOnlinePaymentRequired() {
+    onlinePaymentRequired = !onlinePaymentRequired;
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 4: System Configuration
+  // =========================================================================
+  function renderSystemModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 max-w-xl">
+        <p class="text-sm font-semibold mb-4">General</p>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5"><label class="text-xs font-medium">Timezone</label>
+              <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <option selected>Asia/Kolkata (IST, UTC+5:30)</option>
+              </select>
+            </div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Currency</label>
+              <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <option selected>Indian Rupee (\u20b9)</option>
+              </select>
+            </div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Date format</label>
+              <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <option selected>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option>
+              </select>
+            </div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Fiscal year starts</label>
+              <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <option selected>April</option><option>January</option>
+              </select>
+            </div>
+          </div>
+          <div class="space-y-1.5"><label class="text-xs font-medium">Default language</label>
+            <select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              <option selected>English</option><option>Kannada</option><option>Tamil</option><option>Konkani</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="bg-section-bg rounded-card p-4 max-w-xl mt-4">
+        <p class="text-xs text-ink-muted">These settings apply parish-wide. Changing the default language does not translate existing content \u2014 it only sets the default for new screens and notifications.</p>
+      </div>
+    `;
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>

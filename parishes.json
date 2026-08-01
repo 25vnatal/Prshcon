@@ -1,0 +1,1172 @@
+[
+  {
+    "id": "PAR-0001",
+    "name": "St Mary's Minor Basilica Church",
+    "address": "Msgr. F. Noronha Road, Shivajinagar, Bengaluru 560 051",
+    "sizeTier": "Large",
+    "estFamilies": "1,275 - 3,175",
+    "parishPriest": "Fr MFr Arockia Swamy Sebastian",
+    "yearEstablished": 1702
+  },
+  {
+    "id": "PAR-0002",
+    "name": "Infant Jesus Shrine",
+    "address": "Post Box 4712, Viveknagar, Bengaluru 560 047",
+    "sizeTier": "Large",
+    "estFamilies": "925 - 2,300",
+    "parishPriest": "Fr. John Anthony",
+    "yearEstablished": 1971
+  },
+  {
+    "id": "PAR-0003",
+    "name": "St Francis Xavier Cathedral",
+    "address": "Promenade Road, Post Box No. 584, Father Servanton Circle, Cleveland Town, Bengaluru 560 005",
+    "sizeTier": "Large",
+    "estFamilies": "925 - 2,300",
+    "parishPriest": "Fr. Gerord Christopher White",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0004",
+    "name": "Holy Ghost Parish",
+    "address": "No. 9/1, Clarke Road, Richard's Town, Bengaluru 560 084",
+    "sizeTier": "Large",
+    "estFamilies": "800 - 2,025",
+    "parishPriest": "Fr Siluvai Muthu, CSSR",
+    "yearEstablished": 1953
+  },
+  {
+    "id": "PAR-0005",
+    "name": "Our Lady of Lourdes Church",
+    "address": "Whitefield, Bengaluru 560 066",
+    "sizeTier": "Large",
+    "estFamilies": "800 - 2,025",
+    "parishPriest": "Fr Martin Ananda Kumar",
+    "yearEstablished": 1936
+  },
+  {
+    "id": "PAR-0006",
+    "name": "Sacred Heart Church",
+    "address": "No. 62, Richmond Road, Msgr. D'Souza Circle, Bengaluru 560 025",
+    "sizeTier": "Large",
+    "estFamilies": "800 - 2,025",
+    "parishPriest": "Fr. Lourdu Xavier Santhosh",
+    "yearEstablished": 1874
+  },
+  {
+    "id": "PAR-0007",
+    "name": "Immaculate Conception Church",
+    "address": "Doresanipalya, Bannerghatta Road, I.I.M.B. Post, Bengaluru 560 076",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Sahayaraj",
+    "yearEstablished": 1928
+  },
+  {
+    "id": "PAR-0008",
+    "name": "Immaculate Heart of Mary Church",
+    "address": "Mt St Joseph's Campus, Kalena Agrahara, IIMB Post, Bannerghatta Road, Bengaluru 560 076",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Balraju A, SJ",
+    "yearEstablished": 2002
+  },
+  {
+    "id": "PAR-0009",
+    "name": "Our Lady of Sacred Heart Church",
+    "address": "Haralur Road, Bellandur Gate, HSR Layout Post, Chevalier Bhavan, Bengaluru 560 102",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr. John Chinnapan, MSC",
+    "yearEstablished": 2000
+  },
+  {
+    "id": "PAR-0010",
+    "name": "Resurrection Church",
+    "address": "Old Madras Road, 80 Ft. Road, Opp. Swami Vivekananda Metro Station, Indiranagar, Bengaluru 560 038",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr. Amarnath Dinesh Roy",
+    "yearEstablished": 1980
+  },
+  {
+    "id": "PAR-0011",
+    "name": "St Anthony's Church",
+    "address": "T. C. Palya, K. R. Puram, Bengaluru 560 036",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Msgr. C. Francis",
+    "yearEstablished": 1907
+  },
+  {
+    "id": "PAR-0012",
+    "name": "St Anthony's Friary Church",
+    "address": "No. 85, Hosur Road, Madiwala, Koramangala Post, Bengaluru 560 095",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Prashanth Wilson Fernandes",
+    "yearEstablished": 1953
+  },
+  {
+    "id": "PAR-0013",
+    "name": "St Francis De Sales Church",
+    "address": "Mermier Nagara, Hebbagodi, Electronic City Post, Bengaluru 560 100",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Joshy Philip Thazhathukunnel, MSFS",
+    "yearEstablished": 1983
+  },
+  {
+    "id": "PAR-0014",
+    "name": "St John The Evangelist Church",
+    "address": "Church Road, J. C. Nagar, Benson Town Post, Bengaluru 560 046",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Deva Dass D.",
+    "yearEstablished": 1978
+  },
+  {
+    "id": "PAR-0015",
+    "name": "St Peter's Church",
+    "address": "Rustum Bagh (Behind Manipal Hospital), Old Airport Road, Bengaluru 560 017",
+    "sizeTier": "Large",
+    "estFamilies": "700 - 1,725",
+    "parishPriest": "Fr Jayaraj L",
+    "yearEstablished": 2002
+  },
+  {
+    "id": "PAR-0016",
+    "name": "Ascension Church",
+    "address": "2nd Cross, Da'Costa Layout, St Mary's Town Post, Bengaluru 560 084",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr. Gabriel Christy",
+    "yearEstablished": 1968
+  },
+  {
+    "id": "PAR-0017",
+    "name": "Christha Prabhalaya Epiphany Church",
+    "address": "16th Main, 4th Block East, Jayanagar, Bengaluru 560 011",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Joseph Naveen Kumar",
+    "yearEstablished": 1968
+  },
+  {
+    "id": "PAR-0018",
+    "name": "Don Bosco Church",
+    "address": "No. 5/10, Don Bosco Street, Lingarajapuram, St. Thomas Town P.O., Bengaluru 560 084",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr. Koottiyanickal Jose, SDB",
+    "yearEstablished": 1995
+  },
+  {
+    "id": "PAR-0019",
+    "name": "Holy Family Church",
+    "address": "Ramamurthy Nagar Main Road, Dooravaninagar Post, Bengaluru 560 016",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Susairaj P",
+    "yearEstablished": 1969
+  },
+  {
+    "id": "PAR-0020",
+    "name": "Holy Redeemer Church",
+    "address": "Sadupadesha Vidyalaya, 28/1, Hennuru Bande Main Road, Bengaluru 560 043",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr. Christopher Ponnusamy, C.Ss.R",
+    "yearEstablished": 2010
+  },
+  {
+    "id": "PAR-0021",
+    "name": "Immaculate Conception Church",
+    "address": "M.G. Railway Colony, Bengaluru 560 023",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Amal Raj Crispin",
+    "yearEstablished": 1901
+  },
+  {
+    "id": "PAR-0022",
+    "name": "Our Lady of Fatima Church",
+    "address": "Jalahalli, H.M.T. Post, Bengaluru 560 013",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Gnanamonie Roys S",
+    "yearEstablished": 1953
+  },
+  {
+    "id": "PAR-0023",
+    "name": "Our Lady of Lourdes Church",
+    "address": "Lourdunagara, Virgonagara Post, Bengaluru 560 049",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Varghese Chakkala, SDB",
+    "yearEstablished": 1983
+  },
+  {
+    "id": "PAR-0024",
+    "name": "St Paul Church",
+    "address": "8th Mile, Chokkasandra, Nagasandra Post, Bengaluru 560 073",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr Anthony Swamy A., SSP",
+    "yearEstablished": 1997
+  },
+  {
+    "id": "PAR-0025",
+    "name": "St Pius X Church",
+    "address": "Kammanahalli, St Thomas Town Post, Bengaluru 560 084",
+    "sizeTier": "Large",
+    "estFamilies": "575 - 1,450",
+    "parishPriest": "Fr. Arun Santhosh, M",
+    "yearEstablished": 1965
+  },
+  {
+    "id": "PAR-0026",
+    "name": "Christ the King Church",
+    "address": "8th Main Road, Malleswaram West, Bengaluru 560 055",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Jude Conrad Santhosh Kumar",
+    "yearEstablished": 1947
+  },
+  {
+    "id": "PAR-0027",
+    "name": "Good Shepherd Church",
+    "address": "Thamarai Kannan Road, Hoysalanagar, Murphy Town, Halasuru Post, Bengaluru 560 008",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr. Anthony Pravin Rajan G",
+    "yearEstablished": 1967
+  },
+  {
+    "id": "PAR-0028",
+    "name": "Holy Rosary Church",
+    "address": "New Airport Road, Venkatala, Yelahanka Post, Bengaluru 560 064",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Mariappa Gregory",
+    "yearEstablished": 1970
+  },
+  {
+    "id": "PAR-0029",
+    "name": "Mother of Mines Shrine",
+    "address": "Orgaum Post, K.G.F. 563 120",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Pious Arun Kumar N",
+    "yearEstablished": 1975
+  },
+  {
+    "id": "PAR-0030",
+    "name": "Nativity Church",
+    "address": "No. 431, AMS Layout, Vidyaranyapura, II Phase, Bengaluru 560 097",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Ananda GnanaXavier",
+    "yearEstablished": 1999
+  },
+  {
+    "id": "PAR-0031",
+    "name": "Our Lady of Lourdes Church",
+    "address": "No. 14, Cambridge Road, Halasuru, Bengaluru 560 008",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Maria Louis",
+    "yearEstablished": 1937
+  },
+  {
+    "id": "PAR-0032",
+    "name": "Our Lady of Mount Carmel Church",
+    "address": "Mariapura, Thattuguppe Post, Via Udayapura, Bengaluru 560 082",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Bartholomew S",
+    "yearEstablished": 1905
+  },
+  {
+    "id": "PAR-0033",
+    "name": "Our Lady of Victories Church",
+    "address": "Champion Reefs, K.G.F. 563 117",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr A. Gilbert Raj",
+    "yearEstablished": 1899
+  },
+  {
+    "id": "PAR-0034",
+    "name": "Sacred Heart Church",
+    "address": "Siluvepura, Tharabanahalli Post, Bengaluru 560 090",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Vincent Santhosh.",
+    "yearEstablished": 1880
+  },
+  {
+    "id": "PAR-0035",
+    "name": "Ss Peter and Paul Church",
+    "address": "Jagajivan Ram Nagara, Rayapuram, Bengaluru 560 018",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Dominic Xavier",
+    "yearEstablished": 1951
+  },
+  {
+    "id": "PAR-0036",
+    "name": "St Anthony's Church",
+    "address": "St. Anthony's Church Street, Off Sarjapura Main Road, Kodathi, Carmelaram Post, Bengaluru 560 035",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr J. Arokianathan",
+    "yearEstablished": 1884
+  },
+  {
+    "id": "PAR-0037",
+    "name": "St Ignatius Church",
+    "address": "Begur, Bengaluru 560 114",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Sahayaraj",
+    "yearEstablished": 1860
+  },
+  {
+    "id": "PAR-0038",
+    "name": "St Ignatius Church",
+    "address": "Beguru, Bengaluru 560 114",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Arokya Swamy D.",
+    "yearEstablished": 1860
+  },
+  {
+    "id": "PAR-0039",
+    "name": "St James Church",
+    "address": "Mariannapalya, Hebbal Agricultural Farm Post, Bengaluru 560 024",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Kiran Kumar B",
+    "yearEstablished": 1943
+  },
+  {
+    "id": "PAR-0040",
+    "name": "St John Paul II Church",
+    "address": "K. Channasandra Main Road, Kalkere, Horamavu Post, Bengaluru 560 036",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Sagayanathan A",
+    "yearEstablished": 2011
+  },
+  {
+    "id": "PAR-0041",
+    "name": "St John the Baptist Church",
+    "address": "No. 95/12, 20th Cross, 8th Main, M.C. Layout, Vijayanagara, Bengaluru 560 040",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Michael Antony",
+    "yearEstablished": 1999
+  },
+  {
+    "id": "PAR-0042",
+    "name": "St Joseph's Church",
+    "address": "Briand Square, Chamarajapete, Bengaluru 560 002",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr PrashanthPrem Kumar",
+    "yearEstablished": 1867
+  },
+  {
+    "id": "PAR-0043",
+    "name": "St Patrick's Church",
+    "address": "15 K, Brigade Road, Bengaluru 560 025",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Christy Raj Issac, E-mail: christyraj1993@ gmail.com",
+    "yearEstablished": 1844
+  },
+  {
+    "id": "PAR-0044",
+    "name": "St Theresa's Church",
+    "address": "J. C. Road, Bengaluru 560 002",
+    "sizeTier": "Medium",
+    "estFamilies": "450 - 1,150",
+    "parishPriest": "Fr Balraj R",
+    "yearEstablished": 1949
+  },
+  {
+    "id": "PAR-0045",
+    "name": "Annunciation Church",
+    "address": "No. 50, Nandidurga Road, Jayamahal Extension, Benson Town Post, Bengaluru 560 046",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Balraj J",
+    "yearEstablished": 2010
+  },
+  {
+    "id": "PAR-0046",
+    "name": "Assumption Church",
+    "address": "2nd Block, 12th Main, Rajajinagar, Bengaluru 560 010",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Balaraj J",
+    "yearEstablished": 1971
+  },
+  {
+    "id": "PAR-0047",
+    "name": "Christ The King Church",
+    "address": "Byrathi, Kothanur Post, Bengaluru 560 077",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Chowrappa E",
+    "yearEstablished": 1983
+  },
+  {
+    "id": "PAR-0048",
+    "name": "Church of the Holy Name of Jesus",
+    "address": "No. 912, 16th Cross, Ideal Home Township, Rajarajeshwari Nagar, Bengaluru 560 098",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Micheal Y.",
+    "yearEstablished": 2002
+  },
+  {
+    "id": "PAR-0049",
+    "name": "Divine Mercy Church",
+    "address": "Anagalapura, Doddagubbi Post, Bengaluru 560 077",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Pradeep Kumar Z",
+    "yearEstablished": 2010
+  },
+  {
+    "id": "PAR-0050",
+    "name": "Holy Eucharist Church",
+    "address": "Near Graffitti Garments, Paramarasada Church Road, Mangammanapalya, Bommanahalli Post, Bengaluru 560 068",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Udayakumar Stanislaus",
+    "yearEstablished": 2004
+  },
+  {
+    "id": "PAR-0051",
+    "name": "Holy Trinity Church",
+    "address": "Mylasandra, Begur Post, Bengaluru 560 114",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Patrick Edward Pinto",
+    "yearEstablished": 2004
+  },
+  {
+    "id": "PAR-0052",
+    "name": "Holy Trinity Church",
+    "address": "No. 7, Near Ravi Shankar Residency, Kodigehalli Main Road, Sahakar Nagar, Bengaluru 560 092",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Varghese V",
+    "yearEstablished": 2014
+  },
+  {
+    "id": "PAR-0053",
+    "name": "Immaculate Heart of Mary Church",
+    "address": "Sanyasa Institute Campus, Sarjapura Road, Carmelaram Post, Bengaluru 560 035",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Mervyn Manuel Savio L",
+    "yearEstablished": 2018
+  },
+  {
+    "id": "PAR-0054",
+    "name": "Infant Jesus Church",
+    "address": "5th Cross, Anubhava Nagara, Moodalapalya, Nagarabhavi Road, Bengaluru 560 072",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Therese Babu E.",
+    "yearEstablished": 1989
+  },
+  {
+    "id": "PAR-0055",
+    "name": "Krista Krupalaya Church",
+    "address": "Hosakerehalli, Veerabhadranagara, Bengaluru 560 086",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Vijaya Raj, CPPS",
+    "yearEstablished": 2018
+  },
+  {
+    "id": "PAR-0056",
+    "name": "Kristha Karunalaya Church",
+    "address": "Kanakapura Main Road, Jaraganahalli, Chunchaghatta Cross, J. P. Nagar Post, Bengaluru 560 078",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Rajarathinam",
+    "yearEstablished": 2003
+  },
+  {
+    "id": "PAR-0057",
+    "name": "Mother of Perpetual Help Church",
+    "address": "Akashnagar, B. Narayanapura, Dooravaninagar Post, Bengaluru 560 016",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. D. Chinnappa",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0058",
+    "name": "Our Lady of Good Health Church",
+    "address": "Anekal,Jigani,near APC Circle, Ittina Nagar, Bengaluru, Karnataka 560105",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Fernandes J",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0059",
+    "name": "Our Lady of Lourdes Church",
+    "address": "Karubele, Kumbalgodu Post, Kengeri Hobli, Bengaluru 560 074",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Anthony Raj, OFM Cap",
+    "yearEstablished": 2015
+  },
+  {
+    "id": "PAR-0060",
+    "name": "Our Lady of Vailankanni Church",
+    "address": "23/A C.A. Site, A Sector, Yelahanka New Town, Bengaluru 560 064",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Joseph Menezes",
+    "yearEstablished": 1992
+  },
+  {
+    "id": "PAR-0061",
+    "name": "Sacred Heart Church",
+    "address": "No. 3069, Kolar Main Road, Bangarapet 563 114, Kolar Dist.",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Simeon Sebastian, OMI",
+    "yearEstablished": 1951
+  },
+  {
+    "id": "PAR-0062",
+    "name": "St Anne's Church",
+    "address": "H.A.L. Colony, Marathahalli Post, Bengaluru 560 037",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Holenston D'Souza",
+    "yearEstablished": 1984
+  },
+  {
+    "id": "PAR-0063",
+    "name": "St Anne's Church",
+    "address": "Dr. Shivaram Karanth Nagara Post, Mestripalya, Bengaluru 560 077",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Prem Arokianathan G",
+    "yearEstablished": 2007
+  },
+  {
+    "id": "PAR-0064",
+    "name": "St Anthony's Church",
+    "address": "Gangondanahalli, 12th Cross, Nayandahalli Post, Bengaluru 560 039",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr VijayKumar, OFM Cap",
+    "yearEstablished": 1993
+  },
+  {
+    "id": "PAR-0065",
+    "name": "St Anthony's Church",
+    "address": "Uttarahalli, Subramanyapura Post, Bengaluru 560 061",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Vinay Pradeep S",
+    "yearEstablished": 1997
+  },
+  {
+    "id": "PAR-0066",
+    "name": "St Anthony's Church",
+    "address": "A' Street, New Guddadahalli, Mysore Road, Bengaluru 560 026",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr PeterEdwin C.",
+    "yearEstablished": 1998
+  },
+  {
+    "id": "PAR-0067",
+    "name": "St Anthony's Church",
+    "address": "No. 225, 6th Cross, Netaji Nagar, K.P. Agrahara, Bengaluru 560 023",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr A. Antic Arnold Ashwyn",
+    "yearEstablished": 1999
+  },
+  {
+    "id": "PAR-0068",
+    "name": "St Anthony's Church",
+    "address": "3rd Main Road, 1st Block, Kaval Byrasandra, R. T. Nagara Post, Bengaluru 560 032",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Sunny Richard John",
+    "yearEstablished": 2001
+  },
+  {
+    "id": "PAR-0069",
+    "name": "St Anthony's Church",
+    "address": "Gottigere Post, Bannerghatta Road, Basavanapura, Bengaluru 560 083, Parish Mob: 7349426324",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Alphonse Bhaskar R",
+    "yearEstablished": 2008
+  },
+  {
+    "id": "PAR-0070",
+    "name": "St Anthony's Church",
+    "address": "N.H. 4, Behind Mathru Shree Hospital, Indiranagara, Nelamangala, Bengaluru 562 123",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Lourdu Swamy M., CMF",
+    "yearEstablished": 2010
+  },
+  {
+    "id": "PAR-0071",
+    "name": "St Anthony's Church",
+    "address": "Munnekolala, Marathahalli, Bengaluru 560 037",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Mac Donald Fernandis",
+    "yearEstablished": 2016
+  },
+  {
+    "id": "PAR-0072",
+    "name": "St Benedict's Church",
+    "address": "Asirvanam, Benedictine Monastery, Kumbalagudu Post, Anchepalya, Bengaluru 560 074",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Jayaprakasha, OSB",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0073",
+    "name": "St Francis of Assisi Church",
+    "address": "No. 26/1, Ring Road, K.S.T., Kengeri Satellite Town, Bengaluru 560 060",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Hrudayaraju A",
+    "yearEstablished": 2002
+  },
+  {
+    "id": "PAR-0074",
+    "name": "St Francis Xavier's Church",
+    "address": "Chikkakammanahalli, Gottigere Post, Bannerghatta Main Road, Bengaluru 560 083",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Kodavatikanti Rajarao",
+    "yearEstablished": 1955
+  },
+  {
+    "id": "PAR-0075",
+    "name": "St Francis Xavier's Church",
+    "address": "Somanahalli Post, Bengaluru South 560 082",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Peter C",
+    "yearEstablished": 1960
+  },
+  {
+    "id": "PAR-0076",
+    "name": "St Gaspar's Church",
+    "address": "Precious Blood Missionaries, 81/233, Kithiganur, Medahalli, Via, K. R. Puram Post, Bengaluru 560 036",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Rajendra Mariadass, CPPS",
+    "yearEstablished": 2009
+  },
+  {
+    "id": "PAR-0077",
+    "name": "St John Marie Vianney Semi Public Church",
+    "address": "83, Main Layout, Goshala Road, Garudacharyapalya, Mahadevapura, Bengaluru 560 048",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Sagaya Arockiadass A.",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0078",
+    "name": "St John the Britto Church",
+    "address": "Laggere Main Road (Near Old Bus Stop), Church Road, Parvathi Nagara, Laggere, Peenya Post, Bengaluru 560 058",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr John Paul",
+    "yearEstablished": 2016
+  },
+  {
+    "id": "PAR-0079",
+    "name": "St Joseph Vaz Church",
+    "address": "1st Block, 2nd Stage, Naagarabhaavi, Bengaluru, Karnataka 560091",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr. Prabhakar, SMM",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0080",
+    "name": "St Joseph's Church",
+    "address": "Adigondanahally, Muthanallur Post, Bengaluru 560 099",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Rojo Thomas Kaviyil scj",
+    "yearEstablished": null
+  },
+  {
+    "id": "PAR-0081",
+    "name": "St Joseph's Church",
+    "address": "Soluru Post, Magadi Tq, Ramanagara Dist., 562 127",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Baptist Pais, SVD",
+    "yearEstablished": 1937
+  },
+  {
+    "id": "PAR-0082",
+    "name": "St Joseph's Church",
+    "address": "Susaipalayam, B. M. Road, Andersonpete Post, Kolara Gold Fields, K.G.F. 563 113",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Jose Churavelikudilil, SDB",
+    "yearEstablished": 1970
+  },
+  {
+    "id": "PAR-0083",
+    "name": "St Joseph's Church",
+    "address": "Church Street, BDA Layout, Lingarajapuram, Bengaluru 560 084",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Jerome D",
+    "yearEstablished": 2015
+  },
+  {
+    "id": "PAR-0084",
+    "name": "St Jude's Church",
+    "address": "Karahalli Post, Devanahalli Tq., Bengaluru Rural Dist., 562 110",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Arogya Nadhan, CMF",
+    "yearEstablished": 1971
+  },
+  {
+    "id": "PAR-0085",
+    "name": "St Jude's Church",
+    "address": "7th Main, H. M. T. Layout, R. T. Nagar Post, Bengaluru 560 032",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Vinoo Fabian Sudhakar",
+    "yearEstablished": 1992
+  },
+  {
+    "id": "PAR-0086",
+    "name": "St Jude's Church",
+    "address": "Dr. S. Kumara Layout, Maruti Sevanagara, Naganapalya, Bengaluru 560 033",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Vivian Richards S.",
+    "yearEstablished": 2010
+  },
+  {
+    "id": "PAR-0087",
+    "name": "St Mary's Church",
+    "address": "Ramakrishna Hegde Nagar, Dr. Shivaram Karanth Nagar Post, K.R. Pura Hobli, Bengaluru 560 077",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Boniface Cyril D'Souza, OCD",
+    "yearEstablished": 2000
+  },
+  {
+    "id": "PAR-0088",
+    "name": "St Michael's Church",
+    "address": "Church Road, Shanthinagar, Bengaluru 560 027",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr John Rose",
+    "yearEstablished": 1953
+  },
+  {
+    "id": "PAR-0089",
+    "name": "St Paul the Hermit Church",
+    "address": "Nagenahalli, R.T. Nagara Post, Bengaluru 560 032",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr AnthonyPrasad",
+    "yearEstablished": 1990
+  },
+  {
+    "id": "PAR-0090",
+    "name": "St Rock's Church",
+    "address": "Amruthnagar, Kalyan Nagara Post, Chelikere, Bengaluru 560 043",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Arun Bala Raj A",
+    "yearEstablished": 1988
+  },
+  {
+    "id": "PAR-0091",
+    "name": "St Teresa of Kolkata Church",
+    "address": "Kalpana Chawla Road, R.M.V. 1st Stage, Boopasandara, Bengaluru 560 094",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Arokia Dass G",
+    "yearEstablished": 2014
+  },
+  {
+    "id": "PAR-0092",
+    "name": "St Theresa of Child Jesus Church, Singasandra",
+    "address": "Manipal County Rd, Aishwarya Crystal Layout, Begur, Bengaluru, Karnataka 560068",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Clement Deep S",
+    "yearEstablished": 1984
+  },
+  {
+    "id": "PAR-0093",
+    "name": "St Theresa's Church",
+    "address": "2nd Cross Road, Robertsonpet Post, K.G.F. 563 122",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "FrJerome Stanislaus",
+    "yearEstablished": 1929
+  },
+  {
+    "id": "PAR-0094",
+    "name": "St Thomas Church",
+    "address": "Jeevanbhima Nagara (HAL), Bengaluru 560 075",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr.Devakumar I",
+    "yearEstablished": 1956
+  },
+  {
+    "id": "PAR-0095",
+    "name": "St Thomas Church",
+    "address": "7th cross, Kanakanagara, R.T. Nagar post, Bengaluru 560 032",
+    "sizeTier": "Medium",
+    "estFamilies": "350 - 875",
+    "parishPriest": "Fr Rai Prasad Moses",
+    "yearEstablished": 2017
+  },
+  {
+    "id": "PAR-0096",
+    "name": "Church of Our Lady of Compassion",
+    "address": "Nugilubande, Mulabagilu Tq., Kolara Dist., 563 131",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Ummikuzhiyil Cyriac, MSFS",
+    "yearEstablished": 1995
+  },
+  {
+    "id": "PAR-0097",
+    "name": "Holy Cross Church",
+    "address": "B.E.M.L. Nagar, Kathihalli, K.G.F. 563 115",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr John Sudeep A.",
+    "yearEstablished": 1971
+  },
+  {
+    "id": "PAR-0098",
+    "name": "Holy Rosary Church",
+    "address": "Harobale, Kanakapura Tq., Ramanagara Dist., 562 126",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Vincent Kiran Kumar A",
+    "yearEstablished": 1859
+  },
+  {
+    "id": "PAR-0099",
+    "name": "Holy Rosary Church",
+    "address": "Bidadi Hobali, Kelhaganahalli Road, Ramanagara Tq., Ramanagara Dist., 571 509",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr A.C. Arokianathan, MSFS",
+    "yearEstablished": 2006
+  },
+  {
+    "id": "PAR-0100",
+    "name": "Immaculate Heart of Mary Church",
+    "address": "M. B. Road, Kolar Town, Kolar 563 101",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Santy Kurian, MSFS",
+    "yearEstablished": 1865
+  },
+  {
+    "id": "PAR-0101",
+    "name": "Infant Jesus Church",
+    "address": "Sidlaghatta Road, St Claret Nagara, Vijayapura Post, Devanahalli Tq., Bengaluru 562 135",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Chacko Kelamparampil, CMF",
+    "yearEstablished": 1996
+  },
+  {
+    "id": "PAR-0102",
+    "name": "Nithyadhara Mathe Church",
+    "address": "Rajaji Road, Kolara Road, Srinivasapur, Kolara Dist., 563 135",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr James Thomas, MSFS",
+    "yearEstablished": 1996
+  },
+  {
+    "id": "PAR-0103",
+    "name": "Our Lady of Divine Providence Semi Public Church",
+    "address": "Kannuru Village Post, Via Bagalur, Bengaluru 564 921",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Prakash Menezes OP",
+    "yearEstablished": 2017
+  },
+  {
+    "id": "PAR-0104",
+    "name": "Our Lady of Fathima Church",
+    "address": "Old Madras Road, Hoskote, Bengaluru 562 114",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Arulappa L",
+    "yearEstablished": 2006
+  },
+  {
+    "id": "PAR-0105",
+    "name": "Our Lady of Lourdes Church",
+    "address": "Horapete Post, Tumkuru Dist., 572 101",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Edward David",
+    "yearEstablished": 1931
+  },
+  {
+    "id": "PAR-0106",
+    "name": "Our Lady of Lourdes Church",
+    "address": "Ramanagara Post, Ramanagara Dist., 562 159",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Arun Kumar J",
+    "yearEstablished": 1933
+  },
+  {
+    "id": "PAR-0107",
+    "name": "Sacred Heart Church",
+    "address": "K. R. Extension, Tipaturu, Tumakuru Dist., 572 022",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Jesuraj, SCJ",
+    "yearEstablished": 1948
+  },
+  {
+    "id": "PAR-0108",
+    "name": "Sacred Heart Church",
+    "address": "Chintamani Road, Sidlaghatta Town, Chikkaballapura Dist., 562 105",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Jeevan Prashanth, MSFS",
+    "yearEstablished": 2001
+  },
+  {
+    "id": "PAR-0109",
+    "name": "St Anthony's Church",
+    "address": "Kadisenahalli, Ullappanahalli Post, Chintamani Tq., Chikkaballapur District 563 125",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Rev. Fr. L. Selvaraj, MSFS",
+    "yearEstablished": 1868
+  },
+  {
+    "id": "PAR-0110",
+    "name": "St Anthony's Church",
+    "address": "Bettada Halasuru, Hanchaguli Post, Via Kodihalli, Kanakapura Tq., Ramanagara Dist., 562 119",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Sandhyagu J",
+    "yearEstablished": 1998
+  },
+  {
+    "id": "PAR-0111",
+    "name": "St Anthony's Church",
+    "address": "Hospete Circle, Magadi Town, Solur Post, Ramanagara Dist., 562 120",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Santhosh Fernandies, CSC",
+    "yearEstablished": 2002
+  },
+  {
+    "id": "PAR-0112",
+    "name": "St Anthony's Church",
+    "address": "Yedavanahalli, Anekal Tq., Attibele, Bengaluru 562 107",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr JudeDaniel Vijay, SCJ",
+    "yearEstablished": 2015
+  },
+  {
+    "id": "PAR-0113",
+    "name": "St Anthony's Church",
+    "address": "Amalagondi, Sira Taluk, Agrahara Post, Tumakuru Dist. 572 137",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Shashi Kiran, I.",
+    "yearEstablished": 2018
+  },
+  {
+    "id": "PAR-0114",
+    "name": "St Francis de Sales Church",
+    "address": "J.J. Nagara, Gudnahalli Road, Malur, Kolara Dist., 563 130",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Salvador Fernandes,MSFS",
+    "yearEstablished": 1991
+  },
+  {
+    "id": "PAR-0115",
+    "name": "St Francis Xavier's Church",
+    "address": "Gokunte, Mulbagal Tq., Kolara Dist., 563 131",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Joseph C.",
+    "yearEstablished": 1928
+  },
+  {
+    "id": "PAR-0116",
+    "name": "St Francis Xavier's Church",
+    "address": "B. B. Road, Chikkaballapura, Chikkaballapura Dist., 562 101",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr AlbanZeo G.",
+    "yearEstablished": 1955
+  },
+  {
+    "id": "PAR-0117",
+    "name": "St Joseph's Church",
+    "address": "Church Road, Anekal, Bengaluru 562 106",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Ivan Peter Mendonca, SJ",
+    "yearEstablished": 1964
+  },
+  {
+    "id": "PAR-0118",
+    "name": "St Joseph's Church",
+    "address": "Sannenahalli, Masavanaghatta Post, Tipaturu Tq., Tumakuru Dist., 572 224",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Mario Fernandes",
+    "yearEstablished": 1913
+  },
+  {
+    "id": "PAR-0119",
+    "name": "St Joseph's Church",
+    "address": "Channapatna, Ramanagara Dist., 562 160",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Norman Bernard",
+    "yearEstablished": 1955
+  },
+  {
+    "id": "PAR-0120",
+    "name": "St Joseph's Church",
+    "address": "Soosaipalya, Gerahalli Post, Chikkaballapura Tq., Kolara Dist., 562 101",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Joseph Anthony Daniel, CPPS",
+    "yearEstablished": 1964
+  },
+  {
+    "id": "PAR-0121",
+    "name": "St Joseph's Church",
+    "address": "M. G. Road, Chintamani, Chikkaballapura Dist., 563 125",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Balavendra Jacob,MSFS",
+    "yearEstablished": 1977
+  },
+  {
+    "id": "PAR-0122",
+    "name": "St Joseph's Church",
+    "address": "Jyothi Nagar, Electric Colony, Sira, Tumkuru Dist., 572 137",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Maurinus Robin",
+    "yearEstablished": 1993
+  },
+  {
+    "id": "PAR-0123",
+    "name": "St Paul's Church",
+    "address": "Marikuppa, K.G.F. 563 119",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr S. Xavier Thangaraj, CPPS",
+    "yearEstablished": 1948
+  },
+  {
+    "id": "PAR-0124",
+    "name": "St Peter's Church",
+    "address": "Court Road, Near T. B. Circle, Doddaballapura, Bengaluru 561 203",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Terry Prakash Xavier N.",
+    "yearEstablished": 1990
+  },
+  {
+    "id": "PAR-0125",
+    "name": "St Rita's Church",
+    "address": "Church Street, Kanakapura, Ramnagara Dist., 562 117",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr David Kumar A.",
+    "yearEstablished": 1965
+  },
+  {
+    "id": "PAR-0126",
+    "name": "St Rita's Church",
+    "address": "Kunigal, Tumakuru District 572 130",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr. Infant L",
+    "yearEstablished": 1969
+  },
+  {
+    "id": "PAR-0127",
+    "name": "St Rita's Church",
+    "address": "Kaggalahalli Village and Post, Harohalli Hobli, Kanakapura Taluk, Ramanagara Dist., 562 112",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Rayappa G. A.",
+    "yearEstablished": 2018
+  },
+  {
+    "id": "PAR-0128",
+    "name": "St Sebastian's Church",
+    "address": "Coramandel Post, K.G.F. 563 118",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Arockiadass P",
+    "yearEstablished": 1899
+  },
+  {
+    "id": "PAR-0129",
+    "name": "St Theresa of Child Jesus Church",
+    "address": "T.C. Halli, Sarjapura Main Road, Dommasandra Circle, Anekal Taluk, Bengaluru 562 125",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Antony Peter John",
+    "yearEstablished": 2017
+  },
+  {
+    "id": "PAR-0130",
+    "name": "St Theresa's Church",
+    "address": "Theresapura, Yelagalli Post, Kanakapura Tq., Ramanagar Dist., 562 117",
+    "sizeTier": "Small",
+    "estFamilies": "125 - 300",
+    "parishPriest": "Fr Divya Yesu Balan S.",
+    "yearEstablished": 1992
+  }
+]
