@@ -71,7 +71,7 @@
           <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
           Masses
         </button>
-        <button onclick="toast('Communication')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
         </button>
@@ -129,10 +129,13 @@
 
         <div id="summary-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"></div>
 
-        <div class="flex gap-2 mb-6">
-          <button onclick="setModule('income')" data-module="income" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Income</button>
-          <button onclick="setModule('expenses')" data-module="expenses" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Expenses</button>
-          <button onclick="setModule('settings')" data-module="settings" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Categories &amp; Accounts</button>
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="setModule('income')" data-module="income" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Income</button>
+            <button onclick="setModule('expenses')" data-module="expenses" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Expenses</button>
+            <button onclick="setModule('payroll')" data-module="payroll" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Payroll</button>
+          </div>
+          <button onclick="setModule('settings')" class="text-primary text-sm font-semibold flex-shrink-0">Manage Categories &amp; Accounts</button>
         </div>
 
         <div id="module-content"></div>
@@ -219,6 +222,7 @@
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
   function goServices() { window.location.href = 'screen-parish-services-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-parish-communication-hub.html?' + baseParams().toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
@@ -330,6 +334,7 @@
     const el = document.getElementById('module-content');
     if (currentModule === 'income') renderTransactionsModule(el, 'Income');
     else if (currentModule === 'expenses') renderTransactionsModule(el, 'Expense');
+    else if (currentModule === 'payroll') renderPayrollModule(el);
     else renderSettingsModule(el);
   }
 
@@ -468,52 +473,132 @@
   // =========================================================================
   // Categories & Accounts (settings) module
   // =========================================================================
+  let settingsSubTab = 'categories';
   function renderSettingsModule(el) {
     el.innerHTML = `
+      <div class="flex gap-2 mb-5">
+        <button onclick="setSettingsSubTab('categories')" class="px-3.5 py-2 rounded-badge text-xs font-semibold transition-warm ${settingsSubTab==='categories' ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">Categories</button>
+        <button onclick="setSettingsSubTab('accounts')" class="px-3.5 py-2 rounded-badge text-xs font-semibold transition-warm ${settingsSubTab==='accounts' ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">Accounts</button>
+      </div>
+      <div id="settings-subcontent"></div>
+    `;
+    renderSettingsSubContent();
+  }
+  function setSettingsSubTab(t) {
+    settingsSubTab = t;
+    renderSettingsModule(document.getElementById('module-content'));
+  }
+  function renderSettingsSubContent() {
+    const el = document.getElementById('settings-subcontent');
+    if (settingsSubTab === 'accounts') {
+      el.innerHTML = `
+        <div class="flex justify-end mb-3">
+          <button onclick="openAccountModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Account</button>
+        </div>
+        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+          ${accounts.map(a => `
+            <div class="px-4 py-3 flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-sm font-medium truncate">${a.name}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${a.type} \u00b7 Opening balance ${formatMoney(a.openingBalance)} \u00b7 ${a.status}</p>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <button onclick="openAccountModal('${a.id}')" aria-label="Edit account" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                <button onclick="deleteAccount('${a.id}')" aria-label="Delete account" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      return;
+    }
+    const incomeCategories = categories.filter(c => c.type === 'Income');
+    const expenseCategories = categories.filter(c => c.type === 'Expense');
+    el.innerHTML = `
+      <div class="flex justify-end mb-3">
+        <button onclick="openCategoryModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Category</button>
+      </div>
       <div class="grid lg:grid-cols-2 gap-6">
         <div>
-          <div class="flex items-center justify-between mb-3">
-            <p class="text-sm font-semibold">Categories</p>
-            <button onclick="openCategoryModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Category</button>
-          </div>
+          <p class="text-xs font-semibold text-[#2f6b45] uppercase tracking-wide mb-2">Income categories</p>
           <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-            ${categories.map(c => `
-              <div class="px-4 py-3 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-sm font-medium truncate">${c.name}</p>
-                  <p class="text-xs text-ink-muted mt-0.5">${c.type} · ${c.status}</p>
-                </div>
-                <div class="flex items-center gap-1 flex-shrink-0">
-                  <button onclick="openCategoryModal('${c.id}')" aria-label="Edit category" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                  <button onclick="deleteCategory('${c.id}')" aria-label="Delete category" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-                </div>
-              </div>
-            `).join('')}
+            ${incomeCategories.map(c => renderCategoryRow(c)).join('')}
           </div>
         </div>
-
         <div>
-          <div class="flex items-center justify-between mb-3">
-            <p class="text-sm font-semibold">Accounts</p>
-            <button onclick="openAccountModal()" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-3.5 h-3.5')}Add Account</button>
-          </div>
+          <p class="text-xs font-semibold text-error uppercase tracking-wide mb-2">Expense categories</p>
           <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-            ${accounts.map(a => `
-              <div class="px-4 py-3 flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-sm font-medium truncate">${a.name}</p>
-                  <p class="text-xs text-ink-muted mt-0.5">${a.type} · Opening balance ${formatMoney(a.openingBalance)} · ${a.status}</p>
-                </div>
-                <div class="flex items-center gap-1 flex-shrink-0">
-                  <button onclick="openAccountModal('${a.id}')" aria-label="Edit account" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                  <button onclick="deleteAccount('${a.id}')" aria-label="Delete account" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-                </div>
-              </div>
-            `).join('')}
+            ${expenseCategories.map(c => renderCategoryRow(c)).join('')}
           </div>
         </div>
       </div>
     `;
+  }
+  function renderCategoryRow(c) {
+    return `
+      <div class="px-4 py-3 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-sm font-medium truncate">${c.name}</p>
+          <p class="text-xs text-ink-muted mt-0.5">${c.status}</p>
+        </div>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button onclick="openCategoryModal('${c.id}')" aria-label="Edit category" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+          <button onclick="deleteCategory('${c.id}')" aria-label="Delete category" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // MODULE: Payroll (moved here from Administration \u2014 salary/payment details
+  // belong in Finance, not the staff directory)
+  // =========================================================================
+  let payrollStaff = [
+    { id:"STF-001", name:"Grace Almeida", role:"Parish Secretary", monthlySalary:25000, paymentStatus:"Paid" },
+    { id:"STF-002", name:"Thomas Rebello", role:"Accountant", monthlySalary:28000, paymentStatus:"Paid" },
+    { id:"STF-003", name:"Peter Vaz", role:"Sacristan", monthlySalary:18000, paymentStatus:"Pending" },
+    { id:"STF-004", name:"Anil Kumar", role:"Groundskeeper", monthlySalary:15000, paymentStatus:"Paid" },
+  ];
+  function renderPayrollModule(el) {
+    const total = payrollStaff.reduce((s, m) => s + m.monthlySalary, 0);
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-4">
+        <p class="text-xs text-ink-muted uppercase tracking-wide">Total monthly payroll</p>
+        <p class="font-heading font-bold text-2xl mt-1">${formatMoney(total)}</p>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Role</th>
+                <th class="px-4 py-3 font-medium">Monthly Salary</th>
+                <th class="px-4 py-3 font-medium">This Month</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${payrollStaff.map(m => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${m.name}</td>
+                  <td class="px-4 py-3 text-ink-muted">${m.role}</td>
+                  <td class="px-4 py-3">${formatMoney(m.monthlySalary)}</td>
+                  <td class="px-4 py-3">
+                    <button onclick="togglePayrollStatus('${m.id}')" class="${m.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap transition-warm">${m.paymentStatus}</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="text-xs text-ink-muted mt-3">Tap a payment pill to toggle it between Paid and Pending for the current month. Staff records themselves are managed under Administration.</p>
+    `;
+  }
+  function togglePayrollStatus(id) {
+    const m = payrollStaff.find(x => x.id === id);
+    m.paymentStatus = m.paymentStatus === 'Paid' ? 'Pending' : 'Paid';
+    renderPayrollModule(document.getElementById('module-content'));
   }
 
   let editingCategoryId = null;
