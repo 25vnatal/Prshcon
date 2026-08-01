@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Documents</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .cert-paper { font-family: 'Georgia', 'Times New Roman', serif; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="return goCalendar()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          Parish Calendar
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Documents
+        </a>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="return goFaithFormation()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          Faith Formation
+        </button>
+        <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="return goAdministration()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Documents</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Documents</p>
+          <p class="text-ink-muted text-sm mt-1">Browse certificate templates and generate documents \u2014 the same engine that powers document requests approved in Requests.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('templates')" data-module="templates" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Templates</button>
+          <button onclick="setModule('create')" data-module="create" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Create Certificate</button>
+          <button onclick="setModule('generated')" data-module="generated" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Generated Documents</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ VIEW TEMPLATE MODAL ============ -->
+  <div id="template-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-xl max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="template-modal-title" class="font-heading font-bold text-lg">Template</p>
+        <button onclick="closeModal('template-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="template-modal-body" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2">
+        <button id="template-modal-use-btn" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Use This Template</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['parish', 'parishName', 'name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  const staffName = sessionParams.get('name') || 'Parish Staff';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
+  function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goCalendar() { window.location.href = 'screen-parish-calendar-hub.html?' + baseParams().toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-parish-communication-hub.html?' + baseParams().toString(); return false; }
+  function goFaithFormation() { window.location.href = 'screen-parish-faithformation-hub.html?' + baseParams().toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
+  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+    print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7"/><path d="M4 9h16a2 2 0 0 1 2 2v5h-4M2 16v-5a2 2 0 0 1 2-2"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '\u2014';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function statusPill(status) {
+    const map = { 'Published':['bg-green/20','text-[#2f6b45]'], 'Draft':['bg-gold/20','text-[#8a5a10]'], 'Archived':['bg-section-bg','text-ink-muted'] };
+    const [bg, text] = map[status] || map['Published'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
+  }
+
+  // ---------------- Mock data: Certificate Templates (schema DOC-ISD-003, seeded to match the ----------------
+  // ---------------- document types already configured in Services \u2192 Documents & Certificates) ----------------
+  const templates = [
+    { id:"TPL-001", name:"Baptism Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
+      description:"Standard certificate issued for a completed Baptism.",
+      fields: [
+        { key:"childName", label:"Child's Full Name", type:"text" },
+        { key:"dob", label:"Date of Birth", type:"date" },
+        { key:"baptismDate", label:"Date of Baptism", type:"date" },
+        { key:"church", label:"Church", type:"text", default: parishName },
+        { key:"fatherName", label:"Father's Name", type:"text" },
+        { key:"motherName", label:"Mother's Name", type:"text" },
+        { key:"godfather", label:"Godfather", type:"text" },
+        { key:"godmother", label:"Godmother", type:"text" },
+      ],
+      body: "This is to certify that {{childName}}, born on {{dob}}, child of {{fatherName}} and {{motherName}}, was baptized into the Catholic faith on {{baptismDate}} at {{church}}, with {{godfather}} and {{godmother}} standing as godparents." },
+    { id:"TPL-002", name:"First Communion Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
+      description:"Certificate issued for a completed First Holy Communion.",
+      fields: [
+        { key:"childName", label:"Child's Full Name", type:"text" },
+        { key:"communionDate", label:"Date of First Communion", type:"date" },
+        { key:"church", label:"Church", type:"text", default: parishName },
+        { key:"fatherName", label:"Father's Name", type:"text" },
+        { key:"motherName", label:"Mother's Name", type:"text" },
+      ],
+      body: "This is to certify that {{childName}}, child of {{fatherName}} and {{motherName}}, received the Sacrament of First Holy Communion on {{communionDate}} at {{church}}." },
+    { id:"TPL-003", name:"Confirmation Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
+      description:"Certificate issued for a completed Confirmation.",
+      fields: [
+        { key:"candidateName", label:"Candidate's Full Name", type:"text" },
+        { key:"confirmationDate", label:"Date of Confirmation", type:"date" },
+        { key:"church", label:"Church", type:"text", default: parishName },
+        { key:"sponsor", label:"Sponsor's Name", type:"text" },
+        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+      ],
+      body: "This is to certify that {{candidateName}} received the Sacrament of Confirmation on {{confirmationDate}} at {{church}}, administered by {{celebrant}}, with {{sponsor}} standing as sponsor." },
+    { id:"TPL-004", name:"Marriage Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
+      description:"Certificate issued for a solemnized marriage.",
+      fields: [
+        { key:"groomName", label:"Groom's Full Name", type:"text" },
+        { key:"brideName", label:"Bride's Full Name", type:"text" },
+        { key:"marriageDate", label:"Date of Marriage", type:"date" },
+        { key:"church", label:"Church", type:"text", default: parishName },
+        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"witness1", label:"Witness 1", type:"text" },
+        { key:"witness2", label:"Witness 2", type:"text" },
+      ],
+      body: "This is to certify that {{groomName}} and {{brideName}} were joined in the Sacrament of Holy Matrimony on {{marriageDate}} at {{church}}, witnessed by {{witness1}} and {{witness2}}, in the presence of {{celebrant}}." },
+    { id:"TPL-005", name:"No Objection Certificate", category:"Letters & Testimonials", owner:"Parish", version:1, status:"Published",
+      description:"NOC issued for a parishioner's specified purpose.",
+      fields: [
+        { key:"applicantName", label:"Applicant's Full Name", type:"text" },
+        { key:"reason", label:"Reason for NOC", type:"text" },
+        { key:"destinationParish", label:"Destination Parish", type:"text" },
+      ],
+      body: "This is to certify that this parish has no objection to {{applicantName}}'s request regarding {{reason}}, in connection with {{destinationParish}}." },
+    { id:"TPL-006", name:"Parish Transfer Certificate", category:"Letters & Testimonials", owner:"Parish", version:1, status:"Published",
+      description:"Certificate issued when a family or member transfers to another parish.",
+      fields: [
+        { key:"memberName", label:"Family / Member Name", type:"text" },
+        { key:"destinationParish", label:"Destination Parish Name & Address", type:"text" },
+        { key:"reason", label:"Reason for Transfer", type:"text" },
+      ],
+      body: "This is to certify that {{memberName}} was a registered member of this parish in good standing and is being transferred to {{destinationParish}}. Reason: {{reason}}." },
+  ];
+
+  // ---------------- Mock data: Generated Documents log ----------------
+  let generatedDocuments = [
+    { id:"GEN-001", templateName:"Baptism Certificate", subject:"Clara Rodrigues", referenceNumber:"CERT-2026-0142", generatedDate:"2026-07-20", generatedBy:"Parish Office" },
+  ];
+
+  let currentModule = 'templates';
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'templates') renderTemplatesModule(el);
+    else if (currentModule === 'create') renderCreateModule(el);
+    else renderGeneratedModule(el);
+  }
+
+  // =========================================================================
+  // MODULE 1: Templates (view only — template design is out of scope)
+  // =========================================================================
+  function renderTemplatesModule(el) {
+    const categories = [...new Set(templates.map(t => t.category))];
+    el.innerHTML = categories.map(cat => `
+      <div class="mb-6">
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">${cat}</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          ${templates.filter(t => t.category === cat).map(t => `
+            <div class="bg-card-bg rounded-card shadow-card p-5">
+              <div class="flex items-start justify-between gap-3 mb-2">
+                <p class="text-sm font-semibold">${t.name}</p>
+                ${statusPill(t.status)}
+              </div>
+              <p class="text-xs text-ink-muted">${t.description}</p>
+              <p class="text-xs text-ink-muted mt-2">${t.owner} template \u00b7 v${t.version} \u00b7 ${t.fields.length} guided fields</p>
+              <div class="flex gap-2 mt-3">
+                <button onclick="viewTemplate('${t.id}')" class="bg-section-bg text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-primary-light flex items-center gap-1.5">${icon('eye','icon w-3.5 h-3.5')}View</button>
+                <button onclick="useTemplate('${t.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Use Template</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+  function templateById(id) { return templates.find(t => t.id === id); }
+  function viewTemplate(id) {
+    const t = templateById(id);
+    document.getElementById('template-modal-title').textContent = t.name;
+    document.getElementById('template-modal').classList.remove('hidden');
+    document.getElementById('template-modal-body').innerHTML = `
+      <p class="text-sm text-ink-muted">${t.description}</p>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div><p class="text-ink-muted">Category</p><p class="font-medium mt-0.5">${t.category}</p></div>
+        <div><p class="text-ink-muted">Owner</p><p class="font-medium mt-0.5">${t.owner}</p></div>
+        <div><p class="text-ink-muted">Version</p><p class="font-medium mt-0.5">v${t.version}</p></div>
+        <div><p class="text-ink-muted">Status</p><p class="font-medium mt-0.5">${t.status}</p></div>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Guided fields</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${t.fields.map(f => `<span class="bg-section-bg text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge">${f.label}</span>`).join('')}
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Document body (placeholders)</p>
+        <div class="bg-section-bg rounded-card p-4 text-xs text-ink-muted cert-paper">${t.body}</div>
+      </div>
+    `;
+    document.getElementById('template-modal-use-btn').onclick = () => { closeModal('template-modal'); useTemplate(id); };
+  }
+  function useTemplate(id) {
+    selectedTemplateId = id;
+    certFieldValues = {};
+    templateById(id).fields.forEach(f => { certFieldValues[f.key] = f.default || ''; });
+    setModule('create');
+  }
+
+  // =========================================================================
+  // MODULE 2: Create Certificate (simplified Document Workspace — guided inputs + live preview)
+  // =========================================================================
+  let selectedTemplateId = null;
+  let certFieldValues = {};
+
+  function renderCreateModule(el) {
+    if (!selectedTemplateId) {
+      el.innerHTML = `
+        <p class="text-sm text-ink-muted mb-4">Choose a certificate template to get started.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          ${templates.filter(t => t.status === 'Published').map(t => `
+            <button onclick="useTemplate('${t.id}')" class="bg-card-bg rounded-card shadow-card p-5 text-left transition-warm hover:shadow-card-hover">
+              <p class="text-sm font-semibold">${t.name}</p>
+              <p class="text-xs text-ink-muted mt-1">${t.description}</p>
+            </button>
+          `).join('')}
+        </div>
+      `;
+      return;
+    }
+    const t = templateById(selectedTemplateId);
+    el.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm font-semibold">${t.name}</p>
+          <p class="text-xs text-ink-muted mt-0.5">Fill in the details on the left \u2014 the certificate updates as you type.</p>
+        </div>
+        <button onclick="selectedTemplateId=null; renderModule()" class="text-primary text-xs font-semibold flex-shrink-0">Change template</button>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-card-bg rounded-card shadow-card p-5 space-y-4">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Guided details</p>
+          ${t.fields.map(f => `
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium">${f.label}</label>
+              <input type="${f.type === 'date' ? 'date' : 'text'}" value="${certFieldValues[f.key] || ''}" oninput="certFieldValues['${f.key}']=this.value; updateCertPreview()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            </div>
+          `).join('')}
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium">Additional notes (appended below the certificate body)</label>
+            <textarea id="cert-notes" rows="2" oninput="updateCertPreview()" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Live preview</p>
+          <div id="cert-preview" class="bg-white rounded-card shadow-card p-8 cert-paper border border-divider"></div>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <button onclick="saveCertDraft()" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg">Save as Draft</button>
+            <button onclick="generateCertificate()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('check','icon w-4 h-4')}Generate Certificate</button>
+            <button onclick="toast('Print')" class="bg-white border border-divider text-ink text-sm font-semibold px-3 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('print','icon w-4 h-4')}Print</button>
+            <button onclick="toast('Email')" class="bg-white border border-divider text-ink text-sm font-semibold px-3 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('mail','icon w-4 h-4')}Email</button>
+          </div>
+        </div>
+      </div>
+    `;
+    updateCertPreview();
+  }
+
+  function mergeTemplateBody(t) {
+    let merged = t.body;
+    t.fields.forEach(f => {
+      const value = certFieldValues[f.key] || `[${f.label}]`;
+      const displayValue = f.type === 'date' && certFieldValues[f.key] ? formatDate(certFieldValues[f.key]) : value;
+      merged = merged.split(`{{${f.key}}}`).join(displayValue);
+    });
+    return merged;
+  }
+
+  function updateCertPreview() {
+    const t = templateById(selectedTemplateId);
+    const notesEl = document.getElementById('cert-notes');
+    const notes = notesEl ? notesEl.value.trim() : '';
+    const preview = document.getElementById('cert-preview');
+    if (!preview) return;
+    preview.innerHTML = `
+      <div class="text-center border-b border-divider pb-4 mb-4">
+        <p class="font-bold text-lg">${parishName}</p>
+        <p class="text-xs text-ink-muted mt-1">Bangalore Archdiocese</p>
+        <p class="font-bold text-base mt-3 uppercase tracking-wide">${t.name}</p>
+      </div>
+      <p class="text-sm leading-relaxed">${mergeTemplateBody(t)}</p>
+      ${notes ? `<p class="text-sm leading-relaxed mt-3">${notes}</p>` : ''}
+      <div class="flex items-end justify-between mt-8 pt-4">
+        <div>
+          <p class="text-xs text-ink-muted">Date issued</p>
+          <p class="text-sm font-medium">31 Jul 2026</p>
+        </div>
+        <div class="text-center">
+          <p class="text-sm font-medium border-t border-ink pt-1 px-6">Fr. John Anthony</p>
+          <p class="text-xs text-ink-muted">Parish Priest</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveCertDraft() {
+    toast('Certificate saved as draft.');
+  }
+  function generateCertificate() {
+    const t = templateById(selectedTemplateId);
+    const primaryField = t.fields[0];
+    const subject = certFieldValues[primaryField.key] || 'Unnamed';
+    const ref = 'CERT-2026-' + Math.floor(1000 + Math.random() * 8999);
+    generatedDocuments.unshift({ id:'GEN-'+Math.floor(100+Math.random()*899), templateName: t.name, subject, referenceNumber: ref, generatedDate: '2026-07-31', generatedBy: staffName });
+    toast(`${t.name} generated \u2014 ${ref}`);
+    selectedTemplateId = null;
+    setModule('generated');
+  }
+
+  // =========================================================================
+  // MODULE 3: Generated Documents log
+  // =========================================================================
+  function renderGeneratedModule(el) {
+    if (generatedDocuments.length === 0) {
+      el.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No documents generated yet</p><p class="text-sm text-ink-muted mt-1">Certificates you generate will appear here.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+                <th class="px-4 py-3 font-medium">Reference</th>
+                <th class="px-4 py-3 font-medium">Document</th>
+                <th class="px-4 py-3 font-medium">Subject</th>
+                <th class="px-4 py-3 font-medium">Generated</th>
+                <th class="px-4 py-3 font-medium">By</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${generatedDocuments.map(g => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${g.referenceNumber}</td>
+                  <td class="px-4 py-3 text-ink-muted">${g.templateName}</td>
+                  <td class="px-4 py-3 text-ink-muted">${g.subject}</td>
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(g.generatedDate)}</td>
+                  <td class="px-4 py-3 text-ink-muted">${g.generatedBy}</td>
+                  <td class="px-4 py-3">
+                    <button onclick="toast('Download')" aria-label="Download" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('download','icon w-4 h-4')}</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>
