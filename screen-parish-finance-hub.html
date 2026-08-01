@@ -47,10 +47,10 @@
         <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
       </div>
       <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
-        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
           Dashboard
-        </a>
+        </button>
         <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
           Family Records
@@ -59,21 +59,25 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
           Committees
         </button>
-        <button onclick="return goServices()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
-          Services
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="return goCalendar()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          Parish Calendar
         </button>
         <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           Requests
         </button>
-        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
-          Masses
-        </button>
         <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
+        </button>
+        <button onclick="return goFaithFormation()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          Faith Formation
         </button>
         <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
@@ -135,7 +139,13 @@
             <button onclick="setModule('expenses')" data-module="expenses" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Expenses</button>
             <button onclick="setModule('payroll')" data-module="payroll" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Payroll</button>
           </div>
-          <button onclick="setModule('settings')" class="text-primary text-sm font-semibold flex-shrink-0">Manage Categories &amp; Accounts</button>
+          <div class="relative inline-block flex-shrink-0">
+            <button onclick="toggleManageMenu()" class="text-primary text-sm font-semibold flex items-center gap-1">Manage<svg class="icon w-3.5 h-3.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div id="manage-menu" class="hidden absolute right-0 mt-1.5 w-44 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-20">
+              <button onclick="openSettingsSubTab('categories')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Categories</button>
+              <button onclick="openSettingsSubTab('accounts')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Accounts</button>
+            </div>
+          </div>
         </div>
 
         <div id="module-content"></div>
@@ -221,8 +231,10 @@
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goCalendar() { window.location.href = 'screen-parish-calendar-hub.html?' + baseParams().toString(); return false; }
   function goServices() { window.location.href = 'screen-parish-services-hub.html?' + baseParams().toString(); return false; }
   function goCommunication() { window.location.href = 'screen-parish-communication-hub.html?' + baseParams().toString(); return false; }
+  function goFaithFormation() { window.location.href = 'screen-parish-faithformation-hub.html?' + baseParams().toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
@@ -307,6 +319,15 @@
       btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
     });
     renderModule();
+  }
+
+  function toggleManageMenu() {
+    document.getElementById('manage-menu').classList.toggle('hidden');
+  }
+  function openSettingsSubTab(tab) {
+    document.getElementById('manage-menu').classList.add('hidden');
+    settingsSubTab = tab;
+    setModule('settings');
   }
 
   function renderSummary() {
@@ -559,6 +580,7 @@
     { id:"STF-003", name:"Peter Vaz", role:"Sacristan", monthlySalary:18000, paymentStatus:"Pending" },
     { id:"STF-004", name:"Anil Kumar", role:"Groundskeeper", monthlySalary:15000, paymentStatus:"Paid" },
   ];
+  let payrollConfirmId = null;
   function renderPayrollModule(el) {
     const total = payrollStaff.reduce((s, m) => s + m.monthlySalary, 0);
     el.innerHTML = `
@@ -583,21 +605,34 @@
                   <td class="px-4 py-3 font-medium">${m.name}</td>
                   <td class="px-4 py-3 text-ink-muted">${m.role}</td>
                   <td class="px-4 py-3">${formatMoney(m.monthlySalary)}</td>
-                  <td class="px-4 py-3">
-                    <button onclick="togglePayrollStatus('${m.id}')" class="${m.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap transition-warm">${m.paymentStatus}</button>
-                  </td>
+                  <td class="px-4 py-3">${renderPayrollStatusCell(m)}</td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
         </div>
       </div>
-      <p class="text-xs text-ink-muted mt-3">Tap a payment pill to toggle it between Paid and Pending for the current month. Staff records themselves are managed under Administration.</p>
+      <p class="text-xs text-ink-muted mt-3">Tap a payment pill, then confirm, to mark it Paid or Pending for the current month. Staff records themselves are managed under Administration.</p>
     `;
   }
-  function togglePayrollStatus(id) {
+  function renderPayrollStatusCell(m) {
+    if (payrollConfirmId === m.id) {
+      const nextStatus = m.paymentStatus === 'Paid' ? 'Pending' : 'Paid';
+      return `
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs text-ink-muted">Mark as ${nextStatus}?</span>
+          <button onclick="confirmPayrollToggle('${m.id}')" class="text-primary text-xs font-semibold px-2 py-1 rounded-button hover:bg-primary-light">Confirm</button>
+          <button onclick="payrollConfirmId=null; renderPayrollModule(document.getElementById('module-content'))" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        </div>
+      `;
+    }
+    return `<button onclick="payrollConfirmId='${m.id}'; renderPayrollModule(document.getElementById('module-content'))" class="${m.paymentStatus==='Paid' ? 'bg-green/20 text-[#2f6b45]' : 'bg-gold/20 text-[#8a5a10]'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap transition-warm">${m.paymentStatus}</button>`;
+  }
+  function confirmPayrollToggle(id) {
     const m = payrollStaff.find(x => x.id === id);
     m.paymentStatus = m.paymentStatus === 'Paid' ? 'Pending' : 'Paid';
+    payrollConfirmId = null;
+    toast(`${m.name} marked as ${m.paymentStatus}.`);
     renderPayrollModule(document.getElementById('module-content'));
   }
 

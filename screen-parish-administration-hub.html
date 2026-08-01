@@ -134,7 +134,7 @@
         <div class="flex gap-2 mb-6 flex-wrap items-center">
           <button onclick="setModule('profile')" data-module="profile" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Parish Profile</button>
           <button onclick="setModule('inventory')" data-module="inventory" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Inventory</button>
-          <button onclick="setModule('staff')" data-module="staff" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Staff &amp; Payroll</button>
+          <button onclick="setModule('staff')" data-module="staff" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Staff</button>
           <span class="w-px h-5 bg-divider mx-1"></span>
           <button onclick="return goServices()" class="px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted border border-divider hover:bg-section-bg flex items-center gap-1.5">Services<svg class="icon w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></button>
         </div>
@@ -267,6 +267,7 @@
     file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
     box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
     users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+    kebab: '<circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/>',
     mapPin: '<path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
@@ -326,6 +327,7 @@
   let currentModule = 'profile';
 
   function setModule(m) {
+    if (typeof closeStaffKebab === 'function') closeStaffKebab();
     currentModule = m;
     document.querySelectorAll('.module-tab').forEach(btn => {
       const active = btn.dataset.module === m;
@@ -728,11 +730,8 @@
                   <td class="px-4 py-3 text-ink-muted">${m.phone || '\u2014'}</td>
                   <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(m.joinedDate)}</td>
                   <td class="px-4 py-3">${employmentStatusPill(m.employmentStatus)}</td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-1 justify-end">
-                      <button onclick="openStaffModal('${m.id}')" aria-label="Edit staff member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                      ${renderStaffStatusAction(m)}
-                    </div>
+                  <td class="px-4 py-3 text-right relative">
+                    ${renderStaffActionsCell(m)}
                   </td>
                 </tr>
               `).join('')}
@@ -751,21 +750,57 @@
   }
 
   let staffConfirmContext = null; // { id, action: 'Inactive' | 'Terminated' }
-  function renderStaffStatusAction(m) {
+  let openStaffKebabId = null;
+
+  function renderStaffActionsCell(m) {
     if (staffConfirmContext && staffConfirmContext.id === m.id) {
       return `
-        <span class="text-xs text-ink-muted mr-1">Mark as ${staffConfirmContext.action}?</span>
-        <button onclick="confirmStaffStatusChange()" class="text-error text-xs font-semibold px-2 py-1 rounded-button hover:bg-error-bg">Confirm</button>
-        <button onclick="staffConfirmContext=null; renderModule()" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        <div class="flex items-center justify-end gap-1.5">
+          <span class="text-xs text-ink-muted mr-1">Mark as ${staffConfirmContext.action}?</span>
+          <button onclick="confirmStaffStatusChange()" class="text-error text-xs font-semibold px-2 py-1 rounded-button hover:bg-error-bg">Confirm</button>
+          <button onclick="staffConfirmContext=null; renderModule()" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        </div>
       `;
     }
-    if (m.employmentStatus === 'Terminated') return '';
     return `
-      <button onclick="promptStaffStatusChange('${m.id}','Inactive')" aria-label="Mark inactive" class="text-ink-muted text-xs font-semibold px-2.5 py-1.5 rounded-button hover:bg-section-bg transition-warm">Mark Inactive</button>
-      <button onclick="promptStaffStatusChange('${m.id}','Terminated')" aria-label="Terminate" class="text-error text-xs font-semibold px-2.5 py-1.5 rounded-button hover:bg-error-bg transition-warm">Terminate</button>
+      <div class="inline-block text-left">
+        <button onclick="toggleStaffKebab('${m.id}', this)" aria-label="More actions" aria-haspopup="true" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('kebab','icon w-4 h-4')}</button>
+      </div>
     `;
   }
+  function renderStaffKebabMenu(m) {
+    return `
+      <div id="staff-kebab-menu" style="position:fixed; top:${kebabMenuPos.top}px; left:${kebabMenuPos.left}px;" class="w-44 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-50">
+        <button onclick="editStaffFromKebab('${m.id}')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm flex items-center gap-2">${icon('edit','icon w-3.5 h-3.5')}Edit</button>
+        ${m.employmentStatus !== 'Terminated' ? `
+          ${m.employmentStatus !== 'Inactive' ? `<button onclick="promptStaffStatusChange('${m.id}','Inactive')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Mark Inactive</button>` : ''}
+          <button onclick="promptStaffStatusChange('${m.id}','Terminated')" class="w-full text-left px-3.5 py-2.5 text-sm text-error hover:bg-error-bg transition-warm">Terminate</button>
+        ` : ''}
+      </div>
+    `;
+  }
+  let kebabMenuPos = { top: 0, left: 0 };
+  function closeStaffKebab() {
+    const existing = document.getElementById('staff-kebab-menu');
+    if (existing) existing.remove();
+    openStaffKebabId = null;
+  }
+  function toggleStaffKebab(id, btnEl) {
+    const wasOpenForThisRow = openStaffKebabId === id;
+    closeStaffKebab();
+    if (wasOpenForThisRow) return;
+    openStaffKebabId = id;
+    const rect = btnEl.getBoundingClientRect();
+    kebabMenuPos = { top: rect.bottom + 4, left: Math.max(8, rect.right - 176) };
+    const m = staffMembers.find(x => x.id === id);
+    document.body.insertAdjacentHTML('beforeend', renderStaffKebabMenu(m));
+  }
+  function editStaffFromKebab(id) {
+    closeStaffKebab();
+    openStaffModal(id);
+  }
   function promptStaffStatusChange(id, action) {
+    closeStaffKebab();
     staffConfirmContext = { id, action };
     renderModule();
   }
