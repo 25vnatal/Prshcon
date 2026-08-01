@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Faith Formation</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)', 'card-hover': '0 12px 36px rgba(30,41,59,0.12)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside id="sidebar" class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
+          Family Records
+        </button>
+        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
+          Committees
+        </button>
+        <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+          Masses
+        </button>
+        <button onclick="return goCalendar()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          Parish Calendar
+        </button>
+        <button onclick="return goServices()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+          Services
+        </button>
+        <button onclick="return goRequests()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Requests
+        </button>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          Faith Formation
+        </a>
+        <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          Finance
+        </button>
+        <button onclick="return goAdministration()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+          Administration
+        </button>
+        <button onclick="toast('Reports')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="toast('Settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 min-w-0">
+
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p id="header-parish-name" class="text-sm font-semibold">Infant Jesus Shrine</p>
+            <p class="text-xs text-ink-muted">Faith Formation</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-primary text-white text-xs font-bold flex items-center justify-center flex-shrink-0">PS</button>
+        </div>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Parish Staff</p>
+            <p id="account-parish-name" class="text-xs text-ink-muted truncate">Infant Jesus Shrine</p>
+          </div>
+          <button onclick="window.location.href='screen-parish-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Faith Formation</p>
+          <p class="text-ink-muted text-sm mt-1">Daily prayers, readings, reflections, and media for the parish community — pulled from Communication since it's its own body of content, not a single announcement.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('content')" data-module="content" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Content</button>
+          <button onclick="setModule('media')" data-module="media" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Media &amp; Videos</button>
+        </div>
+
+        <div id="module-content"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ ADD/EDIT CONTENT MODAL ============ -->
+  <div id="content-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-xl max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="content-modal-title" class="font-heading font-bold text-lg">Add Content</p>
+        <button onclick="closeModal('content-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="content-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitContent('Draft')" class="text-ink-muted border border-divider text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Save as Draft</button>
+        <button onclick="submitContent('Published')" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ADD/EDIT MEDIA MODAL ============ -->
+  <div id="media-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-lg max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="media-modal-title" class="font-heading font-bold text-lg">Add Media</p>
+        <button onclick="closeModal('media-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="media-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitMedia('Draft')" class="text-ink-muted border border-divider text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Save as Draft</button>
+        <button onclick="submitMedia('Published')" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Publish</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['parish', 'parishName', 'name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  const parishName = sessionParams.get('parishName') || 'Infant Jesus Shrine';
+  const staffName = sessionParams.get('name') || 'Parish Staff';
+  document.getElementById('sidebar-parish-name').textContent = parishName;
+  document.getElementById('header-parish-name').textContent = parishName;
+  document.getElementById('account-parish-name').textContent = parishName;
+  document.getElementById('avatar-btn').textContent = parishName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+  function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
+  function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
+  function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goCalendar() { window.location.href = 'screen-parish-calendar-hub.html?' + baseParams().toString(); return false; }
+  function goServices() { window.location.href = 'screen-parish-services-hub.html?' + baseParams().toString(); return false; }
+  function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-parish-communication-hub.html?' + baseParams().toString(); return false; }
+  function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
+  function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  const ICON_PATHS = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    play: '<circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '\u2014';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function statusPill(status) {
+    const map = { 'Published':['bg-green/20','text-[#2f6b45]'], 'Draft':['bg-gold/20','text-[#8a5a10]'] };
+    const [bg, text] = map[status] || map['Draft'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
+  }
+
+  const CATEGORIES = ["Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Feast Day Content"];
+
+  // ---------------- Mock data: Faith Formation content (moved out of Communication, richer + categorized) ----------------
+  let faithContent = [
+    { id:"FF-001", category:"Daily Prayers", title:"Morning Offering", body:"O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", status:"Published", publishedDate:"2026-07-26" },
+    { id:"FF-002", category:"Daily Prayers", title:"Prayer of the Day \u2014 Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", status:"Published", publishedDate:"2026-07-26" },
+    { id:"FF-003", category:"Daily Prayers", title:"Grace Before Meals", body:"Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen.", status:"Published", publishedDate:"2026-07-20" },
+    { id:"FF-004", category:"Readings & Reflections", title:"Reflecting on the Novena", body:"As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", status:"Published", publishedDate:"2026-07-25" },
+    { id:"FF-005", category:"Readings & Reflections", title:"Sunday Gospel Reflection \u2014 The Good Samaritan", body:"Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", status:"Published", publishedDate:"2026-07-19" },
+    { id:"FF-006", category:"Readings & Reflections", title:"Reflection for Families \u2014 Patience", body:"A short reflection for parents on modelling patience for their children, drawn from this week's readings.", status:"Draft", publishedDate:null },
+    { id:"FF-007", category:"Special Prayers", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", status:"Published", publishedDate:"2026-07-15" },
+    { id:"FF-008", category:"Special Prayers", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", status:"Published", publishedDate:"2026-06-20" },
+    { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"A guide to praying the Joyful Mysteries, prayed on Mondays and Saturdays: the Annunciation, Visitation, Nativity, Presentation, and Finding in the Temple.", status:"Published", publishedDate:"2026-05-01" },
+    { id:"FF-010", category:"Rosary", title:"The Sorrowful Mysteries", body:"A guide to praying the Sorrowful Mysteries, prayed on Tuesdays and Fridays: the Agony, Scourging, Crowning with Thorns, Carrying of the Cross, and Crucifixion.", status:"Published", publishedDate:"2026-05-01" },
+    { id:"FF-011", category:"Rosary", title:"How to Pray the Rosary \u2014 A Beginner's Guide", body:"Step-by-step instructions for parishioners new to the Rosary, including how to hold the beads and the order of prayers.", status:"Published", publishedDate:"2026-04-10" },
+    { id:"FF-012", category:"Feast Day Content", title:"About the Feast of the Infant Jesus", body:"A short history and devotional note on the parish's patronal feast, celebrated every 13 January.", status:"Draft", publishedDate:null },
+  ];
+
+  // ---------------- Mock data: Media / Videos for children & youth ----------------
+  let mediaItems = [
+    { id:"MED-001", title:"Bible Stories for Kids \u2014 Noah's Ark", audience:"Children", description:"A short animated retelling of Noah's Ark, produced by the parish youth ministry.", durationMinutes:6, status:"Published", publishedDate:"2026-06-01" },
+    { id:"MED-002", title:"How to Pray the Rosary (Video Guide)", audience:"Both", description:"A companion video to the written Rosary guide, walking through each mystery on screen.", durationMinutes:12, status:"Published", publishedDate:"2026-05-02" },
+    { id:"MED-003", title:"Youth Talk \u2014 Faith in the Age of Social Media", audience:"Youth", description:"Recording of Fr. Francis's talk to the youth group on living faith online.", durationMinutes:28, status:"Published", publishedDate:"2026-04-15" },
+    { id:"MED-004", title:"Sunday School Song \u2014 This Little Light of Mine", audience:"Children", description:"A sing-along video recorded with the Sunday School choir.", durationMinutes:3, status:"Draft", publishedDate:null },
+  ];
+
+  let currentModule = 'content';
+  let searchQuery = '';
+  let categoryFilter = 'All';
+
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'content') renderContentModule(el);
+    else renderMediaModule(el);
+  }
+
+  // =========================================================================
+  // MODULE 1: Content (Daily Prayers, Readings & Reflections, Special Prayers, Rosary, Feast Day)
+  // =========================================================================
+  function filteredContent() {
+    const q = searchQuery.trim().toLowerCase();
+    return faithContent.filter(f => {
+      const matchesCategory = categoryFilter === 'All' || f.category === categoryFilter;
+      const matchesSearch = !q || f.title.toLowerCase().includes(q) || f.body.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }
+  function renderContentModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
+          <input id="ff-search" type="text" placeholder="Search by title or text\u2026" value="${searchQuery}" oninput="searchQuery=this.value; renderContentList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+        <select id="ff-category-filter" onchange="categoryFilter=this.value; renderContentList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none flex-shrink-0">
+          <option value="All">All categories</option>
+          ${CATEGORIES.map(c => `<option ${categoryFilter===c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <button onclick="openContentModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">${icon('plus','icon w-4 h-4')}Add Content</button>
+      </div>
+      <div id="ff-content-list" class="space-y-3"></div>
+    `;
+    renderContentList();
+  }
+  function renderContentList() {
+    const list = filteredContent();
+    const container = document.getElementById('ff-content-list');
+    if (list.length === 0) {
+      container.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No content found</p><p class="text-sm text-ink-muted mt-1">Try a different search term or category.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(f => `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <p class="text-xs text-primary font-semibold uppercase tracking-wide">${f.category}</p>
+            <p class="text-sm font-semibold mt-0.5">${f.title}</p>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            ${statusPill(f.status)}
+            <button onclick="openContentModal('${f.id}')" aria-label="Edit content" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+            <button onclick="deleteContent('${f.id}')" aria-label="Delete content" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+          </div>
+        </div>
+        <p class="text-xs text-ink-muted">${f.body}</p>
+        <p class="text-xs text-ink-muted mt-2">${f.status === 'Published' ? 'Published ' + formatDate(f.publishedDate) : 'Not yet published'}</p>
+      </div>
+    `).join('');
+  }
+  let editingContentId = null;
+  function openContentModal(editId) {
+    editingContentId = editId || null;
+    const f = editId ? faithContent.find(x => x.id === editId) : null;
+    document.getElementById('content-modal-title').textContent = f ? 'Edit Content' : 'Add Content';
+    document.getElementById('content-modal').classList.remove('hidden');
+    document.getElementById('content-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Category</label>
+        <select id="cf-category" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${CATEGORIES.map(c => `<option ${f && f.category===c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Title</label><input id="cf-title" type="text" value="${f ? f.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Content</label><textarea id="cf-body" rows="5" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${f ? f.body : ''}</textarea></div>
+      ${f && f.status === 'Published' ? `<p class="text-xs text-ink-muted">Currently published. Saving as Draft will unpublish it; Publish will update the live version.</p>` : ''}
+    `;
+  }
+  function submitContent(action) {
+    const title = document.getElementById('cf-title').value.trim();
+    const body = document.getElementById('cf-body').value.trim();
+    if (!title || !body) { toast('Please fill in title and content.'); return; }
+    const category = document.getElementById('cf-category').value;
+    const status = action;
+    if (editingContentId) {
+      const existing = faithContent.find(x => x.id === editingContentId);
+      Object.assign(existing, { category, title, body, status, publishedDate: status==='Published' ? '2026-07-31' : existing.publishedDate });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
+    } else {
+      faithContent.unshift({ id:'FF-'+Math.floor(100+Math.random()*899), category, title, body, status, publishedDate: status==='Published' ? '2026-07-31' : null });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
+    }
+    editingContentId = null;
+    closeModal('content-modal');
+    renderModule();
+  }
+  function deleteContent(id) {
+    const f = faithContent.find(x => x.id === id);
+    faithContent = faithContent.filter(x => x.id !== id);
+    toast(`${f.title} deleted.`);
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 2: Media & Videos
+  // =========================================================================
+  function renderMediaModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openMediaModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Media</button>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        ${mediaItems.map(m => `
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-badge bg-lavender/20 text-[#5b3fc4] flex items-center justify-center flex-shrink-0">${icon('play','icon w-4 h-4')}</span>
+                <div>
+                  <p class="text-sm font-semibold">${m.title}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${m.audience} \u00b7 ${m.durationMinutes} min</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                ${statusPill(m.status)}
+                <button onclick="openMediaModal('${m.id}')" aria-label="Edit media" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                <button onclick="deleteMedia('${m.id}')" aria-label="Delete media" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+              </div>
+            </div>
+            <p class="text-xs text-ink-muted">${m.description}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  let editingMediaId = null;
+  function openMediaModal(editId) {
+    editingMediaId = editId || null;
+    const m = editId ? mediaItems.find(x => x.id === editId) : null;
+    document.getElementById('media-modal-title').textContent = m ? 'Edit Media' : 'Add Media';
+    document.getElementById('media-modal').classList.remove('hidden');
+    document.getElementById('media-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Title</label><input id="mf-title" type="text" value="${m ? m.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Audience</label>
+          <select id="mf-audience" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            ${["Children","Youth","Both"].map(a => `<option ${m && m.audience===a ? 'selected' : ''}>${a}</option>`).join('')}
+          </select>
+        </div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Duration (minutes)</label><input id="mf-duration" type="number" value="${m ? m.durationMinutes : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Description</label><textarea id="mf-desc" rows="3" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${m ? m.description : ''}</textarea></div>
+      <div class="bg-section-bg rounded-card p-4 text-xs text-ink-muted">Video file upload is simulated in this prototype \u2014 in production this would link to hosted video.</div>
+    `;
+  }
+  function submitMedia(action) {
+    const title = document.getElementById('mf-title').value.trim();
+    if (!title) { toast('Please enter a title.'); return; }
+    const audience = document.getElementById('mf-audience').value;
+    const durationMinutes = parseInt(document.getElementById('mf-duration').value) || 0;
+    const description = document.getElementById('mf-desc').value.trim();
+    const status = action;
+    if (editingMediaId) {
+      const existing = mediaItems.find(x => x.id === editingMediaId);
+      Object.assign(existing, { title, audience, durationMinutes, description, status, publishedDate: status==='Published' ? '2026-07-31' : existing.publishedDate });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
+    } else {
+      mediaItems.unshift({ id:'MED-'+Math.floor(100+Math.random()*899), title, audience, durationMinutes, description, status, publishedDate: status==='Published' ? '2026-07-31' : null });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
+    }
+    editingMediaId = null;
+    closeModal('media-modal');
+    renderModule();
+  }
+  function deleteMedia(id) {
+    const m = mediaItems.find(x => x.id === id);
+    mediaItems = mediaItems.filter(x => x.id !== id);
+    toast(`${m.title} deleted.`);
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>

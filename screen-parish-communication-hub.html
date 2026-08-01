@@ -47,10 +47,10 @@
         <p id="sidebar-parish-name" class="text-xs text-ink-muted mt-1 truncate">Infant Jesus Shrine</p>
       </div>
       <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
-        <a href="#" onclick="return goDash()" class="flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
           Dashboard
-        </a>
+        </button>
         <button onclick="return goFamilyRecords()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
           Family Records
@@ -62,6 +62,10 @@
         <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
           Masses
+        </button>
+        <button onclick="return goCalendar()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          Parish Calendar
         </button>
         <button onclick="return goServices()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
@@ -75,6 +79,10 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
         </a>
+        <button onclick="return goFaithFormation()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+          Faith Formation
+        </button>
         <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
           Finance
@@ -131,7 +139,7 @@
           <button onclick="setModule('announcements')" data-module="announcements" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Announcements</button>
           <button onclick="setModule('circulars')" data-module="circulars" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Circulars</button>
           <button onclick="setModule('events')" data-module="events" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Events</button>
-          <button onclick="setModule('faithformation')" data-module="faithformation" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Faith Formation</button>
+
         </div>
 
         <div id="module-content"></div>
@@ -144,7 +152,7 @@
 
   <!-- ============ ADD/EDIT ANNOUNCEMENT MODAL ============ -->
   <div id="announcement-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-2xl max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
         <p id="announcement-modal-title" class="font-heading font-bold text-lg">Add Announcement</p>
         <button onclick="closeModal('announcement-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
@@ -153,8 +161,8 @@
       </div>
       <div id="announcement-form" class="px-6 py-5 space-y-4"></div>
       <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitAnnouncement()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="announcement-modal-save-label">Save</span></button>
-        <button onclick="closeModal('announcement-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+        <button onclick="submitAnnouncement('Draft')" class="text-ink-muted border border-divider text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Save as Draft</button>
+        <button onclick="submitAnnouncement('Published')" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Publish</button>
       </div>
     </div>
   </div>
@@ -206,22 +214,6 @@
     </div>
   </div>
 
-  <!-- ============ ADD/EDIT FAITH FORMATION CONTENT MODAL ============ -->
-  <div id="faithcontent-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
-      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
-        <p id="faithcontent-modal-title" class="font-heading font-bold text-lg">Add Content</p>
-        <button onclick="closeModal('faithcontent-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div id="faithcontent-form" class="px-6 py-5 space-y-4"></div>
-      <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitFaithContent()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="faithcontent-modal-save-label">Save</span></button>
-        <button onclick="closeModal('faithcontent-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
-      </div>
-    </div>
-  </div>
 
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
@@ -241,8 +233,10 @@
   function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
+  function goCalendar() { window.location.href = 'screen-parish-calendar-hub.html?' + baseParams().toString(); return false; }
   function goServices() { window.location.href = 'screen-parish-services-hub.html?' + baseParams().toString(); return false; }
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
+  function goFaithFormation() { window.location.href = 'screen-parish-faithformation-hub.html?' + baseParams().toString(); return false; }
   function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
@@ -264,6 +258,9 @@
     trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
     users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
+    attachment: '<path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.13 17.1a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+    close: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+    search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
@@ -281,9 +278,10 @@
 
   // ---------------- Mock data: Announcements (schema section 4.5, mirrors mock-seed.json) ----------------
   let announcements = [
-    { id:"ANN-4001", title:"Feast of Infant Jesus - Novena Begins", content:"The nine-day novena in preparation for the Feast of Infant Jesus begins this Friday at 6:00 PM. All parishioners are invited.", status:"Published", createdBy:"Parish Office", createdDate:"2026-07-18", publishedDate:"2026-07-18" },
-    { id:"ANN-4002", title:"Parish Office Closed for Maintenance", content:"The parish office will be closed on Monday, 3 August for electrical maintenance. Normal hours resume Tuesday.", status:"Draft", createdBy:"Parish Office", createdDate:"2026-07-29", publishedDate:null },
-    { id:"ANN-4003", title:"Sunday School Registration Open", content:"Registration for the new Sunday School year is now open. Visit the parish office or register online.", status:"Published", createdBy:"Parish Office", createdDate:"2026-06-10", publishedDate:"2026-06-10" },
+    { id:"ANN-4001", title:"Feast of Infant Jesus - Novena Begins", content:"The nine-day novena in preparation for the Feast of Infant Jesus begins this Friday at 6:00 PM. All parishioners are invited.", status:"Published", createdBy:"Parish Office", createdDate:"2026-07-18", publishedDate:"2026-07-18", attachments:["novena-schedule.pdf"] },
+    { id:"ANN-4002", title:"Parish Office Closed for Maintenance", content:"The parish office will be closed on Monday, 3 August for electrical maintenance. Normal hours resume Tuesday.", status:"Draft", createdBy:"Parish Office", createdDate:"2026-07-29", publishedDate:null, attachments:[] },
+    { id:"ANN-4003", title:"Sunday School Registration Open", content:"Registration for the new Sunday School year is now open. Visit the parish office or register online.", status:"Published", createdBy:"Parish Office", createdDate:"2026-06-10", publishedDate:"2026-06-10", attachments:["sunday-school-form.pdf"] },
+    { id:"ANN-4004", title:"Announcements for the week of 27 July", content:"Weekly bulletin: Sunday Mass timings unchanged; catechism resumes Saturday; parish council meeting Wednesday 7 PM.", status:"Published", createdBy:"Parish Office", createdDate:"2026-07-27", publishedDate:"2026-07-27", attachments:["weekly-bulletin-27jul.pdf"] },
   ];
 
   // ---------------- Mock data: Circulars (no documented schema — designed pragmatically) ----------------
@@ -295,7 +293,7 @@
 
   // ---------------- Mock data: Events (schema section 4.7, mirrors mock-seed.json) ----------------
   let events = [
-    { id:"EVT-6001", name:"Feast Day Celebration", description:"Annual feast day celebration with Mass, procession, and fellowship lunch.", category:"Feast", status:"Published", eventDate:"2027-01-13", startTime:"07:00 AM", endTime:"01:00 PM", venue:"Infant Jesus Shrine Grounds", registrationRequired:true, capacity:500, paidEvent:false,
+    { id:"EVT-6001", name:"Feast Day Celebration", description:"Annual feast day celebration with Mass, procession, and fellowship lunch.", category:"Feast", status:"Published", eventDate:"2027-01-13", startTime:"07:00 AM", endTime:"01:00 PM", venue:"Infant Jesus Shrine Grounds", registrationRequired:true, capacity:0, paidEvent:false,
       registrations:[
         { memberName:"John Rodrigues", registeredOn:"2026-07-20", attendance:"Not Recorded" },
         { memberName:"Michael Pinto", registeredOn:"2026-07-22", attendance:"Not Recorded" },
@@ -305,13 +303,11 @@
         { memberName:"Kevin Rodrigues", registeredOn:"2026-07-15", attendance:"Not Recorded" },
       ] },
     { id:"EVT-6003", name:"Marian Procession", description:"Evening procession and rosary in honour of Our Lady.", category:"Devotional", status:"Draft", eventDate:"2026-10-04", startTime:"06:00 PM", endTime:"08:00 PM", venue:"Main Church", registrationRequired:false, capacity:0, paidEvent:false, registrations:[] },
-  ];
-
-  // ---------------- Mock data: Faith Formation content ----------------
-  let faithContent = [
-    { id:"FF-001", type:"Prayer Content", title:"Prayer of the Day — Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", status:"Published", publishedDate:"2026-07-26" },
-    { id:"FF-002", type:"Reflection", title:"Reflecting on the Novena", body:"As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", status:"Published", publishedDate:"2026-07-25" },
-    { id:"FF-003", type:"Feast Day Content", title:"About the Feast of the Infant Jesus", body:"A short history and devotional note on the parish's patronal feast.", status:"Draft", publishedDate:null },
+    { id:"EVT-6004", name:"Winter Clothes Drive \u2014 Outreach Program", description:"Volunteers collect and distribute winter clothing to underprivileged families in the neighbourhood.", category:"Outreach", status:"Published", eventDate:"2026-11-14", startTime:"09:00 AM", endTime:"01:00 PM", venue:"Parish Hall", registrationRequired:true, capacity:30, paidEvent:false,
+      registrations:[
+        { memberName:"Grace Rodrigues", registeredOn:"2026-07-28", attendance:"Not Recorded" },
+      ] },
+    { id:"EVT-6005", name:"Christmas Celebration", description:"Christmas Eve Mass followed by a community fellowship dinner for the whole parish.", category:"Celebration", status:"Published", eventDate:"2026-12-24", startTime:"08:00 PM", endTime:"11:00 PM", venue:"Infant Jesus Shrine Grounds", registrationRequired:true, capacity:0, paidEvent:false, registrations:[] },
   ];
 
   let currentModule = 'announcements';
@@ -329,78 +325,130 @@
     const el = document.getElementById('module-content');
     if (currentModule === 'announcements') renderAnnouncementsModule(el);
     else if (currentModule === 'circulars') renderCircularsModule(el);
-    else if (currentModule === 'events') renderEventsModule(el);
-    else renderFaithFormationModule(el);
+    else renderEventsModule(el);
   }
 
   // =========================================================================
   // MODULE 1: Announcements
   // =========================================================================
+  const ANNOUNCEMENT_TITLE_SUGGESTIONS = [
+    "Announcements for the week of",
+    "Feast day schedule",
+    "Mass timing changes",
+    "Parish office notice",
+    "Upcoming event reminder",
+  ];
+  let announcementSearchQuery = '';
+  let announcementDateFilter = '';
+
+  function filteredAnnouncements() {
+    const q = announcementSearchQuery.trim().toLowerCase();
+    return announcements.filter(a => {
+      const matchesSearch = !q || a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q);
+      const matchesDate = !announcementDateFilter || a.createdDate === announcementDateFilter || a.publishedDate === announcementDateFilter;
+      return matchesSearch && matchesDate;
+    });
+  }
+
   function renderAnnouncementsModule(el) {
     el.innerHTML = `
-      <div class="flex justify-end mb-4">
-        <button onclick="openAnnouncementModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Announcement</button>
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
+          <input id="ann-search" type="text" placeholder="Search by title or text\u2026" value="${announcementSearchQuery}" oninput="announcementSearchQuery=this.value; renderAnnouncementsList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+        <input id="ann-date-filter" type="date" value="${announcementDateFilter}" onchange="announcementDateFilter=this.value; renderAnnouncementsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none flex-shrink-0">
+        ${announcementDateFilter ? `<button onclick="announcementDateFilter=''; document.getElementById('ann-date-filter').value=''; renderAnnouncementsList()" class="text-primary text-xs font-semibold flex-shrink-0">Clear date</button>` : ''}
+        <button onclick="openAnnouncementModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">${icon('plus','icon w-4 h-4')}Add Announcement</button>
       </div>
-      <div class="space-y-3">
-        ${announcements.map(a => `
-          <div class="bg-card-bg rounded-card shadow-card p-5">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <p class="text-sm font-semibold">${a.title}</p>
-              <div class="flex items-center gap-1.5 flex-shrink-0">
-                ${statusPill(a.status)}
-                <button onclick="openAnnouncementModal('${a.id}')" aria-label="Edit announcement" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                <button onclick="deleteAnnouncement('${a.id}')" aria-label="Delete announcement" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-              </div>
-            </div>
-            <p class="text-xs text-ink-muted">${a.content}</p>
-            <p class="text-xs text-ink-muted mt-2">${a.status === 'Published' ? 'Published ' + formatDate(a.publishedDate) : 'Created ' + formatDate(a.createdDate)} · ${a.createdBy}</p>
-            ${a.status === 'Draft' ? `<button onclick="publishAnnouncement('${a.id}')" class="mt-3 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Publish Now</button>` : ''}
-          </div>
-        `).join('')}
-      </div>
+      <div id="ann-list" class="space-y-3"></div>
     `;
+    renderAnnouncementsList();
+  }
+  function renderAnnouncementsList() {
+    const list = filteredAnnouncements();
+    const container = document.getElementById('ann-list');
+    if (list.length === 0) {
+      container.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No announcements found</p><p class="text-sm text-ink-muted mt-1">Try a different search term or date.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(a => `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <p class="text-sm font-semibold">${a.title}</p>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            ${statusPill(a.status)}
+            <button onclick="openAnnouncementModal('${a.id}')" aria-label="Edit announcement" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+            <button onclick="deleteAnnouncement('${a.id}')" aria-label="Delete announcement" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+          </div>
+        </div>
+        <p class="text-xs text-ink-muted">${a.content}</p>
+        ${a.attachments.length > 0 ? `
+          <div class="flex flex-wrap gap-2 mt-3">
+            ${a.attachments.map(f => `<span class="bg-section-bg text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge flex items-center gap-1.5">${icon('attachment','icon w-3.5 h-3.5')}${f}</span>`).join('')}
+          </div>
+        ` : ''}
+        <p class="text-xs text-ink-muted mt-3">${a.status === 'Published' ? 'Published ' + formatDate(a.publishedDate) : 'Created ' + formatDate(a.createdDate)} \u00b7 ${a.createdBy}</p>
+      </div>
+    `).join('');
   }
   let editingAnnouncementId = null;
+  let pendingAttachments = [];
   function openAnnouncementModal(editId) {
     editingAnnouncementId = editId || null;
     const a = editId ? announcements.find(x => x.id === editId) : null;
+    pendingAttachments = a ? [...a.attachments] : [];
     document.getElementById('announcement-modal-title').textContent = a ? 'Edit Announcement' : 'Add Announcement';
-    document.getElementById('announcement-modal-save-label').textContent = a ? 'Save Changes' : 'Save';
     document.getElementById('announcement-modal').classList.remove('hidden');
     document.getElementById('announcement-form').innerHTML = `
-      <div class="space-y-1.5"><label class="text-xs font-medium">Title</label><input id="af-title" type="text" value="${a ? a.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Content</label><textarea id="af-content" rows="4" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${a ? a.content : ''}</textarea></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
-        <select id="af-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-          <option ${a && a.status==='Draft' ? 'selected' : ''}>Draft</option>
-          <option ${!a || a.status==='Published' ? 'selected' : ''}>Published</option>
-          <option ${a && a.status==='Archived' ? 'selected' : ''}>Archived</option>
-        </select>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Title</label>
+        <input id="af-title" type="text" placeholder="e.g. Announcements for the week of 3 August" value="${a ? a.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+        <div class="flex flex-wrap gap-1.5 pt-1">
+          ${ANNOUNCEMENT_TITLE_SUGGESTIONS.map(s => `<button type="button" onclick="document.getElementById('af-title').value='${s}'" class="bg-section-bg hover:bg-primary-light text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge transition-warm">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Content</label><textarea id="af-content" rows="6" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${a ? a.content : ''}</textarea></div>
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Attachments (e.g. feast day flyers)</label>
+        <div id="af-attachment-list" class="flex flex-wrap gap-1.5"></div>
+        <button type="button" onclick="addSimulatedAttachment()" class="text-primary text-xs font-semibold flex items-center gap-1">${icon('plus','icon w-3.5 h-3.5')}Add attachment</button>
+        <p class="text-xs text-ink-muted">File upload is simulated in this prototype. Attachments show inline in the announcement \u2014 viewers won't need to download them separately.</p>
       </div>
     `;
+    renderPendingAttachments();
   }
-  function submitAnnouncement() {
+  function renderPendingAttachments() {
+    document.getElementById('af-attachment-list').innerHTML = pendingAttachments.map((f, i) => `
+      <span class="bg-section-bg text-ink text-xs font-medium pl-2.5 pr-1.5 py-1.5 rounded-badge flex items-center gap-1.5">
+        ${f}
+        <button type="button" onclick="removePendingAttachment(${i})" aria-label="Remove attachment" class="w-4 h-4 rounded-full flex items-center justify-center hover:bg-error-bg hover:text-error">${icon('close','w-3 h-3')}</button>
+      </span>
+    `).join('');
+  }
+  function addSimulatedAttachment() {
+    const name = 'flyer-' + (pendingAttachments.length + 1) + '.pdf';
+    pendingAttachments.push(name);
+    renderPendingAttachments();
+  }
+  function removePendingAttachment(i) {
+    pendingAttachments.splice(i, 1);
+    renderPendingAttachments();
+  }
+  function submitAnnouncement(status) {
     const title = document.getElementById('af-title').value.trim();
     const content = document.getElementById('af-content').value.trim();
-    const status = document.getElementById('af-status').value;
     if (!title || !content) { toast('Please fill in title and content.'); return; }
     if (editingAnnouncementId) {
       const existing = announcements.find(x => x.id === editingAnnouncementId);
-      Object.assign(existing, { title, content, status, publishedDate: status === 'Published' ? (existing.publishedDate || '2026-07-31') : existing.publishedDate });
-      toast(`${title} updated.`);
+      Object.assign(existing, { title, content, status, attachments: [...pendingAttachments], publishedDate: status === 'Published' ? (existing.publishedDate || '2026-07-31') : existing.publishedDate });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
     } else {
-      announcements.unshift({ id:'ANN-'+Math.floor(1000+Math.random()*8999), title, content, status, createdBy: staffName, createdDate:'2026-07-31', publishedDate: status==='Published' ? '2026-07-31' : null });
-      toast(`${title} added.`);
+      announcements.unshift({ id:'ANN-'+Math.floor(1000+Math.random()*8999), title, content, status, attachments: [...pendingAttachments], createdBy: staffName, createdDate:'2026-07-31', publishedDate: status==='Published' ? '2026-07-31' : null });
+      toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
     }
     editingAnnouncementId = null;
     closeModal('announcement-modal');
-    renderModule();
-  }
-  function publishAnnouncement(id) {
-    const a = announcements.find(x => x.id === id);
-    a.status = 'Published';
-    a.publishedDate = '2026-07-31';
-    toast(`${a.title} published.`);
     renderModule();
   }
   function deleteAnnouncement(id) {
@@ -530,7 +578,7 @@
               <div><p class="text-ink-muted">Fee</p><p class="font-medium mt-0.5">${e.paidEvent ? '₹'+e.registrationFee : 'Free'}</p></div>
             </div>
             ${e.registrationRequired ? `
-              <button onclick="openRegistrationsModal('${e.id}')" class="w-full bg-section-bg text-ink text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-primary-light flex items-center justify-center gap-1.5">${icon('users','icon w-3.5 h-3.5')}${e.registrations.length}${e.capacity ? ' / ' + e.capacity : ''} registered</button>
+              <button onclick="openRegistrationsModal('${e.id}')" class="w-full bg-section-bg text-ink text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-primary-light flex items-center justify-center gap-1.5">${icon('users','icon w-3.5 h-3.5')}${e.registrations.length} registered${e.capacity ? ' / ' + e.capacity + ' capacity' : ' \u00b7 no limit'}</button>
             ` : `<p class="text-xs text-ink-muted">No registration required</p>`}
           </div>
         `).join('')}
@@ -550,7 +598,7 @@
       <div class="grid grid-cols-2 gap-3">
         <div class="space-y-1.5"><label class="text-xs font-medium">Category</label>
           <select id="ef-category" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${["Feast","Retreat","Devotional","Social","Other"].map(cat => `<option ${e && e.category===cat ? 'selected' : ''}>${cat}</option>`).join('')}
+            ${["Feast","Retreat","Outreach","Celebration","Devotional","Social","Other"].map(cat => `<option ${e && e.category===cat ? 'selected' : ''}>${cat}</option>`).join('')}
           </select>
         </div>
         <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
@@ -569,7 +617,7 @@
       <div class="space-y-1.5"><label class="text-xs font-medium">Venue</label><input id="ef-venue" type="text" value="${e ? e.venue : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       <label class="flex items-center gap-2 text-sm"><input id="ef-regreq" type="checkbox" ${!e || e.registrationRequired ? 'checked' : ''} onchange="document.getElementById('ef-regfields').classList.toggle('hidden', !this.checked)" class="w-4 h-4"> Registration required</label>
       <div id="ef-regfields" class="grid grid-cols-2 gap-3 ${e && !e.registrationRequired ? 'hidden' : ''}">
-        <div class="space-y-1.5"><label class="text-xs font-medium">Capacity</label><input id="ef-capacity" type="number" value="${e ? e.capacity : 0}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Capacity (leave 0 for no limit)</label><input id="ef-capacity" type="number" value="${e ? e.capacity : 0}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
         <div class="space-y-1.5"><label class="text-xs font-medium">Fee (₹, 0 = free)</label><input id="ef-fee" type="number" value="${e && e.registrationFee ? e.registrationFee : 0}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       </div>
     `;
@@ -633,84 +681,6 @@
     const r = e.registrations[idx];
     r.attendance = r.attendance === 'Present' ? 'Not Recorded' : 'Present';
     renderRegistrations();
-  }
-
-  // =========================================================================
-  // MODULE 4: Faith Formation
-  // =========================================================================
-  function renderFaithFormationModule(el) {
-    el.innerHTML = `
-      <div class="flex justify-end mb-4">
-        <button onclick="openFaithContentModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Content</button>
-      </div>
-      <div class="space-y-3">
-        ${faithContent.map(f => `
-          <div class="bg-card-bg rounded-card shadow-card p-5">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <div>
-                <p class="text-xs text-primary font-semibold uppercase tracking-wide">${f.type}</p>
-                <p class="text-sm font-semibold mt-0.5">${f.title}</p>
-              </div>
-              <div class="flex items-center gap-1.5 flex-shrink-0">
-                ${statusPill(f.status)}
-                <button onclick="openFaithContentModal('${f.id}')" aria-label="Edit content" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                <button onclick="deleteFaithContent('${f.id}')" aria-label="Delete content" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-              </div>
-            </div>
-            <p class="text-xs text-ink-muted">${f.body}</p>
-            <p class="text-xs text-ink-muted mt-2">${f.status === 'Published' ? 'Published ' + formatDate(f.publishedDate) : 'Not yet published'}</p>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-  const FAITH_TYPES = ["Daily Readings", "Reflections", "Prayer Content", "Feast Day Content"];
-  let editingFaithContentId = null;
-  function openFaithContentModal(editId) {
-    editingFaithContentId = editId || null;
-    const f = editId ? faithContent.find(x => x.id === editId) : null;
-    document.getElementById('faithcontent-modal-title').textContent = f ? 'Edit Content' : 'Add Content';
-    document.getElementById('faithcontent-modal-save-label').textContent = f ? 'Save Changes' : 'Save';
-    document.getElementById('faithcontent-modal').classList.remove('hidden');
-    document.getElementById('faithcontent-form').innerHTML = `
-      <div class="space-y-1.5"><label class="text-xs font-medium">Type</label>
-        <select id="ffc-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-          ${FAITH_TYPES.map(t => `<option ${f && f.type===t ? 'selected' : ''}>${t}</option>`).join('')}
-        </select>
-      </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Title</label><input id="ffc-title" type="text" value="${f ? f.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Content</label><textarea id="ffc-body" rows="4" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${f ? f.body : ''}</textarea></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Status</label>
-        <select id="ffc-status" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-          <option ${f && f.status==='Draft' ? 'selected' : ''}>Draft</option>
-          <option ${!f || f.status==='Published' ? 'selected' : ''}>Published</option>
-        </select>
-      </div>
-    `;
-  }
-  function submitFaithContent() {
-    const title = document.getElementById('ffc-title').value.trim();
-    const body = document.getElementById('ffc-body').value.trim();
-    if (!title || !body) { toast('Please fill in title and content.'); return; }
-    const type = document.getElementById('ffc-type').value;
-    const status = document.getElementById('ffc-status').value;
-    if (editingFaithContentId) {
-      const existing = faithContent.find(x => x.id === editingFaithContentId);
-      Object.assign(existing, { type, title, body, status, publishedDate: status==='Published' ? (existing.publishedDate || '2026-07-31') : existing.publishedDate });
-      toast(`${title} updated.`);
-    } else {
-      faithContent.unshift({ id:'FF-'+Math.floor(100+Math.random()*899), type, title, body, status, publishedDate: status==='Published' ? '2026-07-31' : null });
-      toast(`${title} added.`);
-    }
-    editingFaithContentId = null;
-    closeModal('faithcontent-modal');
-    renderModule();
-  }
-  function deleteFaithContent(id) {
-    const f = faithContent.find(x => x.id === id);
-    faithContent = faithContent.filter(x => x.id !== id);
-    toast(`${f.title} deleted.`);
-    renderModule();
   }
 
   renderModule();
