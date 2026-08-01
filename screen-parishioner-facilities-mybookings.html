@@ -91,7 +91,7 @@
 
   // ---------------- Mock data: facility bookings ----------------
   const bookings = [
-    { id:"FB-001", facilityName:"Parish Hall", date:"2026-08-23", startTime:"5:00 PM", endTime:"9:00 PM", purpose:"Kevin's 23rd birthday celebration", paymentStatus:"Paid", status:"Confirmed", bookingFee:2000, reference:"FAC-BOOK-2026-0311" },
+    { id:"FB-001", facilityName:"Parish Hall", date:"2026-08-23", slotName:"Evening", startTime:"4:00 PM", endTime:"9:00 PM", purpose:"Kevin's 23rd birthday celebration", paymentStatus:"Paid", status:"Confirmed", bookingFee:2000, reference:"FAC-BOOK-2026-0311" },
   ];
 
   function statusPill(status) {
@@ -118,7 +118,7 @@
           </div>
           ${statusPill(b.status)}
         </div>
-        <p class="text-xs text-ink-muted mt-2">${formatDate(b.date)} · ${b.startTime} – ${b.endTime}</p>
+        <p class="text-xs text-ink-muted mt-2">${formatDate(b.date)} · ${b.slotName} · ${b.startTime} – ${b.endTime}</p>
         <p class="text-xs text-ink-muted mt-1">${b.purpose}</p>
         <div class="flex items-center justify-between mt-3 pt-3 border-t border-divider">
           <span class="text-sm font-semibold">₹${b.bookingFee}</span>
