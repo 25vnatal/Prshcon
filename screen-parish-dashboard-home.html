@@ -361,15 +361,15 @@
       error: ['bg-error-bg', 'text-error'],
     };
     const cardBgMap = {
-      primary: 'bg-primary-light',
-      coral: 'bg-coral/10',
-      gold: 'bg-gold/10',
-      green: 'bg-green/10',
-      lavender: 'bg-lavender/10',
-      error: 'bg-error-bg',
+      primary: 'bg-primary-light border border-primary/15',
+      coral: 'bg-coral/20 border border-coral/25',
+      gold: 'bg-gold/20 border border-gold/30',
+      green: 'bg-green/20 border border-green/25',
+      lavender: 'bg-lavender/20 border border-lavender/25',
+      error: 'bg-error-bg border border-error/20',
     };
     return `
-      <section class="bg-gradient-to-r from-primary-light via-lavender/15 to-gold/15 rounded-card shadow-card p-5 flex items-center justify-between gap-4 flex-wrap">
+      <section class="bg-gradient-to-r from-primary-light via-lavender/25 to-gold/25 rounded-card shadow-card border border-primary/10 p-5 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <p class="font-heading font-bold text-xl">Good morning, Parish Office 👋</p>
           <p class="text-ink-muted text-sm mt-1">Thursday, 31 July 2026 · ${parishName}</p>
