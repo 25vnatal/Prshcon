@@ -67,6 +67,10 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
         </button>
+        <button onclick="return goDocuments()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Documents
+        </button>
         <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
           Reports
@@ -175,6 +179,7 @@
   function goParishes() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString(); return false; }
   function goMinistry() { window.location.href = 'screen-diocese-ministry-hub.html?' + baseParams().toString(); return false; }
   function goCommunication() { window.location.href = 'screen-diocese-communication-hub.html?' + baseParams().toString(); return false; }
+  function goDocuments() { window.location.href = 'screen-diocese-documents-hub.html?' + baseParams().toString(); return false; }
   function goReports() { window.location.href = 'screen-diocese-reports-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');

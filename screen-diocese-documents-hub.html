@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Documents</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .letter-paper { font-family: 'Georgia', 'Times New Roman', serif; }
+  .letter-display { font-family: 'Playfair Display', Georgia, serif; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <aside class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform" id="sidebar">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p class="text-xs text-ink-muted mt-1">Diocese Console</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goParishes()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>
+          Parishes
+        </button>
+        <button onclick="return goMinistry()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M5 7h14"/></svg>
+          Ministry
+        </button>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Documents
+        </a>
+        <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="return goSettings()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <div class="flex-1 min-w-0">
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p class="text-sm font-semibold">Bangalore Archdiocese</p>
+            <p class="text-xs text-ink-muted">Documents</p>
+          </div>
+        </div>
+        <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-lavender/30 text-[#5b3fc4] text-xs font-bold flex items-center justify-center flex-shrink-0">DA</button>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Diocese Admin</p>
+            <p class="text-xs text-ink-muted">Bangalore Archdiocese</p>
+          </div>
+          <button onclick="window.location.href='screen-diocese-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Documents</p>
+          <p class="text-ink-muted text-sm mt-1">Create standard circulars and diocesan documents from templates, and share them with parishes.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('templates')" data-module="templates" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Templates</button>
+          <button onclick="setModule('create')" data-module="create" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Create Document</button>
+          <button onclick="setModule('shared')" data-module="shared" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Shared Documents</button>
+        </div>
+
+        <div id="module-content"></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- SHARE MODAL -->
+  <div id="share-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Share Document</p>
+        <button onclick="closeModal('share-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="share-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2">
+        <button onclick="submitShare()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Share with Parishes</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  function goDash() { window.location.href = 'screen-diocese-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goParishes() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString(); return false; }
+  function goMinistry() { window.location.href = 'screen-diocese-ministry-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-diocese-communication-hub.html?' + baseParams().toString(); return false; }
+  function goReports() { window.location.href = 'screen-diocese-reports-hub.html?' + baseParams().toString(); return false; }
+  function goSettings() { window.location.href = 'screen-diocese-settings-hub.html?' + baseParams().toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '\u2014';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function statusPill(status) {
+    const map = { 'Published':['bg-green/20','text-[#2f6b45]'], 'Draft':['bg-gold/20','text-[#8a5a10]'] };
+    const [bg, text] = map[status] || map['Draft'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
+  }
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+    send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  function dioceseCrest() {
+    return `
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="20" stroke="#C9A15A" stroke-width="1.5"/>
+        <path d="M24 12v16M18 18h12" stroke="#C9A15A" stroke-width="2" stroke-linecap="round"/>
+        <path d="M9 28c2-4 5-5 8-3M9 28c1 2 2 4 5 5" stroke="#C9A15A" stroke-width="1" stroke-linecap="round" fill="none"/>
+        <path d="M39 28c-2-4-5-5-8-3M39 28c-1 2-2 4-5 5" stroke="#C9A15A" stroke-width="1" stroke-linecap="round" fill="none"/>
+      </svg>
+    `;
+  }
+
+  // ---------------- Same 4 diocese templates already defined in Communication hub's Diocese Templates tab, ----------------
+  // ---------------- re-embedded here (Option A convention) since this hub is where they're actually USED to ----------------
+  // ---------------- create a document, not just status-managed. ----------------
+  const templates = [
+    { id:"DTPL-001", name:"Diocesan Circular", category:"Parish Communications", status:"Published",
+      fields: [
+        { key:"title", label:"Circular Title", type:"text" },
+        { key:"refNumber", label:"Reference Number", type:"text", default:"BA/CIRC/2026/" },
+        { key:"issuedBy", label:"Issued By", type:"text", default:"Diocese Communications Office" },
+        { key:"body", label:"Message", type:"textarea" },
+      ] },
+    { id:"DTPL-002", name:"Bishop's Pastoral Letter", category:"Administrative Letters", status:"Published",
+      fields: [
+        { key:"title", label:"Letter Title", type:"text" },
+        { key:"occasion", label:"Occasion / Feast", type:"text" },
+        { key:"body", label:"Message", type:"textarea" },
+        { key:"signedBy", label:"Signed By", type:"text", default:"Most Rev. Bishop Peter D'Almeida" },
+      ] },
+    { id:"DTPL-003", name:"Parish Visitation Report", category:"Reports", status:"Published",
+      fields: [
+        { key:"parishName", label:"Parish Name", type:"text" },
+        { key:"visitDate", label:"Visitation Date", type:"date" },
+        { key:"visitingOfficial", label:"Visiting Official", type:"text" },
+        { key:"observations", label:"Observations", type:"textarea" },
+        { key:"recommendations", label:"Recommendations", type:"textarea" },
+      ] },
+    { id:"DTPL-004", name:"Diocesan Event Invitation", category:"Event Documents", status:"Published",
+      fields: [
+        { key:"eventName", label:"Event Name", type:"text" },
+        { key:"eventDate", label:"Date", type:"date" },
+        { key:"venue", label:"Venue", type:"text" },
+        { key:"rsvp", label:"RSVP Instructions", type:"text" },
+      ] },
+  ];
+
+  // ---------------- Lightweight parish list (id/name/sizeTier) for the share-scope picker, same pattern ----------------
+  // ---------------- already established for Communication hub's Broadcast Notifications. ----------------
+  const parishesLight = [
+    { id:'PAR-0001', name:'St Mary\'s Minor Basilica Church', sizeTier:'Large' },
+    { id:'PAR-0002', name:'Infant Jesus Shrine', sizeTier:'Large' },
+    { id:'PAR-0003', name:'St Francis Xavier Cathedral', sizeTier:'Large' },
+    { id:'PAR-0004', name:'Holy Ghost Parish', sizeTier:'Large' },
+    { id:'PAR-0005', name:'Our Lady of Lourdes Church', sizeTier:'Large' },
+    { id:'PAR-0006', name:'Sacred Heart Church', sizeTier:'Large' },
+    { id:'PAR-0007', name:'Immaculate Conception Church', sizeTier:'Large' },
+    { id:'PAR-0008', name:'Immaculate Heart of Mary Church', sizeTier:'Large' },
+    { id:'PAR-0009', name:'Our Lady of Sacred Heart Church', sizeTier:'Large' },
+    { id:'PAR-0010', name:'Resurrection Church', sizeTier:'Large' },
+    { id:'PAR-0011', name:'St Anthony\'s Church', sizeTier:'Large' },
+    { id:'PAR-0012', name:'St Anthony\'s Friary Church', sizeTier:'Large' },
+    { id:'PAR-0013', name:'St Francis De Sales Church', sizeTier:'Large' },
+    { id:'PAR-0014', name:'St John The Evangelist Church', sizeTier:'Large' },
+    { id:'PAR-0015', name:'St Peter\'s Church', sizeTier:'Large' },
+    { id:'PAR-0016', name:'Ascension Church', sizeTier:'Large' },
+    { id:'PAR-0017', name:'Christha Prabhalaya Epiphany Church', sizeTier:'Large' },
+    { id:'PAR-0018', name:'Don Bosco Church', sizeTier:'Large' },
+    { id:'PAR-0019', name:'Holy Family Church', sizeTier:'Large' },
+    { id:'PAR-0020', name:'Holy Redeemer Church', sizeTier:'Large' },
+    { id:'PAR-0021', name:'Immaculate Conception Church', sizeTier:'Large' },
+    { id:'PAR-0022', name:'Our Lady of Fatima Church', sizeTier:'Large' },
+    { id:'PAR-0023', name:'Our Lady of Lourdes Church', sizeTier:'Large' },
+    { id:'PAR-0024', name:'St Paul Church', sizeTier:'Large' },
+    { id:'PAR-0025', name:'St Pius X Church', sizeTier:'Large' },
+    { id:'PAR-0026', name:'Christ the King Church', sizeTier:'Medium' },
+    { id:'PAR-0027', name:'Good Shepherd Church', sizeTier:'Medium' },
+    { id:'PAR-0028', name:'Holy Rosary Church', sizeTier:'Medium' },
+    { id:'PAR-0029', name:'Mother of Mines Shrine', sizeTier:'Medium' },
+    { id:'PAR-0030', name:'Nativity Church', sizeTier:'Medium' },
+    { id:'PAR-0031', name:'Our Lady of Lourdes Church', sizeTier:'Medium' },
+    { id:'PAR-0032', name:'Our Lady of Mount Carmel Church', sizeTier:'Medium' },
+    { id:'PAR-0033', name:'Our Lady of Victories Church', sizeTier:'Medium' },
+    { id:'PAR-0034', name:'Sacred Heart Church', sizeTier:'Medium' },
+    { id:'PAR-0035', name:'Ss Peter and Paul Church', sizeTier:'Medium' },
+    { id:'PAR-0036', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0037', name:'St Ignatius Church', sizeTier:'Medium' },
+    { id:'PAR-0038', name:'St Ignatius Church', sizeTier:'Medium' },
+    { id:'PAR-0039', name:'St James Church', sizeTier:'Medium' },
+    { id:'PAR-0040', name:'St John Paul II Church', sizeTier:'Medium' },
+    { id:'PAR-0041', name:'St John the Baptist Church', sizeTier:'Medium' },
+    { id:'PAR-0042', name:'St Joseph\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0043', name:'St Patrick\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0044', name:'St Theresa\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0045', name:'Annunciation Church', sizeTier:'Medium' },
+    { id:'PAR-0046', name:'Assumption Church', sizeTier:'Medium' },
+    { id:'PAR-0047', name:'Christ The King Church', sizeTier:'Medium' },
+    { id:'PAR-0048', name:'Church of the Holy Name of Jesus', sizeTier:'Medium' },
+    { id:'PAR-0049', name:'Divine Mercy Church', sizeTier:'Medium' },
+    { id:'PAR-0050', name:'Holy Eucharist Church', sizeTier:'Medium' },
+    { id:'PAR-0051', name:'Holy Trinity Church', sizeTier:'Medium' },
+    { id:'PAR-0052', name:'Holy Trinity Church', sizeTier:'Medium' },
+    { id:'PAR-0053', name:'Immaculate Heart of Mary Church', sizeTier:'Medium' },
+    { id:'PAR-0054', name:'Infant Jesus Church', sizeTier:'Medium' },
+    { id:'PAR-0055', name:'Krista Krupalaya Church', sizeTier:'Medium' },
+    { id:'PAR-0056', name:'Kristha Karunalaya Church', sizeTier:'Medium' },
+    { id:'PAR-0057', name:'Mother of Perpetual Help Church', sizeTier:'Medium' },
+    { id:'PAR-0058', name:'Our Lady of Good Health Church', sizeTier:'Medium' },
+    { id:'PAR-0059', name:'Our Lady of Lourdes Church', sizeTier:'Medium' },
+    { id:'PAR-0060', name:'Our Lady of Vailankanni Church', sizeTier:'Medium' },
+    { id:'PAR-0061', name:'Sacred Heart Church', sizeTier:'Medium' },
+    { id:'PAR-0062', name:'St Anne\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0063', name:'St Anne\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0064', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0065', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0066', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0067', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0068', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0069', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0070', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0071', name:'St Anthony\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0072', name:'St Benedict\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0073', name:'St Francis of Assisi Church', sizeTier:'Medium' },
+    { id:'PAR-0074', name:'St Francis Xavier\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0075', name:'St Francis Xavier\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0076', name:'St Gaspar\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0077', name:'St John Marie Vianney Semi Public Church', sizeTier:'Medium' },
+    { id:'PAR-0078', name:'St John the Britto Church', sizeTier:'Medium' },
+    { id:'PAR-0079', name:'St Joseph Vaz Church', sizeTier:'Medium' },
+    { id:'PAR-0080', name:'St Joseph\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0081', name:'St Joseph\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0082', name:'St Joseph\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0083', name:'St Joseph\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0084', name:'St Jude\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0085', name:'St Jude\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0086', name:'St Jude\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0087', name:'St Mary\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0088', name:'St Michael\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0089', name:'St Paul the Hermit Church', sizeTier:'Medium' },
+    { id:'PAR-0090', name:'St Rock\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0091', name:'St Teresa of Kolkata Church', sizeTier:'Medium' },
+    { id:'PAR-0092', name:'St Theresa of Child Jesus Church, Singasandra', sizeTier:'Medium' },
+    { id:'PAR-0093', name:'St Theresa\'s Church', sizeTier:'Medium' },
+    { id:'PAR-0094', name:'St Thomas Church', sizeTier:'Medium' },
+    { id:'PAR-0095', name:'St Thomas Church', sizeTier:'Medium' },
+    { id:'PAR-0096', name:'Church of Our Lady of Compassion', sizeTier:'Small' },
+    { id:'PAR-0097', name:'Holy Cross Church', sizeTier:'Small' },
+    { id:'PAR-0098', name:'Holy Rosary Church', sizeTier:'Small' },
+    { id:'PAR-0099', name:'Holy Rosary Church', sizeTier:'Small' },
+    { id:'PAR-0100', name:'Immaculate Heart of Mary Church', sizeTier:'Small' },
+    { id:'PAR-0101', name:'Infant Jesus Church', sizeTier:'Small' },
+    { id:'PAR-0102', name:'Nithyadhara Mathe Church', sizeTier:'Small' },
+    { id:'PAR-0103', name:'Our Lady of Divine Providence Semi Public Church', sizeTier:'Small' },
+    { id:'PAR-0104', name:'Our Lady of Fathima Church', sizeTier:'Small' },
+    { id:'PAR-0105', name:'Our Lady of Lourdes Church', sizeTier:'Small' },
+    { id:'PAR-0106', name:'Our Lady of Lourdes Church', sizeTier:'Small' },
+    { id:'PAR-0107', name:'Sacred Heart Church', sizeTier:'Small' },
+    { id:'PAR-0108', name:'Sacred Heart Church', sizeTier:'Small' },
+    { id:'PAR-0109', name:'St Anthony\'s Church', sizeTier:'Small' },
+    { id:'PAR-0110', name:'St Anthony\'s Church', sizeTier:'Small' },
+    { id:'PAR-0111', name:'St Anthony\'s Church', sizeTier:'Small' },
+    { id:'PAR-0112', name:'St Anthony\'s Church', sizeTier:'Small' },
+    { id:'PAR-0113', name:'St Anthony\'s Church', sizeTier:'Small' },
+    { id:'PAR-0114', name:'St Francis de Sales Church', sizeTier:'Small' },
+    { id:'PAR-0115', name:'St Francis Xavier\'s Church', sizeTier:'Small' },
+    { id:'PAR-0116', name:'St Francis Xavier\'s Church', sizeTier:'Small' },
+    { id:'PAR-0117', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0118', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0119', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0120', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0121', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0122', name:'St Joseph\'s Church', sizeTier:'Small' },
+    { id:'PAR-0123', name:'St Paul\'s Church', sizeTier:'Small' },
+    { id:'PAR-0124', name:'St Peter\'s Church', sizeTier:'Small' },
+    { id:'PAR-0125', name:'St Rita\'s Church', sizeTier:'Small' },
+    { id:'PAR-0126', name:'St Rita\'s Church', sizeTier:'Small' },
+    { id:'PAR-0127', name:'St Rita\'s Church', sizeTier:'Small' },
+    { id:'PAR-0128', name:'St Sebastian\'s Church', sizeTier:'Small' },
+    { id:'PAR-0129', name:'St Theresa of Child Jesus Church', sizeTier:'Small' },
+    { id:'PAR-0130', name:'St Theresa\'s Church', sizeTier:'Small' },
+  ];
+
+  let sharedDocuments = [
+    { id:"SDOC-001", title:"Circular: Mass Timing Changes for Feast of Christ the King", templateName:"Diocesan Circular", scope:"All Parishes (130)", sharedDate:"2026-07-20", refNumber:"BA/CIRC/2026/0088" },
+  ];
+
+  let currentModule = 'templates';
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'templates') renderTemplatesModule(el);
+    else if (currentModule === 'create') renderCreateModule(el);
+    else renderSharedModule(el);
+  }
+  function templateById(id) { return templates.find(t => t.id === id); }
+
+  // =========================================================================
+  // MODULE 1: Templates (view only — same scope decision as the Parish-side
+  // Documents hub: template authoring is out of scope, this uses what exists).
+  // =========================================================================
+  function renderTemplatesModule(el) {
+    el.innerHTML = `
+      <div class="grid md:grid-cols-2 gap-4">
+        ${templates.map(t => `
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <p class="text-sm font-semibold">${t.name}</p>
+              ${statusPill(t.status)}
+            </div>
+            <p class="text-xs text-ink-muted">${t.category} \u00b7 ${t.fields.length} guided fields</p>
+            <button onclick="useTemplate('${t.id}')" class="mt-3 bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Use Template</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  function useTemplate(id) {
+    selectedTemplateId = id;
+    docFieldValues = {};
+    templateById(id).fields.forEach(f => { docFieldValues[f.key] = f.default || ''; });
+    setModule('create');
+  }
+
+  // =========================================================================
+  // MODULE 2: Create Document — 40/60 split, fixed-height letterhead preview,
+  // matching the layout lessons already applied on the Parish-side Documents hub.
+  // =========================================================================
+  let selectedTemplateId = null;
+  let docFieldValues = {};
+
+  function renderCreateModule(el) {
+    if (!selectedTemplateId) {
+      el.innerHTML = `
+        <p class="text-sm text-ink-muted mb-4">Choose a template to get started.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          ${templates.filter(t => t.status === 'Published').map(t => `
+            <button onclick="useTemplate('${t.id}')" class="bg-card-bg rounded-card shadow-card p-5 text-left transition-warm hover:shadow-card-hover">
+              <p class="text-sm font-semibold">${t.name}</p>
+              <p class="text-xs text-ink-muted mt-1">${t.category}</p>
+            </button>
+          `).join('')}
+        </div>
+      `;
+      return;
+    }
+    const t = templateById(selectedTemplateId);
+    el.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm font-semibold">${t.name}</p>
+          <p class="text-xs text-ink-muted mt-0.5">Fill in the details on the left \u2014 the document updates as you type.</p>
+        </div>
+        <button onclick="selectedTemplateId=null; renderModule()" class="text-primary text-xs font-semibold flex-shrink-0">Change template</button>
+      </div>
+      <div class="grid lg:grid-cols-5 gap-6">
+        <div class="lg:col-span-2 bg-card-bg rounded-card shadow-card p-5 space-y-4">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Guided details</p>
+          ${t.fields.map(f => `
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium">${f.label}</label>
+              ${f.type === 'textarea'
+                ? `<textarea rows="4" oninput="docFieldValues['${f.key}']=this.value; updateDocPreview()" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${docFieldValues[f.key] || ''}</textarea>`
+                : `<input type="${f.type === 'date' ? 'date' : 'text'}" value="${docFieldValues[f.key] || ''}" oninput="docFieldValues['${f.key}']=this.value; updateDocPreview()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">`
+              }
+            </div>
+          `).join('')}
+        </div>
+        <div class="lg:col-span-3">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Live preview</p>
+          <div class="bg-white rounded-card shadow-card border border-divider" style="height:560px; overflow-y:auto;">
+            <div id="doc-preview" class="letter-paper px-10 py-10"></div>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <button onclick="saveDocDraft()" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg">Save as Draft</button>
+            <button onclick="openShareModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('send','icon w-4 h-4')}Generate &amp; Share</button>
+          </div>
+        </div>
+      </div>
+    `;
+    updateDocPreview();
+  }
+
+  function docTitle(t) {
+    if (docFieldValues.title) return docFieldValues.title;
+    if (docFieldValues.eventName) return docFieldValues.eventName;
+    if (t.id === 'DTPL-003') return 'Parish Visitation Report' + (docFieldValues.parishName ? ' \u2014 ' + docFieldValues.parishName : '');
+    return t.name;
+  }
+
+  function updateDocPreview() {
+    const t = templateById(selectedTemplateId);
+    const preview = document.getElementById('doc-preview');
+    if (!preview) return;
+    const refDisplay = docFieldValues.refNumber ? docFieldValues.refNumber : ('BA/DOC/2026/' + selectedTemplateId.slice(-3));
+    preview.innerHTML = `
+      <div class="flex items-start justify-between border-b border-divider pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          ${dioceseCrest()}
+          <div>
+            <p class="letter-display font-bold text-lg" style="color:#3C2E1A;">Bangalore Archdiocese</p>
+            <p class="text-[10px] tracking-wide uppercase text-ink-muted mt-0.5">Office of the Bishop \u00b7 Bengaluru</p>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <p class="text-[10px] text-ink-muted uppercase tracking-wide">Reference</p>
+          <p class="text-xs font-medium mt-0.5">${refDisplay}</p>
+          <p class="text-[10px] text-ink-muted mt-2">31 July 2026</p>
+        </div>
+      </div>
+      <p class="letter-display font-bold text-2xl text-center mb-1" style="color:#3C2E1A;">${docTitle(t)}</p>
+      ${docFieldValues.occasion ? `<p class="text-xs text-ink-muted text-center mb-6">${docFieldValues.occasion}</p>` : '<div class="mb-6"></div>'}
+      ${t.id === 'DTPL-003' ? `
+        <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+          <div><span class="text-ink-muted">Parish:</span> ${docFieldValues.parishName || '[Parish Name]'}</div>
+          <div><span class="text-ink-muted">Date:</span> ${docFieldValues.visitDate ? formatDate(docFieldValues.visitDate) : '[Date]'}</div>
+          <div><span class="text-ink-muted">Visiting Official:</span> ${docFieldValues.visitingOfficial || '[Official]'}</div>
+        </div>
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1">Observations</p>
+        <p class="text-sm leading-relaxed mb-4">${docFieldValues.observations || '[Observations]'}</p>
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1">Recommendations</p>
+        <p class="text-sm leading-relaxed">${docFieldValues.recommendations || '[Recommendations]'}</p>
+      ` : t.id === 'DTPL-004' ? `
+        <p class="text-sm leading-relaxed text-center">You are cordially invited to <strong>${docFieldValues.eventName || '[Event Name]'}</strong>${docFieldValues.eventDate ? ', on ' + formatDate(docFieldValues.eventDate) : ''}${docFieldValues.venue ? ', at ' + docFieldValues.venue : ''}.</p>
+        ${docFieldValues.rsvp ? `<p class="text-sm leading-relaxed text-center mt-4 text-ink-muted">${docFieldValues.rsvp}</p>` : ''}
+      ` : `
+        <p class="text-sm leading-relaxed">${(docFieldValues.body || '[Message body will appear here as you type.]').replace(/\n/g, '<br>')}</p>
+      `}
+      <div class="flex items-end justify-between mt-12 pt-6">
+        <div>
+          <p class="text-[10px] text-ink-muted uppercase tracking-wide">Issued by</p>
+          <p class="text-sm font-medium mt-1">${docFieldValues.issuedBy || 'Diocese Communications Office'}</p>
+        </div>
+        <div class="text-center">
+          <p class="letter-display text-base" style="color:#3C2E1A; border-top:1px solid #C9A15A; padding-top:6px; padding-left:20px; padding-right:20px;">${docFieldValues.signedBy || 'Bangalore Archdiocese'}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveDocDraft() {
+    toast('Document saved as draft.');
+  }
+
+  // =========================================================================
+  // SHARE — recipient scope, matching the Communication hub's Broadcast
+  // Notifications pattern (All Parishes / By Size Tier / Specific Parishes).
+  // =========================================================================
+  let shareScope = 'all';
+  let shareSizeTier = 'Large';
+  let shareSelectedParishes = [];
+  function openShareModal() {
+    shareScope = 'all';
+    shareSelectedParishes = [];
+    document.getElementById('share-modal').classList.remove('hidden');
+    document.getElementById('share-form').innerHTML = `
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Share with</label>
+        <div class="flex gap-2 flex-wrap">
+          <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="share-scope" value="all" checked onchange="shareScope='all'; renderShareRecipientDetail()"> All Parishes (130)</label>
+          <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="share-scope" value="sizeTier" onchange="shareScope='sizeTier'; renderShareRecipientDetail()"> By Size Tier</label>
+          <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="share-scope" value="specific" onchange="shareScope='specific'; renderShareRecipientDetail()"> Specific Parishes</label>
+        </div>
+        <div id="share-recipient-detail" class="pt-2"></div>
+      </div>
+    `;
+    renderShareRecipientDetail();
+  }
+  function renderShareRecipientDetail() {
+    const el = document.getElementById('share-recipient-detail');
+    if (!el) return;
+    if (shareScope === 'sizeTier') {
+      el.innerHTML = `
+        <select onchange="shareSizeTier=this.value" class="border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <option>Large</option><option>Medium</option><option>Small</option>
+        </select>
+      `;
+    } else if (shareScope === 'specific') {
+      el.innerHTML = `
+        <select multiple onchange="shareSelectedParishes=[...this.selectedOptions].map(o=>o.value)" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none" size="6">
+          ${parishesLight.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+        <p class="text-xs text-ink-muted mt-1">Hold Ctrl/Cmd to select multiple.</p>
+      `;
+    } else {
+      el.innerHTML = '';
+    }
+  }
+  function shareScopeLabel() {
+    if (shareScope === 'all') return 'All Parishes (130)';
+    if (shareScope === 'sizeTier') return shareSizeTier + ' parishes (' + parishesLight.filter(p=>p.sizeTier===shareSizeTier).length + ')';
+    return shareSelectedParishes.length + ' selected parish' + (shareSelectedParishes.length === 1 ? '' : 'es');
+  }
+  function submitShare() {
+    if (shareScope === 'specific' && shareSelectedParishes.length === 0) { toast('Please select at least one parish.'); return; }
+    const t = templateById(selectedTemplateId);
+    const refNumber = docFieldValues.refNumber || ('BA/DOC/2026/' + Math.floor(1000 + Math.random() * 8999));
+    sharedDocuments.unshift({ id:'SDOC-'+Math.floor(100+Math.random()*899), title: docTitle(t), templateName: t.name, scope: shareScopeLabel(), sharedDate: '2026-07-31', refNumber });
+    closeModal('share-modal');
+    toast(`Shared with ${shareScopeLabel()}.`);
+    selectedTemplateId = null;
+    setModule('shared');
+  }
+
+  // =========================================================================
+  // MODULE 3: Shared Documents log
+  // =========================================================================
+  function renderSharedModule(el) {
+    if (sharedDocuments.length === 0) {
+      el.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No documents shared yet</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+              <th class="px-4 py-3 font-medium">Document</th>
+              <th class="px-4 py-3 font-medium">Template</th>
+              <th class="px-4 py-3 font-medium">Shared with</th>
+              <th class="px-4 py-3 font-medium">Reference</th>
+              <th class="px-4 py-3 font-medium">Date</th>
+              <th class="px-4 py-3 font-medium"></th>
+            </tr></thead>
+            <tbody>
+              ${sharedDocuments.map(d => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${d.title}</td>
+                  <td class="px-4 py-3 text-ink-muted">${d.templateName}</td>
+                  <td class="px-4 py-3 text-ink-muted">${d.scope}</td>
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${d.refNumber}</td>
+                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(d.sharedDate)}</td>
+                  <td class="px-4 py-3"><button onclick="toast('Downloading ${d.title}')" aria-label="Download" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('download','icon w-4 h-4')}</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>
