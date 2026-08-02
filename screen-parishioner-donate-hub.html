@@ -127,6 +127,9 @@
 
   // ---------------- Real donation causes (mock-seed.json donationCauses — same 2 already ----------------
   // ---------------- referenced on the Dashboard's Community section, kept consistent here). ----------------
+  // ---------------- A parish creates and manages these on screen-parish-finance-hub.html's Donation Causes ----------------
+  // ---------------- tab; kept in sync here per the Option A convention (no live backend, so both files carry ----------------
+  // ---------------- the same seed data rather than one dynamically sourcing from the other). ----------------
   const causes = [
     { id:"CAUSE-5001", name:"Church Renovation Fund", description:"Support the ongoing renovation of the parish worship hall.", donationType:"Goal-based", suggestedAmounts:[500,1000,2500], allowCustomAmount:true, targetAmount:2500000, raisedAmount:1642000 },
     { id:"CAUSE-5002", name:"Education Support Fund", description:"Scholarships for children from economically weaker families in the parish.", donationType:"Open", suggestedAmounts:[250,500,1000], allowCustomAmount:true, raisedAmount:184500 },

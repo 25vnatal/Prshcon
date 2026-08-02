@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Faith Formation</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="px-5 pt-5 pb-4 flex items-center gap-3">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <p class="font-heading font-bold text-lg">Faith Formation</p>
+    </header>
+
+    <main class="px-5 space-y-5">
+
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
+          <svg class="icon w-4 h-4" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input id="ff-search" type="text" placeholder="Search prayers and reflections…" oninput="ffSearch=this.value; renderContentList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1" id="ff-categories"></div>
+
+      <div id="content-list" class="space-y-3"></div>
+
+    </main>
+
+  </div>
+
+  <!-- ============ BOTTOM NAV (5 items) ============ -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
+    <div class="grid grid-cols-5">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+        <span class="text-[10.5px]">Home</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
+        <span class="text-[10.5px]">Services</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
+        <span class="text-[10.5px]">Give</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+        <span class="text-[10.5px]">My Family</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <span class="text-[10.5px]">Menu</span>
+      </button>
+    </div>
+  </nav>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const ICON_PATHS = {
+    chevronDown: '<polyline points="6 9 12 15 18 9"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+
+  // ---------------- Same content already published on screen-parish-faithformation-hub.html — reused ----------------
+  // ---------------- verbatim (only the Published items; the 2 Drafts there are correctly excluded here) so ----------------
+  // ---------------- what a parish publishes is exactly what a parishioner reads, not a separate copy. ----------------
+  const CATEGORIES = ["All", "Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Feast Day Content"];
+  const content = [
+    { id:"FF-001", category:"Daily Prayers", title:"Morning Offering", body:"O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", publishedDate:"2026-07-26" },
+    { id:"FF-002", category:"Daily Prayers", title:"Prayer of the Day — Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", publishedDate:"2026-07-26" },
+    { id:"FF-003", category:"Daily Prayers", title:"Grace Before Meals", body:"Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen.", publishedDate:"2026-07-20" },
+    { id:"FF-004", category:"Readings & Reflections", title:"Reflecting on the Novena", body:"As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", publishedDate:"2026-07-25" },
+    { id:"FF-005", category:"Readings & Reflections", title:"Sunday Gospel Reflection — The Good Samaritan", body:"Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", publishedDate:"2026-07-19" },
+    { id:"FF-007", category:"Special Prayers", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", publishedDate:"2026-07-15" },
+    { id:"FF-008", category:"Special Prayers", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", publishedDate:"2026-06-20" },
+    { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"A guide to praying the Joyful Mysteries, prayed on Mondays and Saturdays: the Annunciation, Visitation, Nativity, Presentation, and Finding in the Temple.", publishedDate:"2026-05-01" },
+    { id:"FF-010", category:"Rosary", title:"The Sorrowful Mysteries", body:"A guide to praying the Sorrowful Mysteries, prayed on Tuesdays and Fridays: the Agony, Scourging, Crowning with Thorns, Carrying of the Cross, and Crucifixion.", publishedDate:"2026-05-01" },
+    { id:"FF-011", category:"Rosary", title:"How to Pray the Rosary — A Beginner's Guide", body:"Step-by-step instructions for parishioners new to the Rosary, including how to hold the beads and the order of prayers.", publishedDate:"2026-04-10" },
+  ];
+
+  let ffCategory = 'All';
+  let ffSearch = '';
+  let openContentId = null;
+
+  function renderCategories() {
+    document.getElementById('ff-categories').innerHTML = CATEGORIES.map(c =>
+      `<button onclick="ffCategory='${c}'; renderCategories(); renderContentList()" class="px-3.5 py-2 rounded-badge text-xs font-semibold whitespace-nowrap transition-warm ${ffCategory === c ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">${c}</button>`
+    ).join('');
+  }
+
+  function filteredContent() {
+    const q = ffSearch.trim().toLowerCase();
+    return content.filter(c => {
+      const matchesCategory = ffCategory === 'All' || c.category === ffCategory;
+      const matchesSearch = !q || c.title.toLowerCase().includes(q) || c.body.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }
+
+  function renderContentList() {
+    const list = filteredContent();
+    document.getElementById('content-list').innerHTML = list.length === 0
+      ? '<div class="bg-card-bg rounded-card shadow-card p-8 text-center"><p class="text-sm text-ink-muted">No content matches your search.</p></div>'
+      : list.map(c => `
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+          <button onclick="toggleContent('${c.id}')" class="w-full text-left px-5 py-4 min-h-[44px]">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-xs text-lavender font-semibold uppercase tracking-wide">${c.category}</p>
+                <p class="text-sm font-semibold mt-0.5">${c.title}</p>
+              </div>
+              <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0 transition-transform ${openContentId === c.id ? 'rotate-180' : ''}" viewBox="0 0 24 24">${ICON_PATHS.chevronDown}</svg>
+            </div>
+          </button>
+          ${openContentId === c.id ? `
+            <div class="px-5 pb-5">
+              <p class="text-sm leading-relaxed text-ink">${c.body}</p>
+              <p class="text-xs text-ink-muted mt-3">Published ${formatDate(c.publishedDate)}</p>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+  }
+
+  function toggleContent(id) {
+    openContentId = openContentId === id ? null : id;
+    renderContentList();
+  }
+
+  renderCategories();
+  renderContentList();
+</script>
+
+</body>
+</html>

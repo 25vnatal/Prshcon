@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Committees & Ministries</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative">
+
+    <header class="px-5 pt-5 pb-4 flex items-center gap-3">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <p class="font-heading font-bold text-lg">Committees & Ministries</p>
+    </header>
+
+    <main class="px-5 space-y-3">
+      <p class="text-sm text-ink-muted -mt-1 mb-2">Get involved — see who leads each ministry and let the parish office know if you'd like to help.</p>
+      <div id="committee-list" class="space-y-3"></div>
+    </main>
+
+  </div>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
+    <div class="grid grid-cols-5">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+        <span class="text-[10.5px]">Home</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
+        <span class="text-[10.5px]">Services</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
+        <span class="text-[10.5px]">Give</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+        <span class="text-[10.5px]">My Family</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <span class="text-[10.5px]">Menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- EXPRESS INTEREST MODAL -->
+  <div id="interest-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-end justify-center">
+    <div class="bg-card-bg rounded-t-card shadow-card w-full max-w-[420px]">
+      <div class="px-5 pt-5 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="interest-modal-title" class="font-heading font-bold text-lg">Express Interest</p>
+        <button onclick="closeModal('interest-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="px-5 py-5 space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">Your name</label>
+          <input id="interest-name" type="text" value="John Rodrigues" readonly class="w-full border border-divider rounded-input px-3 h-11 text-sm bg-section-bg text-ink-muted">
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">A short note (optional)</label>
+          <textarea id="interest-note" rows="3" placeholder="Tell them a bit about how you'd like to help…" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+        </div>
+        <button onclick="submitInterest()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[44px] transition-warm">Send to Parish Office</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  // ---------------- Same 6 committees as screen-parish-committees-hub.html; only Active ones shown here ----------------
+  // ---------------- (Building & Maintenance is Inactive on the Parish side — not something a parishioner ----------------
+  // ---------------- would need to see or volunteer for). Office bearers only, not the full member roster, ----------------
+  // ---------------- since that's the level of detail a parishioner actually needs. ----------------
+  const committees = [
+    { id:"COM-001", name:"Parish Pastoral Council", description:"Advises the parish priest on pastoral matters and represents parishioner interests.", officeBearers:[{name:"John Rodrigues",role:"President"},{name:"Michael Pinto",role:"Secretary"},{name:"Anthony D'Souza",role:"Treasurer"}], memberCount:5 },
+    { id:"COM-002", name:"Parish Finance Committee", description:"Oversees parish budgeting, accounts, and financial planning.", officeBearers:[{name:"Peter Fernandes",role:"President"},{name:"Simon Mascarenhas",role:"Treasurer"}], memberCount:3 },
+    { id:"COM-003", name:"Choir Committee", description:"Organizes and leads music ministry for Sunday and feast Masses.", officeBearers:[{name:"Kevin Rodrigues",role:"President"},{name:"Clara Rodrigues",role:"Secretary"}], memberCount:4 },
+    { id:"COM-004", name:"Ladies' Guild", description:"Supports parish charitable works, retreats, and women's fellowship.", officeBearers:[{name:"Diana Fernandes",role:"President"},{name:"Lisa Colaco",role:"Vice President"},{name:"Nita Mascarenhas",role:"Secretary"}], memberCount:4 },
+    { id:"COM-005", name:"Youth Committee", description:"Engages young parishioners through fellowship, sports, and faith formation activities.", officeBearers:[{name:"Ryan Pinto",role:"President"}], memberCount:2 },
+  ];
+
+  function renderCommitteeList() {
+    document.getElementById('committee-list').innerHTML = committees.map(c => `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-sm font-semibold">${c.name}</p>
+        <p class="text-xs text-ink-muted mt-1.5 leading-relaxed">${c.description}</p>
+        <div class="mt-3 space-y-1.5">
+          ${c.officeBearers.map(m => `
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-badge bg-primary-light text-primary text-[10px] font-bold flex items-center justify-center flex-shrink-0">${m.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</span>
+              <span class="text-xs"><span class="font-medium">${m.name}</span> <span class="text-ink-muted">· ${m.role}</span></span>
+            </div>
+          `).join('')}
+        </div>
+        <p class="text-xs text-ink-muted mt-2">${c.memberCount} members</p>
+        <button onclick="openInterestModal('${c.id}')" class="mt-3 bg-white border border-divider text-ink text-xs font-semibold px-3.5 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg">Express Interest</button>
+      </div>
+    `).join('');
+  }
+
+  let interestCommitteeId = null;
+  function openInterestModal(id) {
+    interestCommitteeId = id;
+    const c = committees.find(x => x.id === id);
+    document.getElementById('interest-modal-title').textContent = 'Interested in ' + c.name;
+    document.getElementById('interest-note').value = '';
+    document.getElementById('interest-modal').classList.remove('hidden');
+  }
+  function submitInterest() {
+    const c = committees.find(x => x.id === interestCommitteeId);
+    closeModal('interest-modal');
+    toast(`Thanks! The parish office will reach out about ${c.name}.`);
+  }
+
+  renderCommitteeList();
+</script>
+
+</body>
+</html>
