@@ -133,7 +133,6 @@
   }
   function goDash() { window.location.href = 'screen-diocese-dashboard-home.html?' + baseParams().toString(); return false; }
   function goParishes() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString(); return false; }
-  function goParishSupport() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString() + '&module=support'; return false; }
   function goReports() { window.location.href = 'screen-diocese-reports-hub.html?' + baseParams().toString(); return false; }
   function goSettings() { window.location.href = 'screen-diocese-settings-hub.html?' + baseParams().toString(); return false; }
   function goCommunication() { window.location.href = 'screen-diocese-communication-hub.html?' + baseParams().toString(); return false; }
@@ -157,6 +156,12 @@
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     alert: '<path d="M12 9v4"/><circle cx="12" cy="16.5" r="0.75" fill="currentColor" stroke="none"/><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
     chevron: '<polyline points="9 18 15 12 9 6"/>',
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    megaphone: '<path d="M3 11v3a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M14 8a4 4 0 0 1 0 8"/><path d="M17 5a8 8 0 0 1 0 14"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    chart: '<path d="M4 20V10M12 20V4M20 20v-7"/>',
+    building: '<path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/>',
+    heartPulse: '<path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${icons[name]}</svg>`; }
 
@@ -165,23 +170,23 @@
   // parishCount (130) and totalCatholicPopulation (~360,561) in mock-seed.json.
   const seed = {
     snapshot: [
-      { label: "Total parishes", value: "130" },
-      { label: "Registered families", value: "46,820" },
-      { label: "Active parishioners", value: "218,450" },
-      { label: "Upcoming diocese events", value: "4" },
+      { label: "Total parishes", value: "130", tone: "primary" },
+      { label: "Registered families", value: "46,820", tone: "green" },
+      { label: "Active parishioners", value: "218,450", tone: "lavender" },
+      { label: "Upcoming diocese events", value: "4", tone: "gold" },
     ],
     actionCenter: [
-      { label: "Parish reports pending", sub: "9 parishes haven't submitted this month's report", status: "Action needed", tone: "gold", go: null },
-      { label: "Parish profile approvals", sub: "3 profile updates awaiting diocesan review", status: "Action needed", tone: "gold", go: null },
-      { label: "New parish onboarding", sub: "St. Teresa of Kolkata Church — setup in progress", status: "In progress", tone: "lavender", go: "goParishSupport" },
+      { label: "Parish activity reports", sub: "9 parishes haven't submitted this month's report", status: "Action needed", tone: "gold", go: "goReports" },
+      { label: "Parish registration requests", sub: "3 profile updates awaiting diocesan review", status: "Action needed", tone: "gold", go: "goSettings" },
+      { label: "New parish onboarding", sub: "St. Teresa of Kolkata Church — setup in progress", status: "In progress", tone: "lavender", go: "goParishes" },
       { label: "Diocese announcements awaiting approval", sub: "1 announcement drafted by communications team", status: "Action needed", tone: "gold", go: "goCommunication" },
     ],
-    parishHealth: [
-      { name: "St Anthony's Church", locality: "T. C. Palya, K. R. Puram", reason: "Monthly report overdue (12 days)" },
-      { name: "Our Lady of Fatima Church", locality: "Jalahalli", reason: "No Mass schedule published" },
-      { name: "Christ the King Church", locality: "Malleswaram West", reason: "High volume of pending document requests" },
-      { name: "St Joseph's Church", locality: "Chamarajapete", reason: "Large number of pending approvals" },
-      { name: "Holy Family Church", locality: "Ramamurthy Nagar", reason: "Parish profile incomplete" },
+    quickActions: [
+      { label: "Register New Parish", icon: "plus", go: "goSettings" },
+      { label: "Send Broadcast", icon: "megaphone", go: "goCommunication" },
+      { label: "Add Diocese Event", icon: "calendar", go: "goMinistry" },
+      { label: "View Reports", icon: "chart", go: "goReports" },
+      { label: "Parish Directory", icon: "building", go: "goParishes" },
     ],
     upcoming: [
       { label: "Bishop's calendar", value: "Confirmation Mass — 3 Aug", sub: "St Francis Xavier Cathedral" },
@@ -193,6 +198,45 @@
       { title: "Updated Guidelines for Parish Financial Reporting", date: "15 Jul 2026" },
     ],
   };
+
+  // ---------------- Parish health summary — same three-pillar model as screen-diocese-parishes-hub.html, ----------------
+  // ---------------- re-embedded here (Option A convention: each file keeps its own consistent copy) so the ----------------
+  // ---------------- aggregate counts shown here match exactly what you'd get counting rows in that hub. ----------------
+  function hashCode(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) { hash = (hash * 31 + str.charCodeAt(i)) % 997; }
+    return hash;
+  }
+  function seededRange(seedStr, min, max) {
+    const h = hashCode(seedStr);
+    return min + (h % (max - min + 1));
+  }
+  function baseWellness(parishId) { return hashCode(parishId + 'wellness') % 100; }
+  function pillarStatus(parishId, seed, base) {
+    if (seed === 'fin') {
+      if (parishId === 'PAR-0002') return 'Green';
+      const rate = Math.max(20, Math.min(98, base + seededRange(parishId + 'fin', -15, 15)));
+      return rate >= 65 ? 'Green' : rate >= 45 ? 'Amber' : 'Red';
+    }
+    if (seed === 'comm') {
+      if (parishId === 'PAR-0002') return 'Green';
+      const scaled = Math.round((base - 50) / 3.5) + seededRange(parishId + 'comm-n2', -3, 3);
+      return scaled >= 0 ? 'Green' : scaled >= -6 ? 'Amber' : 'Red';
+    }
+    if (parishId === 'PAR-0002') return 'Green';
+    const submitted = Math.max(0, Math.min(6, Math.round(base / 100 * 6) + seededRange(parishId + 'gov', -1, 1)));
+    return submitted >= 5 ? 'Green' : submitted >= 3 ? 'Amber' : 'Red';
+  }
+  function computeHealthSummary() {
+    let good = 0, attention = 0;
+    for (let i = 1; i <= 130; i++) {
+      const id = 'PAR-' + String(i).padStart(4, '0');
+      const base = baseWellness(id);
+      const hasRed = ['fin', 'comm', 'gov'].some(seed => pillarStatus(id, seed, base) === 'Red');
+      if (hasRed) attention++; else good++;
+    }
+    return { good, attention };
+  }
 
   function renderLoading() {
     const skel = (h) => `<div class="skeleton rounded-card" style="height:${h}"></div>`;
@@ -221,16 +265,19 @@
       gold: ['bg-gold/20', 'text-[#8a5a10]', 'alert'],
       lavender: ['bg-lavender/20', 'text-[#5b3fc4]', 'clock'],
     };
+    const cardBgMap = { primary: 'bg-primary-light', green: 'bg-green/10', lavender: 'bg-lavender/10', gold: 'bg-gold/10' };
+    const health = computeHealthSummary();
     return `
-      <section>
-        <p class="font-heading font-bold text-2xl">Diocese snapshot</p>
+      <section class="bg-gradient-to-r from-primary-light via-lavender/15 to-gold/15 rounded-card shadow-card p-5 sm:p-6">
+        <p class="font-heading font-bold text-xl">Good morning, Diocese Admin 👋</p>
         <p class="text-ink-muted text-sm mt-1">Bangalore Archdiocese — an overview across all 130 parishes.</p>
       </section>
 
       <section>
+        <p class="font-heading font-bold text-lg mb-3">Diocese snapshot</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           ${seed.snapshot.map(s => `
-            <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="${cardBgMap[s.tone]} rounded-card shadow-card p-5">
               <p class="text-xs text-ink-muted uppercase tracking-wide mb-2">${s.label}</p>
               <p class="font-heading font-bold text-2xl">${s.value}</p>
             </div>
@@ -244,7 +291,7 @@
           ${seed.actionCenter.map(item => {
             const [bg, text, iconName] = toneMap[item.tone];
             return `
-            <button onclick="${item.go ? 'return ' + item.go + '()' : `toast('${item.label}')`}" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
+            <button onclick="return ${item.go}()" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-start justify-between gap-3 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
               <div class="min-w-0">
                 <p class="text-sm font-semibold">${item.label}</p>
                 <p class="text-xs text-ink-muted mt-1">${item.sub}</p>
@@ -255,26 +302,8 @@
         </div>
       </section>
 
-      <section>
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="font-heading font-bold text-lg">Parish health <span class="text-ink-muted font-normal text-sm">— top 5 needing attention</span></h2>
-          <button onclick="return goParishes()" class="text-primary text-xs font-semibold flex items-center gap-1">View all parishes ${icon('chevron','w-3.5 h-3.5')}</button>
-        </div>
-        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-          ${seed.parishHealth.map(p => `
-            <button onclick="return goParishes()" class="w-full flex items-center justify-between px-5 py-4 text-left transition-warm hover:bg-section-bg min-h-[44px]">
-              <div class="min-w-0">
-                <p class="text-sm font-semibold">${p.name}</p>
-                <p class="text-xs text-ink-muted mt-0.5">${p.locality}</p>
-              </div>
-              <span class="bg-error-bg text-error text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap flex-shrink-0 ml-4">${p.reason}</span>
-            </button>
-          `).join('')}
-        </div>
-      </section>
-
-      <div class="grid lg:grid-cols-2 gap-8">
-        <section>
+      <div class="grid lg:grid-cols-5 gap-6">
+        <section class="lg:col-span-3">
           <h2 class="font-heading font-bold text-lg mb-3">Upcoming</h2>
           <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
             ${seed.upcoming.map(u => `
@@ -287,21 +316,53 @@
           </div>
         </section>
 
-        <section>
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="font-heading font-bold text-lg">Diocese announcements</h2>
-            <button onclick="return goCommunication()" class="text-primary text-xs font-semibold">View all</button>
-          </div>
-          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-            ${seed.announcements.map(a => `
-              <div class="px-5 py-4">
-                <p class="text-sm font-semibold">${a.title}</p>
-                <p class="text-xs text-ink-muted mt-1">${a.date}</p>
-              </div>
+        <section class="lg:col-span-2">
+          <h2 class="font-heading font-bold text-lg mb-3">Quick actions</h2>
+          <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+            ${seed.quickActions.map((qa, i) => `
+              <button onclick="return ${qa.go}()" class="w-full flex items-center gap-2.5 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px] ${i < seed.quickActions.length - 1 ? 'border-b border-divider' : ''}">
+                <span class="text-primary flex-shrink-0">${icon(qa.icon, 'icon w-4 h-4')}</span>
+                <span class="text-sm font-medium">${qa.label}</span>
+              </button>
             `).join('')}
           </div>
         </section>
       </div>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-heading font-bold text-lg">Parish health</h2>
+          <button onclick="return goParishes()" class="text-primary text-xs font-semibold flex items-center gap-1">View all parishes ${icon('chevron','w-3.5 h-3.5')}</button>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="return goParishes()" class="bg-green/10 rounded-card shadow-card p-5 text-left transition-warm hover:shadow-card-hover">
+            <span class="w-10 h-10 rounded-badge bg-green/20 text-[#2f6b45] flex items-center justify-center mb-3">${icon('heartPulse','w-4 h-4')}</span>
+            <p class="font-heading font-bold text-2xl">${health.good}</p>
+            <p class="text-xs text-ink-muted mt-1">Parishes in good health</p>
+          </button>
+          <button onclick="return goParishes()" class="bg-error-bg rounded-card shadow-card p-5 text-left transition-warm hover:shadow-card-hover">
+            <span class="w-10 h-10 rounded-badge bg-error/20 text-error flex items-center justify-center mb-3">${icon('alert','w-4 h-4')}</span>
+            <p class="font-heading font-bold text-2xl">${health.attention}</p>
+            <p class="text-xs text-ink-muted mt-1">Parishes requiring attention</p>
+          </button>
+        </div>
+        <p class="text-xs text-ink-muted mt-3">Based on financial, community, and governance indicators — a parish needs attention if any one of the three is at risk.</p>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-heading font-bold text-lg">Diocese announcements</h2>
+          <button onclick="return goCommunication()" class="text-primary text-xs font-semibold">View all</button>
+        </div>
+        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+          ${seed.announcements.map(a => `
+            <div class="px-5 py-4">
+              <p class="text-sm font-semibold">${a.title}</p>
+              <p class="text-xs text-ink-muted mt-1">${a.date}</p>
+            </div>
+          `).join('')}
+        </div>
+      </section>
     `;
   }
 

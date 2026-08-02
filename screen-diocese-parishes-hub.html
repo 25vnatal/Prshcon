@@ -336,23 +336,33 @@
     return parts.length >= 2 ? parts[parts.length - 2] : address;
   }
 
-  // Three independent pillars — Financial, Community, Governance — each with its own seeded metric and
-  // its own red/amber/green threshold, so the "reason" behind a status is a real number, not a canned phrase.
+  // Three pillars — Financial, Community, Governance — each with its own seeded metric and real
+  // number behind its status, correlated through a shared per-parish "wellness" base rather than
+  // three fully independent dice rolls: a parish genuinely struggling tends to show it across more
+  // than one dimension, not have anti-correlated pillars. Each pillar still has its own noise on top
+  // of that shared base, so pillars can and do diverge — verified via script test that a meaningful
+  // share of parishes show genuinely mixed Green/Amber/Red across their three pillars, not one score
+  // copied three times.
+  function baseWellness(parishId) { return hashCode(parishId + 'wellness') % 100; }
   function financialHealth(parishId) {
     if (parishId === 'PAR-0002') return { status: 'Green', metric: 82, label: 'Subscription collection rate' };
-    const rate = seededRange(parishId + 'fin', 28, 96);
-    const status = rate >= 70 ? 'Green' : rate >= 50 ? 'Amber' : 'Red';
+    const base = baseWellness(parishId);
+    const noise = seededRange(parishId + 'fin', -15, 15);
+    const rate = Math.max(20, Math.min(98, base + noise));
+    const status = rate >= 65 ? 'Green' : rate >= 45 ? 'Amber' : 'Red';
     return { status, metric: rate, label: 'Subscription collection rate' };
   }
   function communityHealth(parishId) {
     if (parishId === 'PAR-0002') return { status: 'Green', metric: 4, label: 'Registered family growth (YoY)' };
-    const rate = seededRange(parishId + 'comm', -12, 14);
-    const status = rate >= 0 ? 'Green' : rate >= -5 ? 'Amber' : 'Red';
-    return { status, metric: rate, label: 'Registered family growth (YoY)' };
+    const base = baseWellness(parishId);
+    const scaled = Math.round((base - 50) / 3.5) + seededRange(parishId + 'comm-n2', -3, 3);
+    const status = scaled >= 0 ? 'Green' : scaled >= -6 ? 'Amber' : 'Red';
+    return { status, metric: scaled, label: 'Registered family growth (YoY)' };
   }
   function governanceHealth(parishId) {
     if (parishId === 'PAR-0002') return { status: 'Green', metric: 6, label: 'Monthly reports submitted on time (of last 6)' };
-    const submitted = seededRange(parishId + 'gov', 0, 6);
+    const base = baseWellness(parishId);
+    const submitted = Math.max(0, Math.min(6, Math.round(base / 100 * 6) + seededRange(parishId + 'gov', -1, 1)));
     const status = submitted >= 5 ? 'Green' : submitted >= 3 ? 'Amber' : 'Red';
     return { status, metric: submitted, label: 'Monthly reports submitted on time (of last 6)' };
   }
