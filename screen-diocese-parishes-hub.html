@@ -416,12 +416,6 @@
           ${REGIONS.map(r => `<option>${r.label}</option>`).join('')}
           <option>Other</option>
         </select>
-        <div class="flex items-center gap-1.5 text-xs text-ink-muted ml-auto flex-shrink-0">
-          <span>Health:</span>
-          <span class="flex items-center gap-1">${ragDot('Green','Financial')}Financial</span>
-          <span class="flex items-center gap-1">${ragDot('Green','Community')}Community</span>
-          <span class="flex items-center gap-1">${ragDot('Green','Governance')}Governance</span>
-        </div>
       </div>
       <p id="dir-count" class="text-xs text-ink-muted mb-3"></p>
       <div id="dir-list" class="bg-card-bg rounded-card shadow-card overflow-hidden"></div>
@@ -438,15 +432,12 @@
           <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
             <th class="px-4 py-3 font-medium">Parish</th>
             <th class="px-4 py-3 font-medium">Size</th>
-            <th class="px-4 py-3 font-medium">Region</th>
             <th class="px-4 py-3 font-medium">Parish priest</th>
-            <th class="px-4 py-3 font-medium">Priest phone</th>
             <th class="px-4 py-3 font-medium">Office phone</th>
             <th class="px-4 py-3 font-medium">Health</th>
           </tr></thead>
           <tbody>
             ${shown.map(p => {
-              const region = regionFor(p.address);
               const health = healthFor(p.id);
               return `
                 <tr onclick="viewParish('${p.id}')" class="border-b border-divider last:border-0 cursor-pointer transition-warm hover:bg-section-bg">
@@ -455,9 +446,10 @@
                     <p class="text-xs text-ink-muted mt-0.5">${localityOf(p.address)}</p>
                   </td>
                   <td class="px-4 py-3 text-ink-muted">${p.sizeTier}</td>
-                  <td class="px-4 py-3 text-ink-muted">${region}</td>
-                  <td class="px-4 py-3 text-ink-muted">${p.parishPriest}</td>
-                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${priestPhoneFor(p.id)}</td>
+                  <td class="px-4 py-3">
+                    <p class="text-ink-muted">${p.parishPriest}</p>
+                    <p class="text-xs text-ink-muted mt-0.5">${priestPhoneFor(p.id)}</p>
+                  </td>
                   <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${officePhoneFor(p.id)}</td>
                   <td class="px-4 py-3">${healthCell(health)}</td>
                 </tr>
