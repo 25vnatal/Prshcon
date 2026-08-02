@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Settings</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .toggle { width: 40px; height: 24px; border-radius: 999px; position: relative; transition: background 200ms ease; flex-shrink: 0; }
+  .toggle-knob { width: 18px; height: 18px; border-radius: 999px; background: white; position: absolute; top: 3px; left: 3px; transition: left 200ms ease; }
+  .toggle.on { background: #4F7CF5; }
+  .toggle.on .toggle-knob { left: 19px; }
+  .toggle.off { background: #E8EDF5; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <aside class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform" id="sidebar">
+      <div class="px-6 pt-6 pb-5">
+        <p class="font-heading font-bold text-base">Parish Connect</p>
+        <p class="text-xs text-ink-muted mt-1">Diocese Console</p>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goParishes()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>
+          Parishes
+        </button>
+        <button onclick="return goMinistry()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M5 7h14"/></svg>
+          Ministry
+        </button>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </a>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <div class="flex-1 min-w-0">
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p class="text-sm font-semibold">Bangalore Archdiocese</p>
+            <p class="text-xs text-ink-muted">Settings</p>
+          </div>
+        </div>
+        <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-lavender/30 text-[#5b3fc4] text-xs font-bold flex items-center justify-center flex-shrink-0">DA</button>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Diocese Admin</p>
+            <p class="text-xs text-ink-muted">Bangalore Archdiocese</p>
+          </div>
+          <button onclick="window.location.href='screen-diocese-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+        <div class="mb-6">
+          <p class="font-heading font-bold text-2xl">Settings</p>
+          <p class="text-ink-muted text-sm mt-1">Parish management, users, global configuration, and notifications.</p>
+        </div>
+
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button onclick="setModule('parishmgmt')" data-module="parishmgmt" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Parish Management</button>
+          <button onclick="setModule('users')" data-module="users" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Users &amp; Roles</button>
+          <button onclick="setModule('global')" data-module="global" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Global Configuration</button>
+          <button onclick="setModule('notifications')" data-module="notifications" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Notification Settings</button>
+        </div>
+
+        <div id="module-content"></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ADD PARISH MODAL -->
+  <div id="parish-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Register New Parish</p>
+        <button onclick="closeModal('parish-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <div class="space-y-1.5"><label class="text-xs font-medium">Parish name</label><input id="pf-name" type="text" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium">Address</label><input id="pf-address" type="text" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5"><label class="text-xs font-medium">Size tier</label>
+            <select id="pf-size" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              <option>Small</option><option>Medium</option><option>Large</option>
+            </select>
+          </div>
+          <div class="space-y-1.5"><label class="text-xs font-medium">Parish Priest</label><input id="pf-priest" type="text" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+        </div>
+      </div>
+      <div class="px-6 pb-6 pt-2">
+        <button onclick="submitNewParish()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Register Parish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD/EDIT USER MODAL -->
+  <div id="user-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="user-modal-title" class="font-heading font-bold text-lg">Invite User</p>
+        <button onclick="closeModal('user-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="user-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="submitUser()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="user-modal-save-label">Save</span></button>
+        <button onclick="closeModal('user-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  function goDash() { window.location.href = 'screen-diocese-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goParishes() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString(); return false; }
+  function goMinistry() { window.location.href = 'screen-diocese-ministry-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-diocese-communication-hub.html?' + baseParams().toString(); return false; }
+  function goReports() { window.location.href = 'screen-diocese-reports-hub.html?' + baseParams().toString(); return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  function statusPill(status) {
+    const map = { 'Active':['bg-green/20','text-[#2f6b45]'], 'Inactive':['bg-error-bg','text-error'], 'Invited':['bg-gold/20','text-[#8a5a10]'], 'Disabled':['bg-error-bg','text-error'] };
+    const [bg, text] = map[status] || map['Active'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
+  }
+  const ICON_PATHS = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    kebab: '<circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/>',
+    search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  function toggleEl(on, onclickFn) {
+    return `<button onclick="${onclickFn}" class="toggle ${on ? 'on' : 'off'}" role="switch" aria-checked="${on}"><span class="toggle-knob"></span></button>`;
+  }
+
+  // ---------------- Lightweight parish list (id/name/sizeTier/priest) for Parish Management ----------------
+  let parishesMgmt = [
+    { id:'PAR-0001', name:'St Mary\'s Minor Basilica Church', sizeTier:'Large', parishPriest:'Fr MFr Arockia Swamy Sebastian' },
+    { id:'PAR-0002', name:'Infant Jesus Shrine', sizeTier:'Large', parishPriest:'Fr. John Anthony' },
+    { id:'PAR-0003', name:'St Francis Xavier Cathedral', sizeTier:'Large', parishPriest:'Fr. Gerord Christopher White' },
+    { id:'PAR-0004', name:'Holy Ghost Parish', sizeTier:'Large', parishPriest:'Fr Siluvai Muthu, CSSR' },
+    { id:'PAR-0005', name:'Our Lady of Lourdes Church', sizeTier:'Large', parishPriest:'Fr Martin Ananda Kumar' },
+    { id:'PAR-0006', name:'Sacred Heart Church', sizeTier:'Large', parishPriest:'Fr. Lourdu Xavier Santhosh' },
+    { id:'PAR-0007', name:'Immaculate Conception Church', sizeTier:'Large', parishPriest:'Fr Sahayaraj' },
+    { id:'PAR-0008', name:'Immaculate Heart of Mary Church', sizeTier:'Large', parishPriest:'Fr Balraju A, SJ' },
+    { id:'PAR-0009', name:'Our Lady of Sacred Heart Church', sizeTier:'Large', parishPriest:'Fr. John Chinnapan, MSC' },
+    { id:'PAR-0010', name:'Resurrection Church', sizeTier:'Large', parishPriest:'Fr. Amarnath Dinesh Roy' },
+    { id:'PAR-0011', name:'St Anthony\'s Church', sizeTier:'Large', parishPriest:'Msgr. C. Francis' },
+    { id:'PAR-0012', name:'St Anthony\'s Friary Church', sizeTier:'Large', parishPriest:'Fr Prashanth Wilson Fernandes' },
+    { id:'PAR-0013', name:'St Francis De Sales Church', sizeTier:'Large', parishPriest:'Fr Joshy Philip Thazhathukunnel, MSFS' },
+    { id:'PAR-0014', name:'St John The Evangelist Church', sizeTier:'Large', parishPriest:'Fr Deva Dass D.' },
+    { id:'PAR-0015', name:'St Peter\'s Church', sizeTier:'Large', parishPriest:'Fr Jayaraj L' },
+    { id:'PAR-0016', name:'Ascension Church', sizeTier:'Large', parishPriest:'Fr. Gabriel Christy' },
+    { id:'PAR-0017', name:'Christha Prabhalaya Epiphany Church', sizeTier:'Large', parishPriest:'Fr Joseph Naveen Kumar' },
+    { id:'PAR-0018', name:'Don Bosco Church', sizeTier:'Large', parishPriest:'Fr. Koottiyanickal Jose, SDB' },
+    { id:'PAR-0019', name:'Holy Family Church', sizeTier:'Large', parishPriest:'Fr Susairaj P' },
+    { id:'PAR-0020', name:'Holy Redeemer Church', sizeTier:'Large', parishPriest:'Fr. Christopher Ponnusamy, C.Ss.R' },
+    { id:'PAR-0021', name:'Immaculate Conception Church', sizeTier:'Large', parishPriest:'Fr Amal Raj Crispin' },
+    { id:'PAR-0022', name:'Our Lady of Fatima Church', sizeTier:'Large', parishPriest:'Fr Gnanamonie Roys S' },
+    { id:'PAR-0023', name:'Our Lady of Lourdes Church', sizeTier:'Large', parishPriest:'Fr Varghese Chakkala, SDB' },
+    { id:'PAR-0024', name:'St Paul Church', sizeTier:'Large', parishPriest:'Fr Anthony Swamy A., SSP' },
+    { id:'PAR-0025', name:'St Pius X Church', sizeTier:'Large', parishPriest:'Fr. Arun Santhosh, M' },
+    { id:'PAR-0026', name:'Christ the King Church', sizeTier:'Medium', parishPriest:'Fr Jude Conrad Santhosh Kumar' },
+    { id:'PAR-0027', name:'Good Shepherd Church', sizeTier:'Medium', parishPriest:'Fr. Anthony Pravin Rajan G' },
+    { id:'PAR-0028', name:'Holy Rosary Church', sizeTier:'Medium', parishPriest:'Fr Mariappa Gregory' },
+    { id:'PAR-0029', name:'Mother of Mines Shrine', sizeTier:'Medium', parishPriest:'Fr Pious Arun Kumar N' },
+    { id:'PAR-0030', name:'Nativity Church', sizeTier:'Medium', parishPriest:'Fr Ananda GnanaXavier' },
+    { id:'PAR-0031', name:'Our Lady of Lourdes Church', sizeTier:'Medium', parishPriest:'Fr Maria Louis' },
+    { id:'PAR-0032', name:'Our Lady of Mount Carmel Church', sizeTier:'Medium', parishPriest:'Fr Bartholomew S' },
+    { id:'PAR-0033', name:'Our Lady of Victories Church', sizeTier:'Medium', parishPriest:'Fr A. Gilbert Raj' },
+    { id:'PAR-0034', name:'Sacred Heart Church', sizeTier:'Medium', parishPriest:'Fr Vincent Santhosh.' },
+    { id:'PAR-0035', name:'Ss Peter and Paul Church', sizeTier:'Medium', parishPriest:'Fr Dominic Xavier' },
+    { id:'PAR-0036', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr J. Arokianathan' },
+    { id:'PAR-0037', name:'St Ignatius Church', sizeTier:'Medium', parishPriest:'Fr Sahayaraj' },
+    { id:'PAR-0038', name:'St Ignatius Church', sizeTier:'Medium', parishPriest:'Fr Arokya Swamy D.' },
+    { id:'PAR-0039', name:'St James Church', sizeTier:'Medium', parishPriest:'Fr Kiran Kumar B' },
+    { id:'PAR-0040', name:'St John Paul II Church', sizeTier:'Medium', parishPriest:'Fr Sagayanathan A' },
+    { id:'PAR-0041', name:'St John the Baptist Church', sizeTier:'Medium', parishPriest:'Fr Michael Antony' },
+    { id:'PAR-0042', name:'St Joseph\'s Church', sizeTier:'Medium', parishPriest:'Fr PrashanthPrem Kumar' },
+    { id:'PAR-0043', name:'St Patrick\'s Church', sizeTier:'Medium', parishPriest:'Fr Christy Raj Issac, E-mail: christyraj1993@ gmail.com' },
+    { id:'PAR-0044', name:'St Theresa\'s Church', sizeTier:'Medium', parishPriest:'Fr Balraj R' },
+    { id:'PAR-0045', name:'Annunciation Church', sizeTier:'Medium', parishPriest:'Fr. Balraj J' },
+    { id:'PAR-0046', name:'Assumption Church', sizeTier:'Medium', parishPriest:'Fr. Balaraj J' },
+    { id:'PAR-0047', name:'Christ The King Church', sizeTier:'Medium', parishPriest:'Fr Chowrappa E' },
+    { id:'PAR-0048', name:'Church of the Holy Name of Jesus', sizeTier:'Medium', parishPriest:'Fr. Micheal Y.' },
+    { id:'PAR-0049', name:'Divine Mercy Church', sizeTier:'Medium', parishPriest:'Fr. Pradeep Kumar Z' },
+    { id:'PAR-0050', name:'Holy Eucharist Church', sizeTier:'Medium', parishPriest:'Fr. Udayakumar Stanislaus' },
+    { id:'PAR-0051', name:'Holy Trinity Church', sizeTier:'Medium', parishPriest:'Fr Patrick Edward Pinto' },
+    { id:'PAR-0052', name:'Holy Trinity Church', sizeTier:'Medium', parishPriest:'Fr Varghese V' },
+    { id:'PAR-0053', name:'Immaculate Heart of Mary Church', sizeTier:'Medium', parishPriest:'Fr Mervyn Manuel Savio L' },
+    { id:'PAR-0054', name:'Infant Jesus Church', sizeTier:'Medium', parishPriest:'Fr. Therese Babu E.' },
+    { id:'PAR-0055', name:'Krista Krupalaya Church', sizeTier:'Medium', parishPriest:'Fr Vijaya Raj, CPPS' },
+    { id:'PAR-0056', name:'Kristha Karunalaya Church', sizeTier:'Medium', parishPriest:'Fr. Rajarathinam' },
+    { id:'PAR-0057', name:'Mother of Perpetual Help Church', sizeTier:'Medium', parishPriest:'Fr. D. Chinnappa' },
+    { id:'PAR-0058', name:'Our Lady of Good Health Church', sizeTier:'Medium', parishPriest:'Fr Fernandes J' },
+    { id:'PAR-0059', name:'Our Lady of Lourdes Church', sizeTier:'Medium', parishPriest:'Fr Anthony Raj, OFM Cap' },
+    { id:'PAR-0060', name:'Our Lady of Vailankanni Church', sizeTier:'Medium', parishPriest:'Fr Joseph Menezes' },
+    { id:'PAR-0061', name:'Sacred Heart Church', sizeTier:'Medium', parishPriest:'Fr Simeon Sebastian, OMI' },
+    { id:'PAR-0062', name:'St Anne\'s Church', sizeTier:'Medium', parishPriest:'Fr Holenston D\'Souza' },
+    { id:'PAR-0063', name:'St Anne\'s Church', sizeTier:'Medium', parishPriest:'Fr. Prem Arokianathan G' },
+    { id:'PAR-0064', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr VijayKumar, OFM Cap' },
+    { id:'PAR-0065', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr Vinay Pradeep S' },
+    { id:'PAR-0066', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr PeterEdwin C.' },
+    { id:'PAR-0067', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr A. Antic Arnold Ashwyn' },
+    { id:'PAR-0068', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr Sunny Richard John' },
+    { id:'PAR-0069', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr Alphonse Bhaskar R' },
+    { id:'PAR-0070', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr Lourdu Swamy M., CMF' },
+    { id:'PAR-0071', name:'St Anthony\'s Church', sizeTier:'Medium', parishPriest:'Fr Mac Donald Fernandis' },
+    { id:'PAR-0072', name:'St Benedict\'s Church', sizeTier:'Medium', parishPriest:'Fr Jayaprakasha, OSB' },
+    { id:'PAR-0073', name:'St Francis of Assisi Church', sizeTier:'Medium', parishPriest:'Fr Hrudayaraju A' },
+    { id:'PAR-0074', name:'St Francis Xavier\'s Church', sizeTier:'Medium', parishPriest:'Fr Kodavatikanti Rajarao' },
+    { id:'PAR-0075', name:'St Francis Xavier\'s Church', sizeTier:'Medium', parishPriest:'Fr Peter C' },
+    { id:'PAR-0076', name:'St Gaspar\'s Church', sizeTier:'Medium', parishPriest:'Fr Rajendra Mariadass, CPPS' },
+    { id:'PAR-0077', name:'St John Marie Vianney Semi Public Church', sizeTier:'Medium', parishPriest:'Fr Sagaya Arockiadass A.' },
+    { id:'PAR-0078', name:'St John the Britto Church', sizeTier:'Medium', parishPriest:'Fr John Paul' },
+    { id:'PAR-0079', name:'St Joseph Vaz Church', sizeTier:'Medium', parishPriest:'Fr. Prabhakar, SMM' },
+    { id:'PAR-0080', name:'St Joseph\'s Church', sizeTier:'Medium', parishPriest:'Fr Rojo Thomas Kaviyil scj' },
+    { id:'PAR-0081', name:'St Joseph\'s Church', sizeTier:'Medium', parishPriest:'Fr Baptist Pais, SVD' },
+    { id:'PAR-0082', name:'St Joseph\'s Church', sizeTier:'Medium', parishPriest:'Fr Jose Churavelikudilil, SDB' },
+    { id:'PAR-0083', name:'St Joseph\'s Church', sizeTier:'Medium', parishPriest:'Fr Jerome D' },
+    { id:'PAR-0084', name:'St Jude\'s Church', sizeTier:'Medium', parishPriest:'Fr Arogya Nadhan, CMF' },
+    { id:'PAR-0085', name:'St Jude\'s Church', sizeTier:'Medium', parishPriest:'Fr Vinoo Fabian Sudhakar' },
+    { id:'PAR-0086', name:'St Jude\'s Church', sizeTier:'Medium', parishPriest:'Fr Vivian Richards S.' },
+    { id:'PAR-0087', name:'St Mary\'s Church', sizeTier:'Medium', parishPriest:'Fr Boniface Cyril D\'Souza, OCD' },
+    { id:'PAR-0088', name:'St Michael\'s Church', sizeTier:'Medium', parishPriest:'Fr John Rose' },
+    { id:'PAR-0089', name:'St Paul the Hermit Church', sizeTier:'Medium', parishPriest:'Fr AnthonyPrasad' },
+    { id:'PAR-0090', name:'St Rock\'s Church', sizeTier:'Medium', parishPriest:'Fr Arun Bala Raj A' },
+    { id:'PAR-0091', name:'St Teresa of Kolkata Church', sizeTier:'Medium', parishPriest:'Fr Arokia Dass G' },
+    { id:'PAR-0092', name:'St Theresa of Child Jesus Church, Singasandra', sizeTier:'Medium', parishPriest:'Fr Clement Deep S' },
+    { id:'PAR-0093', name:'St Theresa\'s Church', sizeTier:'Medium', parishPriest:'FrJerome Stanislaus' },
+    { id:'PAR-0094', name:'St Thomas Church', sizeTier:'Medium', parishPriest:'Fr.Devakumar I' },
+    { id:'PAR-0095', name:'St Thomas Church', sizeTier:'Medium', parishPriest:'Fr Rai Prasad Moses' },
+    { id:'PAR-0096', name:'Church of Our Lady of Compassion', sizeTier:'Small', parishPriest:'Fr Ummikuzhiyil Cyriac, MSFS' },
+    { id:'PAR-0097', name:'Holy Cross Church', sizeTier:'Small', parishPriest:'Fr John Sudeep A.' },
+    { id:'PAR-0098', name:'Holy Rosary Church', sizeTier:'Small', parishPriest:'Fr. Vincent Kiran Kumar A' },
+    { id:'PAR-0099', name:'Holy Rosary Church', sizeTier:'Small', parishPriest:'Fr A.C. Arokianathan, MSFS' },
+    { id:'PAR-0100', name:'Immaculate Heart of Mary Church', sizeTier:'Small', parishPriest:'Fr Santy Kurian, MSFS' },
+    { id:'PAR-0101', name:'Infant Jesus Church', sizeTier:'Small', parishPriest:'Fr. Chacko Kelamparampil, CMF' },
+    { id:'PAR-0102', name:'Nithyadhara Mathe Church', sizeTier:'Small', parishPriest:'Fr James Thomas, MSFS' },
+    { id:'PAR-0103', name:'Our Lady of Divine Providence Semi Public Church', sizeTier:'Small', parishPriest:'Fr. Prakash Menezes OP' },
+    { id:'PAR-0104', name:'Our Lady of Fathima Church', sizeTier:'Small', parishPriest:'Fr. Arulappa L' },
+    { id:'PAR-0105', name:'Our Lady of Lourdes Church', sizeTier:'Small', parishPriest:'Fr Edward David' },
+    { id:'PAR-0106', name:'Our Lady of Lourdes Church', sizeTier:'Small', parishPriest:'Fr Arun Kumar J' },
+    { id:'PAR-0107', name:'Sacred Heart Church', sizeTier:'Small', parishPriest:'Fr Jesuraj, SCJ' },
+    { id:'PAR-0108', name:'Sacred Heart Church', sizeTier:'Small', parishPriest:'Fr Jeevan Prashanth, MSFS' },
+    { id:'PAR-0109', name:'St Anthony\'s Church', sizeTier:'Small', parishPriest:'Rev. Fr. L. Selvaraj, MSFS' },
+    { id:'PAR-0110', name:'St Anthony\'s Church', sizeTier:'Small', parishPriest:'Fr Sandhyagu J' },
+    { id:'PAR-0111', name:'St Anthony\'s Church', sizeTier:'Small', parishPriest:'Fr Santhosh Fernandies, CSC' },
+    { id:'PAR-0112', name:'St Anthony\'s Church', sizeTier:'Small', parishPriest:'Fr JudeDaniel Vijay, SCJ' },
+    { id:'PAR-0113', name:'St Anthony\'s Church', sizeTier:'Small', parishPriest:'Fr Shashi Kiran, I.' },
+    { id:'PAR-0114', name:'St Francis de Sales Church', sizeTier:'Small', parishPriest:'Fr Salvador Fernandes,MSFS' },
+    { id:'PAR-0115', name:'St Francis Xavier\'s Church', sizeTier:'Small', parishPriest:'Fr Joseph C.' },
+    { id:'PAR-0116', name:'St Francis Xavier\'s Church', sizeTier:'Small', parishPriest:'Fr AlbanZeo G.' },
+    { id:'PAR-0117', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr. Ivan Peter Mendonca, SJ' },
+    { id:'PAR-0118', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr Mario Fernandes' },
+    { id:'PAR-0119', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr Norman Bernard' },
+    { id:'PAR-0120', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr Joseph Anthony Daniel, CPPS' },
+    { id:'PAR-0121', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr Balavendra Jacob,MSFS' },
+    { id:'PAR-0122', name:'St Joseph\'s Church', sizeTier:'Small', parishPriest:'Fr Maurinus Robin' },
+    { id:'PAR-0123', name:'St Paul\'s Church', sizeTier:'Small', parishPriest:'Fr S. Xavier Thangaraj, CPPS' },
+    { id:'PAR-0124', name:'St Peter\'s Church', sizeTier:'Small', parishPriest:'Fr Terry Prakash Xavier N.' },
+    { id:'PAR-0125', name:'St Rita\'s Church', sizeTier:'Small', parishPriest:'Fr David Kumar A.' },
+    { id:'PAR-0126', name:'St Rita\'s Church', sizeTier:'Small', parishPriest:'Fr. Infant L' },
+    { id:'PAR-0127', name:'St Rita\'s Church', sizeTier:'Small', parishPriest:'Fr Rayappa G. A.' },
+    { id:'PAR-0128', name:'St Sebastian\'s Church', sizeTier:'Small', parishPriest:'Fr Arockiadass P' },
+    { id:'PAR-0129', name:'St Theresa of Child Jesus Church', sizeTier:'Small', parishPriest:'Fr Antony Peter John' },
+    { id:'PAR-0130', name:'St Theresa\'s Church', sizeTier:'Small', parishPriest:'Fr Divya Yesu Balan S.' },
+  ];
+
+  let currentModule = 'parishmgmt';
+  function setModule(m) {
+    closeParishKebab();
+    closeUserKebab();
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'parishmgmt') renderParishMgmtModule(el);
+    else if (currentModule === 'users') renderUsersModule(el);
+    else if (currentModule === 'global') renderGlobalModule(el);
+    else renderNotificationsModule(el);
+  }
+
+  // =========================================================================
+  // MODULE 1: Parish Management — administrative parish record actions
+  // (register/deactivate), distinct from Parishes hub's oversight/health view.
+  // =========================================================================
+  let pmSearch = '';
+  function pmFiltered() {
+    const q = pmSearch.trim().toLowerCase();
+    return parishesMgmt.filter(p => !q || p.name.toLowerCase().includes(q));
+  }
+  function renderParishMgmtModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
+          <input type="text" placeholder="Search parishes…" value="${pmSearch}" oninput="pmSearch=this.value; renderParishMgmtList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+        <button onclick="document.getElementById('parish-modal').classList.remove('hidden')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0">${icon('plus','icon w-4 h-4')}Register New Parish</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+              <th class="px-4 py-3 font-medium">Parish</th><th class="px-4 py-3 font-medium">Size Tier</th><th class="px-4 py-3 font-medium">Parish Priest</th><th class="px-4 py-3 font-medium">Status</th><th class="px-4 py-3 font-medium"></th>
+            </tr></thead>
+            <tbody id="pm-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+    renderParishMgmtList();
+  }
+  function renderParishMgmtList() {
+    const list = pmFiltered().slice(0, 25);
+    document.getElementById('pm-tbody').innerHTML = list.map(p => `
+      <tr class="border-b border-divider last:border-0">
+        <td class="px-4 py-3 font-medium">${p.name}</td>
+        <td class="px-4 py-3 text-ink-muted">${p.sizeTier}</td>
+        <td class="px-4 py-3 text-ink-muted">${p.parishPriest}</td>
+        <td class="px-4 py-3">${statusPill(p.status || 'Active')}</td>
+        <td class="px-4 py-3 text-right relative">${renderParishActionsCell(p)}</td>
+      </tr>
+    `).join('') + (pmFiltered().length > 25 ? `<tr><td colspan="5" class="px-4 py-3 text-xs text-ink-muted text-center">Showing 25 of ${pmFiltered().length} parishes \u2014 refine your search to see more</td></tr>` : '');
+  }
+  let parishConfirmContext = null;
+  let openParishKebabId = null;
+  let parishKebabMenuPos = { top: 0, left: 0 };
+  function renderParishActionsCell(p) {
+    if (parishConfirmContext && parishConfirmContext.id === p.id) {
+      return `
+        <div class="flex items-center justify-end gap-1.5">
+          <span class="text-xs text-ink-muted mr-1">Mark as ${parishConfirmContext.action}?</span>
+          <button onclick="confirmParishStatusChange()" class="text-error text-xs font-semibold px-2 py-1 rounded-button hover:bg-error-bg">Confirm</button>
+          <button onclick="parishConfirmContext=null; renderParishMgmtList()" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        </div>
+      `;
+    }
+    return `<button onclick="toggleParishKebab('${p.id}', this)" aria-label="More actions" class="w-8 h-8 rounded-button inline-flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('kebab','icon w-4 h-4')}</button>`;
+  }
+  function renderParishKebabMenu(p) {
+    const isActive = (p.status || 'Active') === 'Active';
+    return `
+      <div id="parish-kebab-menu" style="position:fixed; top:${parishKebabMenuPos.top}px; left:${parishKebabMenuPos.left}px;" class="w-44 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-50">
+        ${isActive
+          ? `<button onclick="promptParishStatusChange('${p.id}','Inactive')" class="w-full text-left px-3.5 py-2.5 text-sm text-error hover:bg-error-bg transition-warm">Deactivate</button>`
+          : `<button onclick="promptParishStatusChange('${p.id}','Active')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Reactivate</button>`
+        }
+      </div>
+    `;
+  }
+  function closeParishKebab() {
+    const existing = document.getElementById('parish-kebab-menu');
+    if (existing) existing.remove();
+    openParishKebabId = null;
+  }
+  function toggleParishKebab(id, btnEl) {
+    const wasOpen = openParishKebabId === id;
+    closeParishKebab();
+    if (wasOpen) return;
+    openParishKebabId = id;
+    const rect = btnEl.getBoundingClientRect();
+    parishKebabMenuPos = { top: rect.bottom + 4, left: Math.max(8, rect.right - 176) };
+    document.body.insertAdjacentHTML('beforeend', renderParishKebabMenu(parishesMgmt.find(x => x.id === id)));
+  }
+  function promptParishStatusChange(id, action) {
+    closeParishKebab();
+    parishConfirmContext = { id, action };
+    renderParishMgmtList();
+  }
+  function confirmParishStatusChange() {
+    const p = parishesMgmt.find(x => x.id === parishConfirmContext.id);
+    p.status = parishConfirmContext.action;
+    toast(`${p.name} marked as ${parishConfirmContext.action}.`);
+    parishConfirmContext = null;
+    renderParishMgmtList();
+  }
+  function submitNewParish() {
+    const name = document.getElementById('pf-name').value.trim();
+    if (!name) { toast('Please enter a parish name.'); return; }
+    const address = document.getElementById('pf-address').value.trim();
+    const sizeTier = document.getElementById('pf-size').value;
+    const parishPriest = document.getElementById('pf-priest').value.trim() || 'Not yet assigned';
+    parishesMgmt.unshift({ id:'PAR-NEW-'+Math.floor(1000+Math.random()*8999), name, sizeTier, parishPriest, status:'Active' });
+    toast(`${name} registered.`);
+    closeModal('parish-modal');
+    ['pf-name','pf-address','pf-priest'].forEach(id => document.getElementById(id).value = '');
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 2: Users & Roles — diocese office staff, same kebab pattern as Parish Settings.
+  // =========================================================================
+  const DIOCESE_ROLES = ["Diocese Administrator", "Vicar General", "Communications Officer", "Finance Officer", "Pastoral Coordinator"];
+  let dioceseUsers = [
+    { id:"DUSR-001", name:"Bishop's Secretariat", email:"secretariat@bangalorearchdiocese.org", role:"Diocese Administrator", status:"Active" },
+    { id:"DUSR-002", name:"Fr. Xavier D'Mello", email:"vicargeneral@bangalorearchdiocese.org", role:"Vicar General", status:"Active" },
+    { id:"DUSR-003", name:"Ms. Anita Coelho", email:"communications@bangalorearchdiocese.org", role:"Communications Officer", status:"Active" },
+    { id:"DUSR-004", name:"Mr. Ravi Shetty", email:"finance@bangalorearchdiocese.org", role:"Finance Officer", status:"Invited" },
+  ];
+  function renderUsersModule(el) {
+    el.innerHTML = `
+      <div class="flex justify-end mb-4">
+        <button onclick="openUserModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Invite User</button>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+              <th class="px-4 py-3 font-medium">Name</th><th class="px-4 py-3 font-medium">Email</th><th class="px-4 py-3 font-medium">Role</th><th class="px-4 py-3 font-medium">Status</th><th class="px-4 py-3 font-medium"></th>
+            </tr></thead>
+            <tbody id="user-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+    renderUsersList();
+  }
+  function renderUsersList() {
+    document.getElementById('user-tbody').innerHTML = dioceseUsers.map(u => `
+      <tr class="border-b border-divider last:border-0">
+        <td class="px-4 py-3 font-medium">${u.name}</td>
+        <td class="px-4 py-3 text-ink-muted">${u.email}</td>
+        <td class="px-4 py-3 text-ink-muted">${u.role}</td>
+        <td class="px-4 py-3">${statusPill(u.status)}</td>
+        <td class="px-4 py-3 text-right relative">${renderUserActionsCell(u)}</td>
+      </tr>
+    `).join('');
+  }
+  let userConfirmContext = null;
+  let openUserKebabId = null;
+  let userKebabMenuPos = { top: 0, left: 0 };
+  function renderUserActionsCell(u) {
+    if (userConfirmContext && userConfirmContext.id === u.id) {
+      return `
+        <div class="flex items-center justify-end gap-1.5">
+          <span class="text-xs text-ink-muted mr-1">Mark as ${userConfirmContext.action}?</span>
+          <button onclick="confirmUserStatusChange()" class="text-error text-xs font-semibold px-2 py-1 rounded-button hover:bg-error-bg">Confirm</button>
+          <button onclick="userConfirmContext=null; renderUsersList()" class="text-ink-muted text-xs font-semibold px-2 py-1 rounded-button hover:bg-section-bg">Cancel</button>
+        </div>
+      `;
+    }
+    return `<button onclick="toggleUserKebab('${u.id}', this)" aria-label="More actions" class="w-8 h-8 rounded-button inline-flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('kebab','icon w-4 h-4')}</button>`;
+  }
+  function renderUserKebabMenu(u) {
+    return `
+      <div id="user-kebab-menu" style="position:fixed; top:${userKebabMenuPos.top}px; left:${userKebabMenuPos.left}px;" class="w-44 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-50">
+        <button onclick="editUserFromKebab('${u.id}')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Edit role</button>
+        ${u.status === 'Disabled'
+          ? `<button onclick="promptUserStatusChange('${u.id}','Active')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Re-enable</button>`
+          : `<button onclick="promptUserStatusChange('${u.id}','Disabled')" class="w-full text-left px-3.5 py-2.5 text-sm text-error hover:bg-error-bg transition-warm">Disable access</button>`
+        }
+      </div>
+    `;
+  }
+  function closeUserKebab() {
+    const existing = document.getElementById('user-kebab-menu');
+    if (existing) existing.remove();
+    openUserKebabId = null;
+  }
+  function toggleUserKebab(id, btnEl) {
+    const wasOpen = openUserKebabId === id;
+    closeUserKebab();
+    if (wasOpen) return;
+    openUserKebabId = id;
+    const rect = btnEl.getBoundingClientRect();
+    userKebabMenuPos = { top: rect.bottom + 4, left: Math.max(8, rect.right - 176) };
+    document.body.insertAdjacentHTML('beforeend', renderUserKebabMenu(dioceseUsers.find(x => x.id === id)));
+  }
+  function editUserFromKebab(id) {
+    closeUserKebab();
+    openUserModal(id);
+  }
+  function promptUserStatusChange(id, action) {
+    closeUserKebab();
+    userConfirmContext = { id, action };
+    renderUsersList();
+  }
+  function confirmUserStatusChange() {
+    const u = dioceseUsers.find(x => x.id === userConfirmContext.id);
+    u.status = userConfirmContext.action;
+    toast(`${u.name} ${userConfirmContext.action === 'Disabled' ? 'access disabled' : 're-enabled'}.`);
+    userConfirmContext = null;
+    renderUsersList();
+  }
+  let editingUserId = null;
+  function openUserModal(editId) {
+    editingUserId = editId || null;
+    const u = editId ? dioceseUsers.find(x => x.id === editId) : null;
+    document.getElementById('user-modal-title').textContent = u ? 'Edit User' : 'Invite User';
+    document.getElementById('user-modal-save-label').textContent = u ? 'Save Changes' : 'Send Invite';
+    document.getElementById('user-modal').classList.remove('hidden');
+    document.getElementById('user-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Full name</label><input id="uf-name" type="text" value="${u ? u.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Email</label><input id="uf-email" type="email" value="${u ? u.email : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Role</label>
+        <select id="uf-role" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+          ${DIOCESE_ROLES.map(r => `<option ${u && u.role===r ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    `;
+  }
+  function submitUser() {
+    const name = document.getElementById('uf-name').value.trim();
+    const email = document.getElementById('uf-email').value.trim();
+    if (!name || !email) { toast('Please enter a name and email.'); return; }
+    const role = document.getElementById('uf-role').value;
+    if (editingUserId) {
+      Object.assign(dioceseUsers.find(x => x.id === editingUserId), { name, email, role });
+      toast(`${name} updated.`);
+    } else {
+      dioceseUsers.push({ id:'DUSR-'+Math.floor(100+Math.random()*899), name, email, role, status:'Invited' });
+      toast(`Invite sent to ${email}.`);
+    }
+    editingUserId = null;
+    closeModal('user-modal');
+    renderModule();
+  }
+
+  // =========================================================================
+  // MODULE 3: Global Configuration
+  // =========================================================================
+  function renderGlobalModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 max-w-xl mb-6">
+        <p class="text-sm font-semibold mb-4">General</p>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5"><label class="text-xs font-medium">Timezone</label><select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><option selected>Asia/Kolkata (IST, UTC+5:30)</option></select></div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Currency</label><select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><option selected>Indian Rupee (\u20b9)</option></select></div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Date format</label><select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><option selected>DD/MM/YYYY</option></select></div>
+            <div class="space-y-1.5"><label class="text-xs font-medium">Fiscal year starts</label><select class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><option selected>April</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5 max-w-xl">
+        <p class="text-sm font-semibold mb-4">Diocese-wide defaults for new parishes</p>
+        <div class="space-y-4">
+          <div class="space-y-1.5"><label class="text-xs font-medium">Suggested minimum subscription (monthly)</label><input type="text" value="\u20b9200" readonly class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-section-bg text-ink-muted"></div>
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">Require diocesan approval for new parish document templates</p></div>
+            ${toggleEl(true, "toast('Setting updated.')")}
+          </div>
+          <div class="flex items-center justify-between">
+            <div><p class="text-sm font-medium">Auto-enable Family Records and Requests for newly onboarded parishes</p></div>
+            ${toggleEl(true, "toast('Setting updated.')")}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // MODULE 4: Notification Settings
+  // =========================================================================
+  let dioceseChannels = { inApp: true, email: true, sms: false, whatsapp: false };
+  let dioceseNotificationEvents = [
+    { key:'parishOnboarded', label:'Parish Onboarding Complete', channels:{ inApp:true, email:true, sms:false, whatsapp:false } },
+    { key:'parishAtRisk', label:'Parish Health Alert (At Risk)', channels:{ inApp:true, email:true, sms:false, whatsapp:false } },
+    { key:'broadcastSent', label:'Broadcast Sent Confirmation', channels:{ inApp:true, email:false, sms:false, whatsapp:false } },
+    { key:'userInvited', label:'New User Invited', channels:{ inApp:true, email:true, sms:false, whatsapp:false } },
+  ];
+  function renderNotificationsModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6">
+        <p class="text-sm font-semibold mb-4">Channels</p>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between"><div><p class="text-sm font-medium">In-App</p><p class="text-xs text-ink-muted">Always enabled</p></div>${toggleEl(true, "toast('In-App notifications cannot be disabled.')")}</div>
+          <div class="flex items-center justify-between"><div><p class="text-sm font-medium">Email</p></div>${toggleEl(dioceseChannels.email, "toggleDioceseChannel('email')")}</div>
+          <div class="flex items-center justify-between"><div><p class="text-sm font-medium">SMS</p></div>${toggleEl(dioceseChannels.sms, "toggleDioceseChannel('sms')")}</div>
+          <div class="flex items-center justify-between"><div><p class="text-sm font-medium">WhatsApp</p></div>${toggleEl(dioceseChannels.whatsapp, "toggleDioceseChannel('whatsapp')")}</div>
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
+              <th class="px-4 py-3 font-medium">Event</th><th class="px-4 py-3 font-medium text-center">In-App</th><th class="px-4 py-3 font-medium text-center">Email</th><th class="px-4 py-3 font-medium text-center">SMS</th><th class="px-4 py-3 font-medium text-center">WhatsApp</th>
+            </tr></thead>
+            <tbody>
+              ${dioceseNotificationEvents.map(ev => `
+                <tr class="border-b border-divider last:border-0">
+                  <td class="px-4 py-3 font-medium">${ev.label}</td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" checked disabled class="w-4 h-4 opacity-60"></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.email ? 'checked' : ''} onchange="toggleDioceseEventChannel('${ev.key}','email')" class="w-4 h-4" ${dioceseChannels.email ? '' : 'disabled'}></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.sms ? 'checked' : ''} onchange="toggleDioceseEventChannel('${ev.key}','sms')" class="w-4 h-4" ${dioceseChannels.sms ? '' : 'disabled'}></td>
+                  <td class="px-4 py-3 text-center"><input type="checkbox" ${ev.channels.whatsapp ? 'checked' : ''} onchange="toggleDioceseEventChannel('${ev.key}','whatsapp')" class="w-4 h-4" ${dioceseChannels.whatsapp ? '' : 'disabled'}></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+  function toggleDioceseChannel(ch) {
+    dioceseChannels[ch] = !dioceseChannels[ch];
+    renderModule();
+  }
+  function toggleDioceseEventChannel(eventKey, ch) {
+    dioceseNotificationEvents.find(e => e.key === eventKey).channels[ch] = !dioceseNotificationEvents.find(e => e.key === eventKey).channels[ch];
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>

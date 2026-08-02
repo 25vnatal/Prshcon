@@ -57,10 +57,6 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
           Family Records
         </button>
-        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
-          Committees
-        </button>
         <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
           Masses
@@ -89,10 +85,20 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
           Finance
         </button>
-        <button onclick="return goAdministration()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
-          Administration
+        <button onclick="toggleAdminGroup()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <span class="flex items-center gap-3">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+            Administration
+          </span>
+          <svg id="admin-chevron" class="icon w-4 h-4 transition-transform" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
+        <div id="admin-children" class="hidden ml-4 pl-3 border-l border-divider space-y-0.5 my-1">
+          <button id="admin-child-profile" onclick="return goAdminProfile()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Parish Profile</button>
+          <button onclick="return goServices()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Services</button>
+          <button id="admin-child-inventory" onclick="return goAdminInventory()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Inventory</button>
+          <button id="admin-child-staff" onclick="return goAdminStaff()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Staff</button>
+          <button onclick="return goCommittees()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Committees</button>
+        </div>
         <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
           Reports
@@ -144,9 +150,9 @@
         <div class="flex gap-2 mb-6 overflow-x-auto">
           <button onclick="setModule('documents')" data-module="documents" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Documents &amp; Certificates</button>
           <button onclick="setModule('familyupdates')" data-module="familyupdates" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted flex items-center gap-1.5">Family Updates<span id="family-updates-badge" class="hidden bg-white/25 text-xs font-bold px-1.5 py-0.5 rounded-badge"></span></button>
-          <button onclick="setModule('sacraments')" data-module="sacraments" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Sacraments</button>
-          <button onclick="setModule('homeservices')" data-module="homeservices" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Home Services</button>
-          <button onclick="setModule('facilities')" data-module="facilities" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Facility Bookings</button>
+          <button onclick="setModule('sacraments')" data-module="sacraments" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted flex items-center gap-1.5">Sacraments<span id="sacraments-badge" class="hidden bg-white/25 text-xs font-bold px-1.5 py-0.5 rounded-badge"></span></button>
+          <button onclick="setModule('homeservices')" data-module="homeservices" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted flex items-center gap-1.5">Home Services<span id="homeservices-badge" class="hidden bg-white/25 text-xs font-bold px-1.5 py-0.5 rounded-badge"></span></button>
+          <button onclick="setModule('facilities')" data-module="facilities" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted flex items-center gap-1.5">Facility Bookings<span id="facilities-badge" class="hidden bg-white/25 text-xs font-bold px-1.5 py-0.5 rounded-badge"></span></button>
         </div>
 
         <div id="module-content"></div>
@@ -205,6 +211,13 @@
   function goDocuments() { window.location.href = 'screen-parish-documents-hub.html?' + baseParams().toString(); return false; }
   function goFaithFormation() { window.location.href = 'screen-parish-faithformation-hub.html?' + baseParams().toString(); return false; }
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
+  function goAdminProfile() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=profile'; return false; }
+  function goAdminInventory() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=inventory'; return false; }
+  function goAdminStaff() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=staff'; return false; }
+  function toggleAdminGroup() {
+    document.getElementById('admin-children').classList.toggle('hidden');
+    document.getElementById('admin-chevron').classList.toggle('rotate-90');
+  }
   function goFinance() { window.location.href = 'screen-parish-finance-hub.html?' + baseParams().toString(); return false; }
   function goAdministration() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString(); return false; }
   function goReports() { window.location.href = 'screen-parish-reports-hub.html?' + baseParams().toString(); return false; }
@@ -367,6 +380,33 @@
     { id: "UPD-4001", familyId: "FAM-1001", familyName: "Rodrigues Family", type: "Add a Family Member", submittedBy: "John Rodrigues", submissionDate: "24 Jul 2026", status: "Submitted" },
   ];
 
+  // ---------------- Sacrament Registrations (mirrors what parishioners submit via ----------------
+  // ---------------- screen-parishioner-sacraments-register.html — this is the staff-side of that loop). ----------------
+  let sacramentRequests = [
+    { id:"SREQ-001", sacramentName:"Confirmation", candidateName:"Clara Rodrigues", familyName:"Rodrigues Family", requiredDocuments:["Baptism Certificate","First Communion Certificate"], submissionDate:"1 Jun 2026", registrationReference:"SAC-REG-2026-0087", registrationFee:200, paymentStatus:"Paid", additionalInfo:"", status:"Approved", internalNotes:"" },
+    { id:"SREQ-002", sacramentName:"Baptism", candidateName:"Baby of Grace Rodrigues", familyName:"Rodrigues Family", requiredDocuments:["Birth Certificate","Parents' Marriage Certificate"], submissionDate:"28 Jul 2026", registrationReference:"SAC-REG-2026-0142", registrationFee:200, paymentStatus:"Paid", additionalInfo:"Requested date: 2 Aug 2026", status:"Submitted", internalNotes:"" },
+    { id:"SREQ-003", sacramentName:"First Communion", candidateName:"Michael Pinto", familyName:"Pinto Family", requiredDocuments:["Baptism Certificate"], submissionDate:"15 Jul 2026", registrationReference:"SAC-REG-2026-0119", registrationFee:150, paymentStatus:"Paid", additionalInfo:"", status:"Submitted", internalNotes:"" },
+    { id:"SREQ-004", sacramentName:"Marriage", candidateName:"Anil Fernandes & Sonia D'Costa", familyName:"Fernandes Family", requiredDocuments:["Baptism Certificate (both parties)","Pre-Cana Certificate"], submissionDate:"10 Jun 2026", registrationReference:"SAC-REG-2026-0091", registrationFee:2000, paymentStatus:"Paid", additionalInfo:"Pre-Cana certificate uploaded is from another diocese — needs verification.", status:"Rejected", internalNotes:"Asked couple to obtain a local Pre-Cana certificate before resubmitting." },
+  ];
+
+  // ---------------- Home Service Requests (mirrors what parishioners submit via ----------------
+  // ---------------- screen-parishioner-homeservices-request.html — the staff-side of that loop). ----------------
+  let homeServiceRequests = [
+    { id:"HSREQ-001", serviceName:"House Blessing", familyName:"Rodrigues Family", requestedBy:"John Rodrigues", preferredDate:"15 Aug 2026", preferredTime:"10:00 AM", isEmergency:false, description:"New home blessing", status:"Pending Approval", scheduledDate:null, scheduledTime:null, internalNotes:"" },
+    { id:"HSREQ-002", serviceName:"Sick Visit / Anointing", familyName:"Rodrigues Family", requestedBy:"Grace Rodrigues", preferredDate:null, preferredTime:null, isEmergency:true, description:"Grandmother recovering from surgery, requesting a visit this week.", status:"Scheduled", scheduledDate:"27 Jul 2026", scheduledTime:"4:00 PM", internalNotes:"" },
+    { id:"HSREQ-003", serviceName:"Family Prayer / Rosary", familyName:"Pinto Family", requestedBy:"Michael Pinto", preferredDate:"20 Aug 2026", preferredTime:"6:00 PM", isEmergency:false, description:"Monthly family rosary, would like Fr. Francis to lead if possible.", status:"Pending Approval", scheduledDate:null, scheduledTime:null, internalNotes:"" },
+    { id:"HSREQ-004", serviceName:"Home Communion", familyName:"Fernandes Family", requestedBy:"Sonia D'Costa", preferredDate:"5 Jul 2026", preferredTime:"9:00 AM", isEmergency:false, description:"Elderly parent unable to attend Mass regularly.", status:"Completed", scheduledDate:"5 Jul 2026", scheduledTime:"9:00 AM", internalNotes:"Now on the monthly Home Communion round." },
+  ];
+
+  // ---------------- Facility Booking Requests (mirrors what parishioners submit via ----------------
+  // ---------------- screen-parishioner-facilities-request.html — the staff-side of that loop). ----------------
+  let facilityBookingRequests = [
+    { id:"FBREQ-001", facilityName:"Parish Hall", familyName:"Rodrigues Family", requestedBy:"Kevin Rodrigues", date:"23 Aug 2026", slotName:"Evening", startTime:"4:00 PM", endTime:"9:00 PM", purpose:"Kevin's 23rd birthday celebration", attendees:80, bookingFee:2000, paymentStatus:"Paid", status:"Confirmed", internalNotes:"" },
+    { id:"FBREQ-002", facilityName:"Meeting Room A", familyName:"Pinto Family", requestedBy:"Michael Pinto", date:"10 Aug 2026", slotName:"Full Day", startTime:"9:00 AM", endTime:"6:00 PM", purpose:"Parish youth group planning meeting", attendees:15, bookingFee:300, paymentStatus:"Paid", status:"Pending Approval", internalNotes:"" },
+    { id:"FBREQ-003", facilityName:"Outdoor Grounds", familyName:"Fernandes Family", requestedBy:"Sonia D'Costa", date:"29 Aug 2026", slotName:"Evening", startTime:"3:00 PM", endTime:"8:00 PM", purpose:"Engagement ceremony", attendees:150, bookingFee:3000, paymentStatus:"Paid", status:"Pending Approval", internalNotes:"" },
+    { id:"FBREQ-004", facilityName:"Parish Hall", familyName:"D'Souza Family", requestedBy:"Anthony D'Souza", date:"5 Aug 2026", slotName:"Morning", startTime:"8:00 AM", endTime:"1:00 PM", purpose:"First birthday celebration", attendees:60, bookingFee:2000, paymentStatus:"Paid", status:"Rejected", internalNotes:"Parish Hall already booked for a funeral that morning \u2014 offered the Evening slot instead, family chose to rebook elsewhere." },
+  ];
+
   function setModule(m) {
     currentModule = m;
     document.querySelectorAll('.module-tab').forEach(btn => {
@@ -382,14 +422,19 @@
       renderFamilyUpdatesModule(el);
       return;
     }
+    if (currentModule === 'sacraments') {
+      renderSacramentsModule(el);
+      return;
+    }
+    if (currentModule === 'homeservices') {
+      renderHomeServicesModule(el);
+      return;
+    }
+    if (currentModule === 'facilities') {
+      renderFacilitiesModule(el);
+      return;
+    }
     if (currentModule !== 'documents') {
-      const labels = { sacraments: 'Sacraments', homeservices: 'Home Services', facilities: 'Facility Bookings' };
-      el.innerHTML = `
-        <div class="bg-card-bg rounded-card shadow-card p-12 text-center space-y-2">
-          <p class="text-sm font-semibold">${labels[currentModule]} requests aren't built yet</p>
-          <p class="text-sm text-ink-muted">This module will follow the same mini-workflow pattern once built.</p>
-        </div>
-      `;
       return;
     }
     el.innerHTML = `
@@ -439,6 +484,456 @@
   function updateFamilyUpdatesBadge() {
     const pendingCount = familyUpdateRequests.filter(r => r.status === 'Submitted').length;
     const badge = document.getElementById('family-updates-badge');
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+  function updateSacramentsBadge() {
+    const pendingCount = sacramentRequests.filter(r => r.status === 'Submitted').length;
+    const badge = document.getElementById('sacraments-badge');
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  // =========================================================================
+  // SACRAMENTS MODULE — mirrors the Documents mini-workflow's spirit (list, expand,
+  // approve/reject) but appropriately lighter: Sacraments don't need file generation
+  // or delivery methods, just document verification and a decision.
+  // =========================================================================
+  const SACRAMENT_TABS = ['All', 'Submitted', 'Approved', 'Rejected'];
+  let sacramentsTab = 'All';
+  let sacramentsExpandedId = null;
+  let sacramentsRejectPromptId = null;
+
+  function sacramentsFiltered() {
+    if (sacramentsTab === 'All') return sacramentRequests;
+    return sacramentRequests.filter(r => r.status === sacramentsTab);
+  }
+
+  function renderSacramentsModule(el) {
+    el.innerHTML = `
+      <div class="flex gap-2 mb-5 overflow-x-auto" id="sacraments-stage-tabs"></div>
+      <div id="sacraments-list" class="space-y-3"></div>
+    `;
+    renderSacramentsStageTabs();
+    renderSacramentsList();
+  }
+  function renderSacramentsStageTabs() {
+    document.getElementById('sacraments-stage-tabs').innerHTML = SACRAMENT_TABS.map(t => {
+      const count = t === 'All' ? sacramentRequests.length : sacramentRequests.filter(r => r.status === t).length;
+      const active = sacramentsTab === t;
+      return `<button onclick="setSacramentsTab('${t}')" class="px-3.5 py-2 rounded-badge text-xs font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">${t}${count ? ` (${count})` : ''}</button>`;
+    }).join('');
+  }
+  function setSacramentsTab(t) {
+    sacramentsTab = t;
+    sacramentsExpandedId = null;
+    renderSacramentsStageTabs();
+    renderSacramentsList();
+  }
+  function sacramentStatusPill(status) {
+    const map = { 'Submitted':['bg-gold/20','text-[#8a5a10]','clock'], 'Approved':['bg-green/20','text-[#2f6b45]','check'], 'Rejected':['bg-error-bg','text-error','x'] };
+    const [bg, text, iconName] = map[status] || map['Submitted'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon(iconName,'w-3 h-3')}${status}</span>`;
+  }
+  function renderSacramentsList() {
+    const list = sacramentsFiltered();
+    const container = document.getElementById('sacraments-list');
+    if (list.length === 0) {
+      container.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No requests here</p><p class="text-sm text-ink-muted mt-1">Sacrament registrations submitted by parishioners will appear here.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(r => {
+      const isExpanded = sacramentsExpandedId === r.id;
+      return `
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+          <button onclick="toggleSacramentExpand('${r.id}')" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 transition-warm hover:bg-section-bg min-h-[44px]">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">${r.sacramentName} \u2014 ${r.candidateName}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${r.familyName} \u00b7 ${r.registrationReference} \u00b7 Submitted ${r.submissionDate}</p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${pill(r.paymentStatus, PAYMENT_STYLE)}
+              ${sacramentStatusPill(r.status)}
+            </div>
+          </button>
+          ${isExpanded ? renderSacramentDetail(r) : ''}
+        </div>
+      `;
+    }).join('');
+  }
+  function toggleSacramentExpand(id) {
+    sacramentsExpandedId = sacramentsExpandedId === id ? null : id;
+    sacramentsRejectPromptId = null;
+    renderSacramentsList();
+  }
+  function renderSacramentDetail(r) {
+    return `
+      <div class="px-5 pb-5 pt-1 border-t border-divider">
+        <div class="grid sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-2">Required documents</p>
+            <div class="flex flex-wrap gap-1.5">
+              ${r.requiredDocuments.map(d => `<span class="bg-section-bg text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge flex items-center gap-1.5">${icon('check','w-3 h-3 text-[#2f6b45]')}${d}</span>`).join('')}
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-2">Registration fee</p>
+            <p class="text-sm font-semibold">\u20b9${r.registrationFee} \u00b7 ${r.paymentStatus}</p>
+          </div>
+        </div>
+        ${r.additionalInfo ? `<div class="mt-4"><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Additional information from parishioner</p><p class="text-sm">${r.additionalInfo}</p></div>` : ''}
+        ${r.internalNotes ? `<div class="mt-4 bg-section-bg rounded-card p-3"><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Internal notes</p><p class="text-sm">${r.internalNotes}</p></div>` : ''}
+        ${r.status === 'Submitted' ? `
+          <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-divider">
+            <button onclick="approveSacrament('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Approve Registration</button>
+            ${sacramentsRejectPromptId === r.id ? '' : `<button onclick="sacramentsRejectPromptId='${r.id}'; renderSacramentsList()" class="bg-white border border-divider text-error text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>`}
+          </div>
+          ${sacramentsRejectPromptId === r.id ? `
+            <div class="mt-3 space-y-2">
+              <textarea id="sac-reject-reason-${r.id}" rows="2" placeholder="Reason for rejection (shown to the parishioner)" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+              <div class="flex gap-2">
+                <button onclick="rejectSacrament('${r.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Confirm Rejection</button>
+                <button onclick="sacramentsRejectPromptId=null; renderSacramentsList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : ''}
+        ` : ''}
+      </div>
+    `;
+  }
+  function approveSacrament(id) {
+    const r = sacramentRequests.find(x => x.id === id);
+    r.status = 'Approved';
+    toast(`${r.sacramentName} registration approved \u2014 ${r.candidateName}.`);
+    updateSacramentsBadge();
+    renderSacramentsStageTabs();
+    renderSacramentsList();
+  }
+  function rejectSacrament(id) {
+    const r = sacramentRequests.find(x => x.id === id);
+    const reason = document.getElementById(`sac-reject-reason-${id}`).value.trim();
+    if (!reason) { toast('Please provide a reason before rejecting.'); return; }
+    r.status = 'Rejected';
+    r.internalNotes = reason;
+    sacramentsRejectPromptId = null;
+    toast(`${r.sacramentName} registration rejected \u2014 parishioner notified.`);
+    updateSacramentsBadge();
+    renderSacramentsStageTabs();
+    renderSacramentsList();
+  }
+
+  // =========================================================================
+  // HOME SERVICES MODULE — Pending Approval \u2192 Scheduled \u2192 Completed, or Rejected.
+  // No payment/fee involved (home services are free), so the workflow is simpler
+  // still than Sacraments: Approve-and-schedule captures a date/time (defaulting
+  // to the parishioner's preferred slot, editable by staff), then a separate
+  // "Mark Completed" step once the visit has actually happened.
+  // =========================================================================
+  const HOMESERVICE_TABS = ['All', 'Pending Approval', 'Scheduled', 'Completed'];
+  let homeServicesTab = 'All';
+  let homeServicesExpandedId = null;
+  let homeServicesRejectPromptId = null;
+  let homeServicesSchedulePromptId = null;
+
+  function homeServicesFiltered() {
+    if (homeServicesTab === 'All') return homeServiceRequests;
+    return homeServiceRequests.filter(r => r.status === homeServicesTab);
+  }
+  function renderHomeServicesModule(el) {
+    el.innerHTML = `
+      <div class="flex gap-2 mb-5 overflow-x-auto" id="homeservices-stage-tabs"></div>
+      <div id="homeservices-list" class="space-y-3"></div>
+    `;
+    renderHomeServicesStageTabs();
+    renderHomeServicesList();
+  }
+  function renderHomeServicesStageTabs() {
+    document.getElementById('homeservices-stage-tabs').innerHTML = HOMESERVICE_TABS.map(t => {
+      const count = t === 'All' ? homeServiceRequests.length : homeServiceRequests.filter(r => r.status === t).length;
+      const active = homeServicesTab === t;
+      return `<button onclick="setHomeServicesTab('${t}')" class="px-3.5 py-2 rounded-badge text-xs font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">${t}${count ? ` (${count})` : ''}</button>`;
+    }).join('');
+  }
+  function setHomeServicesTab(t) {
+    homeServicesTab = t;
+    homeServicesExpandedId = null;
+    renderHomeServicesStageTabs();
+    renderHomeServicesList();
+  }
+  function homeServiceStatusPill(status) {
+    const map = { 'Pending Approval':['bg-gold/20','text-[#8a5a10]','clock'], 'Scheduled':['bg-primary-light','text-primary','clock'], 'Completed':['bg-green/20','text-[#2f6b45]','check'], 'Rejected':['bg-error-bg','text-error','x'] };
+    const [bg, text, iconName] = map[status] || map['Pending Approval'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon(iconName,'w-3 h-3')}${status}</span>`;
+  }
+  function renderHomeServicesList() {
+    const list = homeServicesFiltered();
+    const container = document.getElementById('homeservices-list');
+    if (list.length === 0) {
+      container.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No requests here</p><p class="text-sm text-ink-muted mt-1">Home service requests submitted by parishioners will appear here.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(r => {
+      const isExpanded = homeServicesExpandedId === r.id;
+      return `
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden ${r.isEmergency && r.status === 'Pending Approval' ? 'ring-2 ring-error' : ''}">
+          <button onclick="toggleHomeServiceExpand('${r.id}')" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 transition-warm hover:bg-section-bg min-h-[44px]">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">${r.serviceName}${r.isEmergency ? ' <span class="text-error text-xs font-normal">\u00b7 emergency</span>' : ''}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${r.familyName} \u00b7 ${r.preferredDate ? 'Preferred ' + r.preferredDate + (r.preferredTime ? ' \u00b7 ' + r.preferredTime : '') : 'No preferred date given'}</p>
+            </div>
+            ${homeServiceStatusPill(r.status)}
+          </button>
+          ${isExpanded ? renderHomeServiceDetail(r) : ''}
+        </div>
+      `;
+    }).join('');
+  }
+  function toggleHomeServiceExpand(id) {
+    homeServicesExpandedId = homeServicesExpandedId === id ? null : id;
+    homeServicesRejectPromptId = null;
+    homeServicesSchedulePromptId = null;
+    renderHomeServicesList();
+  }
+  function renderHomeServiceDetail(r) {
+    return `
+      <div class="px-5 pb-5 pt-1 border-t border-divider">
+        <div>
+          <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Requested by</p>
+          <p class="text-sm">${r.requestedBy}</p>
+        </div>
+        <div class="mt-3">
+          <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Details from parishioner</p>
+          <p class="text-sm">${r.description}</p>
+        </div>
+        ${r.status === 'Scheduled' || r.status === 'Completed' ? `
+          <div class="mt-3 bg-primary-light rounded-card p-3">
+            <p class="text-xs text-primary uppercase tracking-wide font-semibold mb-1">Scheduled</p>
+            <p class="text-sm font-medium">${r.scheduledDate} \u00b7 ${r.scheduledTime}</p>
+          </div>
+        ` : ''}
+        ${r.internalNotes ? `<div class="mt-3 bg-section-bg rounded-card p-3"><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Internal notes</p><p class="text-sm">${r.internalNotes}</p></div>` : ''}
+
+        ${r.status === 'Pending Approval' ? `
+          <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-divider">
+            ${homeServicesSchedulePromptId === r.id ? '' : `<button onclick="homeServicesSchedulePromptId='${r.id}'; renderHomeServicesList()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Approve &amp; Schedule</button>`}
+            ${homeServicesRejectPromptId === r.id ? '' : `<button onclick="homeServicesRejectPromptId='${r.id}'; renderHomeServicesList()" class="bg-white border border-divider text-error text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>`}
+          </div>
+          ${homeServicesSchedulePromptId === r.id ? `
+            <div class="mt-3 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <input id="hs-schedule-date-${r.id}" type="date" class="border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+                <input id="hs-schedule-time-${r.id}" type="text" placeholder="e.g. 10:00 AM" value="${r.preferredTime || ''}" class="border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              </div>
+              <div class="flex gap-2">
+                <button onclick="scheduleHomeService('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Confirm Schedule</button>
+                <button onclick="homeServicesSchedulePromptId=null; renderHomeServicesList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : ''}
+          ${homeServicesRejectPromptId === r.id ? `
+            <div class="mt-3 space-y-2">
+              <textarea id="hs-reject-reason-${r.id}" rows="2" placeholder="Reason for rejection (shown to the parishioner)" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+              <div class="flex gap-2">
+                <button onclick="rejectHomeService('${r.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Confirm Rejection</button>
+                <button onclick="homeServicesRejectPromptId=null; renderHomeServicesList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : ''}
+        ` : ''}
+        ${r.status === 'Scheduled' ? `
+          <div class="mt-4 pt-4 border-t border-divider">
+            <button onclick="completeHomeService('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Mark Completed</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+  function scheduleHomeService(id) {
+    const r = homeServiceRequests.find(x => x.id === id);
+    const date = document.getElementById(`hs-schedule-date-${id}`).value;
+    const time = document.getElementById(`hs-schedule-time-${id}`).value.trim();
+    if (!date || !time) { toast('Please choose a date and time.'); return; }
+    r.status = 'Scheduled';
+    r.scheduledDate = formatShortDate(date);
+    r.scheduledTime = time;
+    homeServicesSchedulePromptId = null;
+    toast(`${r.serviceName} scheduled for ${r.familyName}.`);
+    updateHomeServicesBadge();
+    renderHomeServicesStageTabs();
+    renderHomeServicesList();
+  }
+  function rejectHomeService(id) {
+    const r = homeServiceRequests.find(x => x.id === id);
+    const reason = document.getElementById(`hs-reject-reason-${id}`).value.trim();
+    if (!reason) { toast('Please provide a reason before rejecting.'); return; }
+    r.status = 'Rejected';
+    r.internalNotes = reason;
+    homeServicesRejectPromptId = null;
+    toast(`${r.serviceName} request rejected \u2014 parishioner notified.`);
+    updateHomeServicesBadge();
+    renderHomeServicesStageTabs();
+    renderHomeServicesList();
+  }
+  function completeHomeService(id) {
+    const r = homeServiceRequests.find(x => x.id === id);
+    r.status = 'Completed';
+    toast(`${r.serviceName} marked completed.`);
+    renderHomeServicesStageTabs();
+    renderHomeServicesList();
+  }
+  function formatShortDate(iso) {
+    const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function updateHomeServicesBadge() {
+    const pendingCount = homeServiceRequests.filter(r => r.status === 'Pending Approval').length;
+    const badge = document.getElementById('homeservices-badge');
+    if (pendingCount > 0) {
+      badge.textContent = pendingCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  // =========================================================================
+  // FACILITY BOOKINGS MODULE — Pending Approval \u2192 Confirmed, or Rejected.
+  // Has a fee like Sacraments (so payment status is shown), but no multi-step
+  // scheduling like Home Services \u2014 the parishioner already picked a specific
+  // date and slot when booking, staff just approves or rejects it as-is.
+  // =========================================================================
+  const FACILITIES_TABS = ['All', 'Pending Approval', 'Confirmed', 'Rejected'];
+  let facilitiesTab = 'All';
+  let facilitiesExpandedId = null;
+  let facilitiesRejectPromptId = null;
+
+  function facilitiesFiltered() {
+    if (facilitiesTab === 'All') return facilityBookingRequests;
+    return facilityBookingRequests.filter(r => r.status === facilitiesTab);
+  }
+  function renderFacilitiesModule(el) {
+    el.innerHTML = `
+      <div class="flex gap-2 mb-5 overflow-x-auto" id="facilities-stage-tabs"></div>
+      <div id="facilities-list" class="space-y-3"></div>
+    `;
+    renderFacilitiesStageTabs();
+    renderFacilitiesList();
+  }
+  function renderFacilitiesStageTabs() {
+    document.getElementById('facilities-stage-tabs').innerHTML = FACILITIES_TABS.map(t => {
+      const count = t === 'All' ? facilityBookingRequests.length : facilityBookingRequests.filter(r => r.status === t).length;
+      const active = facilitiesTab === t;
+      return `<button onclick="setFacilitiesTab('${t}')" class="px-3.5 py-2 rounded-badge text-xs font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}">${t}${count ? ` (${count})` : ''}</button>`;
+    }).join('');
+  }
+  function setFacilitiesTab(t) {
+    facilitiesTab = t;
+    facilitiesExpandedId = null;
+    renderFacilitiesStageTabs();
+    renderFacilitiesList();
+  }
+  function facilityStatusPill(status) {
+    const map = { 'Pending Approval':['bg-gold/20','text-[#8a5a10]','clock'], 'Confirmed':['bg-green/20','text-[#2f6b45]','check'], 'Rejected':['bg-error-bg','text-error','x'] };
+    const [bg, text, iconName] = map[status] || map['Pending Approval'];
+    return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon(iconName,'w-3 h-3')}${status}</span>`;
+  }
+  function renderFacilitiesList() {
+    const list = facilitiesFiltered();
+    const container = document.getElementById('facilities-list');
+    if (list.length === 0) {
+      container.innerHTML = `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No bookings here</p><p class="text-sm text-ink-muted mt-1">Facility booking requests submitted by parishioners will appear here.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(r => {
+      const isExpanded = facilitiesExpandedId === r.id;
+      return `
+        <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+          <button onclick="toggleFacilityExpand('${r.id}')" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 transition-warm hover:bg-section-bg min-h-[44px]">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">${r.facilityName} \u2014 ${r.familyName}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${r.date} \u00b7 ${r.slotName} (${r.startTime} \u2013 ${r.endTime})</p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${pill(r.paymentStatus, PAYMENT_STYLE)}
+              ${facilityStatusPill(r.status)}
+            </div>
+          </button>
+          ${isExpanded ? renderFacilityDetail(r) : ''}
+        </div>
+      `;
+    }).join('');
+  }
+  function toggleFacilityExpand(id) {
+    facilitiesExpandedId = facilitiesExpandedId === id ? null : id;
+    facilitiesRejectPromptId = null;
+    renderFacilitiesList();
+  }
+  function renderFacilityDetail(r) {
+    return `
+      <div class="px-5 pb-5 pt-1 border-t border-divider">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Requested by</p><p class="text-sm">${r.requestedBy}</p></div>
+          <div><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Expected attendees</p><p class="text-sm">${r.attendees}</p></div>
+        </div>
+        <div class="mt-3">
+          <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Purpose</p>
+          <p class="text-sm">${r.purpose}</p>
+        </div>
+        <div class="mt-3">
+          <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Booking fee</p>
+          <p class="text-sm font-semibold">\u20b9${r.bookingFee} \u00b7 ${r.paymentStatus}</p>
+        </div>
+        ${r.internalNotes ? `<div class="mt-3 bg-section-bg rounded-card p-3"><p class="text-xs text-ink-muted uppercase tracking-wide font-semibold mb-1">Internal notes</p><p class="text-sm">${r.internalNotes}</p></div>` : ''}
+        ${r.status === 'Pending Approval' ? `
+          <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-divider">
+            <button onclick="confirmFacilityBooking('${r.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm">Confirm Booking</button>
+            ${facilitiesRejectPromptId === r.id ? '' : `<button onclick="facilitiesRejectPromptId='${r.id}'; renderFacilitiesList()" class="bg-white border border-divider text-error text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-error-bg">Reject</button>`}
+          </div>
+          ${facilitiesRejectPromptId === r.id ? `
+            <div class="mt-3 space-y-2">
+              <textarea id="fb-reject-reason-${r.id}" rows="2" placeholder="Reason for rejection (shown to the parishioner)" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea>
+              <div class="flex gap-2">
+                <button onclick="rejectFacilityBooking('${r.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Confirm Rejection</button>
+                <button onclick="facilitiesRejectPromptId=null; renderFacilitiesList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : ''}
+        ` : ''}
+      </div>
+    `;
+  }
+  function confirmFacilityBooking(id) {
+    const r = facilityBookingRequests.find(x => x.id === id);
+    r.status = 'Confirmed';
+    toast(`${r.facilityName} booking confirmed for ${r.familyName}.`);
+    updateFacilitiesBadge();
+    renderFacilitiesStageTabs();
+    renderFacilitiesList();
+  }
+  function rejectFacilityBooking(id) {
+    const r = facilityBookingRequests.find(x => x.id === id);
+    const reason = document.getElementById(`fb-reject-reason-${id}`).value.trim();
+    if (!reason) { toast('Please provide a reason before rejecting.'); return; }
+    r.status = 'Rejected';
+    r.internalNotes = reason;
+    facilitiesRejectPromptId = null;
+    toast(`${r.facilityName} booking rejected \u2014 parishioner notified.`);
+    updateFacilitiesBadge();
+    renderFacilitiesStageTabs();
+    renderFacilitiesList();
+  }
+  function updateFacilitiesBadge() {
+    const pendingCount = facilityBookingRequests.filter(r => r.status === 'Pending Approval').length;
+    const badge = document.getElementById('facilities-badge');
     if (pendingCount > 0) {
       badge.textContent = pendingCount;
       badge.classList.remove('hidden');
@@ -896,8 +1391,11 @@
   }
 
   updateFamilyUpdatesBadge();
+  updateSacramentsBadge();
+  updateHomeServicesBadge();
+  updateFacilitiesBadge();
   const initialModule = sessionParams.get('module');
-  if (initialModule === 'familyupdates') { setModule('familyupdates'); } else { renderModule(); }
+  if (initialModule === 'familyupdates' || initialModule === 'sacraments' || initialModule === 'homeservices' || initialModule === 'facilities') { setModule(initialModule); } else { renderModule(); }
 </script>
 
 </body>

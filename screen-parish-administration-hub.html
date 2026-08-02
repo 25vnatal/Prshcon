@@ -55,10 +55,6 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
           Family Records
         </button>
-        <button onclick="return goCommittees()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
-          Committees
-        </button>
         <button onclick="return goMasses()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
           Masses
@@ -87,10 +83,20 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
           Finance
         </button>
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
-          Administration
-        </a>
+        <button onclick="toggleAdminGroup()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <span class="flex items-center gap-3">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v4"/><path d="M9 6l3-2 3 2"/><path d="M5 21V11l7-5 7 5v10"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg>
+            Administration
+          </span>
+          <svg id="admin-chevron" class="icon w-4 h-4 transition-transform rotate-90" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div id="admin-children" class="ml-4 pl-3 border-l border-divider space-y-0.5 my-1">
+          <button id="admin-child-profile" onclick="return goAdminProfile()" class="w-full text-left px-3 py-2 rounded-button text-xs bg-primary-light text-primary font-semibold transition-warm">Parish Profile</button>
+          <button onclick="return goServices()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Services</button>
+          <button id="admin-child-inventory" onclick="return goAdminInventory()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Inventory</button>
+          <button id="admin-child-staff" onclick="return goAdminStaff()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Staff</button>
+          <button onclick="return goCommittees()" class="w-full text-left px-3 py-2 rounded-button text-xs text-ink-muted hover:bg-section-bg transition-warm">Committees</button>
+        </div>
         <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
           Reports
@@ -139,8 +145,6 @@
           <button onclick="setModule('profile')" data-module="profile" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Parish Profile</button>
           <button onclick="setModule('inventory')" data-module="inventory" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Inventory</button>
           <button onclick="setModule('staff')" data-module="staff" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Staff</button>
-          <span class="w-px h-5 bg-divider mx-1"></span>
-          <button onclick="return goServices()" class="px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted border border-divider hover:bg-section-bg flex items-center gap-1.5">Services<svg class="icon w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></button>
         </div>
 
         <div id="module-content"></div>
@@ -242,6 +246,13 @@
   function goDash() { window.location.href = 'screen-parish-dashboard-home.html?' + baseParams().toString(); return false; }
   function goFamilyRecords() { window.location.href = 'screen-parish-familyrecords-search.html?' + baseParams().toString(); return false; }
   function goCommittees() { window.location.href = 'screen-parish-committees-hub.html?' + baseParams().toString(); return false; }
+  function goAdminProfile() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=profile'; return false; }
+  function goAdminInventory() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=inventory'; return false; }
+  function goAdminStaff() { window.location.href = 'screen-parish-administration-hub.html?' + baseParams().toString() + '&module=staff'; return false; }
+  function toggleAdminGroup() {
+    document.getElementById('admin-children').classList.toggle('hidden');
+    document.getElementById('admin-chevron').classList.toggle('rotate-90');
+  }
   function goRequests() { window.location.href = 'screen-parish-requests-hub.html?' + baseParams().toString(); return false; }
   function goDocuments() { window.location.href = 'screen-parish-documents-hub.html?' + baseParams().toString(); return false; }
   function goMasses() { window.location.href = 'screen-parish-masses-hub.html?' + baseParams().toString(); return false; }
@@ -339,6 +350,11 @@
     document.querySelectorAll('.module-tab').forEach(btn => {
       const active = btn.dataset.module === m;
       btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
+    });
+    ['profile', 'inventory', 'staff'].forEach(key => {
+      const el = document.getElementById(`admin-child-${key}`);
+      if (!el) return;
+      el.className = `w-full text-left px-3 py-2 rounded-button text-xs transition-warm ${key === m ? 'bg-primary-light text-primary font-semibold' : 'text-ink-muted hover:bg-section-bg'}`;
     });
     renderModule();
   }
@@ -853,7 +869,8 @@
     renderModule();
   }
 
-  renderModule();
+  const initialModule = sessionParams.get('module');
+  if (initialModule === 'inventory' || initialModule === 'staff') { setModule(initialModule); } else { renderModule(); }
 </script>
 
 </body>
