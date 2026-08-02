@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Me</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .toggle { width: 40px; height: 24px; border-radius: 999px; position: relative; transition: background 200ms ease; flex-shrink: 0; }
+  .toggle-knob { width: 18px; height: 18px; border-radius: 999px; background: white; position: absolute; top: 3px; left: 3px; transition: left 200ms ease; }
+  .toggle.on { background: #4F7CF5; }
+  .toggle.on .toggle-knob { left: 19px; }
+  .toggle.off { background: #E8EDF5; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="px-5 pt-5 pb-4 flex items-center gap-3">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <p class="font-heading font-bold text-lg">Me</p>
+    </header>
+
+    <main class="px-5 space-y-5">
+
+      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="w-full bg-card-bg rounded-card shadow-card p-5 flex items-center gap-4 text-left transition-warm hover:shadow-card-hover min-h-[44px]">
+        <span class="w-11 h-11 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold">My Family</p>
+          <p class="text-xs text-ink-muted mt-0.5">Rodrigues Family \u00b7 4 members</p>
+        </div>
+        <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="flex gap-2 overflow-x-auto pb-1">
+        <button onclick="setModule('membership')" data-module="membership" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-primary text-white">Membership</button>
+        <button onclick="setModule('activity')" data-module="activity" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted border border-divider">Activity</button>
+        <button onclick="setModule('settings')" data-module="settings" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted border border-divider">Settings</button>
+        <button onclick="setModule('help')" data-module="help" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted border border-divider">Help</button>
+      </div>
+
+      <div id="module-content"></div>
+
+    </main>
+
+  </div>
+
+  <!-- ============ BOTTOM NAV (5 items) ============ -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
+    <div class="grid grid-cols-5">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+        <span class="text-[10.5px]">Home</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
+        <span class="text-[10.5px]">Services</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
+        <span class="text-[10.5px]">Give</span>
+      </button>
+      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
+        <span class="text-[10.5px]">My Family</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 py-3 text-primary">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <span class="text-[10.5px] font-semibold">Menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- ============ PAY MODAL ============ -->
+  <div id="pay-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-end justify-center">
+    <div class="bg-card-bg rounded-t-card shadow-card w-full max-w-[420px]">
+      <div class="px-5 pt-5 pb-4 border-b border-divider flex items-center justify-between">
+        <p class="font-heading font-bold text-lg">Pay Subscription</p>
+        <button onclick="document.getElementById('pay-modal').classList.add('hidden')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="px-5 py-5 space-y-4">
+        <div class="bg-section-bg rounded-card p-4 flex items-center justify-between">
+          <span class="text-sm font-semibold">Amount due</span>
+          <span id="pay-amount-display" class="font-heading font-bold text-lg"></span>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">Payment method</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="payState.method='UPI'; renderPayModal()" id="pm-upi" class="py-3 rounded-button text-xs font-semibold border transition-warm bg-white border-divider text-ink hover:bg-section-bg">UPI</button>
+            <button onclick="payState.method='Card'; renderPayModal()" id="pm-card" class="py-3 rounded-button text-xs font-semibold border transition-warm bg-white border-divider text-ink hover:bg-section-bg">Card</button>
+            <button onclick="payState.method='Net Banking'; renderPayModal()" id="pm-netbanking" class="py-3 rounded-button text-xs font-semibold border transition-warm bg-white border-divider text-ink hover:bg-section-bg">Net Banking</button>
+          </div>
+        </div>
+        <button onclick="submitSubscriptionPayment()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3.5 rounded-button min-h-[44px] transition-warm">Confirm Payment</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  const sessionName = sessionParams.get('name') || 'John Rodrigues';
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function formatDate(iso) {
+    if (!iso) return '\u2014';
+    const [y,m,d] = iso.split('-').map(Number);
+    return `${d} ${MONTH_NAMES[m-1]} ${y}`;
+  }
+  function formatMoney(n) { return '\u20b9' + n.toLocaleString('en-IN'); }
+  const ICON_PATHS = {
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
+    heart: '<path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/>',
+    home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>',
+    building: '<rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="8" x2="9" y2="8"/><line x1="15" y1="8" x2="15" y2="8"/>',
+    chevronRight: '<polyline points="9 18 15 12 9 6"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  function toggleEl(on, onclickFn) {
+    return `<button onclick="${onclickFn}" class="toggle ${on ? 'on' : 'off'}" role="switch" aria-checked="${on}"><span class="toggle-knob"></span></button>`;
+  }
+
+  let currentModule = 'membership';
+  function setModule(m) {
+    currentModule = m;
+    document.querySelectorAll('.module-tab').forEach(btn => {
+      const active = btn.dataset.module === m;
+      btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted border border-divider'}`;
+    });
+    renderModule();
+  }
+  function renderModule() {
+    const el = document.getElementById('module-content');
+    if (currentModule === 'membership') renderMembershipModule(el);
+    else if (currentModule === 'activity') renderActivityModule(el);
+    else if (currentModule === 'settings') renderSettingsModule(el);
+    else renderHelpModule(el);
+  }
+
+  // =========================================================================
+  // MEMBERSHIP & SUBSCRIPTION — real Q3 (Paid) plus an upcoming Q4 (Pending),
+  // matching the Dashboard's "Subscription payment reminder — due 1 Oct 2026".
+  // =========================================================================
+  let subscriptionLedger = [
+    { billingPeriod:"2026-Q4", minimumAmountDue:1200, amountPaid:0, outstandingAmount:1200, dueDate:"2026-10-01", status:"Pending" },
+    { billingPeriod:"2026-Q3", minimumAmountDue:1200, amountPaid:1200, outstandingAmount:0, lastPaymentDate:"2026-07-05", status:"Paid" },
+  ];
+  function renderMembershipModule(el) {
+    const current = subscriptionLedger[0];
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-xs text-ink-muted uppercase tracking-wide font-semibold">Registered Parish</p>
+        <p class="text-sm font-semibold mt-1">Infant Jesus Shrine, Viveknagar</p>
+        <p class="text-xs text-ink-muted mt-0.5">Family Record IJS/FAM/1001</p>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mt-4">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-semibold">Subscription \u2014 ${current.billingPeriod}</p>
+          ${current.status === 'Paid' ? `<span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge">Paid</span>` : `<span class="bg-gold/20 text-[#8a5a10] text-xs font-semibold px-2.5 py-1 rounded-badge">Pending</span>`}
+        </div>
+        <div class="flex items-center justify-between text-sm mb-1"><span class="text-ink-muted">Amount due</span><span class="font-medium">${formatMoney(current.minimumAmountDue)}</span></div>
+        ${current.status === 'Pending' ? `
+          <div class="flex items-center justify-between text-sm mb-3"><span class="text-ink-muted">Due date</span><span class="font-medium">${formatDate(current.dueDate)}</span></div>
+          <button onclick="openPayModal()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Pay Now</button>
+        ` : `<div class="flex items-center justify-between text-sm"><span class="text-ink-muted">Paid on</span><span class="font-medium">${formatDate(current.lastPaymentDate)}</span></div>`}
+      </div>
+      <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mt-5 mb-2">Payment history</p>
+      <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+        ${subscriptionLedger.map(s => `
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-semibold">${s.billingPeriod}</p>
+              <p class="text-xs text-ink-muted mt-0.5">${s.status === 'Paid' ? 'Paid ' + formatDate(s.lastPaymentDate) : 'Due ' + formatDate(s.dueDate)}</p>
+            </div>
+            <p class="text-sm font-medium">${formatMoney(s.minimumAmountDue)}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  let payState = { method: null };
+  function openPayModal() {
+    payState = { method: null };
+    document.getElementById('pay-modal').classList.remove('hidden');
+    renderPayModal();
+  }
+  function renderPayModal() {
+    document.getElementById('pay-amount-display').textContent = formatMoney(subscriptionLedger[0].minimumAmountDue);
+    ['upi','card','netbanking'].forEach(id => {
+      const el = document.getElementById('pm-' + id);
+      if (!el) return;
+      const label = { upi:'UPI', card:'Card', netbanking:'Net Banking' }[id];
+      el.className = `py-3 rounded-button text-xs font-semibold border transition-warm ${payState.method === label ? 'bg-primary text-white border-primary' : 'bg-white border-divider text-ink hover:bg-section-bg'}`;
+    });
+  }
+  function submitSubscriptionPayment() {
+    if (!payState.method) { toast('Please choose a payment method.'); return; }
+    const current = subscriptionLedger[0];
+    current.amountPaid = current.minimumAmountDue;
+    current.outstandingAmount = 0;
+    current.status = 'Paid';
+    current.lastPaymentDate = '2026-07-31';
+    document.getElementById('pay-modal').classList.add('hidden');
+    toast(`${formatMoney(current.minimumAmountDue)} paid for ${current.billingPeriod}.`);
+    renderModule();
+  }
+
+  // =========================================================================
+  // ACTIVITY — unified feed across every request/booking type.
+  // =========================================================================
+  const activityFeed = [
+    { date:"2026-07-31", icon:"check", label:"Subscription payment reminder issued", detail:"2026-Q4, \u20b91,200 due 1 Oct 2026" },
+    { date:"2026-07-28", icon:"doc", label:"Document request submitted", detail:"Baptism Certificate \u00b7 DOC-REQ-2026-0142" },
+    { date:"2026-07-20", icon:"doc", label:"Document ready for collection", detail:"Baptism Certificate \u00b7 Clara Rodrigues" },
+    { date:"2026-07-15", icon:"home", label:"Home service scheduled", detail:"Sick Visit / Anointing \u00b7 27 Jul, 4:00 PM" },
+    { date:"2026-07-05", icon:"check", label:"Subscription paid", detail:"2026-Q3 \u00b7 \u20b91,200" },
+    { date:"2026-06-15", icon:"heart", label:"Donation given", detail:"Church Renovation Fund \u00b7 \u20b91,000" },
+    { date:"2026-06-01", icon:"check", label:"Sacrament registration approved", detail:"Confirmation \u00b7 Clara Rodrigues" },
+  ];
+  function renderActivityModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="divide-y divide-divider">
+          ${activityFeed.map(a => `
+            <div class="px-5 py-4 flex items-start gap-3">
+              <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon(a.icon,'w-4 h-4')}</span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold">${a.label}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${a.detail}</p>
+                <p class="text-xs text-ink-muted mt-1">${formatDate(a.date)}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // SETTINGS
+  // =========================================================================
+  let notifPrefs = { email: true, sms: false, whatsapp: true };
+  function renderSettingsModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-sm font-semibold mb-4">Account</p>
+        <div class="space-y-3 text-sm">
+          <div class="flex items-center justify-between"><span class="text-ink-muted">Name</span><span class="font-medium">${sessionName}</span></div>
+          <div class="flex items-center justify-between"><span class="text-ink-muted">Mobile</span><span class="font-medium">9845012345</span></div>
+          <div class="flex items-center justify-between"><span class="text-ink-muted">Email</span><span class="font-medium">john.rodrigues@example.com</span></div>
+          <div class="flex items-center justify-between"><span class="text-ink-muted">Preferred language</span><span class="font-medium">English</span></div>
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5 mt-4">
+        <p class="text-sm font-semibold mb-4">Notifications</p>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between"><span class="text-sm">Email</span>${toggleEl(notifPrefs.email, "toggleNotifPref('email')")}</div>
+          <div class="flex items-center justify-between"><span class="text-sm">SMS</span>${toggleEl(notifPrefs.sms, "toggleNotifPref('sms')")}</div>
+          <div class="flex items-center justify-between"><span class="text-sm">WhatsApp</span>${toggleEl(notifPrefs.whatsapp, "toggleNotifPref('whatsapp')")}</div>
+        </div>
+      </div>
+    `;
+  }
+  function toggleNotifPref(k) {
+    notifPrefs[k] = !notifPrefs[k];
+    renderModule();
+  }
+
+  // =========================================================================
+  // HELP
+  // =========================================================================
+  const faqs = [
+    { q:"How do I request a certificate?", a:"Go to Services \u2192 Documents & Certificates \u2192 Request Document, choose the certificate type, and follow the guided steps." },
+    { q:"How do I book a Mass intention?", a:"From the Dashboard, use the \u201cBook Mass\u201d quick action, or open the Mass Booking flow from the Upcoming section." },
+    { q:"How do I check my subscription status?", a:"Open Me \u2192 Membership to see your current billing period, amount due, and payment history." },
+    { q:"Who do I contact for urgent pastoral needs?", a:"Call the parish office directly \u2014 for emergencies, request a Sick Visit / Anointing through Home Services, which is flagged for immediate attention." },
+  ];
+  let openFaqIndex = null;
+  function renderHelpModule(el) {
+    el.innerHTML = `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden mb-4">
+        <div class="divide-y divide-divider">
+          ${faqs.map((f, i) => `
+            <div>
+              <button onclick="toggleFaq(${i})" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 min-h-[44px]">
+                <span class="text-sm font-medium">${f.q}</span>
+                <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0 transition-transform ${openFaqIndex === i ? 'rotate-90' : ''}" viewBox="0 0 24 24">${ICON_PATHS.chevronRight}</svg>
+              </button>
+              ${openFaqIndex === i ? `<p class="px-5 pb-4 text-xs text-ink-muted leading-relaxed">${f.a}</p>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="bg-card-bg rounded-card shadow-card p-5">
+        <p class="text-sm font-semibold mb-3">Contact the parish office</p>
+        <div class="space-y-2 text-sm">
+          <p class="text-ink-muted">Infant Jesus Shrine, Viveknagar</p>
+          <p class="text-ink-muted">Post Box 4712, Viveknagar, Bengaluru 560 047</p>
+          <p class="text-ink-muted">Phone: 25301206</p>
+          <p class="text-ink-muted">Office hours: 9:00 AM \u2013 5:30 PM (Mon\u2013Sat, closed Mondays)</p>
+        </div>
+      </div>
+    `;
+  }
+  function toggleFaq(i) {
+    openFaqIndex = openFaqIndex === i ? null : i;
+    renderModule();
+  }
+
+  renderModule();
+</script>
+
+</body>
+</html>

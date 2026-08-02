@@ -116,7 +116,7 @@
         <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
         <span class="text-[10.5px]">Services</span>
       </button>
-      <button onclick="toast('Give')" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
         <span class="text-[10.5px]">Give</span>
       </button>
@@ -124,7 +124,7 @@
         <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
         <span class="text-[10.5px]">My Family</span>
       </button>
-      <button onclick="toast('Menu')" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
         <span class="text-[10.5px]">Menu</span>
       </button>
@@ -182,8 +182,8 @@
       count: 2,
     },
     otherActions: [
-      { label: "Mass booking payment pending", sub: "₹100 due for your 16 Aug booking", cta: "Pay Now" },
-      { label: "Subscription payment reminder", sub: "Next payment due 1 Oct 2026", cta: "Pay Now" },
+      { label: "Mass booking payment pending", sub: "₹100 due for your 16 Aug booking", cta: "Pay Now", go: "screen-parishioner-massbooking-mybookings.html" },
+      { label: "Subscription payment reminder", sub: "Next payment due 1 Oct 2026", cta: "Pay Now", go: "screen-parishioner-me-hub.html" },
     ],
     upcoming: [
       { label: "Next Mass", value: "Sunday, 2 Aug · 8:00 AM", church: "Infant Jesus Shrine, Viveknagar" },
@@ -472,7 +472,7 @@
                   <p class="text-[11px] text-ink-muted mt-0.5">${i.sub}</p>
                 </div>
               </div>
-              <button onclick="toast('${i.cta}')" class="bg-primary hover:bg-primary-hover text-white text-[11px] font-semibold px-3 py-1.5 rounded-button flex-shrink-0 transition-warm">${i.cta}</button>
+              <button onclick="goTo('${i.go}', '${i.cta}')" class="bg-primary hover:bg-primary-hover text-white text-[11px] font-semibold px-3 py-1.5 rounded-button flex-shrink-0 transition-warm">${i.cta}</button>
             </div>
           `).join('')}
         </div>
@@ -587,7 +587,7 @@
       <section>
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-heading font-bold text-base">Community</h2>
-          <button onclick="toast('All Causes')" class="text-primary text-xs font-semibold">View all causes</button>
+          <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="text-primary text-xs font-semibold">View all causes</button>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-3">
           ${seed.donationCauses.map(c => `
@@ -596,7 +596,7 @@
                 <p class="text-sm font-semibold leading-snug">${c.name}</p>
                 <p class="text-xs text-ink-muted mt-1.5 leading-relaxed">${c.desc}</p>
               </div>
-              <button onclick="toast('Give to ${c.name}')" class="mt-3 bg-primary hover:bg-primary-hover text-white text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm">Give</button>
+              <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="mt-3 bg-primary hover:bg-primary-hover text-white text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm">Give</button>
             </div>
           `).join('')}
         </div>
