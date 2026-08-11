@@ -265,48 +265,52 @@
     { id:"TPL-001", name:"Baptism Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
       description:"Standard certificate issued for a completed Baptism.",
       fields: [
-        { key:"childName", label:"Child's Full Name", type:"text" },
+        { key:"fullName", label:"Full Name", type:"text" },
         { key:"dob", label:"Date of Birth", type:"date" },
-        { key:"baptismDate", label:"Date of Baptism", type:"date" },
-        { key:"church", label:"Church", type:"text", default: parishName },
         { key:"fatherName", label:"Father's Name", type:"text" },
         { key:"motherName", label:"Mother's Name", type:"text" },
+        { key:"sacramentDate", label:"Baptism Date", type:"date" },
+        { key:"parish", label:"Baptism Parish", type:"text", default: parishName },
         { key:"godfather", label:"Godfather", type:"text" },
         { key:"godmother", label:"Godmother", type:"text" },
+        { key:"certificateNumber", label:"Certificate Number", type:"text" },
       ],
-      body: "This is to certify that {{childName}}, born on {{dob}}, child of {{fatherName}} and {{motherName}}, was baptized into the Catholic faith on {{baptismDate}} at {{church}}, with {{godfather}} and {{godmother}} standing as godparents." },
+      body: "This is to certify that {{fullName}}, born on {{dob}}, child of {{fatherName}} and {{motherName}}, was baptized into the Catholic faith on {{sacramentDate}} at {{parish}}, with {{godfather}} and {{godmother}} standing as godparents. (Certificate No. {{certificateNumber}})" },
     { id:"TPL-002", name:"First Communion Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
       description:"Certificate issued for a completed First Holy Communion.",
       fields: [
-        { key:"childName", label:"Child's Full Name", type:"text" },
-        { key:"communionDate", label:"Date of First Communion", type:"date" },
-        { key:"church", label:"Church", type:"text", default: parishName },
-        { key:"fatherName", label:"Father's Name", type:"text" },
-        { key:"motherName", label:"Mother's Name", type:"text" },
+        { key:"fullName", label:"Full Name", type:"text" },
+        { key:"dob", label:"Date of Birth", type:"date" },
+        { key:"sacramentDate", label:"First Communion Date", type:"date" },
+        { key:"parish", label:"Parish", type:"text", default: parishName },
+        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"certificateNumber", label:"Certificate Number", type:"text" },
       ],
-      body: "This is to certify that {{childName}}, child of {{fatherName}} and {{motherName}}, received the Sacrament of First Holy Communion on {{communionDate}} at {{church}}." },
+      body: "This is to certify that {{fullName}}, born on {{dob}}, received the Sacrament of First Holy Communion on {{sacramentDate}} at {{parish}}, administered by {{celebrant}}. (Certificate No. {{certificateNumber}})" },
     { id:"TPL-003", name:"Confirmation Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
       description:"Certificate issued for a completed Confirmation.",
       fields: [
-        { key:"candidateName", label:"Candidate's Full Name", type:"text" },
-        { key:"confirmationDate", label:"Date of Confirmation", type:"date" },
-        { key:"church", label:"Church", type:"text", default: parishName },
-        { key:"sponsor", label:"Sponsor's Name", type:"text" },
-        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"fullName", label:"Full Name", type:"text" },
+        { key:"dob", label:"Date of Birth", type:"date" },
+        { key:"sacramentDate", label:"Confirmation Date", type:"date" },
+        { key:"parish", label:"Parish", type:"text", default: parishName },
+        { key:"celebrant", label:"Bishop / Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"certificateNumber", label:"Certificate Number", type:"text" },
       ],
-      body: "This is to certify that {{candidateName}} received the Sacrament of Confirmation on {{confirmationDate}} at {{church}}, administered by {{celebrant}}, with {{sponsor}} standing as sponsor." },
+      body: "This is to certify that {{fullName}}, born on {{dob}}, received the Sacrament of Confirmation on {{sacramentDate}} at {{parish}}, administered by {{celebrant}}. (Certificate No. {{certificateNumber}})" },
     { id:"TPL-004", name:"Marriage Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
       description:"Certificate issued for a solemnized marriage.",
       fields: [
-        { key:"groomName", label:"Groom's Full Name", type:"text" },
-        { key:"brideName", label:"Bride's Full Name", type:"text" },
-        { key:"marriageDate", label:"Date of Marriage", type:"date" },
-        { key:"church", label:"Church", type:"text", default: parishName },
-        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"groomName", label:"Groom Name", type:"text" },
+        { key:"brideName", label:"Bride Name", type:"text" },
+        { key:"sacramentDate", label:"Marriage Date", type:"date" },
+        { key:"parish", label:"Marriage Parish", type:"text", default: parishName },
         { key:"witness1", label:"Witness 1", type:"text" },
         { key:"witness2", label:"Witness 2", type:"text" },
+        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
+        { key:"certificateNumber", label:"Certificate Number", type:"text" },
       ],
-      body: "This is to certify that {{groomName}} and {{brideName}} were joined in the Sacrament of Holy Matrimony on {{marriageDate}} at {{church}}, witnessed by {{witness1}} and {{witness2}}, in the presence of {{celebrant}}." },
+      body: "This is to certify that {{groomName}} and {{brideName}} were joined in the Sacrament of Holy Matrimony on {{sacramentDate}} at {{parish}}, witnessed by {{witness1}} and {{witness2}}, in the presence of {{celebrant}}. (Certificate No. {{certificateNumber}})" },
     { id:"TPL-005", name:"No Objection Certificate", category:"Letters & Testimonials", owner:"Parish", version:1, status:"Published",
       description:"NOC issued for a parishioner's specified purpose.",
       fields: [
@@ -413,28 +417,28 @@
   const recordFamilies = [
     { familyName:"Rodrigues Family", members:[
       { name:"John Rodrigues", relationship:"Head", dob:"1975-03-14", sacraments:[
-        { sacrament:"Baptism", date:"1975-04-20", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"Confirmation", date:"1990-05-15", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"John Rodrigues", dob:"1975-03-14", fatherName:"Michael Rodrigues", motherName:"Teresa Rodrigues", sacramentDate:"1975-04-20", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Francis Fernandes", godmother:"Anita Fernandes", certificateNumber:"BAP/1975/0142" },
+        { sacrament:"Confirmation", fullName:"John Rodrigues", dob:"1975-03-14", sacramentDate:"1990-05-15", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Emmanuel Rodrigues", certificateNumber:"CONF/1990/0089" },
+        { sacrament:"Marriage", groomName:"John Rodrigues", brideName:"Grace Rodrigues", sacramentDate:"2001-11-24", parish:"Infant Jesus Shrine, Viveknagar", witness1:"Anthony D'Souza", witness2:"Rose Pinto", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2001/0311" } ] },
       { name:"Grace Rodrigues", relationship:"Spouse", dob:"1978-07-02", sacraments:[
-        { sacrament:"Baptism", date:"1978-08-10", church:"St Patrick's Church" },
-        { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"Grace Rodrigues", dob:"1978-07-02", fatherName:"Anthony Pinto", motherName:"Rose Pinto", sacramentDate:"1978-08-10", parish:"St Patrick's Church", godfather:"Peter Pinto", godmother:"Lucy Pinto", certificateNumber:"BAP/1978/0077" },
+        { sacrament:"Marriage", groomName:"John Rodrigues", brideName:"Grace Rodrigues", sacramentDate:"2001-11-24", parish:"Infant Jesus Shrine, Viveknagar", witness1:"Anthony D'Souza", witness2:"Rose Pinto", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2001/0311" } ] },
       { name:"Kevin Rodrigues", relationship:"Son", dob:"2003-01-18", sacraments:[
-        { sacrament:"Baptism", date:"2003-02-14", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"First Communion", date:"2011-04-10", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"Confirmation", date:"2017-09-03", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"Kevin Rodrigues", dob:"2003-01-18", fatherName:"John Rodrigues", motherName:"Grace Rodrigues", sacramentDate:"2003-02-14", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Michael Pinto", godmother:"Sandra Pinto", certificateNumber:"BAP/2003/0198" },
+        { sacrament:"First Communion", fullName:"Kevin Rodrigues", dob:"2003-01-18", sacramentDate:"2011-04-10", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2011/0245" },
+        { sacrament:"Confirmation", fullName:"Kevin Rodrigues", dob:"2003-01-18", sacramentDate:"2017-09-03", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. John Anthony", certificateNumber:"CONF/2017/0156" } ] },
       { name:"Clara Rodrigues", relationship:"Daughter", dob:"2006-09-25", sacraments:[
-        { sacrament:"Baptism", date:"2006-10-15", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"First Communion", date:"2014-04-06", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"Clara Rodrigues", dob:"2006-09-25", fatherName:"John Rodrigues", motherName:"Grace Rodrigues", sacramentDate:"2006-10-15", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Michael Pinto", godmother:"Sandra Pinto", certificateNumber:"BAP/2006/0233" },
+        { sacrament:"First Communion", fullName:"Clara Rodrigues", dob:"2006-09-25", sacramentDate:"2014-04-06", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2014/0198" } ] },
     ] },
     { familyName:"Pinto Family", members:[
       { name:"Michael Pinto", relationship:"Head", dob:"1980-11-09", sacraments:[
-        { sacrament:"Baptism", date:"1980-12-14", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"Marriage", date:"2008-02-09", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"Michael Pinto", dob:"1980-11-09", fatherName:"Joseph Pinto", motherName:"Maria Pinto", sacramentDate:"1980-12-14", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Peter Fernandes", godmother:"Grace Fernandes", certificateNumber:"BAP/1980/0311" },
+        { sacrament:"Marriage", groomName:"Michael Pinto", brideName:"Sandra Pinto", sacramentDate:"2008-02-09", parish:"Infant Jesus Shrine, Viveknagar", witness1:"John Rodrigues", witness2:"Grace Rodrigues", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2008/0198" } ] },
       { name:"Sandra Pinto", relationship:"Spouse", dob:"1983-02-22", sacraments:[] },
       { name:"Ryan Pinto", relationship:"Son", dob:"2010-05-05", sacraments:[
-        { sacrament:"Baptism", date:"2010-06-12", church:"Infant Jesus Shrine, Viveknagar" },
-        { sacrament:"First Communion", date:"2018-04-08", church:"Infant Jesus Shrine, Viveknagar" } ] },
+        { sacrament:"Baptism", fullName:"Ryan Pinto", dob:"2010-05-05", fatherName:"Michael Pinto", motherName:"Sandra Pinto", sacramentDate:"2010-06-12", parish:"Infant Jesus Shrine, Viveknagar", godfather:"John Rodrigues", godmother:"Grace Rodrigues", certificateNumber:"BAP/2010/0287" },
+        { sacrament:"First Communion", fullName:"Ryan Pinto", dob:"2010-05-05", sacramentDate:"2018-04-08", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2018/0301" } ] },
     ] },
   ];
   const TEMPLATE_SACRAMENT_MAP = { "TPL-001":"Baptism", "TPL-002":"First Communion", "TPL-003":"Confirmation", "TPL-004":"Marriage" };
@@ -443,13 +447,6 @@
   function allMembersFlat() {
     return recordFamilies.flatMap(f => f.members.map(m => Object.assign({}, m, { familyName: f.familyName })));
   }
-  function findParentNames(familyName, memberName) {
-    const fam = recordFamilies.find(f => f.familyName === familyName);
-    if (!fam) return { father: '', mother: '' };
-    const head = fam.members.find(m => m.relationship === 'Head' && m.name !== memberName);
-    const spouse = fam.members.find(m => m.relationship === 'Spouse' && m.name !== memberName);
-    return { father: head ? head.name : '', mother: spouse ? spouse.name : '' };
-  }
   function fillFromRecord(memberName) {
     const sacramentType = TEMPLATE_SACRAMENT_MAP[selectedTemplateId];
     const person = allMembersFlat().find(m => m.name === memberName);
@@ -457,19 +454,12 @@
     const record = sacramentType ? person.sacraments.find(s => s.sacrament === sacramentType) : null;
     if (!record) { toast(`No ${sacramentType} record on file for ${memberName}.`); return; }
     linkedMemberName = memberName;
-    const parents = findParentNames(person.familyName, person.name);
-    if ('childName' in certFieldValues) certFieldValues.childName = person.name;
-    if ('candidateName' in certFieldValues) certFieldValues.candidateName = person.name;
-    if ('dob' in certFieldValues) certFieldValues.dob = person.dob;
-    if ('baptismDate' in certFieldValues) certFieldValues.baptismDate = record.date;
-    if ('communionDate' in certFieldValues) certFieldValues.communionDate = record.date;
-    if ('confirmationDate' in certFieldValues) certFieldValues.confirmationDate = record.date;
-    if ('marriageDate' in certFieldValues) certFieldValues.marriageDate = record.date;
-    if ('church' in certFieldValues) certFieldValues.church = record.church;
-    if ('fatherName' in certFieldValues) certFieldValues.fatherName = parents.father;
-    if ('motherName' in certFieldValues) certFieldValues.motherName = parents.mother;
-    if (person.relationship === 'Head' && 'groomName' in certFieldValues) certFieldValues.groomName = person.name;
-    if (person.relationship === 'Spouse' && 'brideName' in certFieldValues) certFieldValues.brideName = person.name;
+    // Template field keys now match the sacrament record schema directly (fullName, dob, sacramentDate,
+    // parish, etc.), so this is a straightforward per-field copy rather than a mapping table — a direct
+    // consequence of the certificate templates and the underlying sacramental record sharing one schema.
+    templateById(selectedTemplateId).fields.forEach(f => {
+      if (f.key in record) certFieldValues[f.key] = record[f.key];
+    });
     toast(`Filled from ${memberName}'s ${sacramentType} record.`);
     renderCreateModule(document.getElementById('module-content'));
   }

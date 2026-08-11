@@ -241,6 +241,23 @@
     </div>
   </div>
 
+  <!-- SACRAMENT ADD/EDIT MODAL -->
+  <div id="sacrament-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="sacrament-modal-title" class="font-heading font-bold text-lg">Add Sacramental Record</p>
+        <button onclick="closeModal('sacrament-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="sacrament-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2 flex gap-3">
+        <button onclick="saveSacramentModal()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Save</button>
+        <button onclick="closeModal('sacrament-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
   // Only these identity params should ever propagate between pages via navigation —
@@ -335,25 +352,25 @@
       members:[
         { name:"John Rodrigues", relationship:"Head", dob:"1975-03-14", status:"Active",
           sacraments:[
-            { id:"SAC-R001", sacrament:"Baptism", date:"1975-04-20", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Rodrigues, Teresa Fernandes" },
-            { id:"SAC-R002", sacrament:"Confirmation", date:"1990-05-15", church:"Infant Jesus Shrine, Viveknagar", details:"Sponsor: Michael Rodrigues" },
-            { id:"SAC-R003", sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar", details:"Spouse: Grace Rodrigues (née Pinto) · Witnesses: Anthony D'Souza, Rose Pinto" },
+            { id:"SAC-R001", sacrament:"Baptism", fullName:"John Rodrigues", dob:"1975-03-14", fatherName:"Michael Rodrigues", motherName:"Teresa Rodrigues", sacramentDate:"1975-04-20", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Francis Fernandes", godmother:"Anita Fernandes", certificateNumber:"BAP/1975/0142" },
+            { id:"SAC-R002", sacrament:"Confirmation", fullName:"John Rodrigues", dob:"1975-03-14", sacramentDate:"1990-05-15", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Emmanuel Rodrigues", certificateNumber:"CONF/1990/0089" },
+            { id:"SAC-R003", sacrament:"Marriage", groomName:"John Rodrigues", brideName:"Grace Rodrigues", sacramentDate:"2001-11-24", parish:"Infant Jesus Shrine, Viveknagar", witness1:"Anthony D'Souza", witness2:"Rose Pinto", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2001/0311" },
           ] },
         { name:"Grace Rodrigues", relationship:"Spouse", dob:"1978-07-02", status:"Active",
           sacraments:[
-            { id:"SAC-R004", sacrament:"Baptism", date:"1978-08-10", church:"St Patrick's Church", details:"" },
-            { id:"SAC-R005", sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar", details:"Spouse: John Rodrigues · Witnesses: Anthony D'Souza, Rose Pinto" },
+            { id:"SAC-R004", sacrament:"Baptism", fullName:"Grace Rodrigues", dob:"1978-07-02", fatherName:"Anthony Pinto", motherName:"Rose Pinto", sacramentDate:"1978-08-10", parish:"St Patrick's Church", godfather:"Peter Pinto", godmother:"Lucy Pinto", certificateNumber:"BAP/1978/0077" },
+            { id:"SAC-R005", sacrament:"Marriage", groomName:"John Rodrigues", brideName:"Grace Rodrigues", sacramentDate:"2001-11-24", parish:"Infant Jesus Shrine, Viveknagar", witness1:"Anthony D'Souza", witness2:"Rose Pinto", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2001/0311" },
           ] },
         { name:"Kevin Rodrigues", relationship:"Son", dob:"2003-01-18", status:"Active",
           sacraments:[
-            { id:"SAC-R006", sacrament:"Baptism", date:"2003-02-14", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Pinto, Sandra Pinto" },
-            { id:"SAC-R007", sacrament:"First Communion", date:"2011-04-10", church:"Infant Jesus Shrine, Viveknagar", details:"" },
-            { id:"SAC-R008", sacrament:"Confirmation", date:"2017-09-03", church:"Infant Jesus Shrine, Viveknagar", details:"Sponsor: Anthony D'Souza" },
+            { id:"SAC-R006", sacrament:"Baptism", fullName:"Kevin Rodrigues", dob:"2003-01-18", fatherName:"John Rodrigues", motherName:"Grace Rodrigues", sacramentDate:"2003-02-14", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Michael Pinto", godmother:"Sandra Pinto", certificateNumber:"BAP/2003/0198" },
+            { id:"SAC-R007", sacrament:"First Communion", fullName:"Kevin Rodrigues", dob:"2003-01-18", sacramentDate:"2011-04-10", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2011/0245" },
+            { id:"SAC-R008", sacrament:"Confirmation", fullName:"Kevin Rodrigues", dob:"2003-01-18", sacramentDate:"2017-09-03", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. John Anthony", certificateNumber:"CONF/2017/0156" },
           ] },
         { name:"Clara Rodrigues", relationship:"Daughter", dob:"2006-09-25", status:"Active",
           sacraments:[
-            { id:"SAC-R009", sacrament:"Baptism", date:"2006-10-15", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Pinto, Sandra Pinto" },
-            { id:"SAC-R010", sacrament:"First Communion", date:"2014-04-06", church:"Infant Jesus Shrine, Viveknagar", details:"" },
+            { id:"SAC-R009", sacrament:"Baptism", fullName:"Clara Rodrigues", dob:"2006-09-25", fatherName:"John Rodrigues", motherName:"Grace Rodrigues", sacramentDate:"2006-10-15", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Michael Pinto", godmother:"Sandra Pinto", certificateNumber:"BAP/2006/0233" },
+            { id:"SAC-R010", sacrament:"First Communion", fullName:"Clara Rodrigues", dob:"2006-09-25", sacramentDate:"2014-04-06", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2014/0198" },
           ] },
       ], status:"Active" },
     { id:"FAM-1002", familyRecordNumber:"IJS/FAM/1002", familyName:"Pinto Family", headOfFamily:"Michael Pinto", ward:"Ejipura",
@@ -362,14 +379,14 @@
       members:[
         { name:"Michael Pinto", relationship:"Head", dob:"1980-11-09", status:"Active",
           sacraments:[
-            { id:"SAC-P001", sacrament:"Baptism", date:"1980-12-14", church:"Infant Jesus Shrine, Viveknagar", details:"" },
-            { id:"SAC-P002", sacrament:"Marriage", date:"2008-02-09", church:"Infant Jesus Shrine, Viveknagar", details:"Spouse: Sandra Pinto" },
+            { id:"SAC-P001", sacrament:"Baptism", fullName:"Michael Pinto", dob:"1980-11-09", fatherName:"Joseph Pinto", motherName:"Maria Pinto", sacramentDate:"1980-12-14", parish:"Infant Jesus Shrine, Viveknagar", godfather:"Peter Fernandes", godmother:"Grace Fernandes", certificateNumber:"BAP/1980/0311" },
+            { id:"SAC-P002", sacrament:"Marriage", groomName:"Michael Pinto", brideName:"Sandra Pinto", sacramentDate:"2008-02-09", parish:"Infant Jesus Shrine, Viveknagar", witness1:"John Rodrigues", witness2:"Grace Rodrigues", celebrant:"Fr. John Anthony", certificateNumber:"MAR/2008/0198" },
           ] },
         { name:"Sandra Pinto", relationship:"Spouse", dob:"1983-02-22", status:"Active", sacraments:[] },
         { name:"Ryan Pinto", relationship:"Son", dob:"2010-05-05", status:"Active",
           sacraments:[
-            { id:"SAC-P003", sacrament:"Baptism", date:"2010-06-12", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: John Rodrigues, Grace Rodrigues" },
-            { id:"SAC-P004", sacrament:"First Communion", date:"2018-04-08", church:"Infant Jesus Shrine, Viveknagar", details:"" },
+            { id:"SAC-P003", sacrament:"Baptism", fullName:"Ryan Pinto", dob:"2010-05-05", fatherName:"Michael Pinto", motherName:"Sandra Pinto", sacramentDate:"2010-06-12", parish:"Infant Jesus Shrine, Viveknagar", godfather:"John Rodrigues", godmother:"Grace Rodrigues", certificateNumber:"BAP/2010/0287" },
+            { id:"SAC-P004", sacrament:"First Communion", fullName:"Ryan Pinto", dob:"2010-05-05", sacramentDate:"2018-04-08", parish:"Infant Jesus Shrine, Viveknagar", celebrant:"Fr. Francis Billemane", certificateNumber:"FC/2018/0301" },
           ] },
       ], status:"Active" },
     { id:"FAM-1003", familyRecordNumber:"IJS/FAM/1003", familyName:"D'Souza Family", headOfFamily:"Anthony D'Souza", ward:"Viveknagar",
@@ -657,8 +674,7 @@
     showPaymentForm = false;
     editingMemberIndex = null;
     removeMemberConfirmIndex = null;
-    addingSacramentForMemberIndex = null;
-    editingSacramentId = null;
+    sacramentDetailKey = null;
     updateRejectPromptFor = null;
     document.getElementById('drawer').classList.remove('translate-x-full');
     document.getElementById('drawer-backdrop').classList.remove('hidden');
@@ -680,8 +696,7 @@
     showPaymentForm = false;
     editingMemberIndex = null;
     removeMemberConfirmIndex = null;
-    addingSacramentForMemberIndex = null;
-    editingSacramentId = null;
+    sacramentDetailKey = null;
     updateRejectPromptFor = null;
     renderDrawer();
   }
@@ -697,9 +712,9 @@
     const el = document.getElementById('drawer-content');
     if (!f) { el.innerHTML = ''; return; }
 
-    const tabs = ['overview', 'members', 'sacraments', 'subscription', 'updates'];
+    const tabs = ['overview', 'members', 'subscription', 'updates'];
     const pendingUpdates = updateRequestsFor(f.id).filter(r => r.status === 'Submitted').length;
-    const tabLabels = { overview: 'Overview', members: 'Members', sacraments: 'Sacraments', subscription: 'Subscription', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
+    const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
 
     el.innerHTML = `
       <div class="p-6 border-b border-divider sticky top-0 bg-card-bg z-10">
@@ -729,7 +744,6 @@
       <div class="p-6">
         ${activeTab === 'overview' ? (editMode ? renderOverviewEdit(f) : renderOverviewTab(f)) : ''}
         ${activeTab === 'members' ? renderMembersTab(f) : ''}
-        ${activeTab === 'sacraments' ? renderSacramentsTab(f) : ''}
         ${activeTab === 'subscription' ? renderSubscriptionTab(f) : ''}
         ${activeTab === 'updates' ? renderUpdatesTab(f) : ''}
       </div>
@@ -858,9 +872,57 @@
   let editingMemberIndex = null;
   let removeMemberConfirmIndex = null;
 
+  // ---------------- Sacrament field schemas — each sacrament type has its own real fields ----------------
+  // ---------------- (not a generic date/church/free-text model), matching what a parish register ----------------
+  // ---------------- actually needs to capture. sacramentDate/parish/celebrant/certificateNumber are shared ----------------
+  // ---------------- key names across types even though their on-screen labels differ per type, so the rest ----------------
+  // ---------------- of the app (Documents hub, Parishioner side) can read them without type-specific branching. ----------------
+  const SACRAMENT_FIELD_SCHEMAS = {
+    "Baptism": [
+      { key:"fullName", label:"Full Name" },
+      { key:"dob", label:"Date of Birth", type:"date" },
+      { key:"fatherName", label:"Father's Name" },
+      { key:"motherName", label:"Mother's Name" },
+      { key:"sacramentDate", label:"Baptism Date", type:"date" },
+      { key:"parish", label:"Baptism Parish" },
+      { key:"godfather", label:"Godfather" },
+      { key:"godmother", label:"Godmother" },
+      { key:"certificateNumber", label:"Certificate Number" },
+    ],
+    "First Communion": [
+      { key:"fullName", label:"Full Name" },
+      { key:"dob", label:"Date of Birth", type:"date" },
+      { key:"sacramentDate", label:"First Communion Date", type:"date" },
+      { key:"parish", label:"Parish" },
+      { key:"celebrant", label:"Celebrant" },
+      { key:"certificateNumber", label:"Certificate Number" },
+    ],
+    "Confirmation": [
+      { key:"fullName", label:"Full Name" },
+      { key:"dob", label:"Date of Birth", type:"date" },
+      { key:"sacramentDate", label:"Confirmation Date", type:"date" },
+      { key:"parish", label:"Parish" },
+      { key:"celebrant", label:"Bishop / Celebrant" },
+      { key:"certificateNumber", label:"Certificate Number" },
+    ],
+    "Marriage": [
+      { key:"groomName", label:"Groom Name" },
+      { key:"brideName", label:"Bride Name" },
+      { key:"sacramentDate", label:"Marriage Date", type:"date" },
+      { key:"parish", label:"Marriage Parish" },
+      { key:"witness1", label:"Witness 1" },
+      { key:"witness2", label:"Witness 2" },
+      { key:"celebrant", label:"Celebrant" },
+      { key:"certificateNumber", label:"Certificate Number" },
+    ],
+  };
+  function sacramentTitle(s) {
+    return s.sacrament === 'Marriage' ? `${s.groomName || '?'} & ${s.brideName || '?'}` : (s.fullName || '?');
+  }
+
   function renderMembersTab(f) {
     return `
-      <div class="space-y-2.5 mb-4">
+      <div class="space-y-3 mb-4">
         ${f.members.map((m, i) => editingMemberIndex === i ? renderEditMemberForm(f, m, i) : removeMemberConfirmIndex === i ? `
           <div class="bg-error-bg rounded-card p-4 space-y-2">
             <p class="text-sm text-error">Remove ${m.name} from this family record? This can't be undone${m.sacraments && m.sacraments.length ? ' — their ' + m.sacraments.length + ' sacramental record' + (m.sacraments.length === 1 ? '' : 's') + ' will be removed too' : ''}.</p>
@@ -870,17 +932,57 @@
             </div>
           </div>
         ` : `
-          <div class="flex items-center justify-between gap-3 bg-section-bg rounded-card p-4">
-            <div class="flex items-center gap-3 min-w-0">
-              <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
-              <div class="min-w-0">
-                <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
-                <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)} · ${m.status}</p>
+          <div class="bg-section-bg rounded-card p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
+                  <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)} · ${m.status}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <button onclick="editingMemberIndex=${i}; showAddMemberForm=false; removeMemberConfirmIndex=null; renderDrawer()" aria-label="Edit member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                ${f.members.length > 1 ? `<button onclick="removeMemberConfirmIndex=${i}; editingMemberIndex=null; renderDrawer()" aria-label="Remove member" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('x','icon w-4 h-4')}</button>` : ''}
               </div>
             </div>
-            <div class="flex items-center gap-1 flex-shrink-0">
-              <button onclick="editingMemberIndex=${i}; showAddMemberForm=false; removeMemberConfirmIndex=null; renderDrawer()" aria-label="Edit member" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-white transition-warm">${icon('edit','icon w-4 h-4')}</button>
-              ${f.members.length > 1 ? `<button onclick="removeMemberConfirmIndex=${i}; editingMemberIndex=null; renderDrawer()" aria-label="Remove member" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('x','icon w-4 h-4')}</button>` : ''}
+            <div class="mt-3 pt-3 border-t border-divider">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Sacramental Records</p>
+                <button onclick="openSacramentModal('${f.id}', ${i})" class="text-primary text-xs font-semibold flex items-center gap-1">${icon('plus','w-3.5 h-3.5')}Add</button>
+              </div>
+              ${(m.sacraments || []).length === 0
+                ? `<p class="text-xs text-ink-muted">No sacramental records on file yet.</p>`
+                : `<div class="space-y-1.5">
+                    ${(m.sacraments || []).map((s, si) => `
+                      <button onclick="sacramentDetailKey='${m.name}::${si}'===sacramentDetailKey ? null : '${m.name}::${si}'; renderDrawer()" class="w-full text-left bg-white rounded-button p-3 transition-warm hover:bg-primary-light/40">
+                        <div class="flex items-center justify-between gap-3">
+                          <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-7 h-7 rounded-badge bg-gold/20 text-[#8a5a10] flex items-center justify-center flex-shrink-0">${icon('cross','w-3.5 h-3.5')}</span>
+                            <div class="min-w-0">
+                              <p class="text-sm font-medium">${s.sacrament}</p>
+                              <p class="text-xs text-ink-muted mt-0.5">${formatDate(s.sacramentDate)} · ${s.parish || ''}</p>
+                            </div>
+                          </div>
+                          <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0 transition-transform ${sacramentDetailKey === m.name+'::'+si ? 'rotate-180' : ''}" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        ${sacramentDetailKey === m.name+'::'+si ? `
+                          <div class="mt-3 pt-3 border-t border-divider grid grid-cols-2 gap-x-3 gap-y-2">
+                            ${SACRAMENT_FIELD_SCHEMAS[s.sacrament].map(field => `
+                              <div>
+                                <p class="text-[10px] text-ink-muted uppercase tracking-wide">${field.label}</p>
+                                <p class="text-xs font-medium mt-0.5">${field.type === 'date' ? formatDate(s[field.key]) : (s[field.key] || '\u2014')}</p>
+                              </div>
+                            `).join('')}
+                          </div>
+                          <div class="mt-3" onclick="event.stopPropagation()">
+                            <button onclick="openSacramentModal('${f.id}', ${i}, ${si})" class="bg-section-bg text-ink text-xs font-semibold px-3 py-1.5 rounded-button min-h-[32px] transition-warm hover:bg-primary-light">Edit</button>
+                          </div>
+                        ` : ''}
+                      </button>
+                    `).join('')}
+                  </div>`
+              }
             </div>
           </div>
         `).join('')}
@@ -898,95 +1000,67 @@
     renderDrawer();
   }
 
-  // =========================================================================
-  // SACRAMENTS TAB — each member's sacramental record (baptism, first communion,
-  // confirmation, marriage), closing a real gap: this data existed in the
-  // original schema (mock-seed.json's sacramentalSummary) but was never
-  // actually surfaced or editable anywhere before now.
-  // =========================================================================
-  const SACRAMENT_TYPES = ["Baptism", "First Communion", "Confirmation", "Marriage"];
-  let sacramentMemberIndex = null;
-  let addingSacramentForMemberIndex = null;
-  let editingSacramentId = null;
-
-  function renderSacramentsTab(f) {
-    return `
-      <div class="space-y-4">
-        ${f.members.map((m, i) => `
-          <div class="bg-section-bg rounded-card p-4">
-            <div class="flex items-center justify-between gap-3 mb-3">
-              <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
-                <p class="text-sm font-semibold">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
-              </div>
-              <button onclick="addingSacramentForMemberIndex=${i}; editingSacramentId=null; renderDrawer()" class="text-primary text-xs font-semibold flex items-center gap-1 flex-shrink-0">${icon('plus','icon w-3.5 h-3.5')}Add</button>
-            </div>
-            ${(m.sacraments || []).length === 0 && addingSacramentForMemberIndex !== i
-              ? `<p class="text-xs text-ink-muted">No sacramental records on file yet.</p>`
-              : `<div class="space-y-2">
-                  ${(m.sacraments || []).map(s => editingSacramentId === s.id ? renderSacramentForm(f, i, s) : `
-                    <div class="bg-white rounded-button p-3 flex items-start justify-between gap-3">
-                      <div class="flex items-start gap-2.5 min-w-0">
-                        <span class="w-7 h-7 rounded-badge bg-gold/20 text-[#8a5a10] flex items-center justify-center flex-shrink-0 mt-0.5">${icon('cross','w-3.5 h-3.5')}</span>
-                        <div class="min-w-0">
-                          <p class="text-sm font-medium">${s.sacrament}</p>
-                          <p class="text-xs text-ink-muted mt-0.5">${formatDate(s.date)} · ${s.church}</p>
-                          ${s.details ? `<p class="text-xs text-ink-muted mt-0.5">${s.details}</p>` : ''}
-                        </div>
-                      </div>
-                      <button onclick="editingSacramentId='${s.id}'; addingSacramentForMemberIndex=null; renderDrawer()" aria-label="Edit" class="w-7 h-7 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">${icon('edit','icon w-3.5 h-3.5')}</button>
-                    </div>
-                  `).join('')}
-                </div>`
-            }
-            ${addingSacramentForMemberIndex === i ? renderSacramentForm(f, i, null) : ''}
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  function renderSacramentForm(f, memberIndex, existing) {
-    const s = existing;
-    return `
-      <div class="bg-white rounded-button p-3 space-y-2.5 mt-2">
-        <div class="grid grid-cols-2 gap-2">
-          <select id="sf-type-${memberIndex}" class="w-full border border-divider rounded-input px-2.5 h-9 text-xs bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${SACRAMENT_TYPES.map(t => `<option ${s && s.sacrament===t ? 'selected' : ''}>${t}</option>`).join('')}
-          </select>
-          <input id="sf-date-${memberIndex}" type="date" value="${s ? s.date : ''}" class="w-full border border-divider rounded-input px-2.5 h-9 text-xs bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-        </div>
-        <input id="sf-church-${memberIndex}" type="text" placeholder="Church" value="${s ? s.church : 'Infant Jesus Shrine, Viveknagar'}" class="w-full border border-divider rounded-input px-2.5 h-9 text-xs bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-        <input id="sf-details-${memberIndex}" type="text" placeholder="Godparents / sponsor / spouse & witnesses (optional)" value="${s ? s.details : ''}" class="w-full border border-divider rounded-input px-2.5 h-9 text-xs bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-        <div class="flex gap-2">
-          <button onclick="saveSacrament('${f.id}', ${memberIndex}, ${s ? `'${s.id}'` : 'null'})" class="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-3.5 py-2 rounded-button min-h-[36px] transition-warm">Save</button>
-          <button onclick="addingSacramentForMemberIndex=null; editingSacramentId=null; renderDrawer()" class="text-ink-muted text-xs font-semibold px-3.5 py-2 rounded-button min-h-[36px] hover:bg-section-bg transition-warm">Cancel</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function saveSacrament(familyId, memberIndex, existingId) {
+  // ---------------- Sacrament Add/Edit modal — fields render dynamically per SACRAMENT_FIELD_SCHEMAS, ----------------
+  // ---------------- since Baptism/First Communion/Confirmation/Marriage each need genuinely different data. ----------------
+  let sacramentModalContext = null; // { familyId, memberIndex, sacramentIndex }
+  function openSacramentModal(familyId, memberIndex, sacramentIndex) {
+    sacramentModalContext = { familyId, memberIndex, sacramentIndex: sacramentIndex === undefined ? null : sacramentIndex };
     const f = findFamily(familyId);
     const m = f.members[memberIndex];
-    if (!m.sacraments) m.sacraments = [];
-    const sacrament = document.getElementById(`sf-type-${memberIndex}`).value;
-    const date = document.getElementById(`sf-date-${memberIndex}`).value;
-    const church = document.getElementById(`sf-church-${memberIndex}`).value.trim();
-    const details = document.getElementById(`sf-details-${memberIndex}`).value.trim();
-    if (!date || !church) { toast('Please enter a date and church.'); return; }
-    if (existingId) {
-      const rec = m.sacraments.find(x => x.id === existingId);
-      Object.assign(rec, { sacrament, date, church, details });
-      toast(`${sacrament} record updated for ${m.name}.`);
-    } else {
-      m.sacraments.push({ id: 'SAC-' + Math.floor(1000 + Math.random() * 8999), sacrament, date, church, details });
-      toast(`${sacrament} record added for ${m.name}.`);
+    const existing = sacramentModalContext.sacramentIndex !== null ? m.sacraments[sacramentModalContext.sacramentIndex] : null;
+    document.getElementById('sacrament-modal-title').textContent = existing ? 'Edit Sacramental Record' : 'Add Sacramental Record';
+    document.getElementById('sacrament-modal').classList.remove('hidden');
+    renderSacramentModalForm(existing ? existing.sacrament : 'Baptism', existing, m);
+  }
+  function renderSacramentModalForm(type, existing, member) {
+    const fields = SACRAMENT_FIELD_SCHEMAS[type];
+    document.getElementById('sacrament-form').innerHTML = `
+      <div class="space-y-1.5">
+        <label class="text-xs font-medium">Sacrament</label>
+        <select id="sf-type" ${existing ? 'disabled' : ''} onchange="renderSacramentModalForm(this.value, null, sacramentModalMember())" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none disabled:bg-section-bg disabled:text-ink-muted">
+          ${Object.keys(SACRAMENT_FIELD_SCHEMAS).map(t => `<option ${t === type ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      ${fields.map(field => `
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium">${field.label}</label>
+          <input id="sf-${field.key}" type="${field.type === 'date' ? 'date' : 'text'}" value="${existing ? (existing[field.key] || '') : (field.key === 'fullName' ? member.name : field.key === 'dob' ? member.dob : field.key === 'parish' ? parishName : '')}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+        </div>
+      `).join('')}
+    `;
+  }
+  function sacramentModalMember() {
+    const f = findFamily(sacramentModalContext.familyId);
+    return f.members[sacramentModalContext.memberIndex];
+  }
+  function saveSacramentModal() {
+    const type = document.getElementById('sf-type').value;
+    const fields = SACRAMENT_FIELD_SCHEMAS[type];
+    const record = { sacrament: type };
+    for (const field of fields) {
+      record[field.key] = document.getElementById(`sf-${field.key}`).value.trim();
     }
-    addingSacramentForMemberIndex = null;
-    editingSacramentId = null;
+    const requiredOk = type === 'Marriage' ? (record.groomName && record.brideName) : record.fullName;
+    if (!requiredOk || !record.sacramentDate) { toast('Please fill in the required name and date fields.'); return; }
+
+    const f = findFamily(sacramentModalContext.familyId);
+    const m = f.members[sacramentModalContext.memberIndex];
+    if (!m.sacraments) m.sacraments = [];
+    if (sacramentModalContext.sacramentIndex !== null) {
+      record.id = m.sacraments[sacramentModalContext.sacramentIndex].id;
+      m.sacraments[sacramentModalContext.sacramentIndex] = record;
+      toast(`${type} record updated for ${m.name}.`);
+    } else {
+      record.id = 'SAC-' + Math.floor(1000 + Math.random() * 8999);
+      m.sacraments.push(record);
+      toast(`${type} record added for ${m.name}.`);
+    }
+    sacramentModalContext = null;
+    closeModal('sacrament-modal');
     renderDrawer();
   }
+
+  let sacramentDetailKey = null;
 
   function renderEditMemberForm(f, m, i) {
     return `
@@ -1217,6 +1291,7 @@
     `;
   }
   function closeRegisterModal() { document.getElementById('register-modal').classList.add('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
   function submitRegister() {
     const familyName = document.getElementById('rf-familyname').value.trim();
