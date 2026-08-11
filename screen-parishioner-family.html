@@ -149,10 +149,24 @@
     mobile: "9845012345", email: "john.rodrigues@example.com", preferredLanguage: "English",
   };
   let members = [
-    { name: "John Rodrigues", relationship: "Head", dob: "1975-03-14" },
-    { name: "Grace Rodrigues", relationship: "Spouse", dob: "1978-07-02" },
-    { name: "Kevin Rodrigues", relationship: "Son", dob: "2003-01-18" },
-    { name: "Clara Rodrigues", relationship: "Daughter", dob: "2006-09-25" },
+    { name: "John Rodrigues", relationship: "Head", dob: "1975-03-14", sacraments: [
+      { sacrament:"Baptism", date:"1975-04-20", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Rodrigues, Teresa Fernandes" },
+      { sacrament:"Confirmation", date:"1990-05-15", church:"Infant Jesus Shrine, Viveknagar", details:"Sponsor: Michael Rodrigues" },
+      { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar", details:"Spouse: Grace Rodrigues" },
+    ] },
+    { name: "Grace Rodrigues", relationship: "Spouse", dob: "1978-07-02", sacraments: [
+      { sacrament:"Baptism", date:"1978-08-10", church:"St Patrick's Church", details:"" },
+      { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar", details:"Spouse: John Rodrigues" },
+    ] },
+    { name: "Kevin Rodrigues", relationship: "Son", dob: "2003-01-18", sacraments: [
+      { sacrament:"Baptism", date:"2003-02-14", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Pinto, Sandra Pinto" },
+      { sacrament:"First Communion", date:"2011-04-10", church:"Infant Jesus Shrine, Viveknagar", details:"" },
+      { sacrament:"Confirmation", date:"2017-09-03", church:"Infant Jesus Shrine, Viveknagar", details:"Sponsor: Anthony D'Souza" },
+    ] },
+    { name: "Clara Rodrigues", relationship: "Daughter", dob: "2006-09-25", sacraments: [
+      { sacrament:"Baptism", date:"2006-10-15", church:"Infant Jesus Shrine, Viveknagar", details:"Godparents: Michael Pinto, Sandra Pinto" },
+      { sacrament:"First Communion", date:"2014-04-06", church:"Infant Jesus Shrine, Viveknagar", details:"" },
+    ] },
   ];
 
   document.getElementById('family-initials').textContent = initials(family.familyName.replace(' Family',''));
@@ -164,14 +178,35 @@
   document.getElementById('family-mobile').textContent = family.mobile;
   document.getElementById('family-email').textContent = family.email;
 
+  let openMemberIndex = null;
+  function toggleMemberSacraments(i) {
+    openMemberIndex = openMemberIndex === i ? null : i;
+    renderMembers();
+  }
   function renderMembers() {
-    document.getElementById('members-list').innerHTML = members.map(m => `
-      <div class="bg-card-bg rounded-card shadow-card p-4 flex items-center gap-3">
-        <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
-        <div class="min-w-0">
-          <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
-          <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)}</p>
-        </div>
+    document.getElementById('members-list').innerHTML = members.map((m, i) => `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <button onclick="toggleMemberSacraments(${i})" class="w-full flex items-center gap-3 p-4 text-left min-h-[44px]">
+          <span class="w-9 h-9 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">${initials(m.name)}</span>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold truncate">${m.name} <span class="text-ink-muted font-normal">· ${m.relationship}</span></p>
+            <p class="text-xs text-ink-muted mt-0.5">Born ${formatDate(m.dob)} · ${(m.sacraments||[]).length} sacramental record${(m.sacraments||[]).length === 1 ? '' : 's'}</p>
+          </div>
+          <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0 transition-transform ${openMemberIndex === i ? 'rotate-180' : ''}" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        ${openMemberIndex === i ? `
+          <div class="px-4 pb-4 space-y-2">
+            ${(m.sacraments||[]).length === 0
+              ? `<p class="text-xs text-ink-muted">No sacramental records on file yet.</p>`
+              : (m.sacraments||[]).map(s => `
+                <div class="bg-section-bg rounded-button p-3">
+                  <p class="text-sm font-medium">${s.sacrament}</p>
+                  <p class="text-xs text-ink-muted mt-0.5">${formatDate(s.date)} · ${s.church}</p>
+                  ${s.details ? `<p class="text-xs text-ink-muted mt-0.5">${s.details}</p>` : ''}
+                </div>
+              `).join('')}
+          </div>
+        ` : ''}
       </div>
     `).join('');
   }

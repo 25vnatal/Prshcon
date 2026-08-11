@@ -219,11 +219,32 @@
                 ${b.receiptNumber ? `<button onclick="toast('Downloading receipt ${b.receiptNumber}')" class="text-primary font-semibold">View Receipt</button>` : ''}
               </div>
               ${b.bookingStatus === 'Pending Payment' ? `<button onclick="payNow('${b.id}')" class="w-full bg-primary hover:bg-primary-hover text-white text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm">Pay Now — ₹${totalFor(b)}</button>` : ''}
+              ${['Confirmed','Pending Payment'].includes(b.bookingStatus) ? (
+                cancelConfirmId === b.id
+                  ? `<div class="bg-error-bg rounded-card p-3 space-y-2">
+                       <p class="text-xs text-error">Cancel this booking? This can't be undone.</p>
+                       <div class="flex gap-2">
+                         <button onclick="confirmCancelBooking('${b.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Yes, Cancel</button>
+                         <button onclick="cancelConfirmId=null; renderList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Keep Booking</button>
+                       </div>
+                     </div>`
+                  : `<button onclick="cancelConfirmId='${b.id}'; renderList()" class="w-full bg-white border border-divider text-error text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-error-bg">Cancel Booking</button>`
+              ) : ''}
+              ${b.bookingStatus === 'Cancelled' ? `<p class="text-xs text-ink-muted italic">This booking was cancelled.</p>` : ''}
             </div>
           ` : ''}
         </div>
       `;
     }).join('');
+  }
+
+  let cancelConfirmId = null;
+  function confirmCancelBooking(id) {
+    const b = bookings.find(x => x.id === id);
+    if (b) b.bookingStatus = 'Cancelled';
+    cancelConfirmId = null;
+    toast('Booking cancelled.');
+    renderList();
   }
 
   function payNow(id) {

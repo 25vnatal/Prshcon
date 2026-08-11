@@ -154,7 +154,7 @@
     <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
         <div>
-          <p class="font-heading font-bold text-lg">Add Event to Schedule</p>
+          <p id="adhoc-modal-title" class="font-heading font-bold text-lg">Add Event to Schedule</p>
           <p class="text-xs text-ink-muted mt-0.5">For funerals, weddings, prayer services, and other one-off events. Not published — parishioners won't see or book this.</p>
         </div>
         <button onclick="closeModal('adhoc-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
@@ -163,7 +163,7 @@
       </div>
       <div id="adhoc-form" class="px-6 py-5 space-y-4"></div>
       <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitAdHocEvent()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Add to Schedule</button>
+        <button onclick="submitAdHocEvent()" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="adhoc-modal-save-label">Add to Schedule</span></button>
         <button onclick="closeModal('adhoc-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Cancel</button>
       </div>
     </div>
@@ -216,7 +216,11 @@
   }
   function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-  const ICON_PATHS = { plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>' };
+  const ICON_PATHS = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
   const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -327,7 +331,15 @@
         </div>
       ` : `
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-          ${entries.map(e => `
+          ${entries.map(e => deleteAdHocConfirmId === e.id ? `
+            <div class="px-5 py-4 bg-error-bg">
+              <p class="text-xs text-error mb-2">Remove "${e.title}" from the schedule? This can't be undone.</p>
+              <div class="flex gap-2">
+                <button onclick="confirmDeleteAdHoc('${e.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Yes, Remove</button>
+                <button onclick="deleteAdHocConfirmId=null; renderCalendar()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+              </div>
+            </div>
+          ` : `
             <div class="px-5 py-4 flex items-center justify-between gap-3">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="text-xs font-semibold text-ink-muted w-16 flex-shrink-0">${e.time}</span>
@@ -337,7 +349,11 @@
                 </div>
               </div>
               ${e.kind === 'unpublished'
-                ? `<span class="bg-lavender/20 text-[#5b3fc4] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">Not published</span>`
+                ? `<div class="flex items-center gap-1.5 flex-shrink-0">
+                    <span class="bg-lavender/20 text-[#5b3fc4] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">Not published</span>
+                    <button onclick="openAdHocModal('${e.id}')" aria-label="Edit event" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                    <button onclick="promptDeleteAdHoc('${e.id}')" aria-label="Delete event" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+                  </div>`
                 : `<span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">Published</span>`
               }
             </div>
@@ -348,21 +364,32 @@
     `;
   }
 
-  function openAdHocModal() {
+  let editingAdHocId = null;
+  function openAdHocModal(editId) {
+    editingAdHocId = editId || null;
+    const ev = editId ? adHocEvents.find(x => x.id === editId) : null;
+    let hour = 10, minute = '00', ampm = 'AM';
+    if (ev) {
+      const [time, period] = ev.time.split(' ');
+      const [h, m] = time.split(':');
+      hour = Number(h); minute = MINUTES_5.includes(m) ? m : '00'; ampm = period;
+    }
+    document.getElementById('adhoc-modal-title').textContent = ev ? 'Edit Event' : 'Add Event';
+    document.getElementById('adhoc-modal-save-label').textContent = ev ? 'Save Changes' : 'Add to Schedule';
     document.getElementById('adhoc-modal').classList.remove('hidden');
     document.getElementById('adhoc-form').innerHTML = `
-      <div class="space-y-1.5"><label class="text-xs font-medium">Date</label><input id="ah-date" type="date" value="${selectedDate}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Date</label><input id="ah-date" type="date" value="${ev ? ev.date : selectedDate}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
       <div class="space-y-1.5">
         <label class="text-xs font-medium">Time</label>
         <div class="grid grid-cols-3 gap-2">
           <select id="ah-hour" class="w-full border border-divider rounded-input px-2 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${HOURS_12.map(h => `<option value="${h}">${h}</option>`).join('')}
+            ${HOURS_12.map(h => `<option value="${h}" ${h === hour ? 'selected' : ''}>${h}</option>`).join('')}
           </select>
           <select id="ah-minute" class="w-full border border-divider rounded-input px-2 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${MINUTES_5.map(m => `<option value="${m}">${m}</option>`).join('')}
+            ${MINUTES_5.map(m => `<option value="${m}" ${m === minute ? 'selected' : ''}>${m}</option>`).join('')}
           </select>
           <select id="ah-ampm" class="w-full border border-divider rounded-input px-2 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            <option>AM</option><option>PM</option>
+            <option ${ampm==='AM'?'selected':''}>AM</option><option ${ampm==='PM'?'selected':''}>PM</option>
           </select>
         </div>
       </div>
@@ -370,19 +397,19 @@
         <div class="space-y-1.5">
           <label class="text-xs font-medium">Type</label>
           <select id="ah-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${EVENT_TYPES.map(t => `<option>${t}</option>`).join('')}
+            ${EVENT_TYPES.map(t => `<option ${ev && ev.type===t ? 'selected' : ''}>${t}</option>`).join('')}
           </select>
         </div>
         <div class="space-y-1.5">
           <label class="text-xs font-medium">Venue</label>
           <select id="ah-venue" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-            ${VENUES.map(v => `<option>${v}</option>`).join('')}
+            ${VENUES.map(v => `<option ${ev && ev.venue===v ? 'selected' : ''}>${v}</option>`).join('')}
           </select>
         </div>
       </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Occasion</label><input id="ah-occasion" type="text" placeholder="e.g. Funeral Mass — Fernandes Family" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Celebrant</label><input id="ah-celebrant" type="text" value="Fr. John Anthony" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Notes (optional)</label><textarea id="ah-notes" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Occasion</label><input id="ah-occasion" type="text" placeholder="e.g. Funeral Mass — Fernandes Family" value="${ev ? ev.occasion : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Celebrant</label><input id="ah-celebrant" type="text" value="${ev ? ev.celebrant : 'Fr. John Anthony'}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Notes (optional)</label><textarea id="ah-notes" rows="2" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${ev ? ev.notes : ''}</textarea></div>
       <p class="text-xs text-ink-muted italic">This won't be published — parishioners can't see or book it online.</p>
     `;
   }
@@ -398,14 +425,35 @@
     const celebrant = document.getElementById('ah-celebrant').value.trim();
     const notes = document.getElementById('ah-notes').value.trim();
     if (!date || !occasion) { toast('Please fill in the date and occasion.'); return; }
+    const time = `${hour}:${minute} ${ampm}`;
 
-    adHocEvents.push({
-      id: 'ADHOC-' + Math.floor(100 + Math.random()*899), date, time: `${hour}:${minute} ${ampm}`,
-      occasion, type, venue, celebrant: celebrant || 'Not assigned', notes, createdBy: staffName,
-    });
+    if (editingAdHocId) {
+      const ev = adHocEvents.find(x => x.id === editingAdHocId);
+      Object.assign(ev, { date, time, occasion, type, venue, celebrant: celebrant || 'Not assigned', notes });
+      toast(`${occasion} updated.`);
+    } else {
+      adHocEvents.push({
+        id: 'ADHOC-' + Math.floor(100 + Math.random()*899), date, time,
+        occasion, type, venue, celebrant: celebrant || 'Not assigned', notes, createdBy: staffName,
+      });
+      toast(`${occasion} added to the schedule.`);
+    }
+    editingAdHocId = null;
     selectedDate = date;
     closeModal('adhoc-modal');
-    toast(`${occasion} added to the schedule.`);
+    renderCalendar();
+  }
+
+  let deleteAdHocConfirmId = null;
+  function promptDeleteAdHoc(id) {
+    deleteAdHocConfirmId = id;
+    renderCalendar();
+  }
+  function confirmDeleteAdHoc(id) {
+    const ev = adHocEvents.find(x => x.id === id);
+    adHocEvents = adHocEvents.filter(x => x.id !== id);
+    deleteAdHocConfirmId = null;
+    toast(`${ev.occasion} removed from the schedule.`);
     renderCalendar();
   }
 

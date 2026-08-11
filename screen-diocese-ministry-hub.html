@@ -165,6 +165,22 @@
     </div>
   </div>
 
+  <!-- PASTORAL PROGRAM MODAL -->
+  <div id="program-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
+        <p id="program-modal-title" class="font-heading font-bold text-lg">Add Program</p>
+        <button onclick="closeModal('program-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="program-form" class="px-6 py-5 space-y-4"></div>
+      <div class="px-6 pb-6 pt-2">
+        <button onclick="submitProgram()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="program-modal-save-label">Add Program</span></button>
+      </div>
+    </div>
+  </div>
+
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
   function baseParams() {
@@ -197,7 +213,7 @@
     return `${d} ${MONTH_NAMES[m-1]} ${y}`;
   }
   function statusPill(status) {
-    const map = { 'Published':['bg-green/20','text-[#2f6b45]'], 'Draft':['bg-gold/20','text-[#8a5a10]'], 'Active':['bg-green/20','text-[#2f6b45]'] };
+    const map = { 'Published':['bg-green/20','text-[#2f6b45]'], 'Draft':['bg-gold/20','text-[#8a5a10]'], 'Active':['bg-green/20','text-[#2f6b45]'], 'Paused':['bg-section-bg','text-ink-muted'] };
     const [bg, text] = map[status] || ['bg-section-bg','text-ink-muted'];
     return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
   }
@@ -456,7 +472,10 @@
         ${statCard('Ministry areas', 4)}
         ${statCard('Avg. participants per program', Math.round(totalParticipants/totalPrograms))}
       </div>
-      <div class="flex gap-2 mb-4 flex-wrap" id="pastoral-tabs"></div>
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div class="flex gap-2 flex-wrap" id="pastoral-tabs"></div>
+        <button onclick="openProgramModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Program</button>
+      </div>
       <div id="pastoral-list"></div>
     `;
     renderPastoralTabs();
@@ -469,9 +488,11 @@
   }
   function renderPastoralList() {
     const programs = pastoralMinistries[pastoralTab];
-    document.getElementById('pastoral-list').innerHTML = `
+    document.getElementById('pastoral-list').innerHTML = programs.length === 0
+      ? `<div class="bg-card-bg rounded-card shadow-card p-8 text-center"><p class="text-sm text-ink-muted">No programs in ${pastoralTab} yet.</p></div>`
+      : `
       <div class="grid md:grid-cols-2 gap-4">
-        ${programs.map(p => `
+        ${programs.map((p, i) => `
           <div class="bg-card-bg rounded-card shadow-card p-5">
             <div class="flex items-start justify-between gap-3 mb-1">
               <p class="text-sm font-semibold">${p.name}</p>
@@ -479,10 +500,64 @@
             </div>
             <p class="text-xs text-ink-muted">Coordinator: ${p.coordinator}</p>
             <p class="text-xs text-ink-muted mt-1">${p.participants.toLocaleString('en-IN')} participants</p>
+            <div class="flex gap-2 mt-3">
+              <button onclick="openProgramModal(${i})" class="bg-section-bg text-ink text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-primary-light">Edit</button>
+              <button onclick="toggleProgramStatus(${i})" class="bg-white border border-divider text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-section-bg">${p.status === 'Active' ? 'Pause' : 'Resume'}</button>
+              <button onclick="deleteProgram(${i})" class="bg-white border border-divider text-error text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm hover:bg-error-bg">Delete</button>
+            </div>
           </div>
         `).join('')}
       </div>
     `;
+  }
+  let editingProgramIndex = null;
+  function openProgramModal(index) {
+    editingProgramIndex = index === undefined ? null : index;
+    const p = editingProgramIndex !== null ? pastoralMinistries[pastoralTab][editingProgramIndex] : null;
+    document.getElementById('program-modal-title').textContent = p ? 'Edit Program' : 'Add Program';
+    document.getElementById('program-modal-save-label').textContent = p ? 'Save Changes' : 'Add Program';
+    document.getElementById('program-modal').classList.remove('hidden');
+    document.getElementById('program-form').innerHTML = `
+      <div class="space-y-1.5"><label class="text-xs font-medium">Ministry area</label>
+        <select id="pgf-area" ${p ? 'disabled' : ''} class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none disabled:bg-section-bg disabled:text-ink-muted">
+          ${Object.keys(pastoralMinistries).map(a => `<option ${a === pastoralTab ? 'selected' : ''}>${a}</option>`).join('')}
+        </select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Program name</label><input id="pgf-name" type="text" value="${p ? p.name : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Coordinator</label><input id="pgf-coordinator" type="text" value="${p ? p.coordinator : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium">Participants</label><input id="pgf-participants" type="number" min="0" value="${p ? p.participants : 0}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+    `;
+  }
+  function submitProgram() {
+    const name = document.getElementById('pgf-name').value.trim();
+    if (!name) { toast('Please enter a program name.'); return; }
+    const coordinator = document.getElementById('pgf-coordinator').value.trim();
+    const participants = parseInt(document.getElementById('pgf-participants').value) || 0;
+    if (editingProgramIndex !== null) {
+      const p = pastoralMinistries[pastoralTab][editingProgramIndex];
+      Object.assign(p, { name, coordinator, participants });
+      toast(`${name} updated.`);
+    } else {
+      const area = document.getElementById('pgf-area').value;
+      pastoralMinistries[area].push({ name, coordinator, participants, status: 'Active' });
+      pastoralTab = area;
+      toast(`${name} added to ${area}.`);
+    }
+    editingProgramIndex = null;
+    closeModal('program-modal');
+    renderModule();
+  }
+  function toggleProgramStatus(index) {
+    const p = pastoralMinistries[pastoralTab][index];
+    p.status = p.status === 'Active' ? 'Paused' : 'Active';
+    toast(`${p.name} ${p.status === 'Active' ? 'resumed' : 'paused'}.`);
+    renderPastoralList();
+  }
+  function deleteProgram(index) {
+    const p = pastoralMinistries[pastoralTab][index];
+    pastoralMinistries[pastoralTab].splice(index, 1);
+    toast(`${p.name} removed.`);
+    renderModule();
   }
 
   renderModule();

@@ -403,7 +403,75 @@
     selectedTemplateId = id;
     certFieldValues = {};
     templateById(id).fields.forEach(f => { certFieldValues[f.key] = f.default || ''; });
+    linkedMemberName = null;
     setModule('create');
+  }
+
+  // ---------------- Same families/sacrament records as screen-parish-familyrecords-search.html's new ----------------
+  // ---------------- Sacraments tab, re-embedded here (Option A convention) so a certificate can be filled ----------------
+  // ---------------- from a real stored record instead of typed blank every time. ----------------
+  const recordFamilies = [
+    { familyName:"Rodrigues Family", members:[
+      { name:"John Rodrigues", relationship:"Head", dob:"1975-03-14", sacraments:[
+        { sacrament:"Baptism", date:"1975-04-20", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"Confirmation", date:"1990-05-15", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar" } ] },
+      { name:"Grace Rodrigues", relationship:"Spouse", dob:"1978-07-02", sacraments:[
+        { sacrament:"Baptism", date:"1978-08-10", church:"St Patrick's Church" },
+        { sacrament:"Marriage", date:"2001-11-24", church:"Infant Jesus Shrine, Viveknagar" } ] },
+      { name:"Kevin Rodrigues", relationship:"Son", dob:"2003-01-18", sacraments:[
+        { sacrament:"Baptism", date:"2003-02-14", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"First Communion", date:"2011-04-10", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"Confirmation", date:"2017-09-03", church:"Infant Jesus Shrine, Viveknagar" } ] },
+      { name:"Clara Rodrigues", relationship:"Daughter", dob:"2006-09-25", sacraments:[
+        { sacrament:"Baptism", date:"2006-10-15", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"First Communion", date:"2014-04-06", church:"Infant Jesus Shrine, Viveknagar" } ] },
+    ] },
+    { familyName:"Pinto Family", members:[
+      { name:"Michael Pinto", relationship:"Head", dob:"1980-11-09", sacraments:[
+        { sacrament:"Baptism", date:"1980-12-14", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"Marriage", date:"2008-02-09", church:"Infant Jesus Shrine, Viveknagar" } ] },
+      { name:"Sandra Pinto", relationship:"Spouse", dob:"1983-02-22", sacraments:[] },
+      { name:"Ryan Pinto", relationship:"Son", dob:"2010-05-05", sacraments:[
+        { sacrament:"Baptism", date:"2010-06-12", church:"Infant Jesus Shrine, Viveknagar" },
+        { sacrament:"First Communion", date:"2018-04-08", church:"Infant Jesus Shrine, Viveknagar" } ] },
+    ] },
+  ];
+  const TEMPLATE_SACRAMENT_MAP = { "TPL-001":"Baptism", "TPL-002":"First Communion", "TPL-003":"Confirmation", "TPL-004":"Marriage" };
+  let linkedMemberName = null;
+
+  function allMembersFlat() {
+    return recordFamilies.flatMap(f => f.members.map(m => Object.assign({}, m, { familyName: f.familyName })));
+  }
+  function findParentNames(familyName, memberName) {
+    const fam = recordFamilies.find(f => f.familyName === familyName);
+    if (!fam) return { father: '', mother: '' };
+    const head = fam.members.find(m => m.relationship === 'Head' && m.name !== memberName);
+    const spouse = fam.members.find(m => m.relationship === 'Spouse' && m.name !== memberName);
+    return { father: head ? head.name : '', mother: spouse ? spouse.name : '' };
+  }
+  function fillFromRecord(memberName) {
+    const sacramentType = TEMPLATE_SACRAMENT_MAP[selectedTemplateId];
+    const person = allMembersFlat().find(m => m.name === memberName);
+    if (!person) return;
+    const record = sacramentType ? person.sacraments.find(s => s.sacrament === sacramentType) : null;
+    if (!record) { toast(`No ${sacramentType} record on file for ${memberName}.`); return; }
+    linkedMemberName = memberName;
+    const parents = findParentNames(person.familyName, person.name);
+    if ('childName' in certFieldValues) certFieldValues.childName = person.name;
+    if ('candidateName' in certFieldValues) certFieldValues.candidateName = person.name;
+    if ('dob' in certFieldValues) certFieldValues.dob = person.dob;
+    if ('baptismDate' in certFieldValues) certFieldValues.baptismDate = record.date;
+    if ('communionDate' in certFieldValues) certFieldValues.communionDate = record.date;
+    if ('confirmationDate' in certFieldValues) certFieldValues.confirmationDate = record.date;
+    if ('marriageDate' in certFieldValues) certFieldValues.marriageDate = record.date;
+    if ('church' in certFieldValues) certFieldValues.church = record.church;
+    if ('fatherName' in certFieldValues) certFieldValues.fatherName = parents.father;
+    if ('motherName' in certFieldValues) certFieldValues.motherName = parents.mother;
+    if (person.relationship === 'Head' && 'groomName' in certFieldValues) certFieldValues.groomName = person.name;
+    if (person.relationship === 'Spouse' && 'brideName' in certFieldValues) certFieldValues.brideName = person.name;
+    toast(`Filled from ${memberName}'s ${sacramentType} record.`);
+    renderCreateModule(document.getElementById('module-content'));
   }
 
   // =========================================================================
@@ -436,6 +504,16 @@
         </div>
         <button onclick="selectedTemplateId=null; renderModule()" class="text-primary text-xs font-semibold flex-shrink-0">Change template</button>
       </div>
+      ${TEMPLATE_SACRAMENT_MAP[selectedTemplateId] ? `
+        <div class="bg-primary-light rounded-card p-4 mb-4">
+          <p class="text-xs font-semibold text-primary uppercase tracking-wide mb-2">Fill from a parishioner's record</p>
+          <select onchange="if(this.value) fillFromRecord(this.value)" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+            <option value="">${linkedMemberName ? 'Linked: ' + linkedMemberName : 'Search for a parishioner\u2026'}</option>
+            ${allMembersFlat().map(m => `<option value="${m.name}">${m.name} \u2014 ${m.familyName}</option>`).join('')}
+          </select>
+          <p class="text-xs text-ink-muted mt-2">Only parishioners with a ${TEMPLATE_SACRAMENT_MAP[selectedTemplateId]} record on file can be linked here.</p>
+        </div>
+      ` : ''}
       <div class="grid lg:grid-cols-5 gap-6">
         <div class="lg:col-span-2 bg-card-bg rounded-card shadow-card p-5 space-y-4">
           <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Guided details</p>

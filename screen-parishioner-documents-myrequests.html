@@ -92,6 +92,8 @@
     </div>
   </nav>
 
+  <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
 
@@ -168,6 +170,14 @@
     chevronDown: '<polyline points="6 9 12 15 18 9"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
 
   // Builds a simple linear activity timeline per request based on its current status/notes.
   function buildTimeline(r) {
@@ -199,6 +209,12 @@
         submitted,
         { label: 'Under Review', date: '', state: 'done' },
         { label: 'Rejected', date: r.internalNotes, state: 'current-reject' },
+      ];
+    }
+    if (r.requestStatus === 'Cancelled') {
+      return [
+        submitted,
+        { label: 'Cancelled by you', date: r.lastUpdated, state: 'current-reject' },
       ];
     }
     return [submitted];
@@ -280,10 +296,34 @@
               <span class="text-ink-muted transition-warm" style="transform: rotate(${isOpen ? '180' : '0'}deg)">${icon('chevronDown', 'w-4 h-4')}</span>
             </div>
           </button>
-          ${isOpen ? `<div class="border-t border-divider"><p class="text-xs font-semibold text-ink-muted uppercase tracking-wide px-5 pt-4 pb-1">Activity Timeline</p>${renderTimeline(r)}</div>` : ''}
+          ${isOpen ? `<div class="border-t border-divider"><p class="text-xs font-semibold text-ink-muted uppercase tracking-wide px-5 pt-4 pb-1">Activity Timeline</p>${renderTimeline(r)}
+            ${['Submitted','Under Review','Awaiting Information'].includes(r.requestStatus) ? `
+              <div class="px-5 pb-5">
+                ${cancelConfirmId === r.id
+                  ? `<div class="bg-error-bg rounded-card p-3 space-y-2">
+                       <p class="text-xs text-error">Cancel this request? This can't be undone.</p>
+                       <div class="flex gap-2">
+                         <button onclick="confirmCancelDocRequest('${r.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Yes, Cancel</button>
+                         <button onclick="cancelConfirmId=null; renderList()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Keep Request</button>
+                       </div>
+                     </div>`
+                  : `<button onclick="cancelConfirmId='${r.id}'; renderList()" class="w-full bg-white border border-divider text-error text-xs font-semibold py-2.5 rounded-button min-h-[36px] transition-warm hover:bg-error-bg">Cancel Request</button>`
+                }
+              </div>
+            ` : ''}
+          </div>` : ''}
         </div>
       `;
     }).join('');
+  }
+
+  let cancelConfirmId = null;
+  function confirmCancelDocRequest(id) {
+    const r = requests.find(x => x.id === id);
+    if (r) { r.requestStatus = 'Cancelled'; r.lastUpdated = '31 Jul 2026'; }
+    cancelConfirmId = null;
+    toast('Request cancelled.');
+    renderList();
   }
 
   function renderLoading() {

@@ -508,8 +508,21 @@
     `;
   }
 
+  let massStatusConfirmId = null;
   function renderMassCard(a) {
     const isSpecial = a.massType !== 'Regular';
+    const isActive = a.status === 'Active';
+    if (massStatusConfirmId === a.id) {
+      return `
+        <div class="bg-error-bg rounded-card px-4 py-3">
+          <p class="text-sm text-error mb-2">${isActive ? 'Deactivate' : 'Reactivate'} "${a.massName}"? ${isActive ? 'It will no longer accept new bookings.' : ''}</p>
+          <div class="flex gap-2">
+            <button onclick="confirmMassStatusToggle('${a.id}')" class="bg-error text-white text-xs font-semibold px-3.5 py-2 rounded-button min-h-[36px] transition-warm">Confirm</button>
+            <button onclick="massStatusConfirmId=null; renderScheduleModule(document.getElementById('module-content'))" class="text-ink-muted text-xs font-semibold px-3.5 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+          </div>
+        </div>
+      `;
+    }
     return `
       <div class="bg-card-bg rounded-card shadow-card px-4 py-3 flex items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
@@ -520,11 +533,19 @@
           <p class="text-xs text-ink-muted mt-0.5">${a.time} · ${a.bookingFee > 0 ? '₹'+a.bookingFee : 'No fee'} · Max ${a.maxIntentions || 'Unlimited'}</p>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
-          <span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('check','icon w-3 h-3')}${a.status}</span>
+          <button onclick="massStatusConfirmId='${a.id}'; renderScheduleModule(document.getElementById('module-content'))" class="${isActive ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1 transition-warm hover:opacity-80">${icon(isActive ? 'check' : 'clock','icon w-3 h-3')}${a.status}</button>
           <button onclick="openScheduleModal('${a.id}')" aria-label="Edit mass" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
         </div>
       </div>
     `;
+  }
+
+  function confirmMassStatusToggle(id) {
+    const a = massActivities.find(x => x.id === id);
+    a.status = a.status === 'Active' ? 'Inactive' : 'Active';
+    massStatusConfirmId = null;
+    toast(`${a.massName} ${a.status === 'Active' ? 'reactivated' : 'deactivated'}.`);
+    renderScheduleModule(document.getElementById('module-content'));
   }
 
   let editingScheduleId = null;

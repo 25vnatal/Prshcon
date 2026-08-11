@@ -612,7 +612,7 @@
   function approveSacrament(id) {
     const r = sacramentRequests.find(x => x.id === id);
     r.status = 'Approved';
-    toast(`${r.sacramentName} registration approved \u2014 ${r.candidateName}.`);
+    toast(`${r.sacramentName} approved for ${r.candidateName} \u2014 add it to their sacramental record in Family Records.`);
     updateSacramentsBadge();
     renderSacramentsStageTabs();
     renderSacramentsList();

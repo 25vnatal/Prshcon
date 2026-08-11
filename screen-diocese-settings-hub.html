@@ -128,7 +128,7 @@
   <div id="parish-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
     <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
-        <p class="font-heading font-bold text-lg">Register New Parish</p>
+        <p id="parish-modal-title" class="font-heading font-bold text-lg">Register New Parish</p>
         <button onclick="closeModal('parish-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
         </button>
@@ -146,7 +146,7 @@
         </div>
       </div>
       <div class="px-6 pb-6 pt-2">
-        <button onclick="submitNewParish()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Register Parish</button>
+        <button onclick="submitParishForm()" class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"><span id="parish-modal-save-label">Register Parish</span></button>
       </div>
     </div>
   </div>
@@ -377,7 +377,7 @@
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
           <input type="text" placeholder="Search parishes…" value="${pmSearch}" oninput="pmSearch=this.value; renderParishMgmtList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
         </div>
-        <button onclick="document.getElementById('parish-modal').classList.remove('hidden')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0">${icon('plus','icon w-4 h-4')}Register New Parish</button>
+        <button onclick="openParishFormModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0">${icon('plus','icon w-4 h-4')}Register New Parish</button>
       </div>
       <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
         <div class="overflow-x-auto">
@@ -423,12 +423,17 @@
     const isActive = (p.status || 'Active') === 'Active';
     return `
       <div id="parish-kebab-menu" style="position:fixed; top:${parishKebabMenuPos.top}px; left:${parishKebabMenuPos.left}px;" class="w-44 bg-card-bg rounded-card shadow-card border border-divider py-1.5 z-50">
+        <button onclick="editParishFromKebab('${p.id}')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Edit Details</button>
         ${isActive
           ? `<button onclick="promptParishStatusChange('${p.id}','Inactive')" class="w-full text-left px-3.5 py-2.5 text-sm text-error hover:bg-error-bg transition-warm">Deactivate</button>`
           : `<button onclick="promptParishStatusChange('${p.id}','Active')" class="w-full text-left px-3.5 py-2.5 text-sm hover:bg-section-bg transition-warm">Reactivate</button>`
         }
       </div>
     `;
+  }
+  function editParishFromKebab(id) {
+    closeParishKebab();
+    openParishFormModal(id);
   }
   function closeParishKebab() {
     const existing = document.getElementById('parish-kebab-menu');
@@ -456,16 +461,34 @@
     parishConfirmContext = null;
     renderParishMgmtList();
   }
-  function submitNewParish() {
+  let editingParishId = null;
+  function openParishFormModal(editId) {
+    editingParishId = editId || null;
+    const p = editId ? parishesMgmt.find(x => x.id === editId) : null;
+    document.getElementById('parish-modal-title').textContent = p ? 'Edit Parish Details' : 'Register New Parish';
+    document.getElementById('parish-modal-save-label').textContent = p ? 'Save Changes' : 'Register Parish';
+    document.getElementById('pf-name').value = p ? p.name : '';
+    document.getElementById('pf-address').value = p ? (p.address || '') : '';
+    document.getElementById('pf-size').value = p ? p.sizeTier : 'Small';
+    document.getElementById('pf-priest').value = p ? p.parishPriest : '';
+    document.getElementById('parish-modal').classList.remove('hidden');
+  }
+  function submitParishForm() {
     const name = document.getElementById('pf-name').value.trim();
     if (!name) { toast('Please enter a parish name.'); return; }
     const address = document.getElementById('pf-address').value.trim();
     const sizeTier = document.getElementById('pf-size').value;
     const parishPriest = document.getElementById('pf-priest').value.trim() || 'Not yet assigned';
-    parishesMgmt.unshift({ id:'PAR-NEW-'+Math.floor(1000+Math.random()*8999), name, sizeTier, parishPriest, status:'Active' });
-    toast(`${name} registered.`);
+    if (editingParishId) {
+      const p = parishesMgmt.find(x => x.id === editingParishId);
+      Object.assign(p, { name, address, sizeTier, parishPriest });
+      toast(`${name} updated.`);
+    } else {
+      parishesMgmt.unshift({ id:'PAR-NEW-'+Math.floor(1000+Math.random()*8999), name, address, sizeTier, parishPriest, status:'Active' });
+      toast(`${name} registered.`);
+    }
+    editingParishId = null;
     closeModal('parish-modal');
-    ['pf-name','pf-address','pf-priest'].forEach(id => document.getElementById(id).value = '');
     renderModule();
   }
 
