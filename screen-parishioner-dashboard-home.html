@@ -421,9 +421,9 @@
   ];
 
   const NEARBY_CHURCHES = [
-    { name: "Infant Jesus Shrine", locality: "Viveknagar (your parish)", distance: "0.0 km" },
-    { name: "Our Lady of Sacred Heart Church", locality: "HSR Layout", distance: "3.1 km" },
-    { name: "Resurrection Church", locality: "Indiranagar", distance: "4.4 km" },
+    { id: "PAR-0002", name: "Infant Jesus Shrine", locality: "Viveknagar (your parish)", distance: "0.0 km" },
+    { id: "PAR-0009", name: "Our Lady of Sacred Heart Church", locality: "HSR Layout", distance: "3.1 km" },
+    { id: "PAR-0010", name: "Resurrection Church", locality: "Indiranagar", distance: "4.4 km" },
   ];
   const MASS_TIMINGS = [
     { label: "Sunday", value: "6:30 AM, 8:00 AM, 10:00 AM (Konkani)" },
@@ -462,14 +462,14 @@
         ${heading}
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
           ${NEARBY_CHURCHES.map(c => `
-            <div class="px-4 py-3 flex items-center gap-3">
+            <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&parishId=${c.id}'" class="w-full flex items-center gap-3 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px]">
               <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('pin','w-4 h-4')}</span>
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold truncate">${c.name}</p>
                 <p class="text-xs text-ink-muted mt-0.5">${c.locality}</p>
               </div>
               <span class="text-xs text-ink-muted flex-shrink-0">${c.distance}</span>
-            </div>
+            </button>
           `).join('')}
         </div>
         <p class="text-xs text-ink-muted mt-2">Distances are approximate.</p>
