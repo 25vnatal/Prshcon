@@ -106,7 +106,7 @@
   // ---------------- Same content already published on screen-parish-faithformation-hub.html — reused ----------------
   // ---------------- verbatim (only the Published items; the 2 Drafts there are correctly excluded here) so ----------------
   // ---------------- what a parish publishes is exactly what a parishioner reads, not a separate copy. ----------------
-  const CATEGORIES = ["All", "Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Feast Day Content"];
+  const CATEGORIES = ["All", "Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Prayers for Every Occasion", "Feast Day Content"];
   const content = [
     { id:"FF-001", category:"Daily Prayers", title:"Morning Offering", body:"O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", publishedDate:"2026-07-26" },
     { id:"FF-002", category:"Daily Prayers", title:"Prayer of the Day — Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", publishedDate:"2026-07-26" },
@@ -115,9 +115,58 @@
     { id:"FF-005", category:"Readings & Reflections", title:"Sunday Gospel Reflection — The Good Samaritan", body:"Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", publishedDate:"2026-07-19" },
     { id:"FF-007", category:"Special Prayers", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", publishedDate:"2026-07-15" },
     { id:"FF-008", category:"Special Prayers", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", publishedDate:"2026-06-20" },
-    { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"A guide to praying the Joyful Mysteries, prayed on Mondays and Saturdays: the Annunciation, Visitation, Nativity, Presentation, and Finding in the Temple.", publishedDate:"2026-05-01" },
-    { id:"FF-010", category:"Rosary", title:"The Sorrowful Mysteries", body:"A guide to praying the Sorrowful Mysteries, prayed on Tuesdays and Fridays: the Agony, Scourging, Crowning with Thorns, Carrying of the Cross, and Crucifixion.", publishedDate:"2026-05-01" },
+    { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"Traditionally prayed on Mondays and Saturdays. Meditate on the early life of Christ, from the Annunciation to finding Him in the Temple.", publishedDate:"2026-05-01",
+      mysteries:[
+        { name:"The Annunciation", fruit:"Humility" },
+        { name:"The Visitation", fruit:"Love of Neighbour" },
+        { name:"The Nativity", fruit:"Poverty of Spirit" },
+        { name:"The Presentation in the Temple", fruit:"Obedience" },
+        { name:"The Finding of Jesus in the Temple", fruit:"Joy in Seeking Christ" },
+      ] },
+    { id:"FF-010", category:"Rosary", title:"The Sorrowful Mysteries", body:"Traditionally prayed on Tuesdays and Fridays. Meditate on the suffering Christ endured for our salvation.", publishedDate:"2026-05-01",
+      mysteries:[
+        { name:"The Agony in the Garden", fruit:"Sorrow for Sin" },
+        { name:"The Scourging at the Pillar", fruit:"Purity" },
+        { name:"The Crowning with Thorns", fruit:"Moral Courage" },
+        { name:"The Carrying of the Cross", fruit:"Patience" },
+        { name:"The Crucifixion", fruit:"Perseverance" },
+      ] },
+    { id:"FF-013", category:"Rosary", title:"The Glorious Mysteries", body:"Traditionally prayed on Wednesdays and Sundays. Meditate on the triumph of Christ and Our Lady's own glory.", publishedDate:"2026-05-01",
+      mysteries:[
+        { name:"The Resurrection", fruit:"Faith" },
+        { name:"The Ascension", fruit:"Christian Hope" },
+        { name:"The Descent of the Holy Spirit", fruit:"Wisdom" },
+        { name:"The Assumption of Mary", fruit:"Devotion to Mary" },
+        { name:"The Coronation of Mary", fruit:"Trust in Mary's Intercession" },
+      ] },
+    { id:"FF-014", category:"Rosary", title:"The Luminous Mysteries", body:"Traditionally prayed on Thursdays. Meditate on Christ's public ministry, from His Baptism to the institution of the Eucharist.", publishedDate:"2026-05-01",
+      mysteries:[
+        { name:"The Baptism in the Jordan", fruit:"Openness to the Holy Spirit" },
+        { name:"The Wedding at Cana", fruit:"Trust in Jesus" },
+        { name:"The Proclamation of the Kingdom", fruit:"Repentance and Trust in God" },
+        { name:"The Transfiguration", fruit:"Desire for Holiness" },
+        { name:"The Institution of the Eucharist", fruit:"Love of the Eucharist" },
+      ] },
     { id:"FF-011", category:"Rosary", title:"How to Pray the Rosary — A Beginner's Guide", body:"Step-by-step instructions for parishioners new to the Rosary, including how to hold the beads and the order of prayers.", publishedDate:"2026-04-10" },
+    { id:"FF-015", category:"Prayers for Every Occasion", title:"Prayer Before Exams", body:"Lord, calm my mind and steady my thoughts. Help me recall what I have learned, and grant me clarity and confidence. Whatever the result, let me know I have done my honest best.", publishedDate:"2026-06-01" },
+    { id:"FF-016", category:"Prayers for Every Occasion", title:"Prayer Before a Journey", body:"Lord, watch over me on this journey. Guide the hands of all who travel with me, keep us safe from harm, and bring us to our destination in peace.", publishedDate:"2026-06-01" },
+    { id:"FF-017", category:"Prayers for Every Occasion", title:"Prayer for the Dying", body:"Merciful Lord, receive your servant with tenderness. Ease their pain, calm their fear, and welcome them into the peace of your presence.", publishedDate:"2026-06-01" },
+    { id:"FF-018", category:"Prayers for Every Occasion", title:"Prayer for the Faithful Departed", body:"Eternal rest grant unto them, O Lord, and let perpetual light shine upon them. May their souls, and the souls of all the faithful departed, rest in peace.", publishedDate:"2026-06-01" },
+    { id:"FF-019", category:"Prayers for Every Occasion", title:"Prayer for a New Job", body:"Lord, as I begin this new work, grant me diligence, humility, and a spirit of service. Help me to use my gifts well and to treat those I work with fairly and kindly.", publishedDate:"2026-06-01" },
+    { id:"FF-020", category:"Prayers for Every Occasion", title:"Prayer for a New Home", body:"Bless this home, Lord, and all who will live within it. May it be a place of peace, of welcome, and of love, and may your presence dwell here always.", publishedDate:"2026-06-01" },
+    { id:"FF-021", category:"Prayers for Every Occasion", title:"Prayer for Guidance in a Decision", body:"Lord, I am uncertain of the path ahead. Grant me wisdom to see clearly, courage to choose well, and trust that you walk with me whichever way I go.", publishedDate:"2026-06-01" },
+    { id:"FF-022", category:"Prayers for Every Occasion", title:"Prayer for Peace in the Family", body:"Lord, heal what is broken in our family and strengthen what is good. Grant us patience with one another, quickness to forgive, and a home built on love.", publishedDate:"2026-06-01" },
+    { id:"FF-023", category:"Prayers for Every Occasion", title:"Prayer for the Last Day of the Year", body:"Lord, thank you for the year now ending — its joys, its trials, and every grace I did not deserve. As a new year begins, walk with me still, and make me more like you.", publishedDate:"2026-06-01" },
+    { id:"FF-024", category:"Prayers for Every Occasion", title:"Prayer on a Birthday", body:"Lord, thank you for the gift of another year of life. Bless the year ahead, deepen my faith, and help me become the person you made me to be.", publishedDate:"2026-06-01" },
+    { id:"FF-025", category:"Prayers for Every Occasion", title:"Prayer for a Wedding Anniversary", body:"Lord, thank you for the years you have given this marriage. Renew our love, deepen our patience with each other, and bless the years still to come.", publishedDate:"2026-06-01" },
+    { id:"FF-026", category:"Prayers for Every Occasion", title:"Prayer for Healing", body:"Lord, you are the source of all healing. Touch this body and this heart with your mercy, and grant strength and peace through this time of illness.", publishedDate:"2026-06-01" },
+    { id:"FF-027", category:"Prayers for Every Occasion", title:"Prayer for Forgiveness", body:"Lord, I am sorry for the ways I have fallen short. Forgive me, help me forgive myself, and give me the grace to do better.", publishedDate:"2026-06-01" },
+    { id:"FF-028", category:"Prayers for Every Occasion", title:"Prayer for Strength in Difficult Times", body:"Lord, this burden feels heavy. Lend me your strength when mine runs out, and remind me that I do not carry it alone.", publishedDate:"2026-06-01" },
+    { id:"FF-029", category:"Prayers for Every Occasion", title:"Prayer for Students", body:"Lord, bless all who are studying and learning. Grant them focus, curiosity, and perseverance, and help them grow not only in knowledge but in wisdom.", publishedDate:"2026-06-01" },
+    { id:"FF-030", category:"Prayers for Every Occasion", title:"Prayer for an Expectant Mother", body:"Lord, watch over this mother and the child she carries. Grant her health and peace of mind, and bring this child safely into the world.", publishedDate:"2026-06-01" },
+    { id:"FF-031", category:"Prayers for Every Occasion", title:"Prayer Before Starting Work", body:"Lord, be with me in the work of this day. Help me to do it well, to treat others with patience, and to offer this work back to you.", publishedDate:"2026-06-01" },
+    { id:"FF-032", category:"Prayers for Every Occasion", title:"Prayer in Times of Anxiety", body:"Lord, my mind is restless and my heart is heavy with worry. Help me to place this fear in your hands, and grant me your peace, which the world cannot give.", publishedDate:"2026-06-01" },
+    { id:"FF-033", category:"Prayers for Every Occasion", title:"Act of Contrition", body:"O my God, I am sorry for my sins with all my heart. In choosing to do wrong and failing to do good, I have sinned against you, whom I should love above all things. I firmly intend, with your help, to do penance, to sin no more, and to avoid whatever leads me to sin.", publishedDate:"2026-06-01" },
   ];
 
   let ffCategory = 'All';
@@ -139,6 +188,12 @@
     });
   }
 
+  // Traditional day-of-week mystery assignment. Uses the real current day (not this app's usual fixed
+  // mock "TODAY") since this is a recurring weekly pattern, not a dated event — it should genuinely
+  // reflect whatever day someone is actually using the app on.
+  const MYSTERY_BY_DAY = { 0:"The Glorious Mysteries", 1:"The Joyful Mysteries", 2:"The Sorrowful Mysteries", 3:"The Glorious Mysteries", 4:"The Luminous Mysteries", 5:"The Sorrowful Mysteries", 6:"The Joyful Mysteries" };
+  function todaysMysteryTitle() { return MYSTERY_BY_DAY[new Date().getDay()]; }
+
   function renderContentList() {
     const list = filteredContent();
     document.getElementById('content-list').innerHTML = list.length === 0
@@ -149,7 +204,7 @@
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <p class="text-xs text-lavender font-semibold uppercase tracking-wide">${c.category}</p>
-                <p class="text-sm font-semibold mt-0.5">${c.title}</p>
+                <p class="text-sm font-semibold mt-0.5">${c.title}${c.title === todaysMysteryTitle() ? ` <span class="text-primary text-xs font-semibold">· Today</span>` : ''}</p>
               </div>
               <svg class="icon w-4 h-4 text-ink-muted flex-shrink-0 transition-transform ${openContentId === c.id ? 'rotate-180' : ''}" viewBox="0 0 24 24">${ICON_PATHS.chevronDown}</svg>
             </div>
@@ -157,6 +212,19 @@
           ${openContentId === c.id ? `
             <div class="px-5 pb-5">
               <p class="text-sm leading-relaxed text-ink">${c.body}</p>
+              ${c.mysteries ? `
+                <div class="mt-3 space-y-2">
+                  ${c.mysteries.map((m, i) => `
+                    <div class="flex items-start gap-2.5 bg-section-bg rounded-button px-3.5 py-2.5">
+                      <span class="w-6 h-6 rounded-badge bg-primary-light text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${i + 1}</span>
+                      <div class="min-w-0">
+                        <p class="text-sm font-medium">${m.name}</p>
+                        <p class="text-xs text-ink-muted mt-0.5">Fruit of the Mystery: ${m.fruit}</p>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
               <p class="text-xs text-ink-muted mt-3">Published ${formatDate(c.publishedDate)}</p>
             </div>
           ` : ''}
@@ -171,6 +239,11 @@
 
   const initialCategory = sessionParams.get('category');
   if (initialCategory && CATEGORIES.includes(initialCategory)) { ffCategory = initialCategory; }
+  const initialItem = sessionParams.get('item');
+  if (initialItem === 'todaysMystery') {
+    const todaysEntry = content.find(c => c.title === todaysMysteryTitle());
+    if (todaysEntry) { openContentId = todaysEntry.id; }
+  }
   renderCategories();
   renderContentList();
 </script>
