@@ -42,7 +42,7 @@
   <div class="max-w-[420px] mx-auto min-h-screen bg-bg-warm pb-28 relative">
 
     <header class="px-5 pt-5 pb-4 flex items-center gap-3">
-      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
         <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
       </button>
       <p class="font-heading font-bold text-lg">Parish Profile</p>
@@ -54,23 +54,23 @@
 
   <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
     <div class="grid grid-cols-5">
-      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
         <span class="text-[10.5px]">Home</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
         <span class="text-[10.5px]">Services</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
         <span class="text-[10.5px]">Give</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-family.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
         <span class="text-[10.5px]">My Family</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
         <span class="text-[10.5px]">Menu</span>
       </button>
@@ -79,6 +79,15 @@
 
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
+  // Strips page-specific params (parishId, card) so they never leak forward onto the Dashboard's own
+  // URL via Back/Home — without this, a later Dashboard-generated link (e.g. the hero banner, which
+  // appends its own &parishId=...) would end up with a duplicate parishId, and URLSearchParams.get()
+  // silently returns the FIRST value, not the intended one. This was a real, reproducible bug.
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
   const HOME_PARISH_ID = 'PAR-0002';
   const targetParishId = sessionParams.get('parishId') || HOME_PARISH_ID;
   const scrollToCard = sessionParams.get('card');
@@ -462,7 +471,7 @@
                 </div>
               `).join('')}
             </div>
-            <button onclick="window.location.href='screen-parishioner-committees.html?' + sessionParams.toString()" class="text-primary text-xs font-semibold mt-3">View all committees</button>
+            <button onclick="window.location.href='screen-parishioner-committees.html?' + baseParams().toString()" class="text-primary text-xs font-semibold mt-3">View all committees</button>
           `
         )}
 
@@ -478,11 +487,11 @@
                 </div>
               `).join('')}
             </div>
-            <button onclick="window.location.href='screen-parishioner-faithformation.html?' + sessionParams.toString()" class="text-primary text-xs font-semibold mt-3">View all faith formation content</button>
+            <button onclick="window.location.href='screen-parishioner-faithformation.html?' + baseParams().toString()" class="text-primary text-xs font-semibold mt-3">View all faith formation content</button>
           `
         )}
 
-        <button onclick="window.location.href='screen-parishioner-events.html?' + sessionParams.toString()" class="w-full bg-card-bg rounded-card shadow-card p-4 text-center transition-warm hover:shadow-card-hover min-h-[44px]">
+        <button onclick="window.location.href='screen-parishioner-events.html?' + baseParams().toString()" class="w-full bg-card-bg rounded-card shadow-card p-4 text-center transition-warm hover:shadow-card-hover min-h-[44px]">
           <p class="text-sm font-semibold">View All Parish Events</p>
         </button>
       ` : ''}

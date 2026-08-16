@@ -41,7 +41,7 @@
 
     <!-- ============ TOP BAR ============ -->
     <header class="px-5 pt-5 pb-4 flex items-center gap-3">
-      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" aria-label="Back" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm flex-shrink-0">
         <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
       </button>
       <p class="font-heading font-bold text-lg">Faith Formation</p>
@@ -67,23 +67,23 @@
   <!-- ============ BOTTOM NAV (5 items) ============ -->
   <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t border-divider max-w-[420px] mx-auto">
     <div class="grid grid-cols-5">
-      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
         <span class="text-[10.5px]">Home</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-services-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="15" width="7" height="7" rx="1.5"/><rect x="14" y="15" width="7" height="7" rx="1.5"/></svg>
         <span class="text-[10.5px]">Services</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-donate-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/></svg>
         <span class="text-[10.5px]">Give</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-family.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-family.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><circle cx="18" cy="8" r="2.5"/></svg>
         <span class="text-[10.5px]">My Family</span>
       </button>
-      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + sessionParams.toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
+      <button onclick="window.location.href='screen-parishioner-me-hub.html?' + baseParams().toString()" class="flex flex-col items-center gap-1 py-3 text-ink-muted">
         <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
         <span class="text-[10.5px]">Menu</span>
       </button>
@@ -92,6 +92,14 @@
 
 <script>
   const sessionParams = new URLSearchParams(window.location.search);
+  // Same fix as screen-parishioner-parish-profile.html: strips page-specific params (category, item) so
+  // they never leak onto the Dashboard's own URL via Back/Home and later cause a duplicate/stale param
+  // on a link the Dashboard builds elsewhere.
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
   const ICON_PATHS = {
     chevronDown: '<polyline points="6 9 12 15 18 9"/>',
   };
@@ -106,15 +114,15 @@
   // ---------------- Same content already published on screen-parish-faithformation-hub.html — reused ----------------
   // ---------------- verbatim (only the Published items; the 2 Drafts there are correctly excluded here) so ----------------
   // ---------------- what a parish publishes is exactly what a parishioner reads, not a separate copy. ----------------
-  const CATEGORIES = ["All", "Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Prayers for Every Occasion", "Feast Day Content"];
+  const CATEGORIES = ["All", "Daily Prayers", "Readings & Reflections", "Rosary", "Prayers for Every Occasion", "Feast Day Content"];
   const content = [
     { id:"FF-001", category:"Daily Prayers", title:"Morning Offering", body:"O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", publishedDate:"2026-07-26" },
     { id:"FF-002", category:"Daily Prayers", title:"Prayer of the Day — Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", publishedDate:"2026-07-26" },
     { id:"FF-003", category:"Daily Prayers", title:"Grace Before Meals", body:"Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen.", publishedDate:"2026-07-20" },
     { id:"FF-004", category:"Readings & Reflections", title:"Reflecting on the Novena", body:"As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", publishedDate:"2026-07-25" },
     { id:"FF-005", category:"Readings & Reflections", title:"Sunday Gospel Reflection — The Good Samaritan", body:"Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", publishedDate:"2026-07-19" },
-    { id:"FF-007", category:"Special Prayers", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", publishedDate:"2026-07-15" },
-    { id:"FF-008", category:"Special Prayers", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", publishedDate:"2026-06-20" },
+    { id:"FF-007", category:"Prayers for Every Occasion", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", publishedDate:"2026-07-15" },
+    { id:"FF-008", category:"Prayers for Every Occasion", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", publishedDate:"2026-06-20" },
     { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"Traditionally prayed on Mondays and Saturdays. Meditate on the early life of Christ, from the Annunciation to finding Him in the Temple.", publishedDate:"2026-05-01",
       mysteries:[
         { name:"The Annunciation", fruit:"Humility" },

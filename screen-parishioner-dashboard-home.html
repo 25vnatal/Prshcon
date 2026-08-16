@@ -162,6 +162,18 @@
 <script>
   // ---------------- Session (from login redirect) ----------------
   const sessionParams = new URLSearchParams(window.location.search);
+  // Defense-in-depth alongside the fixes on screen-parishioner-parish-profile.html and
+  // screen-parishioner-faithformation.html: even though those pages no longer leak their own
+  // page-specific params (parishId, card, category, item) back onto this page's URL, this page
+  // shouldn't propagate a stray param forward either if one ever arrives some other way (a
+  // bookmarked URL, a future page that forgets to strip). Used specifically where this page builds
+  // a link that appends its own parishId/card — never for the plain bottom-nav/section links, which
+  // still use sessionParams directly since they carry nothing that needs stripping.
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
   const sessionName = sessionParams.get('name') || 'John Rodrigues';
   const sessionFirstName = sessionName.split(' ')[0];
   const sessionInitials = sessionName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
@@ -243,7 +255,7 @@
   function goTo(href, label) {
     if (href) {
       const separator = href.includes('?') ? '&' : '?';
-      window.location.href = href + separator + sessionParams.toString();
+      window.location.href = href + separator + baseParams().toString();
     } else {
       toast(`Opening ${label}…`);
     }
@@ -447,7 +459,7 @@
         ${heading}
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
           ${parishMatches.slice(0, 8).map(p => `
-            <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&parishId=${p.id}'" class="w-full flex items-center gap-3 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px]">
+            <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + baseParams().toString() + '&parishId=${p.id}'" class="w-full flex items-center gap-3 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px]">
               <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('pin','w-4 h-4')}</span>
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold truncate">${p.name}${p.id === 'PAR-0002' ? ' <span class="text-primary font-normal">(your parish)</span>' : ''}</p>
@@ -464,7 +476,7 @@
         ${heading}
         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
           ${NEARBY_CHURCHES.map(c => `
-            <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&parishId=${c.id}'" class="w-full flex items-center gap-3 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px]">
+            <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + baseParams().toString() + '&parishId=${c.id}'" class="w-full flex items-center gap-3 px-4 py-3 text-left transition-warm hover:bg-section-bg min-h-[44px]">
               <span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('pin','w-4 h-4')}</span>
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold truncate">${c.name}</p>
@@ -574,7 +586,7 @@
           <p class="font-heading font-bold text-sm text-white leading-tight truncate">${h.title}</p>
           <p class="text-white/90 text-[11px] mt-0.5 truncate">${h.date} · ${h.sub}</p>
         </div>
-        <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&parishId=PAR-0001&card=masstimes'" class="bg-white text-ink text-[11px] font-semibold px-3 py-2 rounded-button min-h-[32px] transition-warm flex-shrink-0 whitespace-nowrap">${h.cta}</button>
+        <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + baseParams().toString() + '&parishId=PAR-0001&card=masstimes'" class="bg-white text-ink text-[11px] font-semibold px-3 py-2 rounded-button min-h-[32px] transition-warm flex-shrink-0 whitespace-nowrap">${h.cta}</button>
       </section>
     `;
   }
@@ -674,11 +686,15 @@
             <span class="flex items-center gap-3 text-sm font-medium"><span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('star')}</span>Committees & Ministries</span>
             <span class="text-ink-muted">${icon('chevron','icon w-4 h-4')}</span>
           </button>
-          <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&card=masstimes'" class="w-full flex items-center justify-between px-5 py-4 min-h-[44px] transition-warm hover:bg-section-bg">
+          <button onclick="window.location.href='screen-parishioner-faithformation.html?' + sessionParams.toString()" class="w-full flex items-center justify-between px-5 py-4 min-h-[44px] transition-warm hover:bg-section-bg">
+            <span class="flex items-center gap-3 text-sm font-medium"><span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('rosary')}</span>Faith & Prayers</span>
+            <span class="text-ink-muted">${icon('chevron','icon w-4 h-4')}</span>
+          </button>
+          <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + baseParams().toString() + '&card=masstimes'" class="w-full flex items-center justify-between px-5 py-4 min-h-[44px] transition-warm hover:bg-section-bg">
             <span class="flex items-center gap-3 text-sm font-medium"><span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('clock')}</span>Mass Timings</span>
             <span class="text-ink-muted">${icon('chevron','icon w-4 h-4')}</span>
           </button>
-          <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + sessionParams.toString() + '&card=contact'" class="w-full flex items-center justify-between px-5 py-4 min-h-[44px] transition-warm hover:bg-section-bg">
+          <button onclick="window.location.href='screen-parishioner-parish-profile.html?' + baseParams().toString() + '&card=contact'" class="w-full flex items-center justify-between px-5 py-4 min-h-[44px] transition-warm hover:bg-section-bg">
             <span class="flex items-center gap-3 text-sm font-medium"><span class="w-9 h-9 rounded-badge bg-primary-light text-primary flex items-center justify-center flex-shrink-0">${icon('phone')}</span>Contact Parish</span>
             <span class="text-ink-muted">${icon('chevron','icon w-4 h-4')}</span>
           </button>
