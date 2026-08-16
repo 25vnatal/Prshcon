@@ -169,6 +169,8 @@
     renderContentList();
   }
 
+  const initialCategory = sessionParams.get('category');
+  if (initialCategory && CATEGORIES.includes(initialCategory)) { ffCategory = initialCategory; }
   renderCategories();
   renderContentList();
 </script>
