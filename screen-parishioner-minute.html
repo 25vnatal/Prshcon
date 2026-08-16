@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — A Minute with Jesus</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'], verse: ['Newsreader', 'serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, .font-heading { font-family: 'Manrope', sans-serif; }
+  .font-verse { font-family: 'Newsreader', serif; font-style: italic; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .stagger-1 { animation: fadeUp 500ms ease both; animation-delay: 60ms; }
+  .stagger-2 { animation: fadeUp 500ms ease both; animation-delay: 160ms; }
+  .stagger-3 { animation: fadeUp 500ms ease both; animation-delay: 260ms; }
+  .stagger-4 { animation: fadeUp 500ms ease both; animation-delay: 360ms; }
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-1, .stagger-2, .stagger-3, .stagger-4 { animation: none; }
+  }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="max-w-[420px] mx-auto min-h-screen relative" id="frame"></div>
+
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  // Same fix as screen-parishioner-parish-profile.html and screen-parishioner-faithformation.html:
+  // this screen has no page-specific params of its own today, but baseParams() is used for all
+  // outbound navigation anyway, on the same principle — never propagate more than the durable
+  // identity param, so nothing this screen might carry in the future can leak forward either.
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t);
+    window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 1800);
+  }
+
+  const ICON_PATHS = {
+    volume: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>',
+    muted: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/>',
+    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  // ---------------- Today's content. This is a single representative example (the Feast of the ----------------
+  // ---------------- Assumption), not a full liturgical-year content calendar — matching how this app's ----------------
+  // ---------------- other content areas work (Faith Formation is a curated list, not 365 auto-generated ----------------
+  // ---------------- entries). Diocese-authored in spirit: no per-parish setup, same content for every parish. ----------------
+  // ---------------- Ordinary Time would use the default primary-blue accent; Advent/Lent would use lavender ----------------
+  // ---------------- (already documented in design-tokens.css as "reflection, prayer") — same layout, different ----------------
+  // ---------------- accent token, not built out yet since this is the one state carried through from the ----------------
+  // ---------------- reviewed mockup. All text below is original composition, not a scripture quotation. ----------------
+  const today = {
+    occasion: "Feast of the Assumption",
+    verseLine: "Today the Church remembers Mary, carried body and soul into glory — a life that had already said yes, long before this day arrived.",
+    reflection: "Mary's whole life was a series of small, unseen yeses — to an angel's strange news, to a long journey, to standing at the foot of a cross. None of it looked triumphant while she was living it. The Assumption isn't a reward that erases that — it's what an ordinary, faithful life quietly becomes.",
+    prayerLine: "Mary, help me say yes today in the small, unseen way you did. When no one is watching and nothing feels triumphant, let me still choose you. Carry my ordinary day the way you carried His extraordinary one.",
+    weekCount: 5,
+  };
+
+  let audioOn = false;
+  let currentState = 'minute';
+
+  // =========================================================================
+  // STATE 1 — THE MINUTE (full-bleed, single scroll, calm)
+  // =========================================================================
+  function renderMinute() {
+    return `
+      <div class="min-h-screen flex flex-col" style="background: linear-gradient(180deg, #FFFDF6 0%, #FFF8E8 40%, #FCEFCE 100%);">
+        <header class="px-5 pt-6 pb-2 flex items-center justify-between">
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" aria-label="Close" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted/70 hover:bg-black/5 transition-warm">
+            ${icon('x','icon w-5 h-5')}
+          </button>
+          <button onclick="toggleAudio()" id="audio-toggle" aria-label="Toggle gentle audio" class="w-10 h-10 rounded-button flex items-center justify-center transition-warm ${audioOn ? 'text-gold bg-gold/15' : 'text-ink-muted/60 hover:bg-black/5'}">
+            ${icon(audioOn ? 'volume' : 'muted','icon w-5 h-5')}
+          </button>
+        </header>
+
+        <main class="flex-1 flex flex-col justify-center px-8 py-10 space-y-9 max-w-[420px] mx-auto">
+
+          <div class="text-center stagger-1">
+            <p class="text-[11px] font-semibold uppercase tracking-wider mb-4" style="color:#9A6D0F;">${today.occasion}</p>
+            <p class="font-verse text-2xl leading-snug text-ink">${today.verseLine}</p>
+          </div>
+
+          <div class="w-8 h-px mx-auto stagger-2" style="background: rgba(154,109,15,0.3);"></div>
+
+          <p class="text-base leading-relaxed text-ink/85 text-center stagger-2">${today.reflection}</p>
+
+          <div class="w-8 h-px mx-auto stagger-3" style="background: rgba(154,109,15,0.3);"></div>
+
+          <div class="text-center stagger-3">
+            <p class="font-verse text-base leading-relaxed text-ink/90">${today.prayerLine}</p>
+          </div>
+
+        </main>
+
+        <footer class="px-8 pb-10 pt-4 stagger-4">
+          <button onclick="setState('share')" class="w-full text-center py-4">
+            <span class="font-heading font-semibold text-lg" style="color:#9A6D0F;">Amen</span>
+          </button>
+        </footer>
+      </div>
+    `;
+  }
+
+  function toggleAudio() {
+    audioOn = !audioOn;
+    const btn = document.getElementById('audio-toggle');
+    btn.className = `w-10 h-10 rounded-button flex items-center justify-center transition-warm ${audioOn ? 'text-gold bg-gold/15' : 'text-ink-muted/60 hover:bg-black/5'}`;
+    btn.innerHTML = icon(audioOn ? 'volume' : 'muted', 'icon w-5 h-5');
+    toast(audioOn ? 'Gentle audio on' : 'Gentle audio off');
+  }
+
+  // =========================================================================
+  // STATE 2 — END / SHARE
+  // =========================================================================
+  function renderShare() {
+    return `
+      <div class="min-h-screen flex flex-col bg-bg-warm">
+        <header class="px-5 pt-6 pb-2 flex items-center justify-between">
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" aria-label="Close" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">
+            ${icon('x','icon w-5 h-5')}
+          </button>
+          <span class="w-10 h-10"></span>
+        </header>
+
+        <main class="flex-1 flex flex-col items-center px-6 pt-2 pb-6 max-w-[420px] mx-auto w-full">
+
+          <!-- Shareable card — 9:16, sized for WhatsApp Status / Instagram Stories. Shows the same prayer -->
+          <!-- line as the Minute screen above (today.prayerLine), one source, so the card can never drift -->
+          <!-- from what was actually prayed. Motif is deliberately abstract (crescent moon, radiating light, -->
+          <!-- simple stars — drawing on the Woman-Clothed-with-the-Sun imagery tied to this feast) rather -->
+          <!-- than a literal figure, per this app's own "no busy religious motifs" guidance. -->
+          <div class="stagger-1 w-full max-w-[280px] aspect-[9/16] rounded-card overflow-hidden shadow-card relative" style="background: linear-gradient(165deg, #FDE9B0 0%, #F6C453 45%, #F0A63E 100%);">
+
+            <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 34%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 58%);"></div>
+
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 280 498" fill="none">
+              <g stroke="#FFFDF3" stroke-width="2.5" stroke-linecap="round" opacity="0.55">
+                <line x1="140" y1="70" x2="140" y2="46"/>
+                <line x1="185" y1="88" x2="203" y2="70"/>
+                <line x1="95" y1="88" x2="77" y2="70"/>
+                <line x1="200" y1="118" x2="222" y2="112"/>
+                <line x1="80" y1="118" x2="58" y2="112"/>
+              </g>
+              <path d="M154 108a34 34 0 1 1 0-56 27 27 0 0 0 0 56Z" fill="#FFFDF3" opacity="0.92"/>
+              <path d="M52 210 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5 Z" fill="#FFFDF3" opacity="0.7"/>
+              <path d="M226 250 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.65"/>
+              <path d="M44 350 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.55"/>
+              <path d="M238 390 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5 Z" fill="#FFFDF3" opacity="0.6"/>
+              <circle cx="90" cy="160" r="1.5" fill="#FFFDF3" opacity="0.7"/>
+              <circle cx="195" cy="175" r="1.5" fill="#FFFDF3" opacity="0.6"/>
+            </svg>
+
+            <div class="relative h-full flex flex-col justify-between px-7 pt-24 pb-8 text-center">
+              <p class="text-[11px] font-semibold uppercase tracking-wider" style="color:#7A5209;">${today.occasion}</p>
+
+              <p class="font-verse text-base leading-relaxed" style="color:#4A3407;">"${today.prayerLine}"</p>
+
+              <div class="space-y-1.5">
+                <div class="w-8 h-px mx-auto" style="background: rgba(74,52,7,0.3);"></div>
+                <p class="text-[10px] tracking-wide" style="color:#8C6A1F;">Reflections by Parish Connect</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full max-w-[280px] mt-6 space-y-3 stagger-2">
+            <button onclick="toast('Preparing to share…')" class="w-full bg-ink text-white text-sm font-semibold py-3.5 rounded-button flex items-center justify-center gap-2 transition-warm hover:opacity-90">
+              ${icon('share','w-4 h-4')} Share
+            </button>
+            <button onclick="toast('Saving image…')" class="w-full text-ink-muted text-xs font-semibold py-1 transition-warm hover:text-ink">
+              Save image
+            </button>
+          </div>
+
+          <p class="stagger-3 text-sm text-ink-muted/80 pt-6 text-center">You've paused with us ${today.weekCount} days this week.</p>
+
+        </main>
+
+        <footer class="px-8 pb-10 pt-2 stagger-4">
+          <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" class="w-full text-center text-sm font-semibold text-ink-muted/70 hover:text-ink transition-warm py-3">
+            Back to today
+          </button>
+        </footer>
+      </div>
+    `;
+  }
+
+  function setState(s) {
+    currentState = s;
+    render();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function render() {
+    document.getElementById('frame').innerHTML = currentState === 'minute' ? renderMinute() : renderShare();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
