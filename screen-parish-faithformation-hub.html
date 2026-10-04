@@ -80,7 +80,7 @@
           Faith Formation
         </a>
         <button onclick="return goFinance()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 2.5-1h.5a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h.5a2.5 2.5 0 0 0 2.5-1"/></svg>
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
           Finance
         </button>
         <button onclick="toggleAdminGroup()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
@@ -649,9 +649,25 @@
   let view = null; // { type:'prayer', id } | { type:'guide' } | { type:'set', setId } | { type:'mystery', setId, n }
   let beads = 0;
   function escH(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
-  function openView(v) { view = v; beads = 0; renderModule(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-  function closeView() { view = null; renderModule(); }
-  function filterTo(cat) { categoryFilter = cat; view = null; renderModule(); }
+  // Each reader page is a real history entry, so the browser's Back button (and the Back button on the page)
+  // return to the page the person came from — the Faith Formation list — instead of leaving the screen.
+  let navDepth = 0;
+  history.replaceState({ ff: true, depth: 0, view: null }, '');
+  function pushView(v) { navDepth += 1; history.pushState({ ff: true, depth: navDepth, view: v }, ''); }
+  function openView(v) { view = v; beads = 0; pushView(v); renderModule(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function goBack() {
+    if (history.state && history.state.ff && history.state.depth > 0) history.back();
+    else { view = null; renderModule(); }
+  }
+  function closeView() { if (view) { view = null; pushView(null); } renderModule(); window.scrollTo({ top: 0 }); }
+  function filterTo(cat) { categoryFilter = cat; view = null; pushView(null); renderModule(); window.scrollTo({ top: 0 }); }
+  window.addEventListener('popstate', e => {
+    const st = e.state;
+    if (!st || !st.ff) return;
+    navDepth = st.depth; beads = 0;
+    if (currentModule !== 'content') { setModule('content'); }
+    view = st.view; renderModule(); window.scrollTo({ top: 0 });
+  });
   function openItem(id) {
     const f = faithContent.find(x => x.id === id);
     if (!f) return;
@@ -664,7 +680,8 @@
     return f ? `<button onclick="openView({type:'prayer', id:'${f.id}'})" class="text-primary font-semibold hover:underline text-left">${escH(label || title)}</button>` : escH(label || title);
   }
   function crumbs(items) {
-    return `<nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted mb-4">${items.map(c => c[1]
+    return `<button onclick="goBack()" class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline mb-3 min-h-[40px] transition-warm">${icon('back','icon w-4 h-4')}Back</button>
+    <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted mb-4">${items.map(c => c[1]
       ? `<button onclick="${c[1]}" class="font-medium hover:text-primary transition-warm">${escH(c[0])}</button>`
       : `<span class="font-semibold text-ink">${escH(c[0])}</span>`).join('<span aria-hidden="true">/</span>')}</nav>`;
   }
