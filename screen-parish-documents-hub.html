@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&family=Libre+Baskerville:wght@400;700&family=Pinyon+Script&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -42,6 +42,36 @@
   }
   .cert-display { font-family: 'Playfair Display', Georgia, serif; }
   .cert-corner { position: absolute; width: 28px; height: 28px; border: 2px solid #C9A15A; }
+
+  /* ---------- Register-style certificate (A4) ---------- */
+  .pc-cert { width: 210mm; height: 297mm; background: #fff; color: #222; position: relative; box-sizing: border-box; padding: 9mm; font-family: 'Libre Baskerville', Georgia, serif; }
+  .pc-frame { position: absolute; inset: 6mm; border: 1.2mm double #9aa0a6; pointer-events: none; }
+  .pc-inner { position: relative; height: 100%; display: flex; flex-direction: column; padding: 4mm 8mm 0; }
+  .pc-head { position: relative; height: 54mm; flex: none; }
+  .pc-angel { position: absolute; top: 2mm; width: 34mm; }
+  .pc-angel.l { left: 0; } .pc-angel.r { right: 0; transform: scaleX(-1); }
+  .pc-arch { position: absolute; left: 50%; top: 4mm; transform: translateX(-50%); width: 120mm; overflow: visible; }
+  .pc-title { font-family: 'Pinyon Script', cursive; font-size: 40pt; text-align: center; line-height: 1.1; margin: 2mm 0 5mm; }
+  .pc-ref { font-size: 10.5pt; margin-bottom: 3mm; }
+  .pc-rows { position: relative; flex: 1; }
+  .pc-wm { position: absolute; left: 14%; top: 0; height: 100%; width: 22mm; opacity: .08; }
+  .pc-row { position: relative; display: grid; grid-template-columns: 40% 1fr; align-items: end; padding-left: 9mm; height: var(--rh, 10mm); font-size: 11.5pt; }
+  .pc-row .k { padding-bottom: 1.2mm; }
+  .pc-row .v { border-bottom: .4mm dotted #333; padding: 0 0 1mm 2mm; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; min-height: 6mm; }
+  .pc-letter { position: relative; flex: 1; padding: 6mm 9mm 0; font-size: 12.5pt; line-height: 2.1; text-align: justify; }
+  .pc-certify { text-align: center; font-size: 10.5pt; line-height: 1.7; margin-top: 4mm; }
+  .pc-sign { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3mm; font-size: 10.5pt; position: relative; height: 30mm; flex: none; }
+  .pc-sign .date { padding-bottom: 6mm; font-weight: 700; }
+  .pc-seal { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 31mm; opacity: .8; }
+  .pc-sig { width: 62mm; text-align: center; padding-bottom: 3mm; }
+  .pc-sig .line { border-top: .3mm solid #333; margin-bottom: 1mm; padding-top: 1mm; }
+  .pc-foot { text-align: center; font-size: 8.5pt; color: #444; padding: 2mm 0 5mm; flex: none; }
+  #print-root { display: none; }
+  @media print {
+    @page { size: A4; margin: 0; }
+    body > *:not(#print-root) { display: none !important; }
+    #print-root { display: block !important; }
+  }
 </style>
 </head>
 <body class="text-ink">
@@ -165,7 +195,7 @@
 
   <!-- ============ VIEW TEMPLATE MODAL ============ -->
   <div id="template-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-bg rounded-card shadow-card w-full max-w-xl max-h-[85vh] overflow-y-auto">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-2xl max-h-[85vh] overflow-y-auto">
       <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
         <p id="template-modal-title" class="font-heading font-bold text-lg">Template</p>
         <button onclick="closeModal('template-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
@@ -262,55 +292,84 @@
   // ---------------- Mock data: Certificate Templates (schema DOC-ISD-003, seeded to match the ----------------
   // ---------------- document types already configured in Services \u2192 Documents & Certificates) ----------------
   const templates = [
-    { id:"TPL-001", name:"Baptism Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
-      description:"Standard certificate issued for a completed Baptism.",
+    { id:"TPL-001", name:"Baptism Certificate", category:"Certificates", owner:"Parish", version:2, status:"Published", layout:"register", register:"Baptisms",
+      description:"True copy of a Baptism register entry, in the parish's traditional certificate layout.",
       fields: [
-        { key:"fullName", label:"Full Name", type:"text" },
+        { key:"fullName", label:"Name", type:"text" },
+        { key:"sex", label:"Sex", type:"select", options:["Male","Female"] },
         { key:"dob", label:"Date of Birth", type:"date" },
-        { key:"fatherName", label:"Father's Name", type:"text" },
-        { key:"motherName", label:"Mother's Name", type:"text" },
-        { key:"sacramentDate", label:"Baptism Date", type:"date" },
-        { key:"parish", label:"Baptism Parish", type:"text", default: parishName },
-        { key:"godfather", label:"Godfather", type:"text" },
-        { key:"godmother", label:"Godmother", type:"text" },
-        { key:"certificateNumber", label:"Certificate Number", type:"text" },
-      ],
-      body: "This is to certify that {{fullName}}, born on {{dob}}, child of {{fatherName}} and {{motherName}}, was baptized into the Catholic faith on {{sacramentDate}} at {{parish}}, with {{godfather}} and {{godmother}} standing as godparents. (Certificate No. {{certificateNumber}})" },
-    { id:"TPL-002", name:"First Communion Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
-      description:"Certificate issued for a completed First Holy Communion.",
+        { key:"sacramentDate", label:"Date of Baptism", type:"date" },
+        { key:"fatherName", label:"Name of Father", type:"text" },
+        { key:"motherName", label:"Name of Mother", type:"text" },
+        { key:"godfather", label:"God Father", type:"text" },
+        { key:"godmother", label:"God Mother", type:"text" },
+        { key:"celebrant", label:"Minister of Baptism", type:"text" },
+        { key:"marriageOn", label:"Marriage on", type:"date" },
+        { key:"remarks", label:"Remarks", type:"text" },
+        { key:"certificateNumber", label:"Ref. No", type:"text" },
+      ] },
+    { id:"TPL-002", name:"First Communion Certificate", category:"Certificates", owner:"Parish", version:2, status:"Published", layout:"register", register:"First Communions",
+      description:"True copy of a First Holy Communion register entry.",
       fields: [
-        { key:"fullName", label:"Full Name", type:"text" },
+        { key:"fullName", label:"Name", type:"text" },
+        { key:"sex", label:"Sex", type:"select", options:["Male","Female"] },
         { key:"dob", label:"Date of Birth", type:"date" },
-        { key:"sacramentDate", label:"First Communion Date", type:"date" },
-        { key:"parish", label:"Parish", type:"text", default: parishName },
-        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
-        { key:"certificateNumber", label:"Certificate Number", type:"text" },
-      ],
-      body: "This is to certify that {{fullName}}, born on {{dob}}, received the Sacrament of First Holy Communion on {{sacramentDate}} at {{parish}}, administered by {{celebrant}}. (Certificate No. {{certificateNumber}})" },
-    { id:"TPL-003", name:"Confirmation Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
-      description:"Certificate issued for a completed Confirmation.",
+        { key:"baptismDate", label:"Date of Baptism", type:"date" },
+        { key:"sacramentDate", label:"Date of First Communion", type:"date" },
+        { key:"parish", label:"Place of First Communion", type:"text", default: parishName },
+        { key:"fatherName", label:"Name of Father", type:"text" },
+        { key:"motherName", label:"Name of Mother", type:"text" },
+        { key:"celebrant", label:"Officiating Priest", type:"text", default:"Fr. John Anthony" },
+        { key:"remarks", label:"Remarks", type:"text" },
+        { key:"certificateNumber", label:"Ref. No", type:"text" },
+      ] },
+    { id:"TPL-003", name:"Confirmation Certificate", category:"Certificates", owner:"Parish", version:2, status:"Published", layout:"register", register:"Confirmations",
+      description:"True copy of a Confirmation register entry, with sponsor and confirming prelate.",
       fields: [
-        { key:"fullName", label:"Full Name", type:"text" },
+        { key:"fullName", label:"Name", type:"text" },
+        { key:"sex", label:"Sex", type:"select", options:["Male","Female"] },
         { key:"dob", label:"Date of Birth", type:"date" },
-        { key:"sacramentDate", label:"Confirmation Date", type:"date" },
-        { key:"parish", label:"Parish", type:"text", default: parishName },
-        { key:"celebrant", label:"Bishop / Celebrant", type:"text", default:"Fr. John Anthony" },
-        { key:"certificateNumber", label:"Certificate Number", type:"text" },
-      ],
-      body: "This is to certify that {{fullName}}, born on {{dob}}, received the Sacrament of Confirmation on {{sacramentDate}} at {{parish}}, administered by {{celebrant}}. (Certificate No. {{certificateNumber}})" },
-    { id:"TPL-004", name:"Marriage Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published",
-      description:"Certificate issued for a solemnized marriage.",
+        { key:"baptismDate", label:"Date of Baptism", type:"date" },
+        { key:"sacramentDate", label:"Date of Confirmation", type:"date" },
+        { key:"parish", label:"Place of Confirmation", type:"text", default: parishName },
+        { key:"fatherName", label:"Name of Father", type:"text" },
+        { key:"motherName", label:"Name of Mother", type:"text" },
+        { key:"sponsor", label:"Sponsor", type:"text" },
+        { key:"celebrant", label:"Confirming Prelate", type:"text", default:"Fr. John Anthony" },
+        { key:"remarks", label:"Remarks", type:"text" },
+        { key:"certificateNumber", label:"Ref. No", type:"text" },
+      ] },
+    { id:"TPL-004", name:"Marriage Certificate", category:"Certificates", owner:"Parish", version:2, status:"Published", layout:"register", register:"Marriages",
+      description:"True copy of a Marriage register entry, with both families, witnesses and celebrant.",
       fields: [
-        { key:"groomName", label:"Groom Name", type:"text" },
-        { key:"brideName", label:"Bride Name", type:"text" },
-        { key:"sacramentDate", label:"Marriage Date", type:"date" },
-        { key:"parish", label:"Marriage Parish", type:"text", default: parishName },
+        { key:"groomName", label:"Name of Groom", type:"text" },
+        { key:"groomFather", label:"Groom's Father", type:"text" },
+        { key:"groomMother", label:"Groom's Mother", type:"text" },
+        { key:"brideName", label:"Name of Bride", type:"text" },
+        { key:"brideFather", label:"Bride's Father", type:"text" },
+        { key:"brideMother", label:"Bride's Mother", type:"text" },
+        { key:"sacramentDate", label:"Date of Marriage", type:"date" },
+        { key:"parish", label:"Place of Marriage", type:"text", default: parishName },
         { key:"witness1", label:"Witness 1", type:"text" },
         { key:"witness2", label:"Witness 2", type:"text" },
-        { key:"celebrant", label:"Celebrant", type:"text", default:"Fr. John Anthony" },
-        { key:"certificateNumber", label:"Certificate Number", type:"text" },
-      ],
-      body: "This is to certify that {{groomName}} and {{brideName}} were joined in the Sacrament of Holy Matrimony on {{sacramentDate}} at {{parish}}, witnessed by {{witness1}} and {{witness2}}, in the presence of {{celebrant}}. (Certificate No. {{certificateNumber}})" },
+        { key:"celebrant", label:"Officiating Priest", type:"text", default:"Fr. John Anthony" },
+        { key:"remarks", label:"Remarks", type:"text" },
+        { key:"certificateNumber", label:"Ref. No", type:"text" },
+      ] },
+    { id:"TPL-007", name:"Burial Certificate", category:"Certificates", owner:"Parish", version:1, status:"Published", layout:"register", register:"Burials",
+      description:"True copy of a Burial register entry, issued to the family of the deceased.",
+      fields: [
+        { key:"fullName", label:"Name", type:"text" },
+        { key:"sex", label:"Sex", type:"select", options:["Male","Female"] },
+        { key:"age", label:"Age", type:"text" },
+        { key:"deathDate", label:"Date of Death", type:"date" },
+        { key:"sacramentDate", label:"Date of Burial", type:"date" },
+        { key:"burialPlace", label:"Place of Burial", type:"text" },
+        { key:"relation", label:"Son / Daughter / Spouse of", type:"text" },
+        { key:"celebrant", label:"Officiating Priest", type:"text", default:"Fr. John Anthony" },
+        { key:"remarks", label:"Remarks", type:"text" },
+        { key:"certificateNumber", label:"Ref. No", type:"text" },
+      ] },
     { id:"TPL-005", name:"No Objection Certificate", category:"Letters & Testimonials", owner:"Parish", version:1, status:"Published",
       description:"NOC issued for a parishioner's specified purpose.",
       fields: [
@@ -397,11 +456,12 @@
         </div>
       </div>
       <div>
-        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Document body (placeholders)</p>
-        <div class="bg-section-bg rounded-card p-4 text-xs text-ink-muted cert-paper">${t.body}</div>
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Certificate layout</p>
+        <div id="tpl-scale-wrap" class="bg-section-bg rounded-card overflow-hidden"><div id="tpl-scale-inner">${certHTML(t, {})}</div></div>
       </div>
     `;
     document.getElementById('template-modal-use-btn').onclick = () => { closeModal('template-modal'); useTemplate(id); };
+    fitScaled('tpl-scale-wrap','tpl-scale-inner');
   }
   function useTemplate(id) {
     selectedTemplateId = id;
@@ -460,6 +520,12 @@
     templateById(selectedTemplateId).fields.forEach(f => {
       if (f.key in record) certFieldValues[f.key] = record[f.key];
     });
+    const fl = templateById(selectedTemplateId).fields.map(f => f.key);
+    const bap = person.sacraments.find(x => x.sacrament === 'Baptism');
+    if (bap && fl.includes('baptismDate')) certFieldValues.baptismDate = bap.sacramentDate;
+    if (bap && fl.includes('fatherName') && !certFieldValues.fatherName) certFieldValues.fatherName = bap.fatherName || '';
+    if (bap && fl.includes('motherName') && !certFieldValues.motherName) certFieldValues.motherName = bap.motherName || '';
+    const g = person.gender || person.sex; if (g && fl.includes('sex')) certFieldValues.sex = g;
     toast(`Filled from ${memberName}'s ${sacramentType} record.`);
     renderCreateModule(document.getElementById('module-content'));
   }
@@ -510,7 +576,7 @@
           ${t.fields.map(f => `
             <div class="space-y-1.5">
               <label class="text-xs font-medium">${f.label}</label>
-              <input type="${f.type === 'date' ? 'date' : 'text'}" value="${certFieldValues[f.key] || ''}" oninput="certFieldValues['${f.key}']=this.value; updateCertPreview()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
+              ${f.type === 'select' ? `<select onchange="certFieldValues['${f.key}']=this.value; updateCertPreview()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><option value="">Select\u2026</option>${f.options.map(o => `<option ${certFieldValues[f.key]===o?'selected':''}>${o}</option>`).join('')}</select>` : `<input type="${f.type === 'date' ? 'date' : 'text'}" value="${certFieldValues[f.key] || ''}" oninput="certFieldValues['${f.key}']=this.value; updateCertPreview()" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">`}
             </div>
           `).join('')}
           <div class="space-y-1.5">
@@ -520,17 +586,11 @@
         </div>
         <div class="lg:col-span-3">
           <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">Live preview</p>
-          <div class="cert-frame rounded-card relative" style="height:560px; overflow-y:auto;">
-            <div class="cert-corner" style="top:10px; left:10px; border-right:none; border-bottom:none;"></div>
-            <div class="cert-corner" style="top:10px; right:10px; border-left:none; border-bottom:none;"></div>
-            <div class="cert-corner" style="bottom:10px; left:10px; border-right:none; border-top:none;"></div>
-            <div class="cert-corner" style="bottom:10px; right:10px; border-left:none; border-top:none;"></div>
-            <div id="cert-preview" class="cert-paper px-10 py-10"></div>
-          </div>
+          <div id="cert-scale-wrap" class="rounded-card shadow-card bg-white overflow-hidden"><div id="cert-preview"></div></div>
           <div class="flex flex-wrap gap-2 mt-4">
             <button onclick="saveCertDraft()" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg">Save as Draft</button>
             <button onclick="generateCertificate()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('check','icon w-4 h-4')}Generate Certificate</button>
-            <button onclick="toast('Print')" class="bg-white border border-divider text-ink text-sm font-semibold px-3 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('print','icon w-4 h-4')}Print</button>
+            <button onclick="printCertificate()" class="bg-white border border-divider text-ink text-sm font-semibold px-3 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('print','icon w-4 h-4')}Print</button>
             <button onclick="toast('Email')" class="bg-white border border-divider text-ink text-sm font-semibold px-3 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">${icon('mail','icon w-4 h-4')}Email</button>
           </div>
         </div>
@@ -539,47 +599,89 @@
     updateCertPreview();
   }
 
-  function mergeTemplateBody(t) {
+  function mergeTemplateBody(t, vals) {
+    const V = vals || certFieldValues;
     let merged = t.body;
     t.fields.forEach(f => {
-      const value = certFieldValues[f.key] || `[${f.label}]`;
-      const displayValue = f.type === 'date' && certFieldValues[f.key] ? formatDate(certFieldValues[f.key]) : value;
+      const value = V[f.key] || `[${f.label}]`;
+      const displayValue = f.type === 'date' && V[f.key] ? formatDate(V[f.key]) : value;
       merged = merged.split(`{{${f.key}}}`).join(displayValue);
     });
     return merged;
   }
 
+  // ---------------- Certificate renderer (A4, register-style layout) ----------------
+  const IS_IJS = parishName === 'Infant Jesus Shrine';
+  const PARISH_ADDRESS = IS_IJS ? 'Post Box no 4712, Viveknagar, Bengaluru 560 047 \u00B7 Tel. 25301206' : 'Bangalore Archdiocese';
+  const PARISH_PRIEST = IS_IJS ? 'Fr. John Anthony' : 'Parish Priest';
+  const ISSUE_DATE = '31.07.2026';
+  let pcUid = 0;
+  function fmtDot(iso) { if (!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}.${m}.${y}`; }
+  function escH(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function certHTML(t, vals) {
+    const V = vals || certFieldValues, u = ++pcUid, n = parishName.toUpperCase();
+    const fs = Math.min(28, Math.floor(400 / (n.length * 0.78)));
+    const angel = cls => `<svg class="pc-angel ${cls}" viewBox="0 0 100 130" fill="#f2f2f2" stroke="#555" stroke-width="1.6" stroke-linejoin="round"><path d="M42 50C28 30 10 22 4 8c18 2 30 10 40 24z"/><path d="M40 62C24 50 8 48 2 40c16-2 28 4 40 12z"/><path d="M40 76C26 70 12 72 8 66c14-2 24 0 34 6z"/><path d="M56 50C70 30 90 22 96 8 78 10 64 18 54 32z"/><circle cx="50" cy="38" r="9"/><path d="M42 36c2-8 14-8 16 0" fill="#ddd"/><path d="M40 50c-4 20-8 50-12 76h44c-4-26-8-56-12-76-4 4-16 4-20 0z"/><path d="M44 62c-2 20-4 40-6 62M56 62c2 20 4 40 6 62M50 70v54" fill="none" stroke-width="1"/></svg>`;
+    const church = `<svg viewBox="0 0 240 110" fill="#f6f6f6" stroke="#444" stroke-width="1.6" stroke-linejoin="round" style="width:62mm;display:block;margin:0 auto"><path d="M20 108V50l50-22v80z"/><path d="M220 108V50l-50-22v80z"/><rect x="70" y="62" width="100" height="46"/><path d="M80 62a40 20 0 0 1 80 0"/><path d="M105 44a15 12 0 0 1 30 0z"/><path d="M120 8v22M113 15h14" stroke-width="2.4"/><path d="M86 78h68M86 92h68" stroke-width="1"/><rect x="108" y="88" width="24" height="20" fill="#ddd"/><path d="M30 70h30M30 84h30M30 98h30M180 70h30M180 84h30M180 98h30" stroke-width="1"/></svg>`;
+    const seal = `<svg class="pc-seal" viewBox="0 0 120 120"><defs><path id="sc${u}" d="M60 60m-42 0a42 42 0 1 1 84 0a42 42 0 1 1-84 0"/></defs><circle cx="60" cy="60" r="57" fill="none" stroke="#2a4a8a" stroke-width="2"/><circle cx="60" cy="60" r="30" fill="none" stroke="#2a4a8a" stroke-width="1.5"/><text font-size="9" fill="#2a4a8a" font-family="Libre Baskerville,serif" letter-spacing="1"><textPath href="#sc${u}" startOffset="50%" text-anchor="middle">${escH(n)} \u00B7 BENGALURU</textPath></text><path d="M60 36v48M46 52h28" stroke="#2a4a8a" stroke-width="3" stroke-linecap="round"/></svg>`;
+    const head = `<div class="pc-head">${angel('l')}${angel('r')}
+      <svg class="pc-arch" viewBox="0 -20 400 150"><defs><path id="ar${u}" d="M30 128A170 108 0 0 1 370 128"/></defs><text font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="${fs}" letter-spacing="2" fill="#111"><textPath href="#ar${u}" startOffset="50%" text-anchor="middle">${escH(n)}</textPath></text></svg>
+      <div style="position:absolute;left:0;right:0;top:22mm">${church}</div></div>`;
+    const title = `<div class="pc-title">${escH(t.name)}</div>`;
+    const ref = V.certificateNumber || '';
+    let body, ending;
+    if (t.layout === 'register') {
+      const rowsF = t.fields.filter(f => f.key !== 'certificateNumber');
+      const rh = rowsF.length > 11 ? '9mm' : '10mm';
+      const rows = rowsF.map(f => {
+        const raw = V[f.key] || '';
+        return `<div class="pc-row" style="--rh:${rh}"><div class="k">${escH(f.label)}</div><div class="v">${escH(f.type === 'date' ? fmtDot(raw) : raw)}</div></div>`;
+      }).join('');
+      body = `<div class="pc-ref">Ref. No: ${escH(ref)}</div><div class="pc-rows"><svg class="pc-wm" viewBox="0 0 40 200" preserveAspectRatio="none" fill="none" stroke="#666" stroke-width="2"><path d="M14 0v50H0v22h14v128h12V72h14V50H26V0z"/></svg>${rows}</div>`;
+      ending = `<div class="pc-certify">I certify that the above is a <b>TRUE COPY</b> of Entry in the Register of ${escH(t.register)}<br>Kept at ${escH(parishName)}, Bengaluru.</div>`;
+    } else {
+      body = `<div class="pc-letter"><p>${escH(mergeTemplateBody(t, V))}</p></div>`;
+      ending = '';
+    }
+    const notesEl = (vals === undefined) ? document.getElementById('cert-notes') : null;
+    const notes = notesEl ? notesEl.value.trim() : '';
+    const notesH = notes ? `<p style="text-align:center;font-size:10pt;font-style:italic;color:#555;margin-top:3mm">${escH(notes)}</p>` : '';
+    return `<div class="pc-cert"><div class="pc-frame"></div><div class="pc-inner">${head}${title}${body}${ending}${notesH}
+      <div class="pc-sign"><div class="date">Date: ${ISSUE_DATE}</div>${seal}<div class="pc-sig"><div style="height:12mm"></div><div class="line">Registrar &amp; Parish Priest</div><div style="font-size:9pt">${escH(PARISH_PRIEST)}</div></div></div>
+      <div class="pc-foot">${escH(PARISH_ADDRESS)}</div></div></div>`;
+  }
+
+  // Scale the fixed-size A4 certificate to fit its container (preview + modal)
+  function fitScaled(wrapId, innerId) {
+    const wrap = document.getElementById(wrapId), inner = document.getElementById(innerId);
+    if (!wrap || !inner || !wrap.parentElement) return;
+    const avail = wrap.parentElement.clientWidth;
+    if (!avail) return;
+    const sc = Math.min(1, avail / 793.7);
+    inner.style.transformOrigin = 'top left';
+    inner.style.transform = `scale(${sc})`;
+    inner.style.width = '793.7px';
+    wrap.style.width = (793.7 * sc) + 'px';
+    wrap.style.height = (1122.5 * sc) + 'px';
+  }
+  window.addEventListener('resize', () => { fitScaled('cert-scale-wrap','cert-preview'); fitScaled('tpl-scale-wrap','tpl-scale-inner'); });
+
   function updateCertPreview() {
     const t = templateById(selectedTemplateId);
-    const notesEl = document.getElementById('cert-notes');
-    const notes = notesEl ? notesEl.value.trim() : '';
     const preview = document.getElementById('cert-preview');
-    if (!preview) return;
-    preview.innerHTML = `
-      <div class="text-center">
-        <div class="flex justify-center mb-3">${certEmblem()}</div>
-        <p class="text-xs tracking-[0.2em] uppercase text-ink-muted">${parishName}</p>
-        <p class="text-[10px] tracking-[0.15em] uppercase text-ink-muted mt-0.5">Bangalore Archdiocese</p>
-        <p class="cert-display font-bold text-3xl mt-5 tracking-wide" style="color:#3C2E1A;">Certificate of ${t.name.replace(' Certificate','')}</p>
-        <div class="flex items-center justify-center gap-3 mt-3">
-          <span style="width:48px; height:1px; background:#C9A15A; display:inline-block;"></span>
-          <span style="width:6px; height:6px; background:#C9A15A; display:inline-block; transform:rotate(45deg);"></span>
-          <span style="width:48px; height:1px; background:#C9A15A; display:inline-block;"></span>
-        </div>
-      </div>
-      <p class="text-base leading-loose text-center mt-8 px-4" style="color:#2A2A28;">${mergeTemplateBody(t)}</p>
-      ${notes ? `<p class="text-sm leading-relaxed mt-4 text-center text-ink-muted italic">${notes}</p>` : ''}
-      <div class="flex items-end justify-between mt-12 pt-6 px-2">
-        <div>
-          <p class="text-[10px] tracking-wide uppercase text-ink-muted">Date issued</p>
-          <p class="cert-display text-sm mt-1" style="color:#3C2E1A;">31 July 2026</p>
-        </div>
-        <div class="text-center">
-          <p class="cert-display text-base" style="color:#3C2E1A; border-top:1px solid #C9A15A; padding-top:6px; padding-left:24px; padding-right:24px;">Fr. John Anthony</p>
-          <p class="text-[10px] tracking-wide uppercase text-ink-muted mt-1">Parish Priest</p>
-        </div>
-      </div>
-    `;
+    if (!preview || !t) return;
+    preview.innerHTML = certHTML(t);
+    fitScaled('cert-scale-wrap', 'cert-preview');
+  }
+
+  function printCertificate() {
+    const t = templateById(selectedTemplateId);
+    if (!t) return;
+    let root = document.getElementById('print-root');
+    if (!root) { root = document.createElement('div'); root.id = 'print-root'; document.body.appendChild(root); }
+    root.innerHTML = certHTML(t);
+    window.print();
   }
 
   function saveCertDraft() {
