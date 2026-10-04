@@ -116,7 +116,6 @@
           <button onclick="setModule('finance')" data-module="finance" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Finance</button>
           <button onclick="setModule('events')" data-module="events" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Events</button>
           <button onclick="setModule('faithformation')" data-module="faithformation" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Faith Formation</button>
-          <button onclick="setModule('comparison')" data-module="comparison" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Parish Comparison</button>
           <button onclick="setModule('export')" data-module="export" class="module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm bg-card-bg text-ink-muted">Export</button>
         </div>
 
@@ -344,30 +343,65 @@
     else if (currentModule === 'finance') renderFinance(el);
     else if (currentModule === 'events') renderEvents(el);
     else if (currentModule === 'faithformation') renderFaithFormation(el);
-    else if (currentModule === 'comparison') renderComparison(el);
     else renderExport(el);
   }
 
   function statCard(label, value) {
     return `<div class="bg-card-bg rounded-card shadow-card p-5"><p class="font-heading font-bold text-2xl">${value}</p><p class="text-xs text-ink-muted mt-1">${label}</p></div>`;
   }
-  function barChart(title, rows, tone) {
-    const toneMap = { primary:'bg-primary', green:'bg-green', gold:'bg-gold', coral:'bg-coral', lavender:'bg-lavender' };
-    const barColor = toneMap[tone || 'primary'];
-    const max = Math.max(...rows.map(r => r.value), 1);
+  // ---------------- Line charts (replace the earlier horizontal bar charts) ----------------
+  const LINE_COLORS = { primary:'#4F7CF5', green:'#6CBF84', gold:'#F6C453', coral:'#FF7F73', lavender:'#A88BFF' };
+  function niceMax(v) {
+    if (v <= 0) return 4;
+    const pow = Math.pow(10, Math.floor(Math.log10(v))), f = v / pow;
+    const nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 4 ? 4 : f <= 5 ? 5 : f <= 8 ? 8 : 10;
+    return nf * pow;
+  }
+  function moneyTick(v) {
+    if (v >= 1e7) return '\u20b9' + (v/1e7).toFixed(1).replace('.0','') + 'Cr';
+    if (v >= 1e5) return '\u20b9' + (v/1e5).toFixed(1).replace('.0','') + 'L';
+    if (v >= 1e3) return '\u20b9' + (v/1e3).toFixed(0) + 'k';
+    return '\u20b9' + v;
+  }
+  // series: [{ name, values[], color ('primary'|...), dashed? }]
+  function lineChart(title, labels, series, opts) {
+    opts = opts || {};
+    const W = 640, H = 270, L = 46, R = 18, T = 18, B = 40, n = labels.length;
+    const fmt = opts.money ? moneyTick : (v => (Math.round(v * 10) / 10).toLocaleString('en-IN'));
+    const max = niceMax(Math.max(...series.flatMap(x => x.values), 1));
+    const X = i => n === 1 ? (L + W - R) / 2 : L + i * (W - L - R) / (n - 1);
+    const Y = v => T + (H - T - B) * (1 - v / max);
+    const grid = [0,1,2,3,4].map(k => {
+      const v = max * k / 4, y = Y(v);
+      return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#E8EDF5" stroke-width="1"/><text x="${L-8}" y="${y+3.5}" text-anchor="end" font-size="10" fill="#6B7280">${fmt(v)}</text>`;
+    }).join('');
+    const short = t => String(t).length > 14 ? String(t).slice(0, 13) + '\u2026' : t;
+    const xl = labels.map((t, i) => `<text x="${X(i)}" y="${H-T-2}" text-anchor="middle" font-size="10" fill="#6B7280"><title>${t}</title>${short(t)}</text>`).join('');
+    const paths = series.map((sr, si) => {
+      const col = LINE_COLORS[sr.color || 'primary'];
+      const pts = sr.values.map((v, i) => [X(i), Y(v)]);
+      const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
+      const area = series.length === 1 && n > 1 ? `<path d="${d} L${X(n-1)} ${Y(0)} L${X(0)} ${Y(0)} Z" fill="${col}" opacity="0.08"/>` : '';
+      const dots = pts.map((q, i) => `<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3.5" fill="#fff" stroke="${col}" stroke-width="2"><title>${labels[i]} \u2014 ${sr.name}: ${fmt(sr.values[i])}</title></circle>`).join('');
+      const lab = (opts.valueLabels !== false && series.length <= 2 && n <= 6) ? sr.values.map((v, i) => `<text x="${pts[i][0].toFixed(1)}" y="${(pts[i][1] - 9).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" fill="#1F2937">${fmt(v)}</text>`).join('') : '';
+      return `${area}<path d="${d}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"${sr.dashed ? ' stroke-dasharray="7 5"' : ''}/>${dots}${lab}`;
+    }).join('');
+    const legend = series.length > 1 ? `<div class="flex flex-wrap gap-x-5 gap-y-1 mb-2">${series.map(sr => `<span class="inline-flex items-center gap-2 text-xs text-ink-muted"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="${LINE_COLORS[sr.color || 'primary']}" stroke-width="2.5"${sr.dashed ? ' stroke-dasharray="6 4"' : ''}/></svg>${sr.name}</span>`).join('')}</div>` : '';
+    const aria = title + '. ' + series.map(sr => sr.name + ': ' + sr.values.map((v, i) => labels[i] + ' ' + fmt(v)).join(', ')).join('. ');
     return `
       <div class="bg-card-bg rounded-card shadow-card p-5">
-        <p class="text-sm font-semibold mb-4">${title}</p>
-        <div class="space-y-3">
-          ${rows.map(r => `
-            <div>
-              <div class="flex items-center justify-between mb-1"><span class="text-xs text-ink-muted">${r.label}</span><span class="text-xs font-semibold">${r.display}</span></div>
-              <div class="h-2 bg-section-bg rounded-badge overflow-hidden"><div class="h-full ${barColor} rounded-badge" style="width:${Math.max(4, Math.round((r.value / max) * 100))}%"></div></div>
-            </div>
-          `).join('')}
+        <p class="text-sm font-semibold">${title}</p>
+        ${opts.subtitle ? `<p class="text-xs text-ink-muted mt-1">${opts.subtitle}</p>` : ''}
+        <div class="${opts.subtitle ? 'mt-3' : 'mt-4'}">${legend}
+          <svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" role="img" aria-label="${aria.replace(/"/g, '&quot;')}">${grid}${xl}${paths}</svg>
         </div>
       </div>
     `;
+  }
+  // Adapter for the older {label, value, display} row data: one line across the labelled points.
+  function lineRowsChart(title, rows, tone) {
+    const money = rows.length && String(rows[0].display).indexOf('\u20b9') === 0;
+    return lineChart(title, rows.map(r => r.label), [{ name: title, values: rows.map(r => r.value), color: tone || 'primary' }], { money });
   }
   function rankedList(title, entries, valueLabel) {
     return `
@@ -405,7 +439,7 @@
         ${rankedList('Most active parishes', mostActive, ' requests')}
         ${rankedList('Least active parishes', leastActive, ' requests')}
       </div>
-      ${barChart('Diocese-wide monthly request volume (last 6 months)', [
+      ${lineRowsChart('Diocese-wide monthly request volume (last 6 months)', [
         { label:'Feb 2026', value: Math.round(totalRequests*0.13), display: Math.round(totalRequests*0.13) },
         { label:'Mar 2026', value: Math.round(totalRequests*0.14), display: Math.round(totalRequests*0.14) },
         { label:'Apr 2026', value: Math.round(totalRequests*0.15), display: Math.round(totalRequests*0.15) },
@@ -419,15 +453,56 @@
   // =========================================================================
   // SACRAMENTS
   // =========================================================================
+  // 12-month window ending Jul 2026 (the mock "today"). Weights reflect the liturgical year so each sacrament
+  // has its own recognisable shape (First Communion clusters around Easter, Confirmation in the autumn, etc.).
+  const SAC_MONTHS = ["Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26","Mar '26","Apr '26","May '26","Jun '26","Jul '26"];
+  const SAC_WEIGHTS = {
+    baptisms:        [8, 7, 8, 8, 10, 9, 7, 8, 10, 9, 8, 8],
+    firstCommunions: [1, 3, 4, 3, 2, 2, 4, 10, 22, 28, 14, 7],
+    confirmations:   [14, 18, 10, 14, 4, 8, 5, 7, 6, 4, 4, 6],
+    marriages:       [5, 6, 8, 12, 14, 10, 5, 4, 9, 12, 8, 7],
+  };
+  // Spread a year-to-date total (Jan-Jul 2026 = last 7 months) over the 12 months so the chart and the card agree.
+  function sacMonthly(key, ytdTotal) {
+    const w = SAC_WEIGHTS[key], ytdW = w.slice(5).reduce((a, b) => a + b, 0), k = ytdTotal / ytdW;
+    const vals = w.map(x => Math.round(x * k));
+    const diff = ytdTotal - vals.slice(5).reduce((a, b) => a + b, 0);
+    let peak = 5; for (let i = 5; i < 12; i++) if (vals[i] > vals[peak]) peak = i;
+    vals[peak] += diff;
+    return vals;
+  }
+  // Eligible = candidates who reached the age/preparation stage that month; always at least what was actually received.
+  function eligibleFor(key, actual) {
+    return actual.map((a, i) => {
+      if (a === 0) return 0;
+      const rate = seededRange(key + 'elig' + i, 76, 92) / 100;
+      return Math.max(a + 1, Math.round(a / rate));
+    });
+  }
   function renderSacraments(el) {
     const withMetrics = parishes.map(p => ({ p, m: metricsFor(p) }));
     const totals = { baptisms:0, firstCommunions:0, confirmations:0, marriages:0 };
     withMetrics.forEach(({ m }) => { totals.baptisms += m.baptisms; totals.firstCommunions += m.firstCommunions; totals.confirmations += m.confirmations; totals.marriages += m.marriages; });
-    const bySizeTier = ['Large', 'Medium', 'Small'].map(tier => {
+    const series = {
+      baptisms: sacMonthly('baptisms', totals.baptisms),
+      firstCommunions: sacMonthly('firstCommunions', totals.firstCommunions),
+      confirmations: sacMonthly('confirmations', totals.confirmations),
+      marriages: sacMonthly('marriages', totals.marriages),
+    };
+    const elig = { firstCommunions: eligibleFor('firstCommunions', series.firstCommunions), confirmations: eligibleFor('confirmations', series.confirmations) };
+    const ytd = arr => arr.slice(5).reduce((a, b) => a + b, 0);
+    const pct = key => Math.round(ytd(series[key]) / ytd(elig[key]) * 100);
+    const pending = key => ytd(elig[key]) - ytd(series[key]);
+    const tierSeries = ['Large', 'Medium', 'Small'].map((tier, ti) => {
       const inTier = withMetrics.filter(({ p }) => p.sizeTier === tier);
-      const avg = Math.round(inTier.reduce((s, { m }) => s + m.baptisms, 0) / inTier.length);
-      return { label: tier + ' parishes (avg. Baptisms)', value: avg, display: avg };
+      const avg = inTier.reduce((s, { m }) => s + m.baptisms, 0) / inTier.length;
+      const w = SAC_WEIGHTS.baptisms, k = avg / w.slice(5).reduce((a, b) => a + b, 0);
+      return { name: tier + ' parishes', values: w.map(x => Math.round(x * k * 10) / 10), color: ['primary', 'green', 'coral'][ti], dashed: ti === 2 };
     });
+    const eligChart = (title, key, label, tone) => lineChart(title, SAC_MONTHS, [
+      { name: 'Eligible candidates', values: elig[key], color: 'gold', dashed: true },
+      { name: label, values: series[key], color: tone },
+    ], { subtitle: `Jan\u2013Jul 2026: <b>${pct(key)}%</b> of eligible candidates received it \u00b7 ${pending(key).toLocaleString('en-IN')} still to go`, valueLabels: false });
     el.innerHTML = `
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         ${statCard('Baptisms (YTD)', totals.baptisms.toLocaleString('en-IN'))}
@@ -435,17 +510,13 @@
         ${statCard('Confirmations (YTD)', totals.confirmations.toLocaleString('en-IN'))}
         ${statCard('Marriages (YTD)', totals.marriages.toLocaleString('en-IN'))}
       </div>
-      <div class="grid lg:grid-cols-2 gap-6">
-        ${barChart('Average Baptisms by parish size tier', bySizeTier, 'green')}
-        ${barChart('Diocese-wide Baptisms by month (last 6 months)', [
-          { label:'Feb 2026', value: Math.round(totals.baptisms*0.14), display: Math.round(totals.baptisms*0.14) },
-          { label:'Mar 2026', value: Math.round(totals.baptisms*0.15), display: Math.round(totals.baptisms*0.15) },
-          { label:'Apr 2026', value: Math.round(totals.baptisms*0.16), display: Math.round(totals.baptisms*0.16) },
-          { label:'May 2026', value: Math.round(totals.baptisms*0.17), display: Math.round(totals.baptisms*0.17) },
-          { label:'Jun 2026', value: Math.round(totals.baptisms*0.18), display: Math.round(totals.baptisms*0.18) },
-          { label:'Jul 2026', value: Math.round(totals.baptisms*0.20), display: Math.round(totals.baptisms*0.20) },
-        ], 'primary')}
+      <div class="grid lg:grid-cols-2 gap-6 mb-6">
+        ${lineChart('Baptisms by month', SAC_MONTHS, [{ name: 'Baptisms', values: series.baptisms, color: 'primary' }], { subtitle: 'Diocese-wide, last 12 months', valueLabels: false })}
+        ${lineChart('Marriages by month', SAC_MONTHS, [{ name: 'Marriages', values: series.marriages, color: 'coral' }], { subtitle: 'Diocese-wide, last 12 months', valueLabels: false })}
+        ${eligChart('First Holy Communion \u2014 eligible vs. received', 'firstCommunions', 'Received First Communion', 'green')}
+        ${eligChart('Confirmation \u2014 eligible vs. received', 'confirmations', 'Received Confirmation', 'lavender')}
       </div>
+      ${lineChart('Baptisms per parish by size tier', SAC_MONTHS, tierSeries, { subtitle: 'Average per parish, by month', valueLabels: false })}
     `;
   }
 
@@ -469,7 +540,7 @@
         ${statCard('Parishes reporting', parishes.length)}
       </div>
       <div class="grid lg:grid-cols-2 gap-6">
-        ${barChart('Income by parish size tier', bySizeTier, 'green')}
+        ${lineRowsChart('Income by parish size tier', bySizeTier, 'green')}
         ${rankedList('Lowest subscription collection rate', lowestCollecting, '')}
       </div>
     `;
@@ -507,7 +578,7 @@
             `).join('')}
           </div>
         </div>
-        ${barChart('Attendance — largest events', topByAttendance.map(e => ({ label: e.name, value: e.attendance, display: e.attendance.toLocaleString('en-IN') })), 'lavender')}
+        ${lineRowsChart('Attendance — largest events', topByAttendance.map(e => ({ label: e.name, value: e.attendance, display: e.attendance.toLocaleString('en-IN') })), 'lavender')}
       </div>
     `;
   }
@@ -534,73 +605,8 @@
         ${statCard('Adoption rate', Math.round((publishing.length / parishes.length) * 100) + '%')}
       </div>
       <div class="grid lg:grid-cols-2 gap-6">
-        ${barChart('Content volume by category', categories, 'lavender')}
+        ${lineRowsChart('Content volume by category', categories, 'lavender')}
         ${rankedList('Parishes not yet publishing (sample)', notPublishing, '')}
-      </div>
-    `;
-  }
-
-  // =========================================================================
-  // PARISH COMPARISON
-  // =========================================================================
-  let comparisonSelection = ['PAR-0002', 'PAR-0001'];
-  function renderComparison(el) {
-    el.innerHTML = `
-      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6">
-        <p class="text-sm font-semibold mb-3">Compare up to 3 parishes</p>
-        <div class="grid sm:grid-cols-3 gap-3">
-          ${[0,1,2].map(i => `
-            <select onchange="setComparisonSlot(${i}, this.value)" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
-              <option value="">${i === 0 ? 'Select a parish…' : 'Add a parish (optional)…'}</option>
-              ${parishes.map(p => `<option value="${p.id}" ${comparisonSelection[i] === p.id ? 'selected' : ''}>${p.name}</option>`).join('')}
-            </select>
-          `).join('')}
-        </div>
-      </div>
-      <div id="comparison-table"></div>
-    `;
-    renderComparisonTable();
-  }
-  function setComparisonSlot(i, id) {
-    comparisonSelection[i] = id || null;
-    renderComparisonTable();
-  }
-  function renderComparisonTable() {
-    const selected = comparisonSelection.filter(Boolean).map(id => parishes.find(p => p.id === id)).filter(Boolean);
-    const container = document.getElementById('comparison-table');
-    if (selected.length === 0) {
-      container.innerHTML = '<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm text-ink-muted">Select at least one parish to compare.</p></div>';
-      return;
-    }
-    const rows = [
-      { label: 'Size tier', get: (p, m) => p.sizeTier },
-      { label: 'Est. families', get: (p, m) => p.estFamilies },
-      { label: 'Modules enabled', get: (p, m) => modulesFor(p.id).length + ' of ' + MODULES.length },
-      { label: 'Requests processed (YTD)', get: (p, m) => m.requestsProcessed.toLocaleString('en-IN') },
-      { label: 'Sacraments YTD (all types)', get: (p, m) => (m.baptisms + m.firstCommunions + m.confirmations + m.marriages).toLocaleString('en-IN') },
-      { label: 'Income (YTD)', get: (p, m) => formatMoney(m.totalIncome) },
-      { label: 'Subscription collection rate', get: (p, m) => m.subscriptionRate + '%' },
-    ];
-    container.innerHTML = `
-      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
-                <th class="px-4 py-3 font-medium">Metric</th>
-                ${selected.map(p => `<th class="px-4 py-3 font-medium">${p.name}</th>`).join('')}
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.map(r => `
-                <tr class="border-b border-divider last:border-0">
-                  <td class="px-4 py-3 text-ink-muted">${r.label}</td>
-                  ${selected.map(p => `<td class="px-4 py-3 font-medium">${r.get(p, metricsFor(p))}</td>`).join('')}
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
       </div>
     `;
   }
@@ -619,7 +625,7 @@
           <div class="space-y-1.5">
             <label class="text-xs font-medium">Report type</label>
             <select id="exp-type" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-              <option>Parish Activity</option><option>Sacraments</option><option>Finance</option><option>Events</option><option>Faith Formation</option><option>Parish Comparison</option>
+              <option>Parish Activity</option><option>Sacraments</option><option>Finance</option><option>Events</option><option>Faith Formation</option>
             </select>
           </div>
           <div class="grid grid-cols-2 gap-3">
