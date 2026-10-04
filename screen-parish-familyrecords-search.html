@@ -142,6 +142,7 @@
 
       <main class="px-6 lg:px-10 py-8 max-w-content">
 
+        <div id="list-view">
         <div class="flex items-center justify-between gap-3 flex-wrap mb-6">
           <div>
             <p class="font-heading font-bold text-2xl">Family Records</p>
@@ -208,18 +209,15 @@
             </table>
           </div>
         </div>
+        </div>
+
+        <div id="detail-view" class="hidden"></div>
 
       </main>
     </div>
   </div>
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
-
-  <!-- ============ RIGHT SLIDE-IN DRAWER: FAMILY DETAIL ============ -->
-  <div id="drawer-backdrop" onclick="closeDrawer()" class="hidden fixed inset-0 bg-black/30 z-40"></div>
-  <div id="drawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-card-bg shadow-card z-50 translate-x-full transition-transform duration-300 overflow-y-auto">
-    <div id="drawer-content"></div>
-  </div>
 
   <!-- ============ REGISTER FAMILY MODAL ============ -->
   <div id="register-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
@@ -320,6 +318,7 @@
     x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
     up: '<polyline points="18 15 12 9 6 15"/>',
     down: '<polyline points="6 9 12 15 18 9"/>',
+    back: '<polyline points="15 18 9 12 15 6"/>',
     history: '<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>',
     cross: '<path d="M12 3v18"/><path d="M7 8h10"/>',
   };
@@ -806,30 +805,47 @@
 
   function findFamily(id) { return families.find(f => f.id === id); }
 
-  // ---------------- Drawer ----------------
-  function openDrawer(id) {
-    selectedFamilyId = id;
-    activeTab = 'overview';
-    editMode = false;
-    showTransferForm = false;
-    showSuspendConfirm = false;
-    showArchiveConfirm = false;
-    showAddMemberForm = false;
-    showPaymentHistory = false;
-    showPaymentForm = false;
-    editingMemberIndex = null;
-    removeMemberConfirmIndex = null;
-    sacramentDetailKey = null;
-    openSacramentSectionIndex = null;
-    updateRejectPromptFor = null;
-    document.getElementById('drawer').classList.remove('translate-x-full');
-    document.getElementById('drawer-backdrop').classList.remove('hidden');
-    renderDrawer();
+  // ---------------- Family page (replaces the old side drawer) ----------------
+  // Each family has its own page: ?family=FAM-1001&tab=members. Opening one is a browser-history step, so the browser's
+  // Back button (and the Back link on the page) return to the Family Records list with the search and filters intact.
+  let listScrollY = 0;
+  function listUrl() { const p = new URLSearchParams(window.location.search); ['family', 'tab', 'openRegister'].forEach(k => p.delete(k)); const q = p.toString(); return window.location.pathname.split('/').pop() + (q ? '?' + q : ''); }
+  function famUrl(id, tab) { const p = new URLSearchParams(window.location.search); p.delete('openRegister'); p.set('family', id); p.set('tab', tab || 'overview'); return window.location.pathname.split('/').pop() + '?' + p.toString(); }
+  function pushHist(state, url) { try { history.pushState(state, '', url); } catch (e) { history.pushState(state, ''); } }
+  function replaceHist(state, url) { try { history.replaceState(state, '', url); } catch (e) { history.replaceState(state, ''); } }
+  function resetFamilyUI() {
+    editMode = false; showTransferForm = false; showSuspendConfirm = false; showArchiveConfirm = false; showAddMemberForm = false;
+    showPaymentHistory = false; showPaymentForm = false; editingMemberIndex = null; removeMemberConfirmIndex = null;
+    sacramentDetailKey = null; openSacramentSectionIndex = null; updateRejectPromptFor = null;
   }
-  function closeDrawer() {
-    document.getElementById('drawer').classList.add('translate-x-full');
-    document.getElementById('drawer-backdrop').classList.add('hidden');
+  function showFamilyView(id, tab) {
+    selectedFamilyId = id; activeTab = ['overview', 'members', 'subscription', 'updates'].includes(tab) ? tab : 'overview'; resetFamilyUI();
+    document.getElementById('list-view').classList.add('hidden');
+    document.getElementById('detail-view').classList.remove('hidden');
+    const f = findFamily(id); document.title = (f ? f.familyName : 'Family') + ' \u2014 Parish Connect';
+    renderDrawer(); window.scrollTo(0, 0);
   }
+  function showListView() {
+    selectedFamilyId = null;
+    document.getElementById('detail-view').classList.add('hidden');
+    document.getElementById('list-view').classList.remove('hidden');
+    document.title = 'Family Records \u2014 Parish Connect';
+    renderTable(); window.scrollTo(0, listScrollY);
+  }
+  function openDrawer(id, tab) {          // name kept: table rows, Register flow and other pages' links all use it
+    if (!findFamily(id)) { toast('We couldn\u2019t find that family record.'); return; }
+    listScrollY = window.scrollY;
+    pushHist({ family: id, tab: tab || 'overview', fromList: true }, famUrl(id, tab));
+    showFamilyView(id, tab);
+  }
+  function closeDrawer() {                // the Back link on the family page
+    if (history.state && history.state.fromList) history.back();
+    else { replaceHist({}, listUrl()); showListView(); }   // opened from a link: there is no list entry behind us, so show it here
+  }
+  window.addEventListener('popstate', e => {
+    const st = e.state;
+    if (st && st.family && findFamily(st.family)) showFamilyView(st.family, st.tab); else showListView();
+  });
 
   function setTab(tab) {
     activeTab = tab;
@@ -845,6 +861,7 @@
     sacramentDetailKey = null;
     openSacramentSectionIndex = null;
     updateRejectPromptFor = null;
+    if (selectedFamilyId) replaceHist({ family: selectedFamilyId, tab, fromList: !!(history.state && history.state.fromList) }, famUrl(selectedFamilyId, tab));
     renderDrawer();
   }
 
@@ -856,57 +873,67 @@
 
   function renderDrawer() {
     const f = findFamily(selectedFamilyId);
-    const el = document.getElementById('drawer-content');
+    const el = document.getElementById('detail-view');
     if (!f) { el.innerHTML = ''; return; }
 
     const tabs = ['overview', 'members', 'subscription', 'updates'];
     const pendingUpdates = updateRequestsFor(f.id).filter(r => r.status === 'Submitted').length;
     const tabLabels = { overview: 'Overview', members: 'Members', subscription: 'Subscription', updates: `Updates${pendingUpdates > 0 ? ` (${pendingUpdates})` : ''}` };
+    const narrow = activeTab === 'subscription' || activeTab === 'updates' || (activeTab === 'overview' && editMode);
 
     el.innerHTML = `
-      <div class="p-6 border-b border-divider sticky top-0 bg-card-bg z-10">
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="w-12 h-12 rounded-badge bg-primary-light text-primary font-heading font-bold text-base flex items-center justify-center flex-shrink-0">${initials(f.headOfFamily)}</span>
-            <div class="min-w-0">
-              <p class="font-heading font-bold text-lg truncate">${f.familyName}</p>
-              <p class="text-xs text-ink-muted">${f.familyRecordNumber}</p>
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm mb-3">
+        <button onclick="closeDrawer()" class="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline min-h-[44px]">${icon('back','icon w-4 h-4')}Family Records</button>
+        <span class="text-ink-muted" aria-hidden="true">/</span>
+        <span class="font-semibold truncate">${f.familyName}</span>
+      </nav>
+      <header class="bg-card-bg rounded-card shadow-card mb-6">
+        <div class="p-6 sm:p-8">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="flex items-center gap-4 min-w-0">
+              <span class="w-16 h-16 rounded-badge bg-primary-light text-primary font-heading font-bold text-xl flex items-center justify-center flex-shrink-0">${initials(f.headOfFamily)}</span>
+              <div class="min-w-0">
+                <h1 class="font-heading font-bold text-2xl sm:text-3xl truncate">${f.familyName}</h1>
+                <p class="text-sm text-ink-muted mt-0.5">${f.members.length} member${f.members.length === 1 ? '' : 's'} \u00b7 ${f.ward} \u00b7 Registered ${formatDate(f.registrationDate)}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${f.familyRecordNumber}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button onclick="enterEditMode()" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] inline-flex items-center gap-2 transition-warm">${icon('edit','icon w-4 h-4')}Edit</button>
+              <button onclick="toast('Generating printable family record for ${f.familyName}')" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] inline-flex items-center gap-2 transition-warm hover:bg-section-bg">${icon('print','icon w-4 h-4')}Print</button>
             </div>
           </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <button onclick="enterEditMode()" aria-label="Edit family" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit')}</button>
-            <button onclick="toast('Generating printable family record for ${f.familyName}')" aria-label="Print family record" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('print')}</button>
-            <button onclick="closeDrawer()" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('x')}</button>
+          <div class="flex flex-wrap gap-2 mt-4">
+            ${pill(f.status, STATUS_STYLE)}
+            ${subPill(computeSubscription(f).status)}
+            ${pendingUpdates > 0 ? `<span class="bg-coral/20 text-[#b1402f] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('alert','w-3 h-3')}${pendingUpdates} update request${pendingUpdates>1?'s':''} pending</span>` : ''}
           </div>
         </div>
-        <div class="flex gap-2 mt-3">
-          ${pill(f.status, STATUS_STYLE)}
-          ${subPill(computeSubscription(f).status)}
-          ${pendingUpdates > 0 ? `<span class="bg-coral/20 text-[#b1402f] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap inline-flex items-center gap-1">${icon('alert','w-3 h-3')}${pendingUpdates} update request${pendingUpdates>1?'s':''} pending</span>` : ''}
+        <div class="flex flex-wrap gap-1 px-4 sm:px-6 border-t border-divider" role="tablist">
+          ${tabs.map(t => `<button role="tab" aria-selected="${activeTab===t}" onclick="setTab('${t}')" class="px-4 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 -mb-px transition-warm min-h-[48px] ${activeTab===t ? 'border-primary text-primary' : 'border-transparent text-ink-muted hover:text-ink'}">${tabLabels[t]}</button>`).join('')}
         </div>
-        <div class="flex flex-wrap gap-x-1 gap-y-1 mt-4 pb-1">
-          ${tabs.map(t => `<button onclick="setTab('${t}')" class="px-3 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-warm ${activeTab===t ? 'border-primary text-primary' : 'border-transparent text-ink-muted hover:text-ink'}">${tabLabels[t]}</button>`).join('')}
+      </header>
+      <section class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+        <div class="${narrow ? 'max-w-3xl' : ''}">
+          ${activeTab === 'overview' ? (editMode ? renderOverviewEdit(f) : renderOverviewTab(f)) : ''}
+          ${activeTab === 'members' ? renderMembersTab(f) : ''}
+          ${activeTab === 'subscription' ? renderSubscriptionTab(f) : ''}
+          ${activeTab === 'updates' ? renderUpdatesTab(f) : ''}
         </div>
-      </div>
-      <div class="p-6">
-        ${activeTab === 'overview' ? (editMode ? renderOverviewEdit(f) : renderOverviewTab(f)) : ''}
-        ${activeTab === 'members' ? renderMembersTab(f) : ''}
-        ${activeTab === 'subscription' ? renderSubscriptionTab(f) : ''}
-        ${activeTab === 'updates' ? renderUpdatesTab(f) : ''}
-      </div>
+      </section>
     `;
   }
 
   function renderOverviewTab(f) {
     return `
-      <div class="grid sm:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 mb-6">
         <div><p class="text-xs text-ink-muted">Head of Family</p><p class="text-sm font-medium mt-0.5">${f.headOfFamily}</p></div>
         <div><p class="text-xs text-ink-muted">Ward / BCC Zone</p><p class="text-sm font-medium mt-0.5">${f.ward}</p></div>
         <div><p class="text-xs text-ink-muted">Preferred Language</p><p class="text-sm font-medium mt-0.5">${f.preferredLanguage}</p></div>
         <div><p class="text-xs text-ink-muted">Registered</p><p class="text-sm font-medium mt-0.5">${formatDate(f.registrationDate)}</p></div>
-        <div class="sm:col-span-2"><p class="text-xs text-ink-muted">Address</p><p class="text-sm font-medium mt-0.5">${f.address}</p></div>
+        <div class="sm:col-span-2 lg:col-span-3"><p class="text-xs text-ink-muted">Address</p><p class="text-sm font-medium mt-0.5">${f.address}</p></div>
         <div><p class="text-xs text-ink-muted">Mobile</p><p class="text-sm font-medium mt-0.5">${f.mobile}</p></div>
-        <div class="sm:col-span-2"><p class="text-xs text-ink-muted">Email</p><p class="text-sm font-medium mt-0.5 break-all">${f.email}</p></div>
+        <div class="sm:col-span-2 lg:col-span-3"><p class="text-xs text-ink-muted">Email</p><p class="text-sm font-medium mt-0.5 break-all">${f.email}</p></div>
       </div>
       <button onclick="setTab('members')" class="bg-white border border-divider text-ink text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm hover:bg-section-bg flex items-center gap-1.5">
         <svg class="icon w-4 h-4" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg>
@@ -1069,7 +1096,7 @@
 
   function renderMembersTab(f) {
     return `
-      <div class="space-y-3 mb-4">
+      <div class="grid lg:grid-cols-2 gap-4 items-start mb-5">
         ${f.members.map((m, i) => editingMemberIndex === i ? renderEditMemberForm(f, m, i) : removeMemberConfirmIndex === i ? `
           <div class="bg-error-bg rounded-card p-4 space-y-2">
             <p class="text-sm text-error">Remove ${m.name} from this family record? This can't be undone${m.sacraments && m.sacraments.length ? ' — their ' + m.sacraments.length + ' sacramental record' + (m.sacraments.length === 1 ? '' : 's') + ' will be removed too' : ''}.</p>
@@ -1491,8 +1518,9 @@
     openRegisterModal();
   }
   if (sessionParams.get('family')) {
-    openDrawer(sessionParams.get('family'));
-    if (sessionParams.get('tab')) { activeTab = sessionParams.get('tab'); renderDrawer(); }
+    const fid = sessionParams.get('family'), ftab = sessionParams.get('tab') || 'overview';
+    if (findFamily(fid)) { replaceHist({ family: fid, tab: ftab, fromList: false }, famUrl(fid, ftab)); showFamilyView(fid, ftab); }
+    else toast('We couldn\u2019t find that family record.');
   }
 
 </script>
