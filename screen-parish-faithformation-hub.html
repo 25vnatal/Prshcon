@@ -240,6 +240,9 @@
     edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
     trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
     search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    back: '<polyline points="15 18 9 12 15 6"/>',
+    chev: '<polyline points="9 18 15 12 9 6"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
     play: '<circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
@@ -256,22 +259,43 @@
     return `<span class="${bg} ${text} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${status}</span>`;
   }
 
-  const CATEGORIES = ["Daily Prayers", "Readings & Reflections", "Special Prayers", "Rosary", "Feast Day Content"];
+  const CATEGORIES = ["Daily Prayers", "Marian Prayers", "Special Prayers", "Rosary", "Readings & Reflections", "Feast Day Content"];
 
   // ---------------- Mock data: Faith Formation content (moved out of Communication, richer + categorized) ----------------
   let faithContent = [
-    { id:"FF-001", category:"Daily Prayers", title:"Morning Offering", body:"O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", status:"Published", publishedDate:"2026-07-26" },
-    { id:"FF-002", category:"Daily Prayers", title:"Prayer of the Day \u2014 Trust in Providence", body:"Lord, help me trust in Your providence today, in ways big and small.", status:"Published", publishedDate:"2026-07-26" },
-    { id:"FF-003", category:"Daily Prayers", title:"Grace Before Meals", body:"Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen.", status:"Published", publishedDate:"2026-07-20" },
-    { id:"FF-004", category:"Readings & Reflections", title:"Reflecting on the Novena", body:"As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", status:"Published", publishedDate:"2026-07-25" },
-    { id:"FF-005", category:"Readings & Reflections", title:"Sunday Gospel Reflection \u2014 The Good Samaritan", body:"Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", status:"Published", publishedDate:"2026-07-19" },
-    { id:"FF-006", category:"Readings & Reflections", title:"Reflection for Families \u2014 Patience", body:"A short reflection for parents on modelling patience for their children, drawn from this week's readings.", status:"Draft", publishedDate:null },
-    { id:"FF-007", category:"Special Prayers", title:"Prayer for the Sick", body:"Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", status:"Published", publishedDate:"2026-07-15" },
-    { id:"FF-008", category:"Special Prayers", title:"Prayer for Vocations", body:"Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", status:"Published", publishedDate:"2026-06-20" },
-    { id:"FF-009", category:"Rosary", title:"The Joyful Mysteries", body:"A guide to praying the Joyful Mysteries, prayed on Mondays and Saturdays: the Annunciation, Visitation, Nativity, Presentation, and Finding in the Temple.", status:"Published", publishedDate:"2026-05-01" },
-    { id:"FF-010", category:"Rosary", title:"The Sorrowful Mysteries", body:"A guide to praying the Sorrowful Mysteries, prayed on Tuesdays and Fridays: the Agony, Scourging, Crowning with Thorns, Carrying of the Cross, and Crucifixion.", status:"Published", publishedDate:"2026-05-01" },
-    { id:"FF-011", category:"Rosary", title:"How to Pray the Rosary \u2014 A Beginner's Guide", body:"Step-by-step instructions for parishioners new to the Rosary, including how to hold the beads and the order of prayers.", status:"Published", publishedDate:"2026-04-10" },
-    { id:"FF-012", category:"Feast Day Content", title:"About the Feast of the Infant Jesus", body:"A short history and devotional note on the parish's patronal feast, celebrated every 13 January.", status:"Draft", publishedDate:null },
+    {"id": "FF-013", "category": "Daily Prayers", "title": "Sign of the Cross", "body": "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-014", "category": "Daily Prayers", "title": "Our Father", "body": "Our Father, who art in heaven,\nhallowed be thy name;\nthy kingdom come;\nthy will be done on earth as it is in heaven.\n\nGive us this day our daily bread,\nand forgive us our trespasses\nas we forgive those who trespass against us;\nand lead us not into temptation,\nbut deliver us from evil.\n\nAmen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-015", "category": "Daily Prayers", "title": "Glory Be", "body": "Glory be to the Father, and to the Son, and to the Holy Spirit,\nas it was in the beginning, is now, and ever shall be,\nworld without end. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-016", "category": "Daily Prayers", "title": "Apostles’ Creed", "body": "I believe in God, the Father almighty, creator of heaven and earth.\n\nI believe in Jesus Christ, his only Son, our Lord,\nwho was conceived by the Holy Spirit,\nborn of the Virgin Mary,\nsuffered under Pontius Pilate,\nwas crucified, died, and was buried.\nHe descended into hell.\nOn the third day he rose again from the dead.\nHe ascended into heaven,\nand is seated at the right hand of God the Father almighty.\nFrom there he will come to judge the living and the dead.\n\nI believe in the Holy Spirit,\nthe holy Catholic Church,\nthe communion of saints,\nthe forgiveness of sins,\nthe resurrection of the body,\nand life everlasting. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-001", "category": "Daily Prayers", "title": "Morning Offering", "body": "O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys, and sufferings of this day.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-002", "category": "Daily Prayers", "title": "Prayer of the Day — Trust in Providence", "body": "Lord, help me trust in Your providence today, in ways big and small.", "status": "Published", "publishedDate": "2026-07-26"},
+    {"id": "FF-003", "category": "Daily Prayers", "title": "Grace Before Meals", "body": "Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen.", "status": "Published", "publishedDate": "2026-07-20", "source": "Traditional"},
+    {"id": "FF-017", "category": "Daily Prayers", "title": "Grace After Meals", "body": "We give thee thanks, almighty God, for all thy benefits,\nwho livest and reignest world without end. Amen.\n\nMay the souls of the faithful departed, through the mercy of God, rest in peace. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-018", "category": "Daily Prayers", "title": "Prayer to Your Guardian Angel", "body": "Angel of God, my guardian dear,\nto whom God’s love commits me here,\never this day be at my side,\nto light and guard, to rule and guide. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-019", "category": "Marian Prayers", "title": "Hail Mary", "body": "Hail Mary, full of grace, the Lord is with thee;\nblessed art thou amongst women,\nand blessed is the fruit of thy womb, Jesus.\n\nHoly Mary, Mother of God,\npray for us sinners,\nnow and at the hour of our death. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-020", "category": "Marian Prayers", "title": "The Angelus", "body": "V. The Angel of the Lord declared unto Mary.\nR. And she conceived of the Holy Spirit.\nHail Mary…\n\nV. Behold the handmaid of the Lord.\nR. Be it done unto me according to thy word.\nHail Mary…\n\nV. And the Word was made flesh.\nR. And dwelt among us.\nHail Mary…\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLet us pray.\nPour forth, we beseech thee, O Lord, thy grace into our hearts; that we, to whom the incarnation of Christ thy Son was made known by the message of an angel, may by his passion and cross be brought to the glory of his resurrection, through the same Christ our Lord. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-021", "category": "Marian Prayers", "title": "The Memorare", "body": "Remember, O most gracious Virgin Mary,\nthat never was it known that anyone who fled to thy protection,\nimplored thy help, or sought thy intercession, was left unaided.\n\nInspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother;\nto thee do I come, before thee I stand, sinful and sorrowful.\nO Mother of the Word Incarnate, despise not my petitions,\nbut in thy mercy hear and answer me. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-022", "category": "Marian Prayers", "title": "Hail, Holy Queen (Salve Regina)", "body": "Hail, holy Queen, Mother of mercy,\nour life, our sweetness and our hope.\nTo thee do we cry, poor banished children of Eve;\nto thee do we send up our sighs,\nmourning and weeping in this valley of tears.\nTurn then, most gracious advocate,\nthine eyes of mercy toward us;\nand after this our exile, show unto us the blessed fruit of thy womb, Jesus.\nO clement, O loving, O sweet Virgin Mary.\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-007", "category": "Special Prayers", "title": "Prayer for the Sick", "body": "Loving God, we lift up all who are sick in our parish family. Grant them comfort, healing, and Your peace.", "status": "Published", "publishedDate": "2026-07-15"},
+    {"id": "FF-008", "category": "Special Prayers", "title": "Prayer for Vocations", "body": "Lord of the harvest, send labourers into Your vineyard. Bless our parish with vocations to priesthood and religious life.", "status": "Published", "publishedDate": "2026-06-20"},
+    {"id": "FF-023", "category": "Special Prayers", "title": "Come, Holy Spirit", "body": "V. Come, Holy Spirit, fill the hearts of thy faithful and kindle in them the fire of thy love.\nV. Send forth thy Spirit and they shall be created.\nR. And thou shalt renew the face of the earth.\n\nLet us pray.\nO God, who didst instruct the hearts of the faithful by the light of the Holy Spirit, grant that by the same Holy Spirit we may be truly wise and ever enjoy his consolations, through Christ our Lord. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-024", "category": "Special Prayers", "title": "Act of Contrition", "body": "O my God, I am heartily sorry for having offended thee,\nand I detest all my sins because of thy just punishments,\nbut most of all because they offend thee, my God,\nwho art all good and deserving of all my love.\n\nI firmly resolve, with the help of thy grace,\nto sin no more and to avoid the near occasion of sin. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-025", "category": "Special Prayers", "title": "Acts of Faith, Hope and Love", "body": "Act of Faith\nO my God, I firmly believe that thou art one God in three divine Persons, Father, Son and Holy Spirit. I believe that thy divine Son became man and died for our sins, and that he will come to judge the living and the dead. I believe these and all the truths which the holy Catholic Church teaches, because thou hast revealed them, who canst neither deceive nor be deceived.\n\nAct of Hope\nO my God, relying on thy almighty power and infinite mercy and promises, I hope to obtain pardon of my sins, the help of thy grace, and life everlasting, through the merits of Jesus Christ, my Lord and Redeemer.\n\nAct of Love\nO my God, I love thee above all things, with my whole heart and soul, because thou art all good and worthy of all love. I love my neighbour as myself for the love of thee. I forgive all who have injured me and ask pardon of all whom I have injured.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-026", "category": "Special Prayers", "title": "Anima Christi (Soul of Christ)", "body": "Soul of Christ, sanctify me.\nBody of Christ, save me.\nBlood of Christ, inebriate me.\nWater from the side of Christ, wash me.\nPassion of Christ, strengthen me.\nO good Jesus, hear me.\nWithin thy wounds hide me.\nSuffer me not to be separated from thee.\nFrom the malicious enemy defend me.\nIn the hour of my death call me,\nand bid me come to thee,\nthat with thy saints I may praise thee\nfor ever and ever. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-027", "category": "Special Prayers", "title": "Prayer to Saint Michael the Archangel", "body": "Saint Michael the Archangel, defend us in battle.\nBe our protection against the wickedness and snares of the devil.\nMay God rebuke him, we humbly pray;\nand do thou, O Prince of the heavenly host,\nby the power of God, cast into hell Satan and all evil spirits\nwho prowl about the world seeking the ruin of souls. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-028", "category": "Special Prayers", "title": "Prayer of Saint Francis (Make Me an Instrument of Peace)", "body": "Lord, make me an instrument of thy peace.\nWhere there is hatred, let me sow love;\nwhere there is injury, pardon;\nwhere there is doubt, faith;\nwhere there is despair, hope;\nwhere there is darkness, light;\nand where there is sadness, joy.\n\nO Divine Master, grant that I may not so much seek\nto be consoled as to console;\nto be understood as to understand;\nto be loved as to love.\n\nFor it is in giving that we receive;\nit is in pardoning that we are pardoned;\nand it is in dying that we are born to eternal life. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-029", "category": "Special Prayers", "title": "Prayer for the Faithful Departed", "body": "Eternal rest grant unto them, O Lord,\nand let perpetual light shine upon them.\n\nMay they rest in peace. Amen.\n\nMay their souls, and the souls of all the faithful departed,\nthrough the mercy of God, rest in peace. Amen.", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-030", "category": "Special Prayers", "title": "Prayer to the Infant Jesus", "body": "O Jesus, who hast said, ‘Ask and you shall receive, seek and you shall find, knock and it shall be opened to you,’ through the intercession of Mary, thy most holy Mother, I knock, I seek, I ask that my prayer be granted.\n(Make your request.)\n\nO Jesus, who hast said, ‘All that you ask of the Father in my name he will grant you,’ through the intercession of Mary, thy most holy Mother, I humbly and urgently ask thy Father in thy name that my prayer be granted.\n(Make your request.)\n\nO Jesus, who hast said, ‘Heaven and earth shall pass away but my word shall not pass,’ through the intercession of Mary, thy most holy Mother, I confidently feel that my prayer will be granted. Amen.\n(Make your request.)", "status": "Published", "publishedDate": "2026-07-26", "source": "Traditional"},
+    {"id": "FF-009", "category": "Rosary", "title": "The Joyful Mysteries", "body": "A guide to praying the Joyful Mysteries, prayed on Mondays and Saturdays: the Annunciation, Visitation, Nativity, Presentation, and Finding in the Temple.", "status": "Published", "publishedDate": "2026-05-01", "ref": "set:joyful"},
+    {"id": "FF-010", "category": "Rosary", "title": "The Sorrowful Mysteries", "body": "A guide to praying the Sorrowful Mysteries, prayed on Tuesdays and Fridays: the Agony, Scourging, Crowning with Thorns, Carrying of the Cross, and Crucifixion.", "status": "Published", "publishedDate": "2026-05-01", "ref": "set:sorrowful"},
+    {"id": "FF-011", "category": "Rosary", "title": "How to Pray the Rosary — A Beginner's Guide", "body": "Step-by-step instructions for parishioners new to the Rosary: the beads, the order of prayers, and which mysteries to pray on which day.", "status": "Published", "publishedDate": "2026-04-10", "ref": "guide"},
+    {"id": "FF-031", "category": "Rosary", "title": "The Glorious Mysteries", "body": "A guide to praying the Glorious Mysteries, prayed on Wednesdays and Sundays: the Resurrection, Ascension, Descent of the Holy Spirit, Assumption of Mary, and Coronation of Mary.", "status": "Published", "publishedDate": "2026-05-01", "source": "Traditional", "ref": "set:glorious"},
+    {"id": "FF-032", "category": "Rosary", "title": "The Luminous Mysteries", "body": "A guide to praying the Luminous Mysteries, prayed on Thursdays: the Baptism of Jesus, Wedding at Cana, Proclamation of the Kingdom, Transfiguration, and Institution of the Eucharist.", "status": "Published", "publishedDate": "2026-05-01", "source": "Traditional", "ref": "set:luminous"},
+    {"id": "FF-033", "category": "Rosary", "title": "Prayers of the Rosary", "body": "Fatima Prayer\nO my Jesus, forgive us our sins, save us from the fires of hell; lead all souls to heaven, especially those who are in most need of thy mercy.\n\nClosing Prayer (after the Hail, Holy Queen)\nLet us pray.\nO God, whose only-begotten Son, by his life, death and resurrection, has purchased for us the rewards of eternal life, grant, we beseech thee, that by meditating upon these mysteries of the most holy Rosary of the Blessed Virgin Mary, we may imitate what they contain and obtain what they promise, through the same Christ our Lord. Amen.", "status": "Published", "publishedDate": "2026-05-01", "source": "Traditional"},
+    {"id": "FF-004", "category": "Readings & Reflections", "title": "Reflecting on the Novena", "body": "As we begin this novena, let us reflect on the humility of the Christ Child and what it asks of us.", "status": "Published", "publishedDate": "2026-07-25"},
+    {"id": "FF-005", "category": "Readings & Reflections", "title": "Sunday Gospel Reflection — The Good Samaritan", "body": "Who is my neighbour? This week's Gospel challenges us to widen our idea of who deserves our compassion.", "status": "Published", "publishedDate": "2026-07-19"},
+    {"id": "FF-006", "category": "Readings & Reflections", "title": "Reflection for Families — Patience", "body": "A short reflection for parents on modelling patience for their children, drawn from this week's readings.", "status": "Draft", "publishedDate": null},
+    {"id": "FF-012", "category": "Feast Day Content", "title": "About the Feast of the Infant Jesus", "body": "A short history and devotional note on the parish's patronal feast, celebrated every 13 January.", "status": "Draft", "publishedDate": null},
   ];
 
   // ---------------- Mock data: Media / Videos for children & youth ----------------
@@ -282,12 +306,231 @@
     { id:"MED-004", title:"Sunday School Song \u2014 This Little Light of Mine", audience:"Children", description:"A sing-along video recorded with the Sunday School choir.", durationMinutes:3, status:"Draft", publishedDate:null },
   ];
 
+
+  // ---------------- Rosary: the four sets of mysteries (structured for the reader pages) ----------------
+  // Scripture is given as references with original reflections, so no translation of the Bible is reproduced.
+  const ROSARY_SETS = [
+ {
+  "id": "joyful",
+  "name": "The Joyful Mysteries",
+  "short": "Joyful",
+  "days": [
+   "Monday",
+   "Saturday"
+  ],
+  "season": "Also prayed on the Sundays of Advent and the Christmas season.",
+  "intro": "The Joyful Mysteries remember the birth and hidden childhood of Jesus, from the angel’s message to Mary to his boyhood in Nazareth.",
+  "mysteries": [
+   {
+    "n": 1,
+    "title": "The Annunciation",
+    "scripture": "Luke 1:26–38",
+    "fruit": "Humility",
+    "reflection": "The angel Gabriel brings Mary an astonishing invitation: to become the mother of the Son of God. She is troubled and she asks questions, yet she answers with trust. Her ‘yes’ opens the door to our salvation. Ask for a heart that listens before it speaks and that says yes to God even when the way is not yet clear.",
+    "intention": "For the grace to trust God’s plan for our lives and our families."
+   },
+   {
+    "n": 2,
+    "title": "The Visitation",
+    "scripture": "Luke 1:39–56",
+    "fruit": "Love of neighbour",
+    "reflection": "Mary sets out in haste to help her cousin Elizabeth, who is expecting a child in her old age. Their meeting is full of joy, and Mary answers with the Magnificat, a song of praise to God. Faith that has met Christ cannot sit still; it goes out to serve.",
+    "intention": "For the sick, the elderly and all who need a helping hand this week."
+   },
+   {
+    "n": 3,
+    "title": "The Nativity",
+    "scripture": "Luke 2:1–20",
+    "fruit": "Poverty of spirit",
+    "reflection": "Jesus is born in Bethlehem, not in comfort but in a stable, and the first to hear the news are shepherds. God comes close in the simplest of ways. Look at the child with Mary and Joseph and ask to let go of whatever clutters your heart.",
+    "intention": "For families without proper homes and for the poor of our parish and city."
+   },
+   {
+    "n": 4,
+    "title": "The Presentation in the Temple",
+    "scripture": "Luke 2:22–38",
+    "fruit": "Obedience",
+    "reflection": "Following the Law, Mary and Joseph bring the infant Jesus to the Temple. Simeon and Anna recognise in him the light and hope of Israel, and Simeon warns Mary that a sword will pierce her heart. Offer your own family and your future to God in the same trust.",
+    "intention": "For parents, that they may offer their children to God with trust, and for those who dedicate their lives to him."
+   },
+   {
+    "n": 5,
+    "title": "The Finding in the Temple",
+    "scripture": "Luke 2:41–52",
+    "fruit": "True wisdom and joy in finding Jesus",
+    "reflection": "After three anxious days, Mary and Joseph find the twelve-year-old Jesus among the teachers. He says he must be in his Father’s house, and Mary keeps these things in her heart. When we lose sight of Jesus, we find him again in prayer, in Scripture and in the Church.",
+    "intention": "For young people, and for all who have drifted from the faith, that they may find their way home."
+   }
+  ]
+ },
+ {
+  "id": "sorrowful",
+  "name": "The Sorrowful Mysteries",
+  "short": "Sorrowful",
+  "days": [
+   "Tuesday",
+   "Friday"
+  ],
+  "season": "Also prayed on the Sundays of Lent.",
+  "intro": "The Sorrowful Mysteries follow Jesus from the Garden of Gethsemane to Calvary, remembering the love that carried him through his Passion.",
+  "mysteries": [
+   {
+    "n": 1,
+    "title": "The Agony in the Garden",
+    "scripture": "Matthew 26:36–46; Luke 22:39–46",
+    "fruit": "Sorrow for sin; conformity to God’s will",
+    "reflection": "On the night before he dies, Jesus prays in Gethsemane in deep distress, asking that the cup pass from him, and then adds, ‘not my will, but yours.’ His friends fall asleep. Stay awake with him a little, and bring him your own fears and burdens.",
+    "intention": "For all who are anxious, afraid or facing hard decisions."
+   },
+   {
+    "n": 2,
+    "title": "The Scourging at the Pillar",
+    "scripture": "Matthew 27:26; John 19:1",
+    "fruit": "Purity and self-control",
+    "reflection": "Pilate has Jesus scourged. The innocent one accepts a cruelty he has not earned. Think of those who suffer violence today, and ask for the strength to treat every person’s body and dignity with respect.",
+    "intention": "For victims of violence, abuse and trafficking."
+   },
+   {
+    "n": 3,
+    "title": "The Crowning with Thorns",
+    "scripture": "Matthew 27:27–31",
+    "fruit": "Moral courage",
+    "reflection": "The soldiers mock Jesus as a king, pressing a crown of thorns on his head. He does not answer insult with insult. Ask for the courage to stand for what is right when others laugh, and to bear ridicule with patience.",
+    "intention": "For those who are mocked or excluded because of their faith."
+   },
+   {
+    "n": 4,
+    "title": "The Carrying of the Cross",
+    "scripture": "Luke 23:26–32; John 19:17",
+    "fruit": "Patience in suffering",
+    "reflection": "Jesus carries his cross toward Calvary, and Simon of Cyrene is made to help him. Women weep along the road. Many of our crosses feel too heavy to carry alone; let us help one another carry them.",
+    "intention": "For caregivers, and for all who carry heavy burdens in silence."
+   },
+   {
+    "n": 5,
+    "title": "The Crucifixion",
+    "scripture": "Luke 23:33–46; John 19:25–30",
+    "fruit": "Perseverance and forgiveness",
+    "reflection": "Jesus is nailed to the cross between two criminals. He forgives those who crucify him, promises paradise to the repentant thief, entrusts Mary to John, and gives up his spirit. Stand with Mary at the foot of the cross and thank him for his love.",
+    "intention": "For the dying, for the forgiveness of sins and for the souls of the faithful departed."
+   }
+  ]
+ },
+ {
+  "id": "glorious",
+  "name": "The Glorious Mysteries",
+  "short": "Glorious",
+  "days": [
+   "Wednesday",
+   "Sunday"
+  ],
+  "season": "Also prayed on the Sundays outside Advent and Lent, especially in the Easter season.",
+  "intro": "The Glorious Mysteries celebrate the Resurrection of Jesus, the gift of the Holy Spirit, and the glory that awaits Mary and all the faithful.",
+  "mysteries": [
+   {
+    "n": 1,
+    "title": "The Resurrection",
+    "scripture": "Matthew 28:1–10; John 20:1–18",
+    "fruit": "Faith",
+    "reflection": "On the third day the tomb is found empty, and Jesus appears to Mary Magdalene and the disciples. Death does not have the last word. Pray for a faith that stays firm in dark times and shares the good news with joy.",
+    "intention": "For all who are grieving, and for the strengthening of our faith."
+   },
+   {
+    "n": 2,
+    "title": "The Ascension",
+    "scripture": "Luke 24:50–53; Acts 1:6–11",
+    "fruit": "Hope",
+    "reflection": "Forty days after Easter, Jesus is taken up to heaven, blessing his disciples and promising to be with them always. Our true home is with him. Ask for a hope that looks up to heaven while working faithfully on earth.",
+    "intention": "For those who have lost hope, and for missionaries."
+   },
+   {
+    "n": 3,
+    "title": "The Descent of the Holy Spirit",
+    "scripture": "Acts 2:1–13",
+    "fruit": "Love of God and the gifts of the Holy Spirit",
+    "reflection": "Mary and the apostles are praying together in the upper room when the Spirit comes like wind and fire. Frightened disciples become bold witnesses. Ask the Spirit to renew the Church and to give you courage and zeal.",
+    "intention": "For the Church, our bishops and priests, and for those preparing for Confirmation."
+   },
+   {
+    "n": 4,
+    "title": "The Assumption of Mary",
+    "scripture": "Revelation 11:19–12:6; Luke 1:39–56 (readings of the feast)",
+    "fruit": "Grace of a happy death",
+    "reflection": "The Church believes that Mary, at the end of her earthly life, was taken body and soul into heavenly glory. What God did for her he promises to all who follow Christ. Entrust the hour of your death to her.",
+    "intention": "For the sick and the dying, and for a holy death for all of us."
+   },
+   {
+    "n": 5,
+    "title": "The Coronation of Mary",
+    "scripture": "Revelation 12:1; Luke 1:46–55",
+    "fruit": "Trust in Mary’s intercession and eternal happiness",
+    "reflection": "Mary is honoured as Queen of heaven and earth, crowned not for herself but because of her union with her Son. She is a mother who prays for us. Ask her to lead you and your family to the joy of heaven.",
+    "intention": "For our families, and for all who are on the way to heaven."
+   }
+  ]
+ },
+ {
+  "id": "luminous",
+  "name": "The Luminous Mysteries",
+  "short": "Luminous",
+  "days": [
+   "Thursday"
+  ],
+  "season": "Added by Saint John Paul II in 2002 (the Mysteries of Light).",
+  "intro": "The Luminous Mysteries, or Mysteries of Light, focus on the public ministry of Jesus, from his baptism in the Jordan to the Last Supper.",
+  "mysteries": [
+   {
+    "n": 1,
+    "title": "The Baptism of Jesus",
+    "scripture": "Matthew 3:13–17; Mark 1:9–11",
+    "fruit": "Openness to the Holy Spirit",
+    "reflection": "At the Jordan the heavens open, the Spirit descends like a dove, and the Father declares Jesus his beloved Son. Remember your own baptism, where you too were called a child of God, and ask to live as one.",
+    "intention": "For the newly baptised and for those preparing for baptism."
+   },
+   {
+    "n": 2,
+    "title": "The Wedding at Cana",
+    "scripture": "John 2:1–12",
+    "fruit": "To Jesus through Mary",
+    "reflection": "When the wine runs out, Mary quietly tells Jesus and tells the servants, ‘Do whatever he tells you.’ At her request, Jesus works his first sign. Bring your small needs to Mary and trust her to bring them to her Son.",
+    "intention": "For married couples and for couples preparing for marriage."
+   },
+   {
+    "n": 3,
+    "title": "The Proclamation of the Kingdom",
+    "scripture": "Mark 1:14–15; Matthew 5:1–12; Luke 7:47–48",
+    "fruit": "Repentance and trust in God",
+    "reflection": "Jesus travels the villages calling people to repent and believe, forgiving sins and healing the sick. The Kingdom begins wherever his word is welcomed. Ask for a change of heart and the courage to forgive.",
+    "intention": "For reconciliation in families and communities, and for those who have not been to confession for a long time."
+   },
+   {
+    "n": 4,
+    "title": "The Transfiguration",
+    "scripture": "Luke 9:28–36; Matthew 17:1–8",
+    "fruit": "Desire for holiness",
+    "reflection": "On the mountain Jesus’ face shines and the Father’s voice says, ‘Listen to him.’ The disciples glimpse the glory that awaits us. Ask to listen more closely to Christ and to be changed by what you hear.",
+    "intention": "For priests and religious, and for all who seek holiness."
+   },
+   {
+    "n": 5,
+    "title": "The Institution of the Eucharist",
+    "scripture": "Luke 22:14–20; Matthew 26:26–29; John 13:1–15",
+    "fruit": "Adoration and love of the Eucharist",
+    "reflection": "At the Last Supper Jesus gives his Body and Blood under the signs of bread and wine, and washes his disciples’ feet. The Mass makes this gift present to us. Ask for a deeper hunger for the Eucharist and a willingness to serve.",
+    "intention": "For our priests, for first communicants and for all who will receive Communion this week."
+   }
+  ]
+ }
+];
+  const ROSARY_GUIDE = {"steps": [["Make the Sign of the Cross", "Sign of the Cross", "Hold the crucifix and begin by blessing yourself."], ["Pray the Apostles’ Creed", "Apostles’ Creed", "Still on the crucifix."], ["Pray one Our Father", "Our Father", "On the first large bead after the crucifix."], ["Pray three Hail Marys", "Hail Mary", "On the three small beads. Traditionally offered for faith, hope and charity."], ["Pray the Glory Be", "Glory Be", "Then announce the first mystery."], ["Pray the five decades", "", "For each decade: announce the mystery and pray one Our Father (large bead), ten Hail Marys (small beads) and one Glory Be. Many add the Fatima Prayer."], ["Pray the Hail, Holy Queen", "Hail, Holy Queen (Salve Regina)", "After the fifth decade."], ["Close with the final prayer and the Sign of the Cross", "Prayers of the Rosary", "The closing prayer is in Prayers of the Rosary."]]};
+
   let currentModule = 'content';
   let searchQuery = '';
   let categoryFilter = 'All';
 
   function setModule(m) {
     currentModule = m;
+    view = null;
     document.querySelectorAll('.module-tab').forEach(btn => {
       const active = btn.dataset.module === m;
       btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
@@ -312,6 +555,7 @@
     });
   }
   function renderContentModule(el) {
+    if (view) { renderReader(el); return; }
     el.innerHTML = `
       <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
         <div class="relative flex-1 min-w-[200px]">
@@ -340,7 +584,7 @@
         <div class="flex items-start justify-between gap-3 mb-2">
           <div>
             <p class="text-xs text-primary font-semibold uppercase tracking-wide">${f.category}</p>
-            <p class="text-sm font-semibold mt-0.5">${f.title}</p>
+            <button onclick="openItem('${f.id}')" class="text-sm font-semibold mt-0.5 text-left hover:text-primary transition-warm">${escH(f.title)}</button>
           </div>
           <div class="flex items-center gap-1.5 flex-shrink-0">
             ${statusPill(f.status)}
@@ -348,8 +592,11 @@
             <button onclick="deleteContent('${f.id}')" aria-label="Delete content" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
           </div>
         </div>
-        <p class="text-xs text-ink-muted">${f.body}</p>
-        <p class="text-xs text-ink-muted mt-2">${f.status === 'Published' ? 'Published ' + formatDate(f.publishedDate) : 'Not yet published'}</p>
+        <p class="text-xs text-ink-muted line-clamp-2 whitespace-normal">${escH(f.body)}</p>
+        <div class="flex items-center justify-between gap-3 mt-3">
+          <p class="text-xs text-ink-muted">${f.status === 'Published' ? 'Published ' + formatDate(f.publishedDate) : 'Not yet published'}</p>
+          <button onclick="openItem('${f.id}')" class="text-primary text-xs font-semibold inline-flex items-center gap-1 min-h-[36px] px-2 rounded-button hover:bg-primary-light transition-warm">${f.ref ? (f.ref === 'guide' ? 'Open guide' : 'Open the five mysteries') : 'Read full prayer'}${icon('chev','icon w-3.5 h-3.5')}</button>
+        </div>
       </div>
     `).join('');
   }
@@ -393,6 +640,230 @@
     faithContent = faithContent.filter(x => x.id !== id);
     toast(`${f.title} deleted.`);
     renderModule();
+  }
+
+
+  // =========================================================================
+  // READER: full-page views for prayers, Rosary guide, each set of mysteries and each mystery
+  // =========================================================================
+  let view = null; // { type:'prayer', id } | { type:'guide' } | { type:'set', setId } | { type:'mystery', setId, n }
+  let beads = 0;
+  function escH(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
+  function openView(v) { view = v; beads = 0; renderModule(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function closeView() { view = null; renderModule(); }
+  function filterTo(cat) { categoryFilter = cat; view = null; renderModule(); }
+  function openItem(id) {
+    const f = faithContent.find(x => x.id === id);
+    if (!f) return;
+    if (f.ref === 'guide') openView({ type: 'guide' });
+    else if (f.ref && f.ref.indexOf('set:') === 0) openView({ type: 'set', setId: f.ref.slice(4) });
+    else openView({ type: 'prayer', id });
+  }
+  function prayerLink(title, label) {
+    const f = faithContent.find(x => x.title === title && x.status === 'Published');
+    return f ? `<button onclick="openView({type:'prayer', id:'${f.id}'})" class="text-primary font-semibold hover:underline text-left">${escH(label || title)}</button>` : escH(label || title);
+  }
+  function crumbs(items) {
+    return `<nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted mb-4">${items.map(c => c[1]
+      ? `<button onclick="${c[1]}" class="font-medium hover:text-primary transition-warm">${escH(c[0])}</button>`
+      : `<span class="font-semibold text-ink">${escH(c[0])}</span>`).join('<span aria-hidden="true">/</span>')}</nav>`;
+  }
+  function formatPrayer(text) {
+    return text.split(/\n\s*\n/).map(par => `<p class="mb-6 last:mb-0">${par.split('\n').map(l => escH(l).replace(/^(V\.|R\.)\s/, '<span class="font-semibold text-primary mr-1">$1</span>')).join('<br>')}</p>`).join('');
+  }
+  function ordinal(n) { return ['', '1st', '2nd', '3rd', '4th', '5th'][n]; }
+  function chip(text, tone) {
+    const t = tone === 'gold' ? 'bg-gold/20 text-[#8a5a10]' : tone === 'green' ? 'bg-green/20 text-[#2f6b45]' : 'bg-lavender/15 text-[#5b3fc4]';
+    return `<span class="${t} text-xs font-semibold px-3 py-1.5 rounded-badge whitespace-nowrap">${escH(text)}</span>`;
+  }
+  function renderReader(el) {
+    if (view.type === 'prayer') return renderPrayerView(el, faithContent.find(x => x.id === view.id));
+    if (view.type === 'guide') return renderGuideView(el);
+    if (view.type === 'set') return renderSetView(el, ROSARY_SETS.find(x => x.id === view.setId));
+    if (view.type === 'mystery') return renderMysteryView(el, ROSARY_SETS.find(x => x.id === view.setId), view.n);
+  }
+
+  // ---- A single prayer ----
+  function renderPrayerView(el, f) {
+    if (!f) { closeView(); return; }
+    const related = faithContent.filter(x => x.category === f.category && x.id !== f.id && x.status === 'Published' && !x.ref).slice(0, 4);
+    el.innerHTML = `
+      ${crumbs([['Faith Formation', 'closeView()'], [f.category, `filterTo('${f.category}')`], [f.title, null]])}
+      <article class="bg-card-bg rounded-card shadow-card overflow-hidden max-w-3xl">
+        <header class="px-6 sm:px-10 pt-8 pb-5 border-b border-divider">
+          <p class="text-xs text-primary font-semibold uppercase tracking-wide">${escH(f.category)}</p>
+          <h2 class="font-heading font-bold text-3xl mt-1">${escH(f.title)}</h2>
+          <div class="flex flex-wrap items-center gap-2 mt-4">${statusPill(f.status)}${f.source ? chip(f.source + ' text', 'lavender') : ''}${f.publishedDate ? `<span class="text-xs text-ink-muted">Published ${formatDate(f.publishedDate)}</span>` : ''}</div>
+        </header>
+        <div class="px-6 sm:px-10 py-8 text-[18px] leading-8 text-ink">${formatPrayer(f.body)}</div>
+        <footer class="px-6 sm:px-10 py-4 bg-section-bg flex flex-wrap gap-2">
+          <button onclick="copyPrayer('${f.id}')" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2 rounded-button min-h-[44px] inline-flex items-center gap-2 transition-warm">${icon('copy','icon w-4 h-4')}Copy text</button>
+          <button onclick="openContentModal('${f.id}')" class="text-primary text-sm font-semibold px-4 py-2 rounded-button min-h-[44px] inline-flex items-center gap-2 hover:bg-primary-light transition-warm">${icon('edit','icon w-4 h-4')}Edit</button>
+        </footer>
+      </article>
+      ${related.length ? `<div class="max-w-3xl mt-6"><p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">More in ${escH(f.category)}</p>
+        <div class="flex flex-wrap gap-2">${related.map(r => `<button onclick="openView({type:'prayer', id:'${r.id}'})" class="bg-card-bg shadow-card text-sm font-medium px-4 py-2.5 rounded-badge min-h-[44px] hover:text-primary transition-warm">${escH(r.title)}</button>`).join('')}</div></div>` : ''}
+    `;
+  }
+  function copyPrayer(id) {
+    const f = faithContent.find(x => x.id === id);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(f.title + '\n\n' + f.body).then(() => toast('Prayer copied.'), () => toast('Could not copy automatically.'));
+    else toast('Copy is not available in this browser.');
+  }
+
+  // ---- How to pray the Rosary ----
+  function renderGuideView(el) {
+    el.innerHTML = `
+      ${crumbs([['Faith Formation', 'closeView()'], ['Rosary', "filterTo('Rosary')"], ['How to pray the Rosary', null]])}
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <header class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <p class="text-xs text-primary font-semibold uppercase tracking-wide">Rosary</p>
+            <h2 class="font-heading font-bold text-3xl mt-1">How to Pray the Rosary</h2>
+            <p class="text-sm text-ink-muted mt-3 max-w-xl">The Rosary is prayed on a string of beads. While the lips pray, the mind rests on the life of Jesus and Mary through five mysteries, called decades. It takes about 20 minutes.</p>
+          </header>
+          <section class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <h3 class="font-heading font-semibold text-xl mb-5">Step by step</h3>
+            <ol class="space-y-5">
+              ${ROSARY_GUIDE.steps.map((st, i) => `
+                <li class="flex gap-4">
+                  <span class="w-9 h-9 rounded-badge bg-lavender/15 text-[#5b3fc4] text-sm font-bold flex items-center justify-center flex-shrink-0">${i + 1}</span>
+                  <div><p class="text-sm font-semibold">${escH(st[0])}</p><p class="text-sm text-ink-muted mt-0.5">${escH(st[2])}${st[1] ? ' <span class="whitespace-nowrap">Prayer: ' + prayerLink(st[1]) + '</span>' : ''}</p></div>
+                </li>`).join('')}
+            </ol>
+          </section>
+          <section class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <h3 class="font-heading font-semibold text-xl mb-1">Each decade</h3>
+            <p class="text-sm text-ink-muted mb-4">Repeat these four parts five times, once for each mystery.</p>
+            ${decadeStrip()}
+          </section>
+        </div>
+        <aside class="space-y-6">
+          <section class="bg-card-bg rounded-card shadow-card p-6">
+            <h3 class="font-heading font-semibold text-lg mb-3">Which mysteries today?</h3>
+            <div class="space-y-2">${ROSARY_SETS.map(st => `
+              <button onclick="openView({type:'set', setId:'${st.id}'})" class="w-full text-left bg-section-bg rounded-button p-3 hover:bg-primary-light/50 transition-warm min-h-[44px]">
+                <p class="text-sm font-semibold">${escH(st.short)}</p><p class="text-xs text-ink-muted">${st.days.join(' and ')}</p>
+              </button>`).join('')}
+            </div>
+          </section>
+        </aside>
+      </div>`;
+  }
+  function decadeStrip() {
+    const parts = [['1', 'Announce the mystery', 'and pray one Our Father'], ['10', 'Hail Marys', 'while meditating on the mystery'], ['1', 'Glory Be', 'to the Father'], ['Opt.', 'Fatima Prayer', '\u201cO my Jesus\u2026\u201d']];
+    return `<div class="grid sm:grid-cols-4 gap-3">${parts.map(p => `<div class="bg-section-bg rounded-card p-4"><p class="font-heading font-bold text-2xl text-[#5b3fc4]">${p[0]}</p><p class="text-sm font-semibold mt-1">${p[1]}</p><p class="text-xs text-ink-muted mt-0.5">${p[2]}</p></div>`).join('')}</div>`;
+  }
+
+  // ---- One set of mysteries (overview of the five) ----
+  function renderSetView(el, st) {
+    el.innerHTML = `
+      ${crumbs([['Faith Formation', 'closeView()'], ['Rosary', "filterTo('Rosary')"], [st.name, null]])}
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-4">
+          <header class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <p class="text-xs text-primary font-semibold uppercase tracking-wide">Rosary</p>
+            <h2 class="font-heading font-bold text-3xl mt-1">${escH(st.name)}</h2>
+            <p class="text-sm text-ink-muted mt-3 max-w-xl">${escH(st.intro)}</p>
+            <div class="flex flex-wrap items-center gap-2 mt-4">${st.days.map(d => chip('Prayed on ' + d + 's', 'lavender')).join('')}</div>
+            <p class="text-xs text-ink-muted mt-3">${escH(st.season)}</p>
+          </header>
+          ${st.mysteries.map(m => `
+            <button onclick="openView({type:'mystery', setId:'${st.id}', n:${m.n}})" class="w-full text-left bg-card-bg rounded-card shadow-card p-5 flex items-center gap-4 hover:shadow-card-hover transition-warm min-h-[88px]">
+              <span class="w-12 h-12 rounded-badge bg-lavender/15 text-[#5b3fc4] font-heading font-bold text-lg flex items-center justify-center flex-shrink-0">${m.n}</span>
+              <span class="flex-1 min-w-0">
+                <span class="block text-xs text-ink-muted font-semibold uppercase tracking-wide">${ordinal(m.n)} ${escH(st.short)} Mystery</span>
+                <span class="block font-heading font-semibold text-lg mt-0.5">${escH(m.title)}</span>
+                <span class="block text-xs text-ink-muted mt-1">${escH(m.scripture)} \u00b7 Fruit: ${escH(m.fruit)}</span>
+              </span>
+              <span class="text-ink-muted flex-shrink-0">${icon('chev','icon w-5 h-5')}</span>
+            </button>`).join('')}
+        </div>
+        <aside class="space-y-6">
+          <section class="bg-card-bg rounded-card shadow-card p-6">
+            <h3 class="font-heading font-semibold text-lg mb-3">Before you begin</h3>
+            <ul class="text-sm space-y-2">
+              <li>${prayerLink('Sign of the Cross')}</li><li>${prayerLink('Apostles\u2019 Creed')}</li><li>${prayerLink('Our Father')}</li><li>${prayerLink('Hail Mary', 'Three Hail Marys')}</li><li>${prayerLink('Glory Be')}</li>
+            </ul>
+          </section>
+          <section class="bg-card-bg rounded-card shadow-card p-6">
+            <h3 class="font-heading font-semibold text-lg mb-3">To finish</h3>
+            <ul class="text-sm space-y-2"><li>${prayerLink('Hail, Holy Queen (Salve Regina)')}</li><li>${prayerLink('Prayers of the Rosary', 'Closing prayer')}</li></ul>
+          </section>
+          <button onclick="openView({type:'guide'})" class="w-full bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-3 rounded-button min-h-[48px] transition-warm">How to pray the Rosary</button>
+        </aside>
+      </div>`;
+  }
+
+  // ---- One mystery ----
+  function beadsHTML() {
+    return Array.from({ length: 10 }, (_, i) => `<button onclick="setBeads(${i + 1})" aria-label="Hail Mary ${i + 1}" aria-pressed="${i < beads}" class="w-11 h-11 rounded-full border-2 text-sm font-semibold transition-warm ${i < beads ? 'bg-lavender border-lavender text-white' : 'bg-white border-divider text-ink-muted hover:border-lavender'}">${i + 1}</button>`).join('');
+  }
+  function beadsLabel() { return beads === 10 ? 'Decade complete \u2014 now pray the Glory Be.' : beads + ' of 10 Hail Marys'; }
+  function setBeads(n) {
+    beads = beads === n ? n - 1 : n;
+    document.getElementById('beads').innerHTML = beadsHTML();
+    document.getElementById('bead-label').textContent = beadsLabel();
+  }
+  function renderMysteryView(el, st, n) {
+    const m = st.mysteries[n - 1], prev = st.mysteries[n - 2], next = st.mysteries[n];
+    el.innerHTML = `
+      ${crumbs([['Faith Formation', 'closeView()'], ['Rosary', "filterTo('Rosary')"], [st.name, `openView({type:'set', setId:'${st.id}'})`], [ordinal(n) + ' Mystery', null]])}
+      <header class="bg-card-bg rounded-card shadow-card p-6 sm:p-8 mb-6">
+        <p class="text-xs text-primary font-semibold uppercase tracking-wide">${ordinal(n)} ${escH(st.short)} Mystery</p>
+        <h2 class="font-heading font-bold text-3xl mt-1">${escH(m.title)}</h2>
+        <div class="flex flex-wrap items-center gap-2 mt-4">${chip('Scripture: ' + m.scripture, 'lavender')}${chip('Fruit: ' + m.fruit, 'gold')}</div>
+      </header>
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <section class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <h3 class="font-heading font-semibold text-xl mb-3">Reflect</h3>
+            <p class="text-[17px] leading-8">${escH(m.reflection)}</p>
+            <div class="mt-5 bg-section-bg rounded-card p-4">
+              <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Intention for this decade</p>
+              <p class="text-sm mt-1">${escH(m.intention)}</p>
+            </div>
+          </section>
+          <section class="bg-card-bg rounded-card shadow-card p-6 sm:p-8">
+            <h3 class="font-heading font-semibold text-xl mb-5">Pray this decade</h3>
+            <ol class="space-y-5">
+              <li class="flex gap-4"><span class="w-9 h-9 rounded-badge bg-lavender/15 text-[#5b3fc4] text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+                <div><p class="text-sm font-semibold">Announce the mystery</p><p class="text-sm text-ink-muted mt-0.5">\u201cThe ${ordinal(n)} ${escH(st.short)} Mystery: ${escH(m.title)}.\u201d Then pray one ${prayerLink('Our Father')}.</p></div></li>
+              <li class="flex gap-4"><span class="w-9 h-9 rounded-badge bg-lavender/15 text-[#5b3fc4] text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+                <div class="flex-1"><p class="text-sm font-semibold">Pray ten ${prayerLink('Hail Mary', 'Hail Marys')}</p><p class="text-sm text-ink-muted mt-0.5">Keep the mystery in mind. Tap a bead as you pray.</p>
+                  <div id="beads" class="flex flex-wrap gap-2 mt-3">${beadsHTML()}</div>
+                  <p id="bead-label" class="text-xs font-semibold text-[#5b3fc4] mt-2" aria-live="polite">${beadsLabel()}</p></div></li>
+              <li class="flex gap-4"><span class="w-9 h-9 rounded-badge bg-lavender/15 text-[#5b3fc4] text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+                <div><p class="text-sm font-semibold">Pray the ${prayerLink('Glory Be')}</p></div></li>
+              <li class="flex gap-4"><span class="w-9 h-9 rounded-badge bg-lavender/15 text-[#5b3fc4] text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+                <div><p class="text-sm font-semibold">Fatima Prayer <span class="text-ink-muted font-normal">(optional)</span></p><p class="text-sm text-ink-muted mt-0.5">${prayerLink('Prayers of the Rosary', 'Read the Fatima Prayer')}</p></div></li>
+            </ol>
+          </section>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            ${prev ? `<button onclick="openView({type:'mystery', setId:'${st.id}', n:${n - 1}})" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] inline-flex items-center gap-2 transition-warm">${icon('back','icon w-4 h-4')}${escH(prev.title)}</button>` : '<span></span>'}
+            ${next ? `<button onclick="openView({type:'mystery', setId:'${st.id}', n:${n + 1}})" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] inline-flex items-center gap-2 transition-warm">Next: ${escH(next.title)}${icon('chev','icon w-4 h-4')}</button>`
+                    : `<button onclick="openView({type:'prayer', id:'${(faithContent.find(x => x.title === 'Hail, Holy Queen (Salve Regina)') || {}).id}'})" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] inline-flex items-center gap-2 transition-warm">Finish: Hail, Holy Queen${icon('chev','icon w-4 h-4')}</button>`}
+          </div>
+        </div>
+        <aside class="space-y-6">
+          <section class="bg-card-bg rounded-card shadow-card p-6">
+            <h3 class="font-heading font-semibold text-lg mb-3">At a glance</h3>
+            <dl class="text-sm space-y-3">
+              <div><dt class="text-xs text-ink-muted uppercase tracking-wide">Set</dt><dd class="font-medium">${escH(st.name)}</dd></div>
+              <div><dt class="text-xs text-ink-muted uppercase tracking-wide">Prayed on</dt><dd class="font-medium">${st.days.join(', ')}</dd></div>
+              <div><dt class="text-xs text-ink-muted uppercase tracking-wide">Scripture</dt><dd class="font-medium">${escH(m.scripture)}</dd></div>
+              <div><dt class="text-xs text-ink-muted uppercase tracking-wide">Fruit of the mystery</dt><dd class="font-medium">${escH(m.fruit)}</dd></div>
+            </dl>
+          </section>
+          <section class="bg-card-bg rounded-card shadow-card p-6">
+            <h3 class="font-heading font-semibold text-lg mb-3">All five mysteries</h3>
+            <div class="space-y-1.5">${st.mysteries.map(x => `
+              <button onclick="openView({type:'mystery', setId:'${st.id}', n:${x.n}})" class="w-full text-left flex items-center gap-3 rounded-button px-3 py-2.5 min-h-[44px] transition-warm ${x.n === n ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-section-bg'}">
+                <span class="w-6 h-6 rounded-badge ${x.n === n ? 'bg-primary text-white' : 'bg-section-bg text-ink-muted'} text-xs font-bold flex items-center justify-center flex-shrink-0">${x.n}</span><span class="text-sm">${escH(x.title)}</span>
+              </button>`).join('')}</div>
+          </section>
+        </aside>
+      </div>`;
   }
 
   // =========================================================================

@@ -584,6 +584,17 @@
       ], status:"Active" },
   ];
 
+  // ---------------- Parish-wide family totals ----------------
+  // Only a sample of families is loaded below for the demo, but the header counts must match the Dashboard
+  // ("Families 5,236") and the Reports hub ("Registered families 5,236"). Adding, archiving or suspending a family
+  // here moves the totals by the same amount.
+  const PARISH_REGISTERED_FAMILIES = 5236;
+  const PARISH_ACTIVE_FAMILIES = 4974;   // registered families whose status is Active (the rest are away, transferred or archived)
+  const SAMPLE_LOADED = families.length;
+  const SAMPLE_ACTIVE_LOADED = families.filter(f => f.status === 'Active').length;
+  function registeredFamilyCount() { return PARISH_REGISTERED_FAMILIES + (families.length - SAMPLE_LOADED); }
+  function activeFamilyCount() { return PARISH_ACTIVE_FAMILIES + (families.filter(f => f.status === 'Active').length - SAMPLE_ACTIVE_LOADED); }
+
   // ---------------- Family Update Requests (submitted by parishioners via "My Family") ----------------
   let updateRequests = [
     { id: "UPD-4001", familyId: "FAM-1001", type: "Add a Family Member", submittedBy: "John Rodrigues", submissionDate: "24 Jul 2026",
@@ -758,9 +769,9 @@
       return av < bv ? (sortDir === 'asc' ? -1 : 1) : av > bv ? (sortDir === 'asc' ? 1 : -1) : 0;
     });
 
-    document.getElementById('result-count').textContent = `${filtered.length} of ${families.length} families`;
-    document.getElementById('stat-registered').textContent = families.length;
-    document.getElementById('stat-active').textContent = families.filter(f => f.status === 'Active').length;
+    document.getElementById('result-count').textContent = `Showing ${filtered.length} of ${families.length} sample families (demo)`;
+    document.getElementById('stat-registered').textContent = registeredFamilyCount().toLocaleString('en-IN');
+    document.getElementById('stat-active').textContent = activeFamilyCount().toLocaleString('en-IN');
     ['familyName','headOfFamily','ward'].forEach(k => {
       document.getElementById('sort-'+k).innerHTML = sortKey === k ? icon(sortDir === 'asc' ? 'up' : 'down', 'icon w-3 h-3 inline') : '';
     });

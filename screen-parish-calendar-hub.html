@@ -217,6 +217,8 @@
   function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
   const ICON_PATHS = {
+    back: '<polyline points="15 18 9 12 15 6"/>',
+    chev: '<polyline points="9 18 15 12 9 6"/>',
     plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
     edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
     trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
@@ -227,7 +229,7 @@
   const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const TODAY = new Date("2026-07-26T00:00:00");
   const VENUES = ["Main Church", "Parish Hall", "Meeting Room A", "Outdoor Grounds"];
-  const EVENT_TYPES = ["Funeral", "Wedding", "Prayer Service", "Adoration", "Other"];
+  const EVENT_TYPES = ["Funeral", "Wedding", "Baptism", "Prayer Service", "Adoration", "Anniversary", "Other"];
   const HOURS_12 = Array.from({length: 12}, (_, i) => i + 1);
   const MINUTES_5 = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, '0'));
 
@@ -246,71 +248,231 @@
     return h * 60 + m;
   }
 
-  // ---------------- Mock data: Mass schedule (mirrors Masses hub — same seed, kept consistent) ----------------
+  // ---------------- Mock data: Mass schedule (mirrors the Masses hub — same seed, kept consistent) ----------------
   let massActivities = [
     { id:"MASS-7001", massName:"Sunday 6:30 AM Mass (English)", massType:"Regular", time:"6:30 AM", recurrence:"Weekly", days:["Sunday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
     { id:"MASS-7002", massName:"Sunday 8:00 AM Mass (Tamil)", massType:"Regular", time:"8:00 AM", recurrence:"Weekly", days:["Sunday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
     { id:"MASS-7003", massName:"Sunday 10:00 AM Mass (Konkani)", massType:"Regular", time:"10:00 AM", recurrence:"Weekly", days:["Sunday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
     { id:"MASS-7004", massName:"Weekday Mass (English)", massType:"Regular", time:"6:45 AM", recurrence:"Weekly", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
     { id:"MASS-7005", massName:"Saturday Vigil Mass (Kannada)", massType:"Regular", time:"6:00 PM", recurrence:"Weekly", days:["Saturday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7006", massName:"Feast of Infant Jesus Novena (English)", massType:"Novena Day", time:"6:00 PM", recurrence:"One-Time", fromDate:"2027-01-04", toDate:"2027-01-12", venue:"Main Church", status:"Active", manuallyClosedDates:[] },
     { id:"MASS-7008", massName:"Weekly Novena to Infant Jesus (English)", massType:"Novena Day", time:"6:00 PM", recurrence:"Weekly", days:["Thursday"], venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7009", massName:"Feast of the Assumption (English)", massType:"Feast", time:"7:00 AM", recurrence:"One-Time", fromDate:"2026-08-15", toDate:"2026-08-15", venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7010", massName:"Christmas Midnight Mass (English)", massType:"Feast", time:"12:00 AM", recurrence:"One-Time", fromDate:"2026-12-25", toDate:"2026-12-25", venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7011", massName:"Easter Vigil Mass (Konkani)", massType:"Feast", time:"6:30 PM", recurrence:"One-Time", fromDate:"2027-04-03", toDate:"2027-04-03", venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+    { id:"MASS-7012", massName:"Good Friday Service (Tamil)", massType:"Feast", time:"3:00 PM", recurrence:"One-Time", fromDate:"2027-04-02", toDate:"2027-04-02", venue:"Main Church", status:"Active", manuallyClosedDates:[] },
+  ];
+
+  // ---------------- Mock data: regular parish activities (prayer, adoration, confession, catechism, meetings) ----------------
+  // Recurring, so they appear in the day, week and month views the same way the Masses do. `nth` = which weekday of the month.
+  let parishActivities = [
+    { id:"ACT-001", title:"Rosary", type:"Prayer", time:"6:15 AM", recurrence:"Weekly", days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], venue:"Main Church", lead:"Parish Prayer Group" },
+    { id:"ACT-002", title:"Divine Mercy Chaplet", type:"Prayer", time:"3:00 PM", recurrence:"Weekly", days:["Friday"], venue:"Main Church", lead:"Divine Mercy Apostolate" },
+    { id:"ACT-003", title:"Confession (before Novena)", type:"Confession", time:"5:15 PM", recurrence:"Weekly", days:["Thursday"], venue:"Main Church", lead:"Fr. Francis Billemane" },
+    { id:"ACT-004", title:"Eucharistic Adoration Hour", type:"Adoration", time:"7:00 PM", recurrence:"Weekly", days:["Thursday"], venue:"Main Church", lead:"Fr. John Anthony" },
+    { id:"ACT-005", title:"Confession", type:"Confession", time:"5:00 PM", recurrence:"Weekly", days:["Saturday"], venue:"Main Church", lead:"Fr. John Anthony" },
+    { id:"ACT-006", title:"Sunday School (Catechism)", type:"Catechism", time:"9:00 AM", recurrence:"Weekly", days:["Sunday"], venue:"Parish Hall", lead:"Catechism Teachers" },
+    { id:"ACT-007", title:"Confirmation Preparation Class", type:"Catechism", time:"4:00 PM", recurrence:"Weekly", days:["Saturday"], venue:"Meeting Room A", lead:"Fr. Francis Billemane" },
+    { id:"ACT-008", title:"Youth Group Meeting", type:"Meeting", time:"4:30 PM", recurrence:"Weekly", days:["Sunday"], venue:"Parish Hall", lead:"Youth Ministry" },
+    { id:"ACT-009", title:"Choir Practice", type:"Meeting", time:"7:00 PM", recurrence:"Weekly", days:["Wednesday"], venue:"Parish Hall", lead:"Parish Choir" },
+    { id:"ACT-010", title:"Baptism Ceremony", type:"Baptism", time:"11:30 AM", recurrence:"Monthly", nth:2, day:"Sunday", venue:"Main Church", lead:"Fr. John Anthony" },
+    { id:"ACT-011", title:"First Friday Mass of the Sacred Heart", type:"Special Mass", time:"6:00 PM", recurrence:"Monthly", nth:1, day:"Friday", venue:"Main Church", lead:"Fr. John Anthony" },
+    { id:"ACT-012", title:"Parish Pastoral Council Meeting", type:"Meeting", time:"7:30 PM", recurrence:"Monthly", nth:2, day:"Tuesday", venue:"Meeting Room A", lead:"Parish Pastoral Council" },
+    { id:"ACT-013", title:"Memorial Mass for the Departed", type:"Special Mass", time:"6:00 PM", recurrence:"Monthly", nth:"last", day:"Monday", venue:"Main Church", lead:"Fr. Francis Billemane" },
   ];
 
   // ---------------- Mock data: unpublished, one-off pastoral events (Parish-side only) ----------------
-  // Now covers more than funerals/weddings — prayer services, adoration, etc. — and tracks venue,
+  // Weddings, funerals, anniversaries, prayer services, adoration, etc. — and tracks venue,
   // since not everything happens in the main church.
   let adHocEvents = [
-    { id:"ADHOC-001", date:"2026-07-29", time:"10:00 AM", occasion:"Funeral Mass — Rosario Family", type:"Funeral", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"Family requested a simple service, no choir.", createdBy:"Parish Staff" },
-    { id:"ADHOC-002", date:"2026-08-22", time:"4:00 PM", occasion:"Wedding — Silva & Fernandes", type:"Wedding", venue:"Main Church", celebrant:"Fr. Francis Billemane", notes:"Rehearsal on 21 Aug, 5 PM.", createdBy:"Parish Staff" },
+    { id:"ADHOC-001", date:"2026-07-29", time:"10:00 AM", occasion:"Funeral Mass \u2014 Rosario Family", type:"Funeral", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"Family requested a simple service, no choir.", createdBy:"Parish Staff" },
+    { id:"ADHOC-012", date:"2026-07-28", time:"7:00 PM", occasion:"Wake Prayer Service \u2014 Rosario Family", type:"Prayer Service", venue:"Main Church", celebrant:"Fr. Francis Billemane", notes:"Rosary and prayers for the departed.", createdBy:"Parish Staff" },
     { id:"ADHOC-003", date:"2026-08-05", time:"6:30 PM", occasion:"Youth Prayer Service", type:"Prayer Service", venue:"Parish Hall", celebrant:"Fr. Francis Billemane", notes:"Open to all youth group members.", createdBy:"Parish Staff" },
-    { id:"ADHOC-004", date:"2026-08-07", time:"7:00 PM", occasion:"Eucharistic Adoration", type:"Adoration", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"", createdBy:"Parish Staff" },
+    { id:"ADHOC-004", date:"2026-08-07", time:"7:00 PM", occasion:"Eucharistic Adoration", type:"Adoration", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"Follows the First Friday Mass.", createdBy:"Parish Staff" },
+    { id:"ADHOC-005", date:"2026-08-08", time:"11:00 AM", occasion:"Wedding Mass \u2014 Mathew & Priya Thomas", type:"Wedding", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"Rehearsal on 7 Aug, 5 PM.", createdBy:"Parish Staff" },
+    { id:"ADHOC-010", date:"2026-08-14", time:"6:30 PM", occasion:"Vigil Prayer Service \u2014 Assumption", type:"Prayer Service", venue:"Main Church", celebrant:"Fr. Francis Billemane", notes:"Candlelight procession after the service.", createdBy:"Parish Staff" },
+    { id:"ADHOC-002", date:"2026-08-22", time:"4:00 PM", occasion:"Wedding Mass \u2014 Silva & Fernandes", type:"Wedding", venue:"Main Church", celebrant:"Fr. Francis Billemane", notes:"Rehearsal on 21 Aug, 5 PM.", createdBy:"Parish Staff" },
+    { id:"ADHOC-008", date:"2026-09-05", time:"9:00 AM", occasion:"Youth Retreat 2026", type:"Prayer Service", venue:"Parish Hall", celebrant:"Fr. Francis Billemane", notes:"Full-day retreat; lunch provided.", createdBy:"Parish Staff" },
+    { id:"ADHOC-006", date:"2026-09-12", time:"4:00 PM", occasion:"Wedding Mass \u2014 Pereira & Dias", type:"Wedding", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"", createdBy:"Parish Staff" },
+    { id:"ADHOC-007", date:"2026-10-10", time:"11:00 AM", occasion:"Wedding Mass \u2014 Rego & Menezes", type:"Wedding", venue:"Main Church", celebrant:"Fr. Francis Billemane", notes:"Choir requested.", createdBy:"Parish Staff" },
+    { id:"ADHOC-009", date:"2026-11-21", time:"4:00 PM", occasion:"Silver Jubilee Thanksgiving Mass \u2014 John & Grace Rodrigues", type:"Anniversary", venue:"Main Church", celebrant:"Fr. John Anthony", notes:"25th wedding anniversary; family lunch in Parish Hall after.", createdBy:"Parish Staff" },
   ];
 
-  // Generates bookable Mass Instances for the next 4 weeks from each active Weekly activity.
-  function generateInstances() {
-    const instances = [];
-    massActivities.filter(a => a.recurrence === 'Weekly' && a.status === 'Active').forEach(a => {
-      a.days.forEach(day => {
-        const targetDow = DAY_NAMES.indexOf(day);
-        for (let week = 0; week < 4; week++) {
-          const d = new Date(TODAY);
-          let base = (targetDow - d.getDay() + 7) % 7;
-          if (base === 0) base = 7;
-          d.setDate(d.getDate() + base + week * 7);
-          const iso = toLocalISODate(d);
-          instances.push({ massActivityId: a.id, massName: a.massName, massType: a.massType, time: a.time, date: iso, venue: a.venue });
-        }
-      });
-    });
-    instances.sort((x,y) => x.date.localeCompare(y.date) || timeToMinutes(x.time) - timeToMinutes(y.time));
-    return instances;
+  // ---------------- Date helpers ----------------
+  const TODAY_ISO = toLocalISODate(TODAY);
+  const FULL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  function parseISO(iso) { return new Date(iso + "T00:00:00"); }
+  function addDaysISO(iso, n) { const d = parseISO(iso); d.setDate(d.getDate() + n); return toLocalISODate(d); }
+  function weekStartISO(iso) { return addDaysISO(iso, -parseISO(iso).getDay()); }          // weeks run Sunday to Saturday
+  function dayLabel(iso, withYear) { const d = parseISO(iso); return `${DAY_NAMES[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}${withYear ? ' ' + d.getFullYear() : ''}`; }
+  function shortTime(t) { return t.replace(':00', '').replace(' AM', 'a').replace(' PM', 'p'); }
+  function isLastWeekdayOfMonth(d) { const x = new Date(d); x.setDate(x.getDate() + 7); return x.getMonth() !== d.getMonth(); }
+
+  // Does a recurring item (Weekly / Monthly / One-Time) happen on this date?
+  function occursOn(a, iso) {
+    if (a.status && a.status !== 'Active') return false;
+    if ((a.manuallyClosedDates || []).includes(iso)) return false;
+    const d = parseISO(iso);
+    if (a.recurrence === 'Weekly') return a.days.includes(DAY_NAMES[d.getDay()]);
+    if (a.recurrence === 'Monthly') return DAY_NAMES[d.getDay()] === a.day && (a.nth === 'last' ? isLastWeekdayOfMonth(d) : Math.ceil(d.getDate() / 7) === a.nth);
+    if (a.recurrence === 'One-Time') return iso >= a.fromDate && iso <= a.toDate;
+    return false;
+  }
+  function recurrenceNote(a) {
+    if (a.recurrence === 'Weekly') return a.days.length === 1 ? 'Every ' + a.days[0] : (a.days.length === 6 && !a.days.includes('Sunday') ? 'Monday to Saturday' : a.days.join(', '));
+    if (a.recurrence === 'Monthly') return (a.nth === 'last' ? 'Last ' : ['', '1st ', '2nd ', '3rd ', '4th '][a.nth]) + a.day + ' of the month';
+    return 'One-time';
   }
 
+  // ---------------- View state ----------------
+  let calView = 'week';            // 'day' | 'week' | 'month'
   let selectedDate = null;
   let selectedVenue = 'All';
+  let deleteAdHocConfirmId = null;
 
+  // Everything happening on one date, from the Mass schedule, regular parish activities and one-off events.
   function dayScheduleEntriesFor(date) {
-    const published = generateInstances()
-      .filter(i => i.date === date)
-      .map(i => ({ kind: 'published', time: i.time, title: i.massName, sub: i.massType || 'Regular', venue: i.venue }));
-    const unpublished = adHocEvents
-      .filter(e => e.date === date)
-      .map(e => ({ kind: 'unpublished', time: e.time, title: e.occasion, sub: `${e.type} · ${e.celebrant}`, venue: e.venue, id: e.id }));
-    return [...published, ...unpublished]
+    const masses = massActivities.filter(a => occursOn(a, date))
+      .map(a => ({ kind: 'mass', time: a.time, title: a.massName, sub: (a.massType || 'Regular') + ' \u00b7 ' + recurrenceNote(a), venue: a.venue }));
+    const activities = parishActivities.filter(a => occursOn(a, date))
+      .map(a => ({ kind: 'activity', time: a.time, title: a.title, sub: recurrenceNote(a) + ' \u00b7 ' + a.lead, venue: a.venue, chip: a.type }));
+    const unpublished = adHocEvents.filter(e => e.date === date)
+      .map(e => ({ kind: 'unpublished', time: e.time, title: e.occasion, sub: `${e.type} \u00b7 ${e.celebrant}`, venue: e.venue, id: e.id, chip: e.type }));
+    return [...masses, ...activities, ...unpublished]
       .filter(e => selectedVenue === 'All' || e.venue === selectedVenue)
-      .sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+      .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+  }
+
+  function setCalView(v) { calView = v; renderCalendar(); }
+  function goToDay(iso) { selectedDate = iso; calView = 'day'; renderCalendar(); }
+  function shiftCal(dir) {
+    const d = parseISO(selectedDate);
+    if (calView === 'day') d.setDate(d.getDate() + dir);
+    else if (calView === 'week') d.setDate(d.getDate() + 7 * dir);
+    else { d.setDate(1); d.setMonth(d.getMonth() + dir); }
+    selectedDate = toLocalISODate(d);
+    renderCalendar();
+  }
+  function goToday() { selectedDate = TODAY_ISO; renderCalendar(); }
+
+  function periodLabel() {
+    if (calView === 'day') return dayLabel(selectedDate, true);
+    if (calView === 'week') {
+      const s = parseISO(weekStartISO(selectedDate)), e = parseISO(addDaysISO(weekStartISO(selectedDate), 6));
+      return `${s.getDate()} ${MONTH_NAMES[s.getMonth()]} \u2013 ${e.getDate()} ${MONTH_NAMES[e.getMonth()]} ${e.getFullYear()}`;
+    }
+    const d = parseISO(selectedDate); return `${FULL_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  function entryBadge(e) {
+    if (e.kind === 'mass') return `<span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">Mass \u00b7 Published</span>`;
+    if (e.kind === 'activity') return `<span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">${e.chip}</span>`;
+    return `<div class="flex items-center gap-1.5 flex-shrink-0">
+        <span class="bg-lavender/20 text-[#5b3fc4] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${e.chip} \u00b7 Not published</span>
+        <button onclick="openAdHocModal('${e.id}')" aria-label="Edit event" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+        <button onclick="promptDeleteAdHoc('${e.id}')" aria-label="Delete event" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+      </div>`;
+  }
+  function entryRow(e) {
+    if (deleteAdHocConfirmId === e.id) return `
+      <div class="px-5 py-4 bg-error-bg">
+        <p class="text-xs text-error mb-2">Remove "${e.title}" from the schedule? This can't be undone.</p>
+        <div class="flex gap-2">
+          <button onclick="confirmDeleteAdHoc('${e.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Yes, Remove</button>
+          <button onclick="deleteAdHocConfirmId=null; renderCalendar()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
+        </div>
+      </div>`;
+    return `
+      <div class="px-5 py-3.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-x-3 gap-y-2">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="text-xs font-semibold text-ink-muted w-16 flex-shrink-0">${e.time}</span>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold">${e.title}</p>
+            <p class="text-xs text-ink-muted mt-0.5">${e.sub} \u00b7 ${e.venue}</p>
+          </div>
+        </div>
+        ${entryBadge(e)}
+      </div>`;
+  }
+  function emptyDayNote() {
+    return `<div class="px-5 py-5 text-sm text-ink-muted">Nothing scheduled${selectedVenue !== 'All' ? ' at ' + selectedVenue : ''} on this day.${selectedVenue !== 'All' ? ` <button onclick="selectedVenue='All'; renderCalendar()" class="text-primary font-semibold hover:underline">Show all venues</button>` : ''}</div>`;
+  }
+
+  function renderDayView() {
+    const entries = dayScheduleEntriesFor(selectedDate);
+    const nMass = entries.filter(e => e.kind === 'mass').length, nOther = entries.length - nMass;
+    return `
+      <p class="text-sm font-semibold mb-1">${dayLabel(selectedDate, true)}${selectedDate === TODAY_ISO ? ' <span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge ml-1">Today</span>' : ''}${selectedVenue !== 'All' ? ' \u00b7 ' + selectedVenue : ''}</p>
+      <p class="text-xs text-ink-muted mb-3">${entries.length ? `${nMass} Mass${nMass === 1 ? '' : 'es'} \u00b7 ${nOther} other ${nOther === 1 ? 'event' : 'events'}` : ''}</p>
+      <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+        ${entries.length ? entries.map(entryRow).join('') : emptyDayNote()}
+      </div>`;
+  }
+
+  function renderWeekView() {
+    const start = weekStartISO(selectedDate);
+    return Array.from({ length: 7 }, (_, i) => addDaysISO(start, i)).map(iso => {
+      const entries = dayScheduleEntriesFor(iso);
+      return `
+        <section class="mb-5">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <button onclick="goToDay('${iso}')" class="text-sm font-semibold hover:text-primary transition-warm text-left">${dayLabel(iso)}${iso === TODAY_ISO ? ' <span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge ml-1">Today</span>' : ''}</button>
+            <span class="text-xs text-ink-muted">${entries.length} ${entries.length === 1 ? 'item' : 'items'}</span>
+          </div>
+          <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+            ${entries.length ? entries.map(entryRow).join('') : emptyDayNote()}
+          </div>
+        </section>`;
+    }).join('');
+  }
+
+  function renderMonthView() {
+    const d = parseISO(selectedDate), first = toLocalISODate(new Date(d.getFullYear(), d.getMonth(), 1));
+    const gridStart = weekStartISO(first);
+    const last = new Date(d.getFullYear(), d.getMonth() + 1, 0), weeks = Math.ceil((parseISO(first).getDay() + last.getDate()) / 7);
+    const cells = Array.from({ length: weeks * 7 }, (_, i) => addDaysISO(gridStart, i)).map(iso => {
+      const inMonth = parseISO(iso).getMonth() === d.getMonth(), entries = dayScheduleEntriesFor(iso), isToday = iso === TODAY_ISO;
+      const dot = k => k === 'mass' ? 'bg-green' : k === 'activity' ? 'bg-primary' : 'bg-lavender';
+      const weight = { unpublished: 0, mass: 1, activity: 2 };
+      const shown = [...entries].sort((a, b) => weight[a.kind] - weight[b.kind] || timeToMinutes(a.time) - timeToMinutes(b.time)).slice(0, 3).sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+      return `
+        <button onclick="goToDay('${iso}')" aria-label="${dayLabel(iso, true)}, ${entries.length} items" class="text-left min-h-[76px] sm:min-h-[118px] p-1.5 sm:p-2 border-t border-l border-divider transition-warm hover:bg-primary-light/40 ${inMonth ? 'bg-card-bg' : 'bg-section-bg/60'}">
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-badge text-xs font-semibold ${isToday ? 'bg-primary text-white' : inMonth ? 'text-ink' : 'text-ink-muted'}">${parseISO(iso).getDate()}</span>
+          <span class="sm:hidden block text-[10px] text-ink-muted mt-1">${entries.length ? entries.length + ' items' : ''}</span>
+          <span class="hidden sm:block mt-1 space-y-0.5">
+            ${shown.map(e => `<span class="flex items-center gap-1 text-[11px] leading-tight ${inMonth ? 'text-ink' : 'text-ink-muted'}"><span class="w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot(e.kind)}"></span><span class="truncate"><span class="font-semibold">${shortTime(e.time)}</span> ${e.title}</span></span>`).join('')}
+            ${entries.length > 3 ? `<span class="block text-[11px] font-semibold text-primary">+${entries.length - 3} more</span>` : ''}
+          </span>
+        </button>`;
+    }).join('');
+    return `
+      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
+        <div class="grid grid-cols-7 text-center text-[11px] sm:text-xs font-semibold text-ink-muted py-2.5">${DAY_NAMES.map(n => `<span>${n.slice(0, 3)}</span>`).join('')}</div>
+        <div class="grid grid-cols-7 border-r border-b border-divider">${cells}</div>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 text-xs text-ink-muted">
+        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green"></span>Mass (published)</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary"></span>Parish activity</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-lavender"></span>One-off event (not published)</span>
+        <span>Tap a day to see everything.</span>
+      </div>`;
   }
 
   function renderCalendar() {
-    if (!selectedDate) selectedDate = toLocalISODate(TODAY);
-    const entries = dayScheduleEntriesFor(selectedDate);
+    if (!selectedDate) selectedDate = TODAY_ISO;
     const el = document.getElementById('calendar-content');
-
+    const seg = (v, label) => `<button onclick="setCalView('${v}')" aria-pressed="${calView === v}" class="px-4 h-10 text-sm font-semibold rounded-badge transition-warm ${calView === v ? 'bg-primary text-white' : 'text-ink-muted hover:bg-section-bg'}">${label}</button>`;
     el.innerHTML = `
-      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-end gap-3">
+        <div class="flex items-center gap-1 bg-bg-warm rounded-badge p-1" role="group" aria-label="Calendar view">${seg('day', 'Day')}${seg('week', 'Week')}${seg('month', 'Month')}</div>
+        <div class="flex items-center gap-1">
+          <button onclick="shiftCal(-1)" aria-label="Previous" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('back','icon w-5 h-5')}</button>
+          <button onclick="goToday()" class="px-3 h-10 rounded-button text-sm font-semibold text-primary hover:bg-primary-light transition-warm">Today</button>
+          <button onclick="shiftCal(1)" aria-label="Next" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('chev','icon w-5 h-5')}</button>
+        </div>
         <div>
-          <label class="text-xs font-medium text-ink-muted block mb-1">Date</label>
-          <input id="day-date-input" type="date" value="${selectedDate}" onchange="selectedDate=this.value; renderCalendar()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <label class="text-xs font-medium text-ink-muted block mb-1">Jump to date</label>
+          <input id="day-date-input" type="date" value="${selectedDate}" onchange="if(this.value){selectedDate=this.value; renderCalendar()}" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
         </div>
         <div>
           <label class="text-xs font-medium text-ink-muted block mb-1">Venue</label>
@@ -322,45 +484,10 @@
         <button onclick="openAdHocModal()" class="ml-auto bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Event</button>
       </div>
 
-      <p class="text-sm font-semibold mb-3">${formatDateLabel(selectedDate)}, ${selectedDate.split('-')[0]}${selectedVenue !== 'All' ? ' · ' + selectedVenue : ''}</p>
+      <h2 class="font-heading font-bold text-xl mb-4">${periodLabel()}</h2>
 
-      ${entries.length === 0 ? `
-        <div class="bg-card-bg rounded-card shadow-card p-8 text-center">
-          <p class="text-sm font-semibold">Nothing scheduled</p>
-          <p class="text-sm text-ink-muted mt-1">No published Masses or one-off events on this day${selectedVenue !== 'All' ? ' at this venue' : ''} yet.</p>
-        </div>
-      ` : `
-        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
-          ${entries.map(e => deleteAdHocConfirmId === e.id ? `
-            <div class="px-5 py-4 bg-error-bg">
-              <p class="text-xs text-error mb-2">Remove "${e.title}" from the schedule? This can't be undone.</p>
-              <div class="flex gap-2">
-                <button onclick="confirmDeleteAdHoc('${e.id}')" class="bg-error text-white text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] transition-warm">Yes, Remove</button>
-                <button onclick="deleteAdHocConfirmId=null; renderCalendar()" class="text-ink-muted text-xs font-semibold px-3 py-2 rounded-button min-h-[36px] hover:bg-white transition-warm">Cancel</button>
-              </div>
-            </div>
-          ` : `
-            <div class="px-5 py-4 flex items-center justify-between gap-3">
-              <div class="flex items-center gap-3 min-w-0">
-                <span class="text-xs font-semibold text-ink-muted w-16 flex-shrink-0">${e.time}</span>
-                <div class="min-w-0">
-                  <p class="text-sm font-semibold truncate">${e.title}</p>
-                  <p class="text-xs text-ink-muted mt-0.5">${e.sub} · ${e.venue}</p>
-                </div>
-              </div>
-              ${e.kind === 'unpublished'
-                ? `<div class="flex items-center gap-1.5 flex-shrink-0">
-                    <span class="bg-lavender/20 text-[#5b3fc4] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">Not published</span>
-                    <button onclick="openAdHocModal('${e.id}')" aria-label="Edit event" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                    <button onclick="promptDeleteAdHoc('${e.id}')" aria-label="Delete event" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-                  </div>`
-                : `<span class="bg-green/20 text-[#2f6b45] text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap flex-shrink-0">Published</span>`
-              }
-            </div>
-          `).join('')}
-        </div>
-      `}
-      <p class="text-xs text-ink-muted mt-3">Entries marked "Not published" are internal only — parishioners cannot see or book them online.</p>
+      ${calView === 'day' ? renderDayView() : calView === 'week' ? renderWeekView() : renderMonthView()}
+      <p class="text-xs text-ink-muted mt-3">Masses come from the Masses schedule. Entries marked "Not published" are internal only \u2014 parishioners cannot see or book them online.</p>
     `;
   }
 
@@ -444,7 +571,6 @@
     renderCalendar();
   }
 
-  let deleteAdHocConfirmId = null;
   function promptDeleteAdHoc(id) {
     deleteAdHocConfirmId = id;
     renderCalendar();
