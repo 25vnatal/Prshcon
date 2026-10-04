@@ -2,6 +2,9 @@
 
 Design system: **Community Heart v1** (locked — supersedes "Midnight Digital v1"). Source files: `design-tokens.css`, `head-snippet.html`, `style-guide.html`.
 
+**Diocese emblem**: the Archdiocese of Bangalore emblem (`assets/archdiocese-emblem.png`, transparent background) is used on the Diocese login (desktop brand panel + mobile header), in the sidebar brand block of every Diocese screen, and as the letterhead crest on all Diocese document templates in `screen-diocese-documents-hub.html`. Screens load it by relative path, so the `assets/` folder must be deployed alongside the HTML files.
+
+
 Every screen below must:
 - Use the exact `head-snippet.html` block in its `<head>`
 - Pull components from `style-guide.html` rather than inventing new markup
