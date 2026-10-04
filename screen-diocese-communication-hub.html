@@ -34,6 +34,14 @@
   :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
   .transition-warm { transition: all 200ms ease; }
   .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* iPad / Safari: native date and time fields ignore the width of their column and push into the next one.
+     Take over the sizing so they always stay inside their own cell. */
+  input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; box-sizing: border-box; line-height: 1.25; }
+  input[type="date"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.25em; }
+  input[type="date"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; right: 0; width: 44px; height: 100%; cursor: pointer; }
+  input[type="date"], input[type="time"] { position: relative; }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -710,7 +718,7 @@
     const a = cm.audience;
     const radio = (v, t, d) => `<label class="flex items-start gap-3 p-3.5 rounded-card border-2 cursor-pointer transition-warm ${a.scope === v ? 'border-primary bg-primary-light/50' : 'border-transparent bg-section-bg hover:border-divider'}"><input type="radio" name="scope" ${a.scope === v ? 'checked' : ''} onchange="setScope('${v}')" class="mt-1 accent-[#4F7CF5]"><span><span class="block text-sm font-semibold">${t}</span><span class="block text-xs text-ink-muted">${d}</span></span></label>`;
     return `
-      <div class="grid sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Which parishes">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px;" role="radiogroup" aria-label="Which parishes">
         ${radio('all', 'All parishes', `Every one of the ${parishesLight.length} parishes`)}
         ${radio('tier', 'By parish size', 'Large, medium or small parishes')}
         ${radio('specific', 'Specific parishes', 'Choose them from the list')}
@@ -727,7 +735,7 @@
           <div id="parish-list" class="max-h-64 overflow-y-auto divide-y divide-divider">${parishListHTML()}</div>
         </div>` : ''}
       <p class="text-xs font-medium mt-5 mb-2">Who in those parishes?</p>
-      <div class="grid sm:grid-cols-2 gap-2.5" role="group" aria-label="Who in those parishes">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px;" role="group" aria-label="Who in those parishes">
         ${ROLES.map(r => `<label class="flex items-start gap-3 p-3 rounded-card cursor-pointer transition-warm min-h-[56px] ${a.roles[r.k] ? 'bg-primary-light/50' : 'bg-section-bg hover:bg-primary-light/30'}"><input type="checkbox" ${a.roles[r.k] ? 'checked' : ''} onchange="toggleRole('${r.k}')" class="mt-0.5 w-4 h-4 accent-[#4F7CF5]"><span><span class="block text-sm font-semibold">${r.label}</span><span class="block text-xs text-ink-muted">${r.hint}</span></span></label>`).join('')}
       </div>
       <div id="reach" class="mt-4"></div>`;
@@ -820,7 +828,7 @@
 
   function renderCompose() {
     const k = KINDS[cm.kind];
-    if (loadingMsg) return `<div class="space-y-3"><div class="skeleton rounded-button h-8 w-1/3"></div><div class="grid lg:grid-cols-[minmax(0,1fr)_440px] gap-6"><div class="space-y-3"><div class="skeleton rounded-card h-32"></div><div class="skeleton rounded-card h-72"></div><div class="skeleton rounded-card h-56"></div></div><div class="skeleton rounded-card h-[520px]"></div></div></div>`;
+    if (loadingMsg) return `<div class="space-y-3"><div class="skeleton rounded-button h-8 w-1/3"></div><div class="grid xl:grid-cols-[minmax(0,1fr)_440px] gap-6"><div class="space-y-3"><div class="skeleton rounded-card h-32"></div><div class="skeleton rounded-card h-72"></div><div class="skeleton rounded-card h-56"></div></div><div class="skeleton rounded-card h-[520px]"></div></div></div>`;
     const tab = (id, label) => `<button onclick="setPreviewTabC('${id}')" aria-pressed="${previewTabC === id}" class="px-3.5 h-9 rounded-badge text-xs font-semibold transition-warm ${previewTabC === id ? 'bg-white text-primary shadow-card' : 'text-ink-muted hover:text-ink'}">${label}</button>`;
     const sendLabel = cm.when === 'later' ? 'Schedule' : (cm.kind === 'broadcast' ? 'Send broadcast' : 'Send now');
     const rte = k.key !== 'broadcast';
@@ -828,10 +836,10 @@
       <button onclick="backToList()" class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-primary mb-3 min-h-[40px] transition-warm">${icon('back','icon w-4 h-4')}All ${k.plural}</button>
       <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div><p class="font-heading font-bold text-2xl">${isNewMsg ? k.add : 'Edit ' + k.noun.toLowerCase()}</p><p class="text-sm text-ink-muted mt-0.5">Write it, choose who receives it, and check the preview before it goes out.</p></div>
-        <div class="flex items-center gap-2">${statusPill(cm)}${dirtyMsg ? '<span class="text-xs text-ink-muted">Unsaved changes</span>' : ''}</div>
+        <div class="flex flex-wrap items-center gap-3"><a href="#preview-anchor" onclick="document.getElementById('preview-anchor').scrollIntoView({behavior:'smooth'}); return false;" class="xl:hidden text-primary text-sm font-semibold hover:underline min-h-[44px] inline-flex items-center">See preview ↓</a>${statusPill(cm)}${dirtyMsg ? '<span class="text-xs text-ink-muted">Unsaved changes</span>' : ''}</div>
       </div>
       ${composeErrors ? `<div class="bg-error-bg rounded-card p-4 mb-5" role="alert"><p class="text-sm font-semibold text-error">${composeErrors.title}</p><ul class="text-sm text-error mt-1 list-disc list-inside">${composeErrors.items.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
-      <div class="grid lg:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
+      <div class="grid xl:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
         <div class="space-y-5 min-w-0">
           <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
             <h2 class="font-heading font-semibold text-lg">1. ${rte ? 'Write it' : 'Your message'}</h2>
@@ -841,7 +849,7 @@
               <p class="text-xs text-ink-muted">Longer than 160 characters will be split into several text messages.</p></div>`
             : `
               <div class="space-y-1.5"><label class="text-xs font-medium" for="f-title">${k.key === 'circular' ? 'Subject' : 'Title'}</label><input id="f-title" type="text" value="${esc(cm.title)}" oninput="setC('title', this.value)" placeholder="${k.key === 'circular' ? 'e.g. Mass timing changes for the Feast of Christ the King' : 'e.g. Chrism Mass \u2014 Save the Date'}" class="w-full border border-divider rounded-input px-3.5 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-              ${k.key === 'circular' ? `<div class="grid sm:grid-cols-3 gap-3">
+              ${k.key === 'circular' ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:16px;">
                 <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-ref">Circular number</label><input id="f-ref" type="text" value="${esc(cm.refNo)}" oninput="setC('refNo', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
                 <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-cat">Category</label><select id="f-cat" onchange="setC('category', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">${CIRCULAR_CATEGORIES.map(c => `<option ${cm.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
                 <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-sign">Signed by</label><input id="f-sign" type="text" value="${esc(cm.signer)}" oninput="setC('signer', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
@@ -890,7 +898,7 @@
                 <label class="flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${cm.when === 'now' ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="radio" name="when" ${cm.when === 'now' ? 'checked' : ''} onchange="setCStruct('when','now')" class="accent-[#4F7CF5]">Send now</label>
                 <label class="flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${cm.when === 'later' ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="radio" name="when" ${cm.when === 'later' ? 'checked' : ''} onchange="setCStruct('when','later')" class="accent-[#4F7CF5]">Schedule for later</label>
               </div>
-              ${cm.when === 'later' ? `<div class="grid grid-cols-2 gap-3 max-w-md"><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-sd">Date</label><input id="f-sd" type="date" min="${TODAY}" value="${cm.schedDate}" onchange="cm.schedDate=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-st">Time</label><input id="f-st" type="time" value="${cm.schedTime}" onchange="cm.schedTime=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div></div>` : ''}
+              ${cm.when === 'later' ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:16px;" class="max-w-md"><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-sd">Date</label><input id="f-sd" type="date" min="${TODAY}" value="${cm.schedDate}" onchange="cm.schedDate=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-st">Time</label><input id="f-st" type="time" value="${cm.schedTime}" onchange="cm.schedTime=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div></div>` : ''}
             </div>
           </section>
 
@@ -903,7 +911,7 @@
           </section>
         </div>
 
-        <aside class="lg:sticky lg:top-24 min-w-0">
+        <aside id="preview-anchor" class="xl:sticky xl:top-24 min-w-0 scroll-mt-24">
           <div class="bg-card-bg rounded-card shadow-card p-5">
             <p class="font-heading font-semibold text-lg mb-3">Preview</p>
             <div class="inline-flex bg-section-bg rounded-badge p-1 mb-4" role="group" aria-label="Preview">${previewTabs().map(([id, l]) => tab(id, l)).join('')}</div>
@@ -993,7 +1001,7 @@
           ${m.status !== 'Sent' ? `<button onclick="editMessage('${m.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-button min-h-[44px] transition-warm">Edit</button>` : ''}
         </div>
       </div>
-      <div class="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+      <div class="grid xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
         <div class="bg-section-bg rounded-card p-4 sm:p-6 min-w-0"><div>${doc}</div></div>
         <aside class="space-y-5 min-w-0">
           <section class="bg-card-bg rounded-card shadow-card p-5">

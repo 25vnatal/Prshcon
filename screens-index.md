@@ -2,6 +2,9 @@
 
 Design system: **Community Heart v1** (locked — supersedes "Midnight Digital v1"). Source files: `design-tokens.css`, `head-snippet.html`, `style-guide.html`.
 
+**iPad / tablet fixes (Diocese)**: two-column editors (Minute editor, Communication composer and view page) now only sit side by side from 1280px wide; below that the preview stacks under the form with a "See preview" link. Field groups use auto-fit grids so they stack when their column is narrow, and native date/time fields are sized by CSS on every Diocese screen so Safari/iPad cannot push them into the next column. Checked at 744 / 768 / 820 / 834 / 1024 / 1112 / 1180 / 1366 px.
+
+
 **Finance icon**: the Finance sidebar item (and the matching payment icons on the Dashboard and Reports) now uses a generic wallet icon on every Parish screen, replacing the dollar-sign glyph.
 
 
