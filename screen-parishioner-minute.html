@@ -88,10 +88,10 @@
   // ---------------- accent token, not built out yet since this is the one state carried through from the ----------------
   // ---------------- reviewed mockup. All text below is original composition, not a scripture quotation. ----------------
   const today = {
-    occasion: "Feast of the Assumption",
-    verseLine: "Today the Church remembers Mary, carried body and soul into glory — a life that had already said yes, long before this day arrived.",
-    reflection: "Mary's whole life was a series of small, unseen yeses — to an angel's strange news, to a long journey, to standing at the foot of a cross. None of it looked triumphant while she was living it. The Assumption isn't a reward that erases that — it's what an ordinary, faithful life quietly becomes.",
-    prayerLine: "Mary, help me say yes today in the small, unseen way you did. When no one is watching and nothing feels triumphant, let me still choose you. Carry my ordinary day the way you carried His extraordinary one.",
+    occasion: "Memorial of Saint Faustina Kowalska",
+    verseLine: "Today the Church remembers Saint Faustina, a quiet Polish sister who spent her short life trusting in God’s mercy and sharing it with others.",
+    reflection: "Faustina held no great title and had no famous project. She cooked, opened the door, tended the garden, and through those ordinary days she kept returning to one message: God’s mercy is bigger than our failures. A new week begins today. Perhaps you carry something you regret, or someone you find hard to forgive. Mercy is not a prize for the tidy; it is where the broken begin again.",
+    prayerLine: "Jesus, I trust in You. Where I have failed, help me return to You without fear. And where someone has failed me, give me the grace to be merciful today.",
     weekCount: 5,
   };
 
@@ -103,7 +103,7 @@
   // =========================================================================
   function renderMinute() {
     return `
-      <div class="min-h-screen flex flex-col" style="background: linear-gradient(180deg, #FFFDF6 0%, #FFF8E8 40%, #FCEFCE 100%);">
+      <div class="min-h-screen flex flex-col" style="background: linear-gradient(180deg, #FFF9F8 0%, #FFEDEA 45%, #FFDCD6 100%);">
         <header class="px-5 pt-6 pb-2 flex items-center justify-between">
           <button onclick="window.location.href='screen-parishioner-dashboard-home.html?' + baseParams().toString()" aria-label="Close" class="w-10 h-10 rounded-button flex items-center justify-center text-ink-muted/70 hover:bg-black/5 transition-warm">
             ${icon('x','icon w-5 h-5')}
@@ -116,15 +116,15 @@
         <main class="flex-1 flex flex-col justify-center px-8 py-10 space-y-9 max-w-[420px] mx-auto">
 
           <div class="text-center stagger-1">
-            <p class="text-[11px] font-semibold uppercase tracking-wider mb-4" style="color:#9A6D0F;">${today.occasion}</p>
+            <p class="text-[11px] font-semibold uppercase tracking-wider mb-4" style="color:#B3463C;">${today.occasion}</p>
             <p class="font-verse text-2xl leading-snug text-ink">${today.verseLine}</p>
           </div>
 
-          <div class="w-8 h-px mx-auto stagger-2" style="background: rgba(154,109,15,0.3);"></div>
+          <div class="w-8 h-px mx-auto stagger-2" style="background: rgba(179,70,60,0.25);"></div>
 
           <p class="text-base leading-relaxed text-ink/85 text-center stagger-2">${today.reflection}</p>
 
-          <div class="w-8 h-px mx-auto stagger-3" style="background: rgba(154,109,15,0.3);"></div>
+          <div class="w-8 h-px mx-auto stagger-3" style="background: rgba(179,70,60,0.25);"></div>
 
           <div class="text-center stagger-3">
             <p class="font-verse text-base leading-relaxed text-ink/90">${today.prayerLine}</p>
@@ -134,7 +134,7 @@
 
         <footer class="px-8 pb-10 pt-4 stagger-4">
           <button onclick="setState('share')" class="w-full text-center py-4">
-            <span class="font-heading font-semibold text-lg" style="color:#9A6D0F;">Amen</span>
+            <span class="font-heading font-semibold text-lg" style="color:#B3463C;">Amen</span>
           </button>
         </footer>
       </div>
@@ -169,35 +169,27 @@
           <!-- from what was actually prayed. Motif is deliberately abstract (crescent moon, radiating light, -->
           <!-- simple stars — drawing on the Woman-Clothed-with-the-Sun imagery tied to this feast) rather -->
           <!-- than a literal figure, per this app's own "no busy religious motifs" guidance. -->
-          <div class="stagger-1 w-full max-w-[280px] aspect-[9/16] rounded-card overflow-hidden shadow-card relative" style="background: linear-gradient(165deg, #FDE9B0 0%, #F6C453 45%, #F0A63E 100%);">
+          <div class="stagger-1 w-full max-w-[280px] aspect-[9/16] rounded-card overflow-hidden shadow-card relative" style="background: linear-gradient(165deg, #FFE3DD 0%, #FFA79B 50%, #F57F6E 100%);">
 
             <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 34%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 58%);"></div>
 
             <svg class="absolute inset-0 w-full h-full" viewBox="0 0 280 498" fill="none">
-              <g stroke="#FFFDF3" stroke-width="2.5" stroke-linecap="round" opacity="0.55">
-                <line x1="140" y1="70" x2="140" y2="46"/>
-                <line x1="185" y1="88" x2="203" y2="70"/>
-                <line x1="95" y1="88" x2="77" y2="70"/>
-                <line x1="200" y1="118" x2="222" y2="112"/>
-                <line x1="80" y1="118" x2="58" y2="112"/>
-              </g>
-              <path d="M154 108a34 34 0 1 1 0-56 27 27 0 0 0 0 56Z" fill="#FFFDF3" opacity="0.92"/>
-              <path d="M52 210 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5 Z" fill="#FFFDF3" opacity="0.7"/>
-              <path d="M226 250 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.65"/>
-              <path d="M44 350 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.55"/>
-              <path d="M238 390 l2.5 6.5 6.5 2.5 -6.5 2.5 -2.5 6.5 -2.5 -6.5 -6.5 -2.5 6.5 -2.5 Z" fill="#FFFDF3" opacity="0.6"/>
-              <circle cx="90" cy="160" r="1.5" fill="#FFFDF3" opacity="0.7"/>
-              <circle cx="195" cy="175" r="1.5" fill="#FFFDF3" opacity="0.6"/>
+              <g stroke="#FFFDF3" stroke-width="3" stroke-linecap="round" opacity="0.6"><line x1="92.4" y1="82.5" x2="63.9" y2="73.3"/><line x1="99.5" y1="68.6" x2="75.3" y2="51.0"/><line x1="110.6" y1="57.5" x2="93.0" y2="33.3"/><line x1="124.5" y1="50.4" x2="115.3" y2="21.9"/><line x1="140.0" y1="48.0" x2="140.0" y2="18.0"/><line x1="155.5" y1="50.4" x2="164.7" y2="21.9"/><line x1="169.4" y1="57.5" x2="187.0" y2="33.3"/><line x1="180.5" y1="68.6" x2="204.7" y2="51.0"/><line x1="187.6" y1="82.5" x2="216.1" y2="73.3"/></g>
+              <circle cx="140" cy="98" r="34" fill="#FFFDF3" opacity="0.92"/>
+              <path d="M38 410 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.6"/>
+              <path d="M236 392 l2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 5.5 -2 Z" fill="#FFFDF3" opacity="0.5"/>
+              <circle cx="60" cy="40" r="1.5" fill="#FFFDF3" opacity="0.7"/>
+              <circle cx="230" cy="52" r="1.5" fill="#FFFDF3" opacity="0.6"/>
             </svg>
 
-            <div class="relative h-full flex flex-col justify-between px-7 pt-24 pb-8 text-center">
-              <p class="text-[11px] font-semibold uppercase tracking-wider" style="color:#7A5209;">${today.occasion}</p>
+            <div class="relative h-full flex flex-col justify-between px-7 pt-40 pb-8 text-center">
+              <p class="text-[11px] font-semibold uppercase tracking-wider" style="color:#7A2820;">${today.occasion}</p>
 
-              <p class="font-verse text-base leading-relaxed" style="color:#4A3407;">"${today.prayerLine}"</p>
+              <p class="font-verse text-base leading-relaxed" style="color:#4A1510;">"${today.prayerLine}"</p>
 
               <div class="space-y-1.5">
-                <div class="w-8 h-px mx-auto" style="background: rgba(74,52,7,0.3);"></div>
-                <p class="text-[10px] tracking-wide" style="color:#8C6A1F;">Reflections by Parish Connect</p>
+                <div class="w-8 h-px mx-auto" style="background: rgba(74,21,16,0.3);"></div>
+                <p class="text-[10px] tracking-wide" style="color:#7A2820;">Reflections by Parish Connect</p>
               </div>
             </div>
           </div>

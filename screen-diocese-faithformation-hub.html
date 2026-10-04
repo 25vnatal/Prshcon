@@ -193,9 +193,9 @@
   // =========================================================================
   // A MINUTE WITH JESUS — curated by the diocese, shown to every parishioner on the home screen
   // =========================================================================
-  // "Today" for this demo. The parishioner Minute screen is built around the Feast of the Assumption,
-  // so the demo date is 15 Aug 2026 and the Assumption Minute is the one that is live.
-  const DEMO_TODAY = '2026-08-15';
+  // "Today" for this demo. The parishioner Minute screen is built around the Memorial of Saint Faustina Kowalska,
+  // so the demo date is 5 Oct 2026, the Memorial of Saint Faustina Kowalska, and that Minute is the one that is live.
+  const DEMO_TODAY = '2026-10-05';
 
   // Sample backgrounds. Each defines the full-screen reading background, the colours of the 9:16 share card and an abstract
   // motif (never a literal figure, in line with the app's "no busy religious motifs" guidance).
@@ -218,6 +218,22 @@
 
   // ---- sample content. The Assumption Minute is word-for-word what the parishioner screen shows today. ----
   let minutes = [
+    { id:'MIN-008', date:'2026-10-05', occasion:'Memorial of Saint Faustina Kowalska', bg:'rose', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-10-03',
+      opening:"Today the Church remembers Saint Faustina, a quiet Polish sister who spent her short life trusting in God’s mercy and sharing it with others.",
+      reflection:"Faustina held no great title and had no famous project. She cooked, opened the door, tended the garden, and through those ordinary days she kept returning to one message: God’s mercy is bigger than our failures. A new week begins today. Perhaps you carry something you regret, or someone you find hard to forgive. Mercy is not a prize for the tidy; it is where the broken begin again.",
+      prayer:"Jesus, I trust in You. Where I have failed, help me return to You without fear. And where someone has failed me, give me the grace to be merciful today." },
+    { id:'MIN-009', date:'2026-10-04', occasion:'Twenty-Seventh Sunday in Ordinary Time', bg:'garden', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-10-02',
+      opening:"We are given much to look after, and fruit is what God hopes to find.",
+      reflection:"The vineyard in today\u2019s Gospel is full of care and promise, yet the tenants forget whose it is. Our time, our families and our talents are also on loan. The question for this Sunday is gentle but honest: what am I growing with what I have been given?",
+      prayer:"Lord of the harvest, help me remember that all I have comes from you. Make my days fruitful in small acts of love. Let me give back what is yours with a grateful heart." },
+    { id:'MIN-010', date:'2026-10-07', occasion:'Our Lady of the Rosary', bg:'lavender', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-10-03',
+      opening:"A string of beads, a quiet minute, and the whole story of Jesus held in the hands of a mother.",
+      reflection:"The Rosary does not ask us to think brilliantly; it asks us to stay. Bead by bead we walk beside Mary through joy, light, sorrow and glory, and our own worries begin to find their place inside a bigger story. Even one decade, prayed slowly, is enough to begin.",
+      prayer:"Mary, mother of Jesus and mother of us all, walk with me through this day. Quiet the noise in my mind as I pray. Lead me, bead by bead, closer to your Son." },
+    { id:'MIN-011', date:'2026-10-11', occasion:'Twenty-Eighth Sunday in Ordinary Time', bg:'sky', font:'serif', size:1, align:'center', motif:true, watermark:true, published:false, updated:'2026-10-03',
+      opening:"There is always a place set for us at God\u2019s table.",
+      reflection:"The invitation has already gone out, and it was meant for you. Whatever kept you from answering before, you are still welcome.",
+      prayer:"" },
     { id:'MIN-001', date:'2026-08-15', occasion:'Feast of the Assumption', bg:'golden', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-10',
       opening:"Today the Church remembers Mary, carried body and soul into glory \u2014 a life that had already said yes, long before this day arrived.",
       reflection:"Mary's whole life was a series of small, unseen yeses \u2014 to an angel's strange news, to a long journey, to standing at the foot of a cross. None of it looked triumphant while she was living it. The Assumption isn't a reward that erases that \u2014 it's what an ordinary, faithful life quietly becomes.",
@@ -234,10 +250,6 @@
       opening:"Mary is honoured as Queen not because she ruled, but because she served.",
       reflection:"A queen who carried water, kept silence and stood beneath a cross is not the kind we expect. Her crown is the fruit of a lifetime of faithfulness, offered quietly. She invites us to see that real greatness in God\u2019s kingdom often looks like patience at home and kindness no one notices.",
       prayer:"Mary, Queen of heaven and mother of us all, teach me the greatness of small service. Where I am tempted to be noticed, make me faithful. Lead me, with all I love, to your Son." },
-    { id:'MIN-005', date:'2026-08-29', occasion:'Memorial of the Passion of Saint John the Baptist', bg:'sky', font:'serif', size:1, align:'center', motif:true, watermark:true, published:false, updated:'2026-08-13',
-      opening:"John pointed away from himself, even when it cost him everything.",
-      reflection:"It is hard to say, \u2018He must increase, I must decrease\u2019 and mean it. John\u2019s courage came from knowing exactly whose voice he was.",
-      prayer:"" },
     { id:'MIN-006', date:'2026-09-08', occasion:'Nativity of the Blessed Virgin Mary', bg:'sea', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-13',
       opening:"A child is born, and the world does not yet know that heaven has begun to draw near.",
       reflection:"We celebrate Mary\u2019s birthday because every beginning given to God matters. Her family, her hometown and her ordinary childhood were the soil God chose. Whatever feels small or unfinished in our lives may be exactly where grace is quietly starting.",
