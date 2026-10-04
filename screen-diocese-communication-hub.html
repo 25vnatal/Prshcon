@@ -35,6 +35,18 @@
   .transition-warm { transition: all 200ms ease; }
   .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+  .rte { min-height: 220px; outline: none; }
+  .rte:empty:before { content: attr(data-placeholder); color: #9CA3AF; pointer-events: none; }
+  .rte ul { list-style: disc; padding-left: 1.4em; } .rte ol { list-style: decimal; padding-left: 1.4em; }
+  .rte-wrap:focus-within { box-shadow: 0 0 0 2px #EEF4FF; border-color: #4F7CF5; }
+  .doc ul { list-style: disc; padding-left: 1.4em; margin: .4em 0; } .doc ol { list-style: decimal; padding-left: 1.4em; margin: .4em 0; }
+  #print-root { display: none; }
+  @media print { @page { size: A4; margin: 0; } body > *:not(#print-root) { display: none !important; } #print-root { display: block !important; } }
+</style>
 </head>
 <body class="text-ink">
 
@@ -111,7 +123,7 @@
       <main class="px-6 lg:px-10 py-8 max-w-content">
         <div class="mb-6">
           <p class="font-heading font-bold text-2xl">Communication</p>
-          <p class="text-ink-muted text-sm mt-1">Circulars, announcements, and broadcast notifications across the diocese.</p>
+          <p class="text-ink-muted text-sm mt-1">Write circulars, announcements and broadcasts, choose which parishes and people receive them, and see who has read them.</p>
         </div>
 
         <div class="flex gap-2 mb-6 flex-wrap">
@@ -128,36 +140,13 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
 
-  <!-- ANNOUNCEMENT MODAL -->
-  <div id="announcement-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-bg rounded-card shadow-card w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
-        <p id="announcement-modal-title" class="font-heading font-bold text-lg">Add Announcement</p>
-        <button onclick="closeModal('announcement-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div id="announcement-form" class="px-6 py-5 space-y-4"></div>
-      <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitAnnouncement('Draft')" class="text-ink-muted border border-divider text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Save as Draft</button>
-        <button onclick="submitAnnouncement('Published')" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Publish</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CIRCULAR MODAL -->
-  <div id="circular-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+  <!-- CONFIRM DIALOG -->
+  <div id="confirm-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
     <div class="bg-card-bg rounded-card shadow-card w-full max-w-md max-h-[85vh] overflow-y-auto">
-      <div class="px-6 pt-6 pb-4 border-b border-divider flex items-center justify-between">
-        <p id="circular-modal-title" class="font-heading font-bold text-lg">Add Circular</p>
-        <button onclick="closeModal('circular-modal')" aria-label="Close" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div id="circular-form" class="px-6 py-5 space-y-4"></div>
-      <div class="px-6 pb-6 pt-2 flex gap-3">
-        <button onclick="submitCircular('Draft')" class="text-ink-muted border border-divider text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm hover:bg-section-bg">Save as Draft</button>
-        <button onclick="submitCircular('Published')" class="flex-1 bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm">Publish</button>
+      <div class="px-6 pt-6 pb-2"><p id="confirm-title" class="font-heading font-bold text-lg"></p><div id="confirm-body" class="text-sm text-ink-muted mt-2 space-y-2"></div></div>
+      <div class="px-6 pb-6 pt-4 flex gap-3">
+        <button id="confirm-ok" class="flex-1 text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"></button>
+        <button onclick="closeModal('confirm-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] hover:bg-section-bg transition-warm">Cancel</button>
       </div>
     </div>
   </div>
@@ -224,6 +213,9 @@
     attachment: '<path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.13 17.1a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
     close: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
     send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+    back: '<polyline points="15 18 9 12 15 6"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
 
@@ -363,7 +355,7 @@
 
   let currentModule = 'announcements';
   function setModule(m) {
-    currentModule = m;
+    currentModule = m; commView = 'list'; cm = null; viewId = null; listSearch = ''; listStatus = 'All'; deletingMsgId = null;
     document.querySelectorAll('.module-tab').forEach(btn => {
       const active = btn.dataset.module === m;
       btn.className = `module-tab px-4 py-2.5 rounded-badge text-sm font-semibold whitespace-nowrap transition-warm ${active ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted'}`;
@@ -372,294 +364,659 @@
   }
   function renderModule() {
     const el = document.getElementById('module-content');
-    if (currentModule === 'announcements') renderAnnouncementsModule(el);
-    else if (currentModule === 'circulars') renderCircularsModule(el);
-    else if (currentModule === 'broadcast') renderBroadcastModule(el);
-    else renderTemplatesModule(el);
+    if (currentModule === 'templates') renderTemplatesModule(el);
+    else renderComm(el);
   }
 
   // =========================================================================
-  // MODULE 1: Announcements — mirrors the Parish-side Communication announcements
-  // pattern (title suggestions, status-by-action, inline attachments, search).
+  // ANNOUNCEMENTS, CIRCULARS and BROADCASTS share one workspace:
+  //   list  ->  compose (write on the left, live preview on the right, choose who gets it)  ->  view (read-only, with delivery)
   // =========================================================================
-  const ANNOUNCEMENT_TITLE_SUGGESTIONS = ["Circular for the week of", "Bishop's message", "Diocesan office notice", "Upcoming diocesan event"];
-  let announcements = [
-    { id:"DANN-001", title:"Chrism Mass — Save the Date", content:"The annual Chrism Mass will be celebrated at St Francis Xavier Cathedral. All priests are requested to attend in choir dress.", status:"Published", createdBy:"Diocese Office", createdDate:"2026-07-15", publishedDate:"2026-07-15", attachments:["chrism-mass-notice.pdf"] },
-    { id:"DANN-002", title:"Revised Guidelines for Parish Subscriptions", content:"The diocese has issued revised guidelines on minimum parish subscription amounts, effective the next financial year.", status:"Published", createdBy:"Diocese Office", createdDate:"2026-06-20", publishedDate:"2026-06-20", attachments:["subscription-guidelines-2026.pdf"] },
-    { id:"DANN-003", title:"Diocesan Synod — Draft Agenda", content:"Draft agenda for the upcoming diocesan synod, circulated for review before finalization.", status:"Draft", createdBy:"Diocese Office", createdDate:"2026-07-28", publishedDate:null, attachments:[] },
+  const TODAY = '2026-07-31';
+  const TIERS = ['Large', 'Medium', 'Small'];
+  const TIER_N = Object.fromEntries(TIERS.map(t => [t, parishesLight.filter(p => p.sizeTier === t).length]));
+  // Who within a parish can receive a message, with typical head-counts per parish size (mock estimates).
+  const ROLES = [
+    { k:'priests', label:'Parish priests', hint:'Parish priest and assistant priests' },
+    { k:'staff', label:'Parish office staff', hint:'Secretaries, accountants, administrators' },
+    { k:'committees', label:'Council & committee members', hint:'Pastoral council, finance council, ministry heads' },
+    { k:'parishioners', label:'All parishioners', hint:'Every parishioner who uses Parish Connect' },
   ];
-  let announcementSearchQuery = '';
-  let announcementDateFilter = '';
-  function filteredAnnouncements() {
-    const q = announcementSearchQuery.trim().toLowerCase();
-    return announcements.filter(a => {
-      const matchesSearch = !q || a.title.toLowerCase().includes(q) || a.content.toLowerCase().includes(q);
-      const matchesDate = !announcementDateFilter || a.createdDate === announcementDateFilter || a.publishedDate === announcementDateFilter;
-      return matchesSearch && matchesDate;
-    });
+  const PER_PARISH = { priests:{Large:3,Medium:2,Small:1}, staff:{Large:4,Medium:2,Small:1}, committees:{Large:18,Medium:11,Small:6}, parishioners:{Large:5400,Medium:2800,Small:800} };
+  const CHANNELS = [['inApp','In-app'],['email','Email'],['sms','SMS'],['whatsapp','WhatsApp']];
+  const CIRCULAR_CATEGORIES = ["Liturgical", "Clergy", "Finance", "Administrative", "Pastoral"];
+  const KINDS = {
+    announcement: { key:'announcement', mod:'announcements', noun:'Announcement', plural:'announcements', add:'New Announcement', intro:'Notices that appear in every selected parish\u2019s Announcements, for staff and parishioners to read in the app.' },
+    circular: { key:'circular', mod:'circulars', noun:'Circular', plural:'circulars', add:'New Circular', intro:'Formal letters on diocesan letterhead, numbered and addressed to parish priests, offices or the faithful. Priests can be asked to confirm receipt.' },
+    broadcast: { key:'broadcast', mod:'broadcast', noun:'Broadcast', plural:'broadcasts', add:'New Broadcast', intro:'Short urgent messages (up to 160 characters) pushed straight to phones. Use sparingly.' },
+  };
+  const kindOfModule = m => Object.values(KINDS).find(k => k.mod === m);
+
+  const aud = (scope, extra, roles) => Object.assign({ scope, tiers:[], parishIds:[], roles:Object.assign({ priests:false, staff:false, committees:false, parishioners:false }, roles) }, extra);
+  const SIGNER = 'Chancellor, Archdiocese of Bangalore';
+  let messages = [
+    { id:'DANN-001', kind:'announcement', title:'Chrism Mass \u2014 Save the Date', category:'', refNo:'', signer:'', pinned:true, requireAck:false,
+      body:'The annual Chrism Mass will be celebrated at St Francis Xavier Cathedral on Thursday, 30 July, at 10:00 AM.<br><br>All priests are requested to attend in choir dress. Each parish is asked to send one representative to carry the oils back to the parish.',
+      attachments:['chrism-mass-notice.pdf'], audience:aud('all',{},{ priests:true, staff:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-07-15', sentDate:'2026-07-15', scheduledFor:null },
+    { id:'DANN-002', kind:'announcement', title:'Revised Guidelines for Parish Subscriptions', category:'', refNo:'', signer:'', pinned:false, requireAck:false,
+      body:'The diocese has issued revised guidelines on minimum parish subscription amounts, effective the next financial year.<ul><li>Minimum monthly amounts are now set by parish size.</li><li>Parishes may offer a quarterly or yearly option.</li><li>Grace periods are unchanged.</li></ul>Please share the attached guidelines with your finance council.',
+      attachments:['subscription-guidelines.pdf'], audience:aud('all',{},{ priests:true, staff:true, committees:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-06-20', sentDate:'2026-06-20', scheduledFor:null },
+    { id:'DANN-004', kind:'announcement', title:'Registrations Open: Diocesan Pilgrimage', category:'', refNo:'', signer:'', pinned:true, requireAck:false,
+      body:'Registrations are now open for this year\u2019s <b>Diocesan Pilgrimage</b>. Families, youth groups and senior citizens are all welcome.<br><br>Please register through your parish office by 20 August. Seats are limited, and parishes will receive a confirmed list one week before travel.',
+      attachments:[], audience:aud('all',{},{ priests:true, staff:true, parishioners:true }), channels:{ inApp:true, email:false, sms:false, whatsapp:true },
+      status:'Scheduled', createdBy:'Diocese Office', createdDate:'2026-07-29', sentDate:null, scheduledFor:'2026-08-05T09:00' },
+    { id:'DANN-003', kind:'announcement', title:'Diocesan Synod \u2014 Draft Agenda', category:'', refNo:'', signer:'', pinned:false, requireAck:false,
+      body:'Draft agenda for the upcoming diocesan synod, circulated to the larger parishes for review before it is finalised. Please send comments to the diocesan office within two weeks.',
+      attachments:[], audience:aud('tier',{ tiers:['Large'] },{ priests:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Draft', createdBy:'Diocese Office', createdDate:'2026-07-28', sentDate:null, scheduledFor:null },
+
+    { id:'DCIRC-001', kind:'circular', title:'Mass Timing Changes \u2014 Feast of Christ the King', category:'Liturgical', refNo:'BA/CIRC/2026/011', signer:SIGNER, pinned:false, requireAck:true,
+      body:'The Feast of Christ the King will be celebrated this year with the following changes to the usual Mass timings:<ol><li>The Saturday evening vigil Mass will be held at 5:30 PM in all parishes.</li><li>On Sunday, the last morning Mass should end by 11:30 AM so that families may attend the diocesan procession.</li><li>Parishes planning a procession must inform the diocesan office at least one week in advance.</li></ol>Parish priests are requested to announce these changes from the pulpit on the two Sundays before the feast.',
+      attachments:['feast-mass-timings.pdf'], audience:aud('all',{},{ priests:true, staff:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-07-10', sentDate:'2026-07-12', scheduledFor:null },
+    { id:'DCIRC-002', kind:'circular', title:'Clergy Retreat Schedule 2026', category:'Clergy', refNo:'BA/CIRC/2026/012', signer:SIGNER, pinned:false, requireAck:true,
+      body:'The annual clergy retreat will be held in three batches so that every parish is always served. Priests are asked to attend the batch assigned to their deanery, as listed in the attached schedule.<br><br>Kindly arrange for Sunday and weekday Masses to be covered during your absence and inform the diocesan office of any difficulty by the end of next month.',
+      attachments:['retreat-schedule.pdf'], audience:aud('all',{},{ priests:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-06-28', sentDate:'2026-06-30', scheduledFor:null },
+    { id:'DCIRC-004', kind:'circular', title:'Observance of the Solemnity of the Assumption', category:'Liturgical', refNo:'BA/CIRC/2026/014', signer:SIGNER, pinned:false, requireAck:false,
+      body:'The Solemnity of the Assumption of the Blessed Virgin Mary falls on Saturday, 15 August. It is a holy day of obligation.<br><br>Parishes are requested to schedule additional Masses so that the faithful can attend, to keep the church open for prayer throughout the day, and to remind parishioners that Confession will be available in the evening before the feast.',
+      attachments:[], audience:aud('all',{},{ priests:true, staff:true, parishioners:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:true },
+      status:'Scheduled', createdBy:'Diocese Office', createdDate:'2026-07-30', sentDate:null, scheduledFor:'2026-08-03T09:00' },
+    { id:'DCIRC-003', kind:'circular', title:'Annual Financial Reporting Deadline', category:'Finance', refNo:'BA/CIRC/2026/013', signer:SIGNER, pinned:false, requireAck:false,
+      body:'All parishes are reminded that the annual financial statements, duly approved by the parish finance council, must reach the diocesan office by 30 September.',
+      attachments:['reporting-deadline.pdf'], audience:aud('all',{},{ priests:true, staff:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Draft', createdBy:'Diocese Office', createdDate:'2026-07-27', sentDate:null, scheduledFor:null },
+
+    { id:'BC-001', kind:'broadcast', title:'', category:'', refNo:'', signer:'', pinned:false, requireAck:false,
+      body:'Reminder: Chrism Mass this Thursday, 10 AM at the Cathedral.', attachments:[], audience:aud('all',{},{ priests:true, staff:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-07-28', sentDate:'2026-07-28', scheduledFor:null },
+    { id:'BC-002', kind:'broadcast', title:'', category:'', refNo:'', signer:'', pinned:false, requireAck:false,
+      body:'Heavy rain alert: parishes are advised to review outdoor programmes this weekend.', attachments:[], audience:aud('all',{},{ priests:true, staff:true, committees:true }), channels:{ inApp:true, email:false, sms:true, whatsapp:true },
+      status:'Sent', createdBy:'Diocese Office', createdDate:'2026-07-24', sentDate:'2026-07-24', scheduledFor:null },
+    { id:'BC-003', kind:'broadcast', title:'', category:'', refNo:'', signer:'', pinned:false, requireAck:false,
+      body:'Please submit your August Mass intention totals to the diocesan office by Friday.', attachments:[], audience:aud('tier',{ tiers:['Medium'] },{ priests:true, staff:true }), channels:{ inApp:true, email:true, sms:false, whatsapp:false },
+      status:'Draft', createdBy:'Diocese Office', createdDate:'2026-07-30', sentDate:null, scheduledFor:null },
+  ];
+
+  // ---------- starter text ----------
+  const STARTERS = {
+    circular: [
+      ['Mass timing change', 'Please note the following change to the Mass timings:<ol><li>[Mass and new time]</li><li>[Mass and new time]</li></ol>Parish priests are requested to announce this from the pulpit.'],
+      ['Reminder with a deadline', 'This is a gentle reminder that [what is needed] must reach the diocesan office by [date].<br><br>Kindly ensure it is completed on time.'],
+      ['Invitation to an event', 'You are warmly invited to [event], to be held on [date] at [time], at [venue].<br><br>Kindly confirm your participation with the diocesan office by [date].'],
+      ['Pastoral message', 'Dear Fathers and Beloved in Christ,<br><br>[A short pastoral reflection or instruction.]<br><br>Let us keep one another in our prayers.'],
+    ],
+    announcement: [
+      ['Event notice', '[Event] will take place on [date] at [time], at [venue]. All are welcome.<br><br>Please contact your parish office for details.'],
+      ['Office closure', 'The diocesan office will be closed on [date(s)] for [reason]. Urgent matters can be sent to [contact].'],
+      ['Appointment or transfer', 'The Archbishop has appointed [name] as [role] of [parish], with effect from [date]. Please keep him in your prayers.'],
+    ],
+  };
+
+  // ---------- helpers ----------
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
+  function hash(str) { let h = 0; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0; return Math.abs(h); }
+  function seeded(seed, min, max) { return min + (hash(seed) % (max - min + 1)); }
+  function dotDate(iso) { if (!iso) return ''; const [y, m, d] = iso.slice(0, 10).split('-'); return `${d}.${m}.${y}`; }
+  function longDate(iso) { if (!iso) return ''; const d = new Date(iso.slice(0, 10) + 'T00:00:00'); return `${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]}, ${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`; }
+  function timeOf(iso) { const t = (iso || '').slice(11, 16); if (!t) return ''; let [h, m] = t.split(':').map(Number); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${String(m).padStart(2, '0')} ${ap}`; }
+  function cleanHTML(html) {
+    const d = document.createElement('div'); d.innerHTML = html;
+    const walk = n => { let out = ''; n.childNodes.forEach(c => {
+      if (c.nodeType === 3) out += esc(c.nodeValue);
+      else if (c.nodeType === 1) {
+        const t = c.tagName.toLowerCase(), inner = walk(c);
+        if (t === 'b' || t === 'strong') out += inner ? '<b>' + inner + '</b>' : '';
+        else if (t === 'i' || t === 'em') out += inner ? '<i>' + inner + '</i>' : '';
+        else if (t === 'ul' || t === 'ol') out += `<${t}>${inner}</${t}>`;
+        else if (t === 'li') out += `<li>${inner}</li>`;
+        else if (t === 'br') out += '<br>';
+        else if (t === 'div' || t === 'p') out += (out && !/(<br>|<\/li>|<\/ul>|<\/ol>)$/.test(out) ? '<br>' : '') + inner;
+        else out += inner;
+      } }); return out; };
+    return walk(d).replace(/(<br>)+$/, '');
   }
-  function renderAnnouncementsModule(el) {
-    el.innerHTML = `
+  function plain(html) { const d = document.createElement('div'); d.innerHTML = (html || '').replace(/<br>|<\/li>|<\/p>/g, ' '); return (d.textContent || '').replace(/\s+/g, ' ').trim(); }
+
+  // ---------- audience maths ----------
+  function parishesOf(a) {
+    if (a.scope === 'all') return parishesLight;
+    if (a.scope === 'tier') return parishesLight.filter(p => a.tiers.includes(p.sizeTier));
+    return parishesLight.filter(p => a.parishIds.includes(p.id));
+  }
+  function reachOf(a) {
+    const ps = parishesOf(a), byRole = {}; let total = 0;
+    ROLES.forEach(r => { byRole[r.k] = a.roles[r.k] ? ps.reduce((n, p) => n + PER_PARISH[r.k][p.sizeTier], 0) : 0; total += byRole[r.k]; });
+    return { parishes: ps.length, byRole, total };
+  }
+  function scopeText(a) {
+    if (a.scope === 'all') return `All ${parishesLight.length} parishes`;
+    if (a.scope === 'tier') return a.tiers.length ? a.tiers.map(t => t + ' parishes').join(' + ') + ` (${parishesOf(a).length})` : 'No size selected';
+    const n = a.parishIds.length; return n === 0 ? 'No parishes selected' : n === 1 ? parishesLight.find(p => p.id === a.parishIds[0]).name : `${n} selected parishes`;
+  }
+  function rolesText(a) {
+    const on = ROLES.filter(r => a.roles[r.k]).map(r => r.label.toLowerCase().replace('all parishioners', 'all parishioners'));
+    if (on.length === 0) return 'No recipients chosen';
+    return on.length === 1 ? on[0] : on.slice(0, -1).join(', ') + ' and ' + on[on.length - 1];
+  }
+  function addressee(a) {
+    const bits = [];
+    if (a.roles.priests) bits.push('the Parish Priests');
+    if (a.roles.staff) bits.push('Parish Offices');
+    if (a.roles.committees) bits.push('Parish Council and Committee Members');
+    if (a.roles.parishioners) bits.push('the Faithful');
+    const who = bits.length ? (bits.length === 1 ? bits[0] : bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1]) : '\u2014';
+    const where = a.scope === 'all' ? 'of the Archdiocese' : a.scope === 'tier' ? `of the ${a.tiers.join(' and ').toLowerCase() || '\u2026'} parishes` : `of ${a.parishIds.length || 0} selected parish${a.parishIds.length === 1 ? '' : 'es'}`;
+    return `${who} ${where}`;
+  }
+  function fmtNum(n) { return n.toLocaleString('en-IN'); }
+  function channelNames(m) { return CHANNELS.filter(([k]) => m.channels[k]).map(([, l]) => l); }
+  function statsOf(m) {
+    const r = reachOf(m.audience), staffish = m.audience.roles.priests || m.audience.roles.staff;
+    const opened = seeded(m.id + 'op', 62, 91), ack = m.requireAck ? Math.min(r.parishes, Math.round(r.parishes * seeded(m.id + 'ak', 70, 93) / 100)) : null;
+    return { delivered: r.total, parishes: r.parishes, opened, ack };
+  }
+  function nextRefNo() {
+    const nums = messages.filter(m => m.kind === 'circular').map(m => parseInt((m.refNo.match(/(\d+)$/) || [0, 0])[1], 10));
+    return 'BA/CIRC/2026/' + String(Math.max(0, ...nums) + 1).padStart(3, '0');
+  }
+
+  // ---------- status ----------
+  function statusPill(m) {
+    const map = { Sent:['bg-green/20','text-[#2f6b45]','Sent'], Scheduled:['bg-primary-light','text-primary', 'Scheduled'], Draft:['bg-gold/20','text-[#8a5a10]','Draft'] };
+    const [bg, tx, label] = map[m.status] || map.Draft;
+    return `<span class="${bg} ${tx} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${label}</span>`;
+  }
+  function whenText(m) {
+    if (m.status === 'Sent') return 'Sent ' + formatDate(m.sentDate);
+    if (m.status === 'Scheduled') return `Goes out ${formatDate(m.scheduledFor.slice(0, 10))}, ${timeOf(m.scheduledFor)}`;
+    return 'Draft \u00b7 created ' + formatDate(m.createdDate);
+  }
+
+  // ---------- view state ----------
+  let commView = 'list';          // 'list' | 'compose' | 'view'
+  let cm = null;                  // working copy of the message being composed
+  let viewId = null;
+  let isNewMsg = false, dirtyMsg = false, loadingMsg = false, sending = false;
+  let previewTabC = null, composeErrors = null, parishFilter = '', openStarter = false;
+  let listSearch = '', listStatus = 'All', deletingMsgId = null;
+  let kindNow = KINDS.announcement;
+
+  function confirmDialog({ title, body, label, tone, onConfirm }) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-body').innerHTML = body;
+    const ok = document.getElementById('confirm-ok'); ok.textContent = label;
+    ok.className = 'flex-1 text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm ' + (tone === 'danger' ? 'bg-error hover:opacity-90' : 'bg-primary hover:bg-primary-hover');
+    ok.onclick = () => { closeModal('confirm-modal'); onConfirm(); };
+    document.getElementById('confirm-modal').classList.remove('hidden');
+  }
+
+  function renderComm(el) {
+    kindNow = kindOfModule(currentModule);
+    if (commView === 'compose') el.innerHTML = renderCompose();
+    else if (commView === 'view') el.innerHTML = renderViewPage();
+    else el.innerHTML = renderCommList();
+    afterRender();
+  }
+  function afterRender() {
+    if (commView === 'compose' && !loadingMsg) { refreshReach(); fitDoc('prev-wrap', 'prev-inner'); }
+    if (commView === 'view') fitDoc('view-wrap', 'view-inner');
+  }
+  function rerender(keepScroll) { const y = window.scrollY; renderModule(); if (keepScroll) window.scrollTo({ top: y }); }
+  window.addEventListener('resize', () => { fitDoc('prev-wrap', 'prev-inner'); fitDoc('view-wrap', 'view-inner'); });
+
+  // =========================================================================
+  // LIST
+  // =========================================================================
+  function renderCommList() {
+    const k = kindNow;
+    const all = messages.filter(m => m.kind === k.key);
+    const q = listSearch.trim().toLowerCase();
+    const list = all.filter(m => (listStatus === 'All' || m.status === listStatus) && (!q || (m.title + ' ' + plain(m.body) + ' ' + m.refNo).toLowerCase().includes(q)))
+      .sort((a, b) => (b.sentDate || b.scheduledFor || b.createdDate).localeCompare(a.sentDate || a.scheduledFor || a.createdDate));
+    const cnt = s => s === 'All' ? all.length : all.filter(m => m.status === s).length;
+    const pill = (s, l) => `<button onclick="listStatus='${s}'; rerender()" aria-pressed="${listStatus === s}" class="px-4 h-10 rounded-badge text-sm font-semibold transition-warm ${listStatus === s ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted hover:bg-section-bg'}">${l} <span class="${listStatus === s ? 'text-white/80' : ''} font-normal">${cnt(s)}</span></button>`;
+    return `
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <p class="text-sm text-ink-muted max-w-2xl">${k.intro}</p>
+        <button onclick="newMessage()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] transition-warm inline-flex items-center gap-2 flex-shrink-0">${icon('plus','icon w-4 h-4')}${k.add}</button>
+      </div>
       <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
         <div class="relative flex-1 min-w-[200px]">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
-          <input type="text" placeholder="Search by title or text…" value="${announcementSearchQuery}" oninput="announcementSearchQuery=this.value; renderAnnouncementsList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
+          <input id="list-search" type="text" placeholder="Search ${k.plural}\u2026" value="${esc(listSearch)}" oninput="listSearch=this.value; refreshListBody()" aria-label="Search ${k.plural}" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none">
         </div>
-        <input type="date" value="${announcementDateFilter}" onchange="announcementDateFilter=this.value; renderAnnouncementsList()" class="border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none flex-shrink-0">
-        <button onclick="openAnnouncementModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">${icon('plus','icon w-4 h-4')}Add Announcement</button>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by status">${pill('All','All')}${pill('Sent','Sent')}${pill('Scheduled','Scheduled')}${pill('Draft','Drafts')}</div>
       </div>
-      <div id="ann-list" class="space-y-3"></div>
-    `;
-    renderAnnouncementsList();
+      <div id="list-body">${renderListBody(list, all.length)}</div>`;
   }
-  function renderAnnouncementsList() {
-    const list = filteredAnnouncements();
-    const container = document.getElementById('ann-list');
-    container.innerHTML = list.length === 0
-      ? '<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><p class="text-sm font-semibold">No announcements found</p></div>'
-      : list.map(a => `
+  function refreshListBody() {
+    const k = kindNow, all = messages.filter(m => m.kind === k.key), q = listSearch.trim().toLowerCase();
+    const list = all.filter(m => (listStatus === 'All' || m.status === listStatus) && (!q || (m.title + ' ' + plain(m.body) + ' ' + m.refNo).toLowerCase().includes(q))).sort((a, b) => (b.sentDate || b.scheduledFor || b.createdDate).localeCompare(a.sentDate || a.scheduledFor || a.createdDate));
+    document.getElementById('list-body').innerHTML = renderListBody(list, all.length);
+  }
+  function renderListBody(list, total) {
+    const k = kindNow;
+    if (list.length === 0) return `
+      <div class="bg-card-bg rounded-card shadow-card p-10 text-center">
+        <svg width="72" height="72" viewBox="0 0 120 120" fill="none" class="mx-auto"><circle cx="90" cy="28" r="14" fill="#F6C453" opacity="0.35"/><path d="M40 100V56l20-16 20 16v44" stroke="#4F7CF5" stroke-width="3" stroke-linejoin="round" fill="#EEF4FF"/><rect x="55" y="72" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#4F7CF5" stroke-width="2.5"/></svg>
+        <p class="text-sm font-semibold mt-3">${total === 0 ? 'No ' + k.plural + ' yet' : 'No ' + k.plural + ' match'}</p>
+        <p class="text-sm text-ink-muted mt-1">${total === 0 ? 'Write the first one and choose who should receive it.' : 'Try another search or filter.'}</p>
+        ${total === 0 ? `<button onclick="newMessage()" class="mt-4 bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[44px]">${k.add}</button>` : ''}
+      </div>`;
+    return `<div class="space-y-3">${list.map(m => {
+      if (deletingMsgId === m.id) return `
+        <div class="bg-error-bg rounded-card p-5"><p class="text-sm text-error mb-3">Delete \u201c${esc(m.title || plain(m.body).slice(0, 50))}\u201d? ${m.status !== 'Draft' ? 'It will be removed from the list. ' : ''}This can\u2019t be undone.</p>
+        <div class="flex gap-2"><button onclick="deleteMessage('${m.id}')" class="bg-error text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px]">Yes, delete</button><button onclick="deletingMsgId=null; rerender(true)" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-white">Cancel</button></div></div>`;
+      const st = m.status === 'Sent' ? statsOf(m) : null, r = reachOf(m.audience);
+      const heading = m.kind === 'broadcast' ? esc(plain(m.body)) : esc(m.title || 'Untitled');
+      return `
         <div class="bg-card-bg rounded-card shadow-card p-5">
-          <div class="flex items-start justify-between gap-3 mb-2">
-            <p class="text-sm font-semibold">${a.title}</p>
-            <div class="flex items-center gap-1.5 flex-shrink-0">
-              ${statusPill(a.status)}
-              <button onclick="openAnnouncementModal('${a.id}')" aria-label="Edit" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-              <button onclick="deleteAnnouncement('${a.id}')" aria-label="Delete" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+          <div class="flex flex-wrap sm:flex-nowrap items-start justify-between gap-3">
+            <button onclick="viewMessage('${m.id}')" class="text-left min-w-0 flex-1" aria-label="Open ${heading}">
+              <span class="flex flex-wrap items-center gap-2 text-xs text-ink-muted mb-1">
+                ${m.kind === 'circular' ? `<span class="font-semibold">${esc(m.refNo)}</span><span>\u00b7</span><span>${esc(m.category)}</span>` : ''}
+                ${m.pinned ? '<span class="bg-gold/20 text-[#8a5a10] font-semibold px-2 py-0.5 rounded-badge">Pinned</span>' : ''}
+              </span>
+              <span class="block text-sm font-semibold">${heading}</span>
+              ${m.kind !== 'broadcast' ? `<span class="block text-xs text-ink-muted mt-1 line-clamp-2">${esc(plain(m.body))}</span>` : ''}
+            </button>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              ${statusPill(m)}
+              <button onclick="viewMessage('${m.id}')" class="text-primary text-xs font-semibold px-3 h-9 rounded-button hover:bg-primary-light transition-warm">View</button>
+              ${m.status !== 'Sent' ? `<button onclick="editMessage('${m.id}')" aria-label="Edit" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>` : ''}
+              <button onclick="duplicateMessage('${m.id}')" aria-label="Duplicate" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('copy','icon w-4 h-4')}</button>
+              <button onclick="deletingMsgId='${m.id}'; rerender(true)" aria-label="Delete" class="w-9 h-9 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
             </div>
           </div>
-          <p class="text-xs text-ink-muted">${a.content}</p>
-          ${a.attachments.length > 0 ? `<div class="flex flex-wrap gap-2 mt-3">${a.attachments.map(f => `<span class="bg-section-bg text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge flex items-center gap-1.5">${icon('attachment','icon w-3.5 h-3.5')}${f}</span>`).join('')}</div>` : ''}
-          <p class="text-xs text-ink-muted mt-3">${a.status === 'Published' ? 'Published ' + formatDate(a.publishedDate) : 'Created ' + formatDate(a.createdDate)} · ${a.createdBy}</p>
-        </div>
-      `).join('');
-  }
-  let editingAnnouncementId = null;
-  let pendingAnnouncementAttachments = [];
-  function openAnnouncementModal(editId) {
-    editingAnnouncementId = editId || null;
-    const a = editId ? announcements.find(x => x.id === editId) : null;
-    pendingAnnouncementAttachments = a ? [...a.attachments] : [];
-    document.getElementById('announcement-modal-title').textContent = a ? 'Edit Announcement' : 'Add Announcement';
-    document.getElementById('announcement-modal').classList.remove('hidden');
-    document.getElementById('announcement-form').innerHTML = `
-      <div class="space-y-1.5">
-        <label class="text-xs font-medium">Title</label>
-        <input id="af-title" type="text" value="${a ? a.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-        <div class="flex flex-wrap gap-1.5 pt-1">
-          ${ANNOUNCEMENT_TITLE_SUGGESTIONS.map(s => `<button type="button" onclick="document.getElementById('af-title').value='${s}'" class="bg-section-bg hover:bg-primary-light text-ink text-xs font-medium px-2.5 py-1.5 rounded-badge transition-warm">${s}</button>`).join('')}
-        </div>
-      </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Content</label><textarea id="af-content" rows="5" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none">${a ? a.content : ''}</textarea></div>
-      <div class="space-y-1.5">
-        <label class="text-xs font-medium">Attachments</label>
-        <div id="af-attachment-list" class="flex flex-wrap gap-1.5"></div>
-        <button type="button" onclick="addAnnouncementAttachment()" class="text-primary text-xs font-semibold flex items-center gap-1">${icon('plus','icon w-3.5 h-3.5')}Add attachment</button>
-      </div>
-    `;
-    renderPendingAnnouncementAttachments();
-  }
-  function renderPendingAnnouncementAttachments() {
-    document.getElementById('af-attachment-list').innerHTML = pendingAnnouncementAttachments.map((f, i) => `
-      <span class="bg-section-bg text-ink text-xs font-medium pl-2.5 pr-1.5 py-1.5 rounded-badge flex items-center gap-1.5">
-        ${f}
-        <button type="button" onclick="pendingAnnouncementAttachments.splice(${i},1); renderPendingAnnouncementAttachments()" aria-label="Remove" class="w-4 h-4 rounded-full flex items-center justify-center hover:bg-error-bg hover:text-error">${icon('close','w-3 h-3')}</button>
-      </span>
-    `).join('');
-  }
-  function addAnnouncementAttachment() {
-    pendingAnnouncementAttachments.push('circular-' + (pendingAnnouncementAttachments.length + 1) + '.pdf');
-    renderPendingAnnouncementAttachments();
-  }
-  function submitAnnouncement(status) {
-    const title = document.getElementById('af-title').value.trim();
-    const content = document.getElementById('af-content').value.trim();
-    if (!title || !content) { toast('Please fill in title and content.'); return; }
-    if (editingAnnouncementId) {
-      Object.assign(announcements.find(x => x.id === editingAnnouncementId), { title, content, status, attachments: [...pendingAnnouncementAttachments], publishedDate: status==='Published' ? '2026-07-31' : null });
-    } else {
-      announcements.unshift({ id:'DANN-'+Math.floor(100+Math.random()*899), title, content, status, attachments: [...pendingAnnouncementAttachments], createdBy: 'Diocese Office', createdDate:'2026-07-31', publishedDate: status==='Published' ? '2026-07-31' : null });
-    }
-    toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
-    editingAnnouncementId = null;
-    closeModal('announcement-modal');
-    renderModule();
-  }
-  function deleteAnnouncement(id) {
-    const a = announcements.find(x => x.id === id);
-    announcements = announcements.filter(x => x.id !== id);
-    toast(`${a.title} deleted.`);
-    renderModule();
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 pt-3 border-t border-divider text-xs text-ink-muted">
+            <span class="inline-flex items-center gap-1.5">${icon('users','icon w-3.5 h-3.5')}<b class="text-ink font-semibold">${scopeText(m.audience)}</b> \u00b7 ${rolesText(m.audience)}</span>
+            <span>${whenText(m)}</span>
+            ${m.attachments.length ? `<span class="inline-flex items-center gap-1">${icon('attachment','icon w-3.5 h-3.5')}${m.attachments.length}</span>` : ''}
+            ${st ? `<span class="ml-auto font-semibold text-[#2f6b45]">Opened by ${st.opened}%${st.ack !== null ? ` \u00b7 Acknowledged by ${st.ack} of ${st.parishes} parishes` : ''}</span>` : `<span class="ml-auto">${fmtNum(r.total)} recipients</span>`}
+          </div>
+        </div>`; }).join('')}</div>`;
   }
 
   // =========================================================================
-  // MODULE 2: Circulars
+  // CREATE / EDIT / DUPLICATE / DELETE
   // =========================================================================
-  let circulars = [
-    { id:"DCIRC-001", title:"Mass Timing Changes — Feast of Christ the King", category:"Liturgical", attachment:"feast-mass-timings.pdf", status:"Published" },
-    { id:"DCIRC-002", title:"Clergy Retreat Schedule 2026", category:"Clergy", attachment:"retreat-schedule.pdf", status:"Published" },
-    { id:"DCIRC-003", title:"Annual Financial Reporting Deadline", category:"Finance", attachment:"reporting-deadline.pdf", status:"Draft" },
-  ];
-  const CIRCULAR_CATEGORIES = ["Liturgical", "Clergy", "Finance", "Administrative", "Pastoral"];
-  function renderCircularsModule(el) {
-    el.innerHTML = `
-      <div class="flex justify-end mb-4">
-        <button onclick="openCircularModal()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add Circular</button>
-      </div>
-      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead><tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
-              <th class="px-4 py-3 font-medium">Title</th><th class="px-4 py-3 font-medium">Category</th><th class="px-4 py-3 font-medium">Attachment</th><th class="px-4 py-3 font-medium">Status</th><th class="px-4 py-3 font-medium"></th>
-            </tr></thead>
-            <tbody>
-              ${circulars.map(c => `
-                <tr class="border-b border-divider last:border-0">
-                  <td class="px-4 py-3 font-medium">${c.title}</td>
-                  <td class="px-4 py-3 text-ink-muted">${c.category}</td>
-                  <td class="px-4 py-3 text-ink-muted">${c.attachment || '\u2014'}</td>
-                  <td class="px-4 py-3">${statusPill(c.status)}</td>
-                  <td class="px-4 py-3 text-right">
-                    <button onclick="openCircularModal('${c.id}')" aria-label="Edit" class="w-8 h-8 rounded-button inline-flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                    <button onclick="deleteCircular('${c.id}')" aria-label="Delete" class="w-8 h-8 rounded-button inline-flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
+  function defaults(kind) {
+    const roles = kind === 'circular' ? { priests:true, staff:true } : kind === 'announcement' ? { priests:true, staff:true, parishioners:true } : { priests:true, staff:true };
+    return { id: ({ announcement:'DANN-', circular:'DCIRC-', broadcast:'BC-' })[kind] + Math.floor(100 + Math.random() * 899), kind, title:'', category: kind === 'circular' ? 'Administrative' : '', refNo: kind === 'circular' ? nextRefNo() : '', signer: kind === 'circular' ? SIGNER : '', pinned:false, requireAck: kind === 'circular',
+      body:'', attachments:[], audience: aud('all', {}, roles), channels:{ inApp:true, email: kind !== 'broadcast', sms:false, whatsapp:false }, status:'Draft', createdBy:'Diocese Office', createdDate:TODAY, sentDate:null, scheduledFor:null, when:'now', schedDate:'', schedTime:'09:00' };
   }
-  let editingCircularId = null;
-  function openCircularModal(editId) {
-    editingCircularId = editId || null;
-    const c = editId ? circulars.find(x => x.id === editId) : null;
-    document.getElementById('circular-modal-title').textContent = c ? 'Edit Circular' : 'Add Circular';
-    document.getElementById('circular-modal').classList.remove('hidden');
-    document.getElementById('circular-form').innerHTML = `
-      <div class="space-y-1.5"><label class="text-xs font-medium">Title</label><input id="cf-title" type="text" value="${c ? c.title : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Category</label>
-        <select id="cf-category" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-          ${CIRCULAR_CATEGORIES.map(cat => `<option ${c && c.category===cat ? 'selected' : ''}>${cat}</option>`).join('')}
-        </select>
-      </div>
-      <div class="space-y-1.5"><label class="text-xs font-medium">Attachment (simulated)</label><input id="cf-attachment" type="text" placeholder="e.g. notice.pdf" value="${c ? (c.attachment||'') : ''}" class="w-full border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
-    `;
+  function openComposer() { commView = 'compose'; composeErrors = null; parishFilter = ''; previewTabC = kindNow.key === 'broadcast' ? 'notif' : (kindNow.key === 'circular' ? 'doc' : 'doc'); loadingMsg = true; rerender(); window.scrollTo({ top: 0 }); setTimeout(() => { loadingMsg = false; rerender(); }, 350); }
+  function newMessage() { cm = defaults(kindNow.key); isNewMsg = true; dirtyMsg = false; openComposer(); }
+  function editMessage(id) {
+    const m = messages.find(x => x.id === id); cm = JSON.parse(JSON.stringify(m)); isNewMsg = false; dirtyMsg = false;
+    cm.when = m.status === 'Scheduled' ? 'later' : 'now'; cm.schedDate = m.scheduledFor ? m.scheduledFor.slice(0, 10) : ''; cm.schedTime = m.scheduledFor ? m.scheduledFor.slice(11, 16) : '09:00';
+    openComposer();
   }
-  function submitCircular(status) {
-    const title = document.getElementById('cf-title').value.trim();
-    if (!title) { toast('Please enter a title.'); return; }
-    const category = document.getElementById('cf-category').value;
-    const attachment = document.getElementById('cf-attachment').value.trim();
-    if (editingCircularId) {
-      Object.assign(circulars.find(x => x.id === editingCircularId), { title, category, attachment, status });
-    } else {
-      circulars.unshift({ id:'DCIRC-'+Math.floor(100+Math.random()*899), title, category, attachment, status });
-    }
-    toast(`${title} ${status === 'Published' ? 'published' : 'saved as draft'}.`);
-    editingCircularId = null;
-    closeModal('circular-modal');
-    renderModule();
+  function duplicateMessage(id) {
+    const m = messages.find(x => x.id === id); cm = JSON.parse(JSON.stringify(m));
+    Object.assign(cm, { id: defaults(m.kind).id, status:'Draft', sentDate:null, scheduledFor:null, createdDate:TODAY, when:'now', schedDate:'', schedTime:'09:00', title: m.title ? m.title + ' (copy)' : '' });
+    if (m.kind === 'circular') cm.refNo = nextRefNo();
+    isNewMsg = true; dirtyMsg = true; openComposer();
   }
-  function deleteCircular(id) {
-    const c = circulars.find(x => x.id === id);
-    circulars = circulars.filter(x => x.id !== id);
-    toast(`${c.title} deleted.`);
-    renderModule();
+  function deleteMessage(id) { const m = messages.find(x => x.id === id); messages = messages.filter(x => x.id !== id); deletingMsgId = null; toast(`${m.kind === 'broadcast' ? 'Broadcast' : '\u201c' + m.title + '\u201d'} deleted.`); rerender(); }
+  function viewMessage(id) { viewId = id; commView = 'view'; rerender(); window.scrollTo({ top: 0 }); }
+  function backToList() {
+    const go = () => { commView = 'list'; cm = null; viewId = null; rerender(); };
+    if (commView === 'compose' && dirtyMsg) { confirmDialog({ title:'Leave without saving?', body:'<p>Your changes have not been saved.</p>', label:'Discard changes', tone:'danger', onConfirm: go }); return; }
+    go();
   }
 
   // =========================================================================
-  // MODULE 3: Broadcast Notifications — compose + send to a scoped set of parishes
-  // via one or more channels, with a Sent Broadcasts log.
+  // COMPOSER
   // =========================================================================
-  let sentBroadcasts = [
-    { id:"BC-001", message:"Reminder: Chrism Mass this Thursday, 10 AM at the Cathedral.", scope:"All Parishes (130)", channels:["In-App","Email"], sentDate:"2026-07-28" },
-  ];
-  let broadcastScope = 'all';
-  let broadcastSizeTier = 'Large';
-  let broadcastSelectedParishes = [];
-  let broadcastChannels = { inApp: true, email: false, sms: false, whatsapp: false };
-  function renderBroadcastModule(el) {
-    el.innerHTML = `
-      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6 max-w-2xl">
-        <p class="text-sm font-semibold mb-4">Compose a broadcast</p>
-        <div class="space-y-4">
-          <div class="space-y-1.5"><label class="text-xs font-medium">Message</label><textarea id="bc-message" rows="3" placeholder="Message shown to parish staff / parishioners…" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none"></textarea></div>
+  function touch() { dirtyMsg = true; composeErrors = null; }
+  function setC(k, v) { cm[k] = v; touch(); refreshPreview(); if (k === 'title') { /* heading only */ } }
+  function setCStruct(k, v) { cm[k] = v; touch(); rerender(true); }
+  function onBody(el) { cm.body = cleanHTML(el.innerHTML); touch(); refreshPreview(); const c = document.getElementById('body-count'); if (c) c.textContent = plain(cm.body).split(' ').filter(Boolean).length + ' words'; }
+  function onMsg(el) { cm.body = el.value; touch(); refreshPreview(); const c = document.getElementById('msg-count'); if (c) { const n = el.value.length; c.textContent = `${n} / 160`; c.className = 'text-xs ' + (n > 160 ? 'text-error font-semibold' : 'text-ink-muted'); } }
+  function fmtCmd(cmd) { document.execCommand(cmd); const el = document.activeElement; if (el && el.classList.contains('rte')) onBody(el); }
+  function pasteText(e) { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text')); }
+  function useStarter(i) {
+    const st = STARTERS[cm.kind][i]; const apply = () => { cm.body = st[1]; touch(); openStarter = false; rerender(true); };
+    if (plain(cm.body)) confirmDialog({ title:'Replace what you have written?', body:'<p>The starter text will replace the current content.</p>', label:'Replace', tone:'danger', onConfirm: apply }); else apply();
+  }
+  function addAttachment(input) {
+    [...input.files].forEach(f => { if (!cm.attachments.includes(f.name)) cm.attachments.push(f.name); });
+    input.value = ''; touch(); rerender(true);
+  }
+  function removeAttachment(i) { cm.attachments.splice(i, 1); touch(); rerender(true); }
 
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium">Recipients</label>
-            <div class="flex gap-2 flex-wrap">
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="bc-scope" value="all" checked onchange="broadcastScope='all'; renderBroadcastRecipientDetail()"> All Parishes (130)</label>
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="bc-scope" value="sizeTier" onchange="broadcastScope='sizeTier'; renderBroadcastRecipientDetail()"> By Size Tier</label>
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="radio" name="bc-scope" value="specific" onchange="broadcastScope='specific'; renderBroadcastRecipientDetail()"> Specific Parishes</label>
+  // --- audience controls ---
+  function setScope(v) { cm.audience.scope = v; touch(); refreshAudience(); }
+  function toggleTier(t) { const a = cm.audience.tiers; const i = a.indexOf(t); i >= 0 ? a.splice(i, 1) : a.push(t); touch(); refreshAudience(); }
+  function toggleRole(k) { cm.audience.roles[k] = !cm.audience.roles[k]; touch(); refreshAudience(); }
+  function toggleParish(id) { const a = cm.audience.parishIds; const i = a.indexOf(id); i >= 0 ? a.splice(i, 1) : a.push(id); touch(); refreshParishList(); refreshReach(); refreshPreview(); }
+  function shownParishes() { const q = parishFilter.trim().toLowerCase(); return parishesLight.filter(p => !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.sizeTier.toLowerCase() === q); }
+  function selectShown() { shownParishes().forEach(p => { if (!cm.audience.parishIds.includes(p.id)) cm.audience.parishIds.push(p.id); }); touch(); refreshParishList(); refreshReach(); refreshPreview(); }
+  function clearParishes() { cm.audience.parishIds = []; touch(); refreshParishList(); refreshReach(); refreshPreview(); }
+  function setChannel(k, v) { cm.channels[k] = v; touch(); refreshPreview(); }
+  function refreshAudience() { const el = document.getElementById('aud-body'); if (el) el.innerHTML = audienceBody(); refreshReach(); refreshPreview(); }
+  function refreshParishList() { const el = document.getElementById('parish-list'); if (el) el.innerHTML = parishListHTML(); const c = document.getElementById('parish-count'); if (c) c.textContent = cm.audience.parishIds.length + ' selected'; }
+
+  function parishListHTML() {
+    const shown = shownParishes(), sel = cm.audience.parishIds;
+    if (shown.length === 0) return '<p class="p-4 text-sm text-ink-muted">No parishes match \u201c' + esc(parishFilter) + '\u201d.</p>';
+    return shown.map(p => `<label class="flex items-center gap-3 px-3 py-2.5 hover:bg-section-bg cursor-pointer min-h-[44px]"><input type="checkbox" ${sel.includes(p.id) ? 'checked' : ''} onchange="toggleParish('${p.id}')" class="w-4 h-4 accent-[#4F7CF5] flex-shrink-0"><span class="text-sm min-w-0 flex-1 truncate">${esc(p.name)}</span><span class="text-xs text-ink-muted flex-shrink-0">${p.sizeTier} \u00b7 ${p.id}</span></label>`).join('');
+  }
+  function audienceBody() {
+    const a = cm.audience;
+    const radio = (v, t, d) => `<label class="flex items-start gap-3 p-3.5 rounded-card border-2 cursor-pointer transition-warm ${a.scope === v ? 'border-primary bg-primary-light/50' : 'border-transparent bg-section-bg hover:border-divider'}"><input type="radio" name="scope" ${a.scope === v ? 'checked' : ''} onchange="setScope('${v}')" class="mt-1 accent-[#4F7CF5]"><span><span class="block text-sm font-semibold">${t}</span><span class="block text-xs text-ink-muted">${d}</span></span></label>`;
+    return `
+      <div class="grid sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Which parishes">
+        ${radio('all', 'All parishes', `Every one of the ${parishesLight.length} parishes`)}
+        ${radio('tier', 'By parish size', 'Large, medium or small parishes')}
+        ${radio('specific', 'Specific parishes', 'Choose them from the list')}
+      </div>
+      ${a.scope === 'tier' ? `<div class="flex flex-wrap gap-2 mt-3">${TIERS.map(t => `<label class="inline-flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${a.tiers.includes(t) ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="checkbox" ${a.tiers.includes(t) ? 'checked' : ''} onchange="toggleTier('${t}')" class="accent-[#4F7CF5]">${t} <span class="text-xs text-ink-muted font-normal">${TIER_N[t]} parishes</span></label>`).join('')}</div>` : ''}
+      ${a.scope === 'specific' ? `
+        <div class="mt-3 border border-divider rounded-card overflow-hidden">
+          <div class="p-3 bg-bg-warm border-b border-divider flex flex-wrap items-center gap-2">
+            <div class="relative flex-1 min-w-[180px]"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span><input id="parish-search" type="text" value="${esc(parishFilter)}" placeholder="Search parish name or ID\u2026" aria-label="Search parishes" oninput="parishFilter=this.value; refreshParishList()" class="w-full border border-divider rounded-input pl-9 pr-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+            <button onclick="selectShown()" class="text-primary text-xs font-semibold px-3 h-10 rounded-button hover:bg-primary-light transition-warm">Select all shown</button>
+            <button onclick="clearParishes()" class="text-ink-muted text-xs font-semibold px-3 h-10 rounded-button hover:bg-section-bg transition-warm">Clear</button>
+            <span id="parish-count" class="text-xs font-semibold text-ink ml-auto">${a.parishIds.length} selected</span>
+          </div>
+          <div id="parish-list" class="max-h-64 overflow-y-auto divide-y divide-divider">${parishListHTML()}</div>
+        </div>` : ''}
+      <p class="text-xs font-medium mt-5 mb-2">Who in those parishes?</p>
+      <div class="grid sm:grid-cols-2 gap-2.5" role="group" aria-label="Who in those parishes">
+        ${ROLES.map(r => `<label class="flex items-start gap-3 p-3 rounded-card cursor-pointer transition-warm min-h-[56px] ${a.roles[r.k] ? 'bg-primary-light/50' : 'bg-section-bg hover:bg-primary-light/30'}"><input type="checkbox" ${a.roles[r.k] ? 'checked' : ''} onchange="toggleRole('${r.k}')" class="mt-0.5 w-4 h-4 accent-[#4F7CF5]"><span><span class="block text-sm font-semibold">${r.label}</span><span class="block text-xs text-ink-muted">${r.hint}</span></span></label>`).join('')}
+      </div>
+      <div id="reach" class="mt-4"></div>`;
+  }
+  function refreshReach() {
+    const el = document.getElementById('reach'); if (!el || !cm) return;
+    const r = reachOf(cm.audience);
+    if (r.parishes === 0 || r.total === 0) { el.innerHTML = `<div class="bg-gold/15 rounded-card px-4 py-3 text-sm">${r.parishes === 0 ? 'Choose at least one parish.' : 'Choose who should receive it.'}</div>`; return; }
+    el.innerHTML = `<div class="bg-section-bg rounded-card px-4 py-3"><p class="text-sm"><b class="font-heading text-lg">${fmtNum(r.total)}</b> <span class="text-ink-muted">people in</span> <b>${r.parishes}</b> <span class="text-ink-muted">${r.parishes === 1 ? 'parish' : 'parishes'}</span></p>
+      <p class="text-xs text-ink-muted mt-1">${ROLES.filter(x => cm.audience.roles[x.k]).map(x => fmtNum(r.byRole[x.k]) + ' ' + x.label.toLowerCase()).join(' \u00b7 ')} <span class="whitespace-nowrap">(estimated)</span></p></div>`;
+  }
+
+  // --- previews ---
+  const LETTER_W = 794;
+  function plainAddressee() { return addressee(cm.audience); }
+  function letterHTML(m, forPrint) {
+    const body = m.body && plain(m.body) ? m.body : '<span style="color:#9CA3AF">Your circular text appears here\u2026</span>';
+    const tos = addressee(m.audience);
+    const sel = m.audience.scope === 'specific' && m.audience.parishIds.length ? parishesLight.filter(p => m.audience.parishIds.includes(p.id)).map(p => p.name) : [];
+    const copy = sel.length ? `<p style="margin:0 0 4px;font-size:12px;color:#555;">Parishes: ${esc(sel.slice(0, 4).join(', '))}${sel.length > 4 ? ' and ' + (sel.length - 4) + ' more' : ''}</p>` : '';
+    return `<div class="doc" style="width:${LETTER_W}px;min-height:1123px;background:#fff;color:#222;font-family:'Libre Baskerville',Georgia,serif;padding:56px 72px 48px;box-sizing:border-box;position:relative;">
+      <div style="position:absolute;inset:20px;border:1px solid #D8D2C0;pointer-events:none;"></div>
+      <div style="text-align:center;">
+        <img src="assets/archdiocese-emblem.png" alt="" style="width:92px;height:92px;object-fit:contain;display:block;margin:0 auto 6px;">
+        <p style="margin:0;font-size:20px;letter-spacing:.2em;font-weight:700;">ARCHDIOCESE OF BANGALORE</p>
+        <p style="margin:4px 0 0;font-size:12px;letter-spacing:.12em;color:#555;">ARCHBISHOP\u2019S HOUSE \u00b7 BENGALURU</p>
+        <div style="height:2px;background:#C9A15A;margin:16px auto 0;width:120px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:34px;font-size:13px;"><span><b>Circular No.</b> ${esc(m.refNo || '\u2014')}</span><span><b>Date:</b> ${dotDate(m.sentDate || (m.scheduledFor || '').slice(0, 10) || TODAY)}</span></div>
+      <p style="margin:22px 0 4px;font-size:13px;"><b>To:</b> ${esc(tos)}</p>${copy}
+      <p style="margin:18px 0 18px;font-size:15px;"><b>Subject:</b> <b style="text-decoration:underline;text-underline-offset:3px;">${esc(m.title || 'Subject of the circular')}</b></p>
+      <div style="font-size:14px;line-height:1.85;">${body}</div>
+      <p style="margin:28px 0 0;font-size:14px;">Yours in Christ,</p>
+      <div style="margin-top:46px;font-size:14px;"><div style="width:230px;border-top:1px solid #333;padding-top:6px;"><b>${esc(m.signer || SIGNER)}</b></div></div>
+      ${m.attachments.length ? `<p style="margin:26px 0 0;font-size:12px;color:#555;"><b>Enclosed:</b> ${esc(m.attachments.join(', '))}</p>` : ''}
+      ${m.requireAck ? `<p style="margin:16px 0 0;font-size:12px;color:#555;font-style:italic;">Parish priests are requested to acknowledge receipt of this circular through Parish Connect.</p>` : ''}
+    </div>`;
+  }
+  function announcementCardHTML(m) {
+    const body = m.body && plain(m.body) ? m.body : '<span style="color:#9CA3AF">Your announcement text appears here\u2026</span>';
+    return `<div class="doc" style="width:420px;background:#fff;border-radius:24px;box-shadow:0 6px 24px rgba(30,41,59,.08);padding:22px;font-family:'Inter',sans-serif;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><img src="assets/archdiocese-emblem.png" alt="" style="width:34px;height:34px;object-fit:contain;"><div><p style="margin:0;font-size:12px;font-weight:600;">Archdiocese of Bangalore</p><p style="margin:0;font-size:11px;color:#6B7280;">${dotDate(m.sentDate || (m.scheduledFor || '').slice(0, 10) || TODAY)}${m.pinned ? ' \u00b7 <span style="color:#8a5a10;font-weight:600;">Pinned</span>' : ''}</p></div></div>
+      <p style="margin:0 0 8px;font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;line-height:1.3;">${esc(m.title || 'Announcement title')}</p>
+      <div style="font-size:14px;line-height:1.65;color:#374151;">${body}</div>
+      ${m.attachments.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">${m.attachments.map(f => `<span style="background:#F5F7FB;font-size:12px;font-weight:500;padding:6px 10px;border-radius:999px;">\ud83d\udcce ${esc(f)}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }
+  function notifHTML(m) {
+    const title = m.kind === 'broadcast' ? 'Archdiocese of Bangalore' : (m.title || 'Title');
+    const text = m.kind === 'broadcast' ? (m.body || 'Your message appears here\u2026') : plain(m.body).slice(0, 110) || 'Message preview\u2026';
+    return `<div style="width:340px;background:linear-gradient(180deg,#E8EDF5,#DCE3F0);border-radius:28px;padding:28px 16px 30px;font-family:'Inter',sans-serif;">
+      <p style="margin:0 0 14px;text-align:center;font-size:12px;color:#6B7280;">${longDate(TODAY)}</p>
+      <div style="background:rgba(255,255,255,.92);border-radius:18px;padding:12px 14px;display:flex;gap:10px;box-shadow:0 2px 10px rgba(30,41,59,.08);">
+        <img src="assets/archdiocese-emblem.png" alt="" style="width:36px;height:36px;border-radius:9px;background:#fff;object-fit:contain;flex-shrink:0;">
+        <div style="min-width:0;"><div style="display:flex;justify-content:space-between;gap:8px;"><p style="margin:0;font-size:12px;font-weight:600;color:#6B7280;">PARISH CONNECT</p><p style="margin:0;font-size:11px;color:#9CA3AF;">now</p></div>
+        <p style="margin:2px 0 0;font-size:13px;font-weight:600;line-height:1.3;">${esc(title)}</p><p style="margin:2px 0 0;font-size:13px;line-height:1.4;color:#374151;">${esc(text)}</p></div>
+      </div></div>`;
+  }
+  function smsHTML(m) {
+    return `<div style="width:340px;background:#F5F7FB;border-radius:28px;padding:24px 18px 30px;font-family:'Inter',sans-serif;">
+      <p style="margin:0 0 4px;text-align:center;font-size:12px;font-weight:600;">DIOCESE-BLR</p><p style="margin:0 0 16px;text-align:center;font-size:11px;color:#9CA3AF;">Text message \u00b7 ${dotDate(TODAY)}</p>
+      <div style="background:#fff;border-radius:18px 18px 18px 4px;padding:12px 14px;font-size:14px;line-height:1.45;box-shadow:0 2px 8px rgba(30,41,59,.06);">${esc(m.body || 'Your message appears here\u2026')}</div>
+      <p style="margin:8px 0 0;font-size:11px;color:#9CA3AF;">${(m.body || '').length} characters${(m.body || '').length > 160 ? ' \u00b7 will be sent as ' + Math.ceil((m.body || '').length / 153) + ' messages' : ''}</p></div>`;
+  }
+  function previewFor(m, tab) {
+    if (tab === 'notif') return notifHTML(m);
+    if (tab === 'sms') return smsHTML(m);
+    return m.kind === 'circular' ? letterHTML(m) : announcementCardHTML(m);
+  }
+  function previewTabs() {
+    const k = cm.kind;
+    return k === 'circular' ? [['doc','Circular letter'],['notif','Notification']] : k === 'announcement' ? [['doc','Announcement'],['notif','Notification']] : [['notif','Phone notification'],['sms','SMS']];
+  }
+  function setPreviewTabC(t) { previewTabC = t; rerender(true); }
+  function previewBody(tab) {
+    const isLetter = cm.kind === 'circular' && tab === 'doc';
+    return isLetter ? `<div id="prev-wrap" class="mx-auto shadow-card bg-white overflow-hidden" style="border:1px solid #E8EDF5;"><div id="prev-inner" style="transform-origin:top left;width:${LETTER_W}px;">${previewFor(cm, tab)}</div></div>` : `<div class="flex justify-center overflow-x-auto pb-1">${previewFor(cm, tab)}</div>`;
+  }
+  function refreshPreview() { const el = document.getElementById('prev-body'); if (el) { el.innerHTML = previewBody(previewTabC); fitDoc('prev-wrap', 'prev-inner'); } }
+  function fitDoc(wrapId, innerId) {
+    const wrap = document.getElementById(wrapId), inner = document.getElementById(innerId); if (!wrap || !inner) return;
+    const avail = wrap.parentElement.clientWidth; if (!avail) return;
+    const sc = Math.min(1, avail / LETTER_W);
+    inner.style.transform = `scale(${sc})`; wrap.style.width = Math.round(LETTER_W * sc) + 'px'; wrap.style.height = Math.round(inner.offsetHeight * sc) + 'px';
+  }
+
+  function toggleRow(label, hint, checked, fn) {
+    return `<label class="flex items-center justify-between gap-3 py-2.5 cursor-pointer"><span><span class="text-sm font-medium block">${label}</span><span class="text-xs text-ink-muted">${hint}</span></span><input type="checkbox" ${checked ? 'checked' : ''} onchange="${fn}" class="w-5 h-5 accent-[#4F7CF5] flex-shrink-0"></label>`;
+  }
+
+  function renderCompose() {
+    const k = KINDS[cm.kind];
+    if (loadingMsg) return `<div class="space-y-3"><div class="skeleton rounded-button h-8 w-1/3"></div><div class="grid lg:grid-cols-[minmax(0,1fr)_440px] gap-6"><div class="space-y-3"><div class="skeleton rounded-card h-32"></div><div class="skeleton rounded-card h-72"></div><div class="skeleton rounded-card h-56"></div></div><div class="skeleton rounded-card h-[520px]"></div></div></div>`;
+    const tab = (id, label) => `<button onclick="setPreviewTabC('${id}')" aria-pressed="${previewTabC === id}" class="px-3.5 h-9 rounded-badge text-xs font-semibold transition-warm ${previewTabC === id ? 'bg-white text-primary shadow-card' : 'text-ink-muted hover:text-ink'}">${label}</button>`;
+    const sendLabel = cm.when === 'later' ? 'Schedule' : (cm.kind === 'broadcast' ? 'Send broadcast' : 'Send now');
+    const rte = k.key !== 'broadcast';
+    return `
+      <button onclick="backToList()" class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-primary mb-3 min-h-[40px] transition-warm">${icon('back','icon w-4 h-4')}All ${k.plural}</button>
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div><p class="font-heading font-bold text-2xl">${isNewMsg ? k.add : 'Edit ' + k.noun.toLowerCase()}</p><p class="text-sm text-ink-muted mt-0.5">Write it, choose who receives it, and check the preview before it goes out.</p></div>
+        <div class="flex items-center gap-2">${statusPill(cm)}${dirtyMsg ? '<span class="text-xs text-ink-muted">Unsaved changes</span>' : ''}</div>
+      </div>
+      ${composeErrors ? `<div class="bg-error-bg rounded-card p-4 mb-5" role="alert"><p class="text-sm font-semibold text-error">${composeErrors.title}</p><ul class="text-sm text-error mt-1 list-disc list-inside">${composeErrors.items.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
+      <div class="grid lg:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
+        <div class="space-y-5 min-w-0">
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
+            <h2 class="font-heading font-semibold text-lg">1. ${rte ? 'Write it' : 'Your message'}</h2>
+            ${k.key === 'broadcast' ? `
+              <div class="space-y-1.5"><div class="flex items-center justify-between"><label class="text-xs font-medium" for="f-msg">Message</label><span id="msg-count" class="text-xs text-ink-muted">${cm.body.length} / 160</span></div>
+              <textarea id="f-msg" rows="4" oninput="onMsg(this)" placeholder="Short and clear, e.g. Reminder: Chrism Mass this Thursday, 10 AM at the Cathedral." class="w-full border border-divider rounded-input px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none leading-relaxed">${esc(cm.body)}</textarea>
+              <p class="text-xs text-ink-muted">Longer than 160 characters will be split into several text messages.</p></div>`
+            : `
+              <div class="space-y-1.5"><label class="text-xs font-medium" for="f-title">${k.key === 'circular' ? 'Subject' : 'Title'}</label><input id="f-title" type="text" value="${esc(cm.title)}" oninput="setC('title', this.value)" placeholder="${k.key === 'circular' ? 'e.g. Mass timing changes for the Feast of Christ the King' : 'e.g. Chrism Mass \u2014 Save the Date'}" class="w-full border border-divider rounded-input px-3.5 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+              ${k.key === 'circular' ? `<div class="grid sm:grid-cols-3 gap-3">
+                <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-ref">Circular number</label><input id="f-ref" type="text" value="${esc(cm.refNo)}" oninput="setC('refNo', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+                <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-cat">Category</label><select id="f-cat" onchange="setC('category', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">${CIRCULAR_CATEGORIES.map(c => `<option ${cm.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+                <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-sign">Signed by</label><input id="f-sign" type="text" value="${esc(cm.signer)}" oninput="setC('signer', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+              </div>` : ''}
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between gap-2"><label class="text-xs font-medium" id="body-label">Content</label>
+                  <span class="flex items-center gap-3"><span id="body-count" class="text-xs text-ink-muted">${plain(cm.body).split(' ').filter(Boolean).length} words</span>
+                  <span class="relative"><button type="button" onclick="openStarter=!openStarter; rerender(true)" aria-expanded="${openStarter}" class="text-primary text-xs font-semibold hover:underline">Start from a template</button>
+                  ${openStarter ? `<div class="absolute right-0 top-7 z-20 bg-card-bg rounded-card shadow-card w-60 py-1.5 border border-divider">${STARTERS[cm.kind].map((s, i) => `<button onclick="useStarter(${i})" class="w-full text-left px-4 py-2.5 text-sm hover:bg-section-bg min-h-[44px]">${s[0]}</button>`).join('')}</div>` : ''}</span></span></div>
+                <div class="rte-wrap border border-divider rounded-input bg-white overflow-hidden">
+                  <div class="flex items-center gap-1 px-2 py-1.5 border-b border-divider bg-bg-warm" role="toolbar" aria-label="Text formatting">
+                    <button type="button" onmousedown="event.preventDefault(); fmtCmd('bold')" aria-label="Bold" class="w-9 h-9 rounded-button text-sm font-bold text-ink-muted hover:bg-section-bg">B</button>
+                    <button type="button" onmousedown="event.preventDefault(); fmtCmd('italic')" aria-label="Italic" class="w-9 h-9 rounded-button text-sm italic font-semibold text-ink-muted hover:bg-section-bg">I</button>
+                    <button type="button" onmousedown="event.preventDefault(); fmtCmd('insertUnorderedList')" aria-label="Bulleted list" class="px-2.5 h-9 rounded-button text-xs font-semibold text-ink-muted hover:bg-section-bg">\u2022 List</button>
+                    <button type="button" onmousedown="event.preventDefault(); fmtCmd('insertOrderedList')" aria-label="Numbered list" class="px-2.5 h-9 rounded-button text-xs font-semibold text-ink-muted hover:bg-section-bg">1. List</button>
+                    <button type="button" onmousedown="event.preventDefault(); fmtCmd('removeFormat')" aria-label="Clear formatting" class="px-2.5 h-9 rounded-button text-xs font-semibold text-ink-muted hover:bg-section-bg">Clear</button>
+                  </div>
+                  <div class="rte px-4 py-3 text-sm leading-relaxed" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="body-label" data-placeholder="Type or paste the full text here\u2026" oninput="onBody(this)" onpaste="pasteText(event)">${cm.body}</div>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <p class="text-xs font-medium">Attachments</p>
+                <div class="flex flex-wrap items-center gap-2">
+                  ${cm.attachments.map((f, i) => `<span class="bg-section-bg text-ink text-xs font-medium pl-3 pr-1.5 py-1.5 rounded-badge inline-flex items-center gap-1.5">${icon('attachment','icon w-3.5 h-3.5')}${esc(f)}<button onclick="removeAttachment(${i})" aria-label="Remove ${esc(f)}" class="w-6 h-6 rounded-full hover:bg-white flex items-center justify-center">${icon('close','icon w-3.5 h-3.5')}</button></span>`).join('')}
+                  <label class="inline-flex items-center gap-1.5 text-primary text-xs font-semibold px-3 h-9 rounded-badge border border-dashed border-primary cursor-pointer hover:bg-primary-light transition-warm focus-within:ring-2 focus-within:ring-primary">${icon('plus','icon w-3.5 h-3.5')}Add file<input type="file" multiple class="sr-only" onchange="addAttachment(this)"></label>
+                </div>
+              </div>`}
+          </section>
+
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6">
+            <h2 class="font-heading font-semibold text-lg mb-4">2. Who should receive it?</h2>
+            <div id="aud-body">${audienceBody()}</div>
+          </section>
+
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
+            <h2 class="font-heading font-semibold text-lg">3. How and when</h2>
+            <div><p class="text-xs font-medium mb-2">Send through</p>
+              <div class="flex flex-wrap gap-2" role="group" aria-label="Channels">${CHANNELS.map(([c, l]) => `<label class="flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${cm.channels[c] ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="checkbox" ${cm.channels[c] ? 'checked' : ''} onchange="setChannel('${c}', this.checked); rerender(true)" class="accent-[#4F7CF5]">${l}</label>`).join('')}</div>
+              <p class="text-xs text-ink-muted mt-2">In-app messages appear inside Parish Connect. Email, SMS and WhatsApp go to the phone numbers and addresses parishes have on file.</p></div>
+            <div class="divide-y divide-divider">
+              ${cm.kind === 'circular' ? toggleRow('Ask parish priests to acknowledge receipt', 'You will see which parishes have confirmed.', cm.requireAck, "cm.requireAck=this.checked; touch(); refreshPreview()") : ''}
+              ${cm.kind === 'announcement' ? toggleRow('Pin to the top of parish announcements', 'Stays at the top until you unpin it.', cm.pinned, "cm.pinned=this.checked; touch(); refreshPreview()") : ''}
             </div>
-            <div id="bc-recipient-detail" class="pt-2"></div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium">Channels</label>
-            <div class="flex gap-2 flex-wrap">
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="checkbox" checked onchange="broadcastChannels.inApp=this.checked"> In-App</label>
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="checkbox" onchange="broadcastChannels.email=this.checked"> Email</label>
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="checkbox" onchange="broadcastChannels.sms=this.checked"> SMS</label>
-              <label class="flex items-center gap-1.5 text-sm bg-section-bg px-3 py-2 rounded-badge cursor-pointer"><input type="checkbox" onchange="broadcastChannels.whatsapp=this.checked"> WhatsApp</label>
+            <div><p class="text-xs font-medium mb-2">When</p>
+              <div class="flex flex-wrap gap-2 mb-3" role="radiogroup" aria-label="When to send">
+                <label class="flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${cm.when === 'now' ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="radio" name="when" ${cm.when === 'now' ? 'checked' : ''} onchange="setCStruct('when','now')" class="accent-[#4F7CF5]">Send now</label>
+                <label class="flex items-center gap-2 text-sm px-4 py-2.5 rounded-badge cursor-pointer min-h-[44px] ${cm.when === 'later' ? 'bg-primary-light text-primary font-semibold' : 'bg-section-bg'}"><input type="radio" name="when" ${cm.when === 'later' ? 'checked' : ''} onchange="setCStruct('when','later')" class="accent-[#4F7CF5]">Schedule for later</label>
+              </div>
+              ${cm.when === 'later' ? `<div class="grid grid-cols-2 gap-3 max-w-md"><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-sd">Date</label><input id="f-sd" type="date" min="${TODAY}" value="${cm.schedDate}" onchange="cm.schedDate=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div><div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-st">Time</label><input id="f-st" type="time" value="${cm.schedTime}" onchange="cm.schedTime=this.value; touch()" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div></div>` : ''}
             </div>
-          </div>
+          </section>
 
-          <button onclick="sendBroadcast()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] transition-warm flex items-center justify-center gap-1.5">${icon('send','icon w-4 h-4')}Send Broadcast</button>
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6">
+            <div class="flex flex-wrap items-center gap-3">
+              <button onclick="startSend()" id="send-btn" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-6 py-3 rounded-button min-h-[48px] transition-warm inline-flex items-center gap-2">${icon('send','icon w-4 h-4')}${sendLabel}</button>
+              <button onclick="saveMessageDraft()" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] transition-warm">Save as draft</button>
+              <button onclick="backToList()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[48px] hover:bg-section-bg transition-warm">Close</button>
+            </div>
+          </section>
+        </div>
+
+        <aside class="lg:sticky lg:top-24 min-w-0">
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <p class="font-heading font-semibold text-lg mb-3">Preview</p>
+            <div class="inline-flex bg-section-bg rounded-badge p-1 mb-4" role="group" aria-label="Preview">${previewTabs().map(([id, l]) => tab(id, l)).join('')}</div>
+            <div id="prev-body">${previewBody(previewTabC)}</div>
+            <p class="text-xs text-ink-muted mt-4">${previewTabC === 'doc' ? (cm.kind === 'circular' ? 'The circular on diocesan letterhead, as parish priests will read and print it.' : 'How the announcement appears in each parish\u2019s list.') : previewTabC === 'sms' ? 'The text message version.' : 'The push notification on a phone.'}</p>
+          </div>
+        </aside>
+      </div>`;
+  }
+
+  // --- validate, save, send ---
+  function validateMsg() {
+    const items = [];
+    if (cm.kind !== 'broadcast' && !cm.title.trim()) items.push(cm.kind === 'circular' ? 'Add the subject.' : 'Add a title.');
+    if (cm.kind === 'circular' && !cm.refNo.trim()) items.push('Add the circular number.');
+    if (cm.kind === 'broadcast' ? !cm.body.trim() : !plain(cm.body)) items.push(cm.kind === 'broadcast' ? 'Write the message.' : 'Write the content.');
+    if (cm.kind === 'broadcast' && cm.body.length > 480) items.push('The message is too long even for several texts. Please shorten it.');
+    const r = reachOf(cm.audience);
+    if (r.parishes === 0) items.push(cm.audience.scope === 'tier' ? 'Choose at least one parish size.' : 'Choose at least one parish.');
+    else if (r.total === 0) items.push('Choose who in those parishes should receive it.');
+    if (!Object.values(cm.channels).some(Boolean)) items.push('Choose at least one way to send it.');
+    if (cm.when === 'later') {
+      if (!cm.schedDate) items.push('Pick the date to send it.');
+      else if (cm.schedDate < TODAY || (cm.schedDate === TODAY && cm.schedTime <= '09:00' && false)) items.push('The date to send it can\u2019t be in the past.');
+    }
+    return items;
+  }
+  function failCompose(title, items) { composeErrors = { title, items }; rerender(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function commitMsg(status) {
+    const out = JSON.parse(JSON.stringify(cm));
+    out.status = status;
+    if (status === 'Sent') { out.sentDate = TODAY; out.scheduledFor = null; }
+    else if (status === 'Scheduled') { out.scheduledFor = cm.schedDate + 'T' + (cm.schedTime || '09:00'); out.sentDate = null; }
+    else { out.scheduledFor = null; out.sentDate = null; }
+    if (cm.kind === 'broadcast') out.title = '';
+    ['when', 'schedDate', 'schedTime'].forEach(k => delete out[k]);
+    const i = messages.findIndex(m => m.id === out.id);
+    if (i >= 0) messages[i] = out; else messages.unshift(out);
+    dirtyMsg = false; commView = 'list'; cm = null; return out;
+  }
+  function saveMessageDraft() {
+    if (!cm.title.trim() && !plain(cm.body)) { failCompose('There is nothing to save yet', ['Add a title or some content first.']); return; }
+    if (cm.kind !== 'broadcast' && !cm.title.trim()) cm.title = 'Untitled';
+    const out = commitMsg('Draft'); toast('Draft saved.'); rerender();
+  }
+  function startSend() {
+    const items = validateMsg();
+    if (items.length) { failCompose('A few things are needed before this can go out', items); return; }
+    const r = reachOf(cm.audience), later = cm.when === 'later', k = KINDS[cm.kind];
+    const names = parishesOf(cm.audience).slice(0, 3).map(p => esc(p.name));
+    confirmDialog({
+      title: later ? `Schedule this ${k.noun.toLowerCase()}?` : `Send this ${k.noun.toLowerCase()} now?`,
+      body: `<p><b class="text-ink">${esc(cm.kind === 'broadcast' ? plain(cm.body).slice(0, 70) : cm.title)}</b></p>
+        <div class="bg-section-bg rounded-card px-4 py-3 space-y-1"><p><b class="text-ink">${scopeText(cm.audience)}</b>${cm.audience.scope === 'specific' ? ': ' + names.join(', ') + (cm.audience.parishIds.length > 3 ? ' and ' + (cm.audience.parishIds.length - 3) + ' more' : '') : ''}</p><p>${rolesText(cm.audience)}</p><p><b class="text-ink">${fmtNum(r.total)}</b> people (estimated) \u00b7 ${channelNames(cm).join(', ')}</p></div>
+        <p>${later ? 'It will go out on <b class="text-ink">' + longDate(cm.schedDate) + ' at ' + timeOf(cm.schedDate + 'T' + cm.schedTime) + '</b>. You can still edit or cancel it before then.' : 'Once sent, it <b class="text-ink">can\u2019t be recalled or edited</b>.'}</p>`,
+      label: later ? 'Schedule' : 'Send now', onConfirm: doSend });
+  }
+  function doSend() {
+    const btn = document.getElementById('send-btn'); if (btn) { btn.disabled = true; btn.textContent = cm.when === 'later' ? 'Scheduling\u2026' : 'Sending\u2026'; }
+    setTimeout(() => {
+      const later = cm.when === 'later', k = KINDS[cm.kind], r = reachOf(cm.audience), when = later ? longDate(cm.schedDate) : '';
+      const out = commitMsg(later ? 'Scheduled' : 'Sent');
+      toast(later ? `${k.noun} scheduled for ${formatDate(out.scheduledFor.slice(0, 10))}.` : `${k.noun} sent to ${fmtNum(r.total)} people in ${r.parishes} ${r.parishes === 1 ? 'parish' : 'parishes'}.`);
+      listStatus = 'All'; rerender();
+    }, 800);
+  }
+
+  // =========================================================================
+  // VIEW (read-only, with audience + delivery)
+  // =========================================================================
+  function renderViewPage() {
+    const m = messages.find(x => x.id === viewId); if (!m) { commView = 'list'; return renderCommList(); }
+    const k = KINDS[m.kind], r = reachOf(m.audience), st = m.status === 'Sent' ? statsOf(m) : null;
+    const ps = parishesOf(m.audience);
+    const doc = m.kind === 'circular' ? `<div id="view-wrap" class="mx-auto shadow-card bg-white overflow-hidden" style="border:1px solid #E8EDF5;"><div id="view-inner" style="transform-origin:top left;width:${LETTER_W}px;">${letterHTML(m)}</div></div>`
+      : m.kind === 'announcement' ? `<div class="flex justify-center overflow-x-auto">${announcementCardHTML(m)}</div>`
+      : `<div class="flex flex-wrap gap-6 justify-center">${notifHTML(m)}${m.channels.sms ? smsHTML(m) : ''}</div>`;
+    const bar = (label, pct, tone) => `<div><div class="flex items-center justify-between text-xs mb-1"><span class="text-ink-muted">${label}</span><span class="font-semibold">${pct}%</span></div><div class="h-2 bg-section-bg rounded-badge overflow-hidden"><div class="h-full ${tone} rounded-badge" style="width:${pct}%"></div></div></div>`;
+    return `
+      <button onclick="backToList()" class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-primary mb-3 min-h-[40px] transition-warm">${icon('back','icon w-4 h-4')}All ${k.plural}</button>
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div class="min-w-0"><div class="flex flex-wrap items-center gap-2 mb-1">${statusPill(m)}${m.pinned ? '<span class="bg-gold/20 text-[#8a5a10] text-xs font-semibold px-2.5 py-1 rounded-badge">Pinned</span>' : ''}<span class="text-xs text-ink-muted">${whenText(m)}</span></div>
+          <p class="font-heading font-bold text-2xl">${esc(m.kind === 'broadcast' ? 'Broadcast' : m.title)}</p>${m.kind === 'circular' ? `<p class="text-sm text-ink-muted mt-0.5">${esc(m.refNo)} \u00b7 ${esc(m.category)}</p>` : ''}</div>
+        <div class="flex flex-wrap items-center gap-2">
+          ${m.kind === 'circular' ? `<button onclick="printCircular('${m.id}')" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm">Print</button>` : ''}
+          <button onclick="duplicateMessage('${m.id}')" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm">Duplicate</button>
+          ${m.status !== 'Sent' ? `<button onclick="editMessage('${m.id}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-button min-h-[44px] transition-warm">Edit</button>` : ''}
         </div>
       </div>
-      <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">Sent broadcasts</p>
-      <div id="broadcast-list"></div>
-    `;
-    renderBroadcastRecipientDetail();
-    renderBroadcastList();
+      <div class="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+        <div class="bg-section-bg rounded-card p-4 sm:p-6 min-w-0"><div>${doc}</div></div>
+        <aside class="space-y-5 min-w-0">
+          <section class="bg-card-bg rounded-card shadow-card p-5">
+            <h2 class="font-heading font-semibold text-base mb-3">Sent to</h2>
+            <p class="text-sm font-semibold">${scopeText(m.audience)}</p>
+            <div class="flex flex-wrap gap-1.5 mt-2">${ROLES.filter(x => m.audience.roles[x.k]).map(x => `<span class="bg-primary-light text-primary text-xs font-semibold px-2.5 py-1 rounded-badge">${x.label}</span>`).join('')}</div>
+            <p class="text-sm mt-3"><b class="font-heading text-lg">${fmtNum(r.total)}</b> <span class="text-ink-muted">people in ${r.parishes} ${r.parishes === 1 ? 'parish' : 'parishes'} (estimated)</span></p>
+            ${m.audience.scope !== 'all' ? `<details class="mt-3"><summary class="text-xs font-semibold text-primary cursor-pointer min-h-[32px] flex items-center">See the ${ps.length} ${ps.length === 1 ? 'parish' : 'parishes'}</summary><ul class="mt-2 max-h-48 overflow-y-auto divide-y divide-divider text-sm">${ps.map(p => `<li class="py-2 flex justify-between gap-3"><span class="truncate">${esc(p.name)}</span><span class="text-xs text-ink-muted flex-shrink-0">${p.sizeTier}</span></li>`).join('')}</ul></details>` : ''}
+            <p class="text-xs text-ink-muted mt-3">Through ${channelNames(m).join(', ') || '\u2014'}</p>
+          </section>
+          ${st ? `<section class="bg-card-bg rounded-card shadow-card p-5 space-y-3">
+            <h2 class="font-heading font-semibold text-base">Delivery</h2>
+            ${bar('Delivered', 100, 'bg-primary')}${bar('Opened', st.opened, 'bg-green')}
+            ${st.ack !== null ? `${bar(`Acknowledged (${st.ack} of ${st.parishes} parishes)`, Math.round(st.ack / st.parishes * 100), 'bg-lavender')}${st.ack < st.parishes ? `<button onclick="toast('Reminder sent to ${st.parishes - st.ack} parishes.')" class="w-full bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm">Remind ${st.parishes - st.ack} parishes</button>` : ''}` : ''}
+            <p class="text-xs text-ink-muted">Figures are sample data for this demo.</p></section>
+          <p class="text-xs text-ink-muted px-1">Sent messages can\u2019t be edited. Duplicate it to send an updated version.</p>` : `<section class="bg-card-bg rounded-card shadow-card p-5"><h2 class="font-heading font-semibold text-base mb-1">${m.status === 'Scheduled' ? 'Waiting to send' : 'Not sent yet'}</h2><p class="text-sm text-ink-muted">${m.status === 'Scheduled' ? `Goes out on ${longDate(m.scheduledFor)} at ${timeOf(m.scheduledFor)}. Edit it to change the time or the audience.` : 'This is a draft. Only diocese staff can see it.'}</p></section>`}
+        </aside>
+      </div>`;
   }
-  function renderBroadcastRecipientDetail() {
-    const el = document.getElementById('bc-recipient-detail');
-    if (!el) return;
-    if (broadcastScope === 'sizeTier') {
-      el.innerHTML = `
-        <select onchange="broadcastSizeTier=this.value" class="border border-divider rounded-input px-3 h-10 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none">
-          <option>Large</option><option>Medium</option><option>Small</option>
-        </select>
-      `;
-    } else if (broadcastScope === 'specific') {
-      el.innerHTML = `
-        <select multiple onchange="broadcastSelectedParishes=[...this.selectedOptions].map(o=>o.value)" class="w-full border border-divider rounded-input px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none" size="6">
-          ${parishesLight.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
-        <p class="text-xs text-ink-muted mt-1">Hold Ctrl/Cmd to select multiple.</p>
-      `;
-    } else {
-      el.innerHTML = '';
-    }
-  }
-  function scopeLabel() {
-    if (broadcastScope === 'all') return 'All Parishes (130)';
-    if (broadcastScope === 'sizeTier') return broadcastSizeTier + ' parishes (' + parishesLight.filter(p=>p.sizeTier===broadcastSizeTier).length + ')';
-    return broadcastSelectedParishes.length + ' selected parish' + (broadcastSelectedParishes.length === 1 ? '' : 'es');
-  }
-  function sendBroadcast() {
-    const message = document.getElementById('bc-message').value.trim();
-    if (!message) { toast('Please enter a message.'); return; }
-    if (broadcastScope === 'specific' && broadcastSelectedParishes.length === 0) { toast('Please select at least one parish.'); return; }
-    const channels = Object.entries(broadcastChannels).filter(([,v]) => v).map(([k]) => ({ inApp:'In-App', email:'Email', sms:'SMS', whatsapp:'WhatsApp' }[k]));
-    if (channels.length === 0) { toast('Please select at least one channel.'); return; }
-    sentBroadcasts.unshift({ id:'BC-'+Math.floor(100+Math.random()*899), message, scope: scopeLabel(), channels, sentDate: '2026-07-31' });
-    toast('Broadcast sent to ' + scopeLabel() + '.');
-    document.getElementById('bc-message').value = '';
-    renderBroadcastList();
-  }
-  function renderBroadcastList() {
-    document.getElementById('broadcast-list').innerHTML = sentBroadcasts.length === 0
-      ? '<div class="bg-card-bg rounded-card shadow-card p-8 text-center"><p class="text-sm text-ink-muted">No broadcasts sent yet.</p></div>'
-      : `<div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">${sentBroadcasts.map(b => `
-          <div class="px-5 py-4">
-            <p class="text-sm">${b.message}</p>
-            <p class="text-xs text-ink-muted mt-1">${b.scope} · ${b.channels.join(', ')} · Sent ${formatDate(b.sentDate)}</p>
-          </div>
-        `).join('')}</div>`;
+  function printCircular(id) {
+    const m = messages.find(x => x.id === id);
+    let root = document.getElementById('print-root'); if (!root) { root = document.createElement('div'); root.id = 'print-root'; document.body.appendChild(root); }
+    root.innerHTML = letterHTML(m, true); window.print();
   }
 
   // =========================================================================
