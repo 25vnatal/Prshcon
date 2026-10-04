@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Parish Connect — Diocese · Faith Formation</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'bg-warm': '#FAFBFD', 'card-bg': '#FFFFFF', 'section-bg': '#F5F7FB', divider: '#E8EDF5',
+          ink: '#1F2937', 'ink-muted': '#6B7280',
+          primary: { DEFAULT: '#4F7CF5', hover: '#3F6CE4', light: '#EEF4FF' },
+          coral: '#FF7F73', gold: '#F6C453', green: '#6CBF84', lavender: '#A88BFF',
+          error: { DEFAULT: '#E5645A', bg: '#FDECEA' },
+        },
+        fontFamily: { heading: ['Manrope', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        borderRadius: { card: '24px', button: '16px', input: '16px', badge: '999px' },
+        boxShadow: { card: '0 6px 24px rgba(30,41,59,0.08)' },
+        maxWidth: { content: '1440px' },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #FAFBFD; color: #1F2937; line-height: 1.5; }
+  h1, h2, h3, .font-heading { font-family: 'Manrope', sans-serif; }
+  :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
+  .transition-warm { transition: all 200ms ease; }
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  .font-verse { font-family: 'Newsreader', serif; font-style: italic; }
+  .skeleton { background: linear-gradient(90deg, #E8EDF5 25%, #F2F5FA 37%, #E8EDF5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+  .rte { min-height: 96px; outline: none; }
+  .rte:empty:before { content: attr(data-placeholder); color: #9CA3AF; pointer-events: none; }
+  .rte:focus-visible { outline: none; }
+  .rte-wrap:focus-within { box-shadow: 0 0 0 2px #EEF4FF; border-color: #4F7CF5; }
+</style>
+</head>
+<body class="text-ink">
+
+  <div class="flex min-h-screen">
+
+    <aside class="w-[280px] bg-card-bg border-r border-divider flex-shrink-0 flex flex-col fixed lg:static inset-y-0 left-0 z-40 -translate-x-full lg:translate-x-0 transition-transform" id="sidebar">
+      <div class="px-6 pt-6 pb-5">
+        <div class="flex items-center gap-3">
+          <img src="assets/archdiocese-emblem.png" alt="Archdiocese of Bangalore emblem" width="44" height="44" class="w-11 h-11 object-contain flex-shrink-0">
+          <div>
+            <p class="font-heading font-bold text-base leading-tight">Parish Connect</p>
+            <p class="text-xs text-ink-muted mt-0.5">Diocese Console</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+        <button onclick="return goDash()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+          Dashboard
+        </button>
+        <button onclick="return goParishes()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>
+          Parishes
+        </button>
+        <button onclick="return goMinistry()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M5 7h14"/></svg>
+          Ministry
+        </button>
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-button bg-primary-light text-primary font-semibold text-sm" aria-current="page">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Faith Formation
+        </a>
+        <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
+          Communication
+        </button>
+        <button onclick="return goDocuments()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Documents
+        </button>
+        <button onclick="return goReports()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+          Reports
+        </button>
+        <button onclick="return goSettings()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 z-30 lg:hidden"></div>
+
+    <div class="flex-1 min-w-0">
+      <header class="bg-card-bg border-b border-divider px-6 lg:px-10 py-4 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" aria-label="Toggle navigation" class="lg:hidden w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div>
+            <p class="text-sm font-semibold">Bangalore Archdiocese</p>
+            <p class="text-xs text-ink-muted">Faith Formation</p>
+          </div>
+        </div>
+        <button id="avatar-btn" onclick="document.getElementById('account-menu').classList.toggle('hidden')" aria-label="Account menu" class="w-9 h-9 rounded-badge bg-lavender/30 text-[#5b3fc4] text-xs font-bold flex items-center justify-center flex-shrink-0">DA</button>
+        <div id="account-menu" class="hidden absolute right-6 lg:right-10 top-16 bg-card-bg rounded-card shadow-card w-56 z-50 overflow-hidden">
+          <div class="px-4 py-3.5 border-b border-divider">
+            <p class="text-sm font-semibold">Diocese Admin</p>
+            <p class="text-xs text-ink-muted">Bangalore Archdiocese</p>
+          </div>
+          <button onclick="window.location.href='screen-diocese-login.html'" class="w-full text-left px-4 py-3.5 text-sm text-error hover:bg-error-bg min-h-[44px] transition-warm">Log out</button>
+        </div>
+      </header>
+
+      <main class="px-6 lg:px-10 py-8 max-w-content">
+        <div id="ff-root"></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white text-sm px-4 py-2.5 rounded-button shadow-card opacity-0 pointer-events-none transition-opacity duration-200 max-w-[90%] text-center z-50"></div>
+
+  <!-- generic confirm dialog -->
+  <div id="confirm-modal" class="hidden fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="bg-card-bg rounded-card shadow-card w-full max-w-md">
+      <div class="px-6 pt-6 pb-2"><p id="confirm-title" class="font-heading font-bold text-lg"></p><div id="confirm-body" class="text-sm text-ink-muted mt-2 space-y-2"></div></div>
+      <div class="px-6 pb-6 pt-4 flex gap-3">
+        <button id="confirm-ok" class="flex-1 text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm"></button>
+        <button onclick="closeModal('confirm-modal')" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[44px] hover:bg-section-bg transition-warm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const sessionParams = new URLSearchParams(window.location.search);
+  function baseParams() {
+    const p = new URLSearchParams();
+    ['name'].forEach(k => { if (sessionParams.get(k)) p.set(k, sessionParams.get(k)); });
+    return p;
+  }
+  function goDash() { window.location.href = 'screen-diocese-dashboard-home.html?' + baseParams().toString(); return false; }
+  function goParishes() { window.location.href = 'screen-diocese-parishes-hub.html?' + baseParams().toString(); return false; }
+  function goMinistry() { window.location.href = 'screen-diocese-ministry-hub.html?' + baseParams().toString(); return false; }
+  function goCommunication() { window.location.href = 'screen-diocese-communication-hub.html?' + baseParams().toString(); return false; }
+  function goDocuments() { window.location.href = 'screen-diocese-documents-hub.html?' + baseParams().toString(); return false; }
+  function goReports() { window.location.href = 'screen-diocese-reports-hub.html?' + baseParams().toString(); return false; }
+  function goSettings() { window.location.href = 'screen-diocese-settings-hub.html?' + baseParams().toString(); return false; }
+  function goFaithFormation() { return false; }
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+  }
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+    clearTimeout(window._t); window._t = setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 2200);
+  }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  function formatDate(iso) { if (!iso) return '\u2014'; const [y,m,d] = iso.split('-').map(Number); return `${d} ${MONTH_NAMES[m-1]} ${y}`; }
+  function weekday(iso) { return DAY_NAMES[new Date(iso + 'T00:00:00').getDay()]; }
+  function addDays(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  const ICON_PATHS = {
+    plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    edit: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    back: '<polyline points="15 18 9 12 15 6"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+    x: '<path d="M18 6 6 18"/><path d="M6 6l12 12"/>',
+  };
+  function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
+
+  function confirmDialog({ title, body, label, tone, onConfirm }) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-body').innerHTML = body;
+    const ok = document.getElementById('confirm-ok');
+    ok.textContent = label;
+    ok.className = 'flex-1 text-white text-sm font-semibold py-3 rounded-button min-h-[44px] transition-warm ' + (tone === 'danger' ? 'bg-error hover:opacity-90' : 'bg-primary hover:bg-primary-hover');
+    ok.onclick = () => { closeModal('confirm-modal'); onConfirm(); };
+    document.getElementById('confirm-modal').classList.remove('hidden');
+  }
+
+  // =========================================================================
+  // A MINUTE WITH JESUS — curated by the diocese, shown to every parishioner on the home screen
+  // =========================================================================
+  // "Today" for this demo. The parishioner Minute screen is built around the Feast of the Assumption,
+  // so the demo date is 15 Aug 2026 and the Assumption Minute is the one that is live.
+  const DEMO_TODAY = '2026-08-15';
+
+  // Sample backgrounds. Each defines the full-screen reading background, the colours of the 9:16 share card and an abstract
+  // motif (never a literal figure, in line with the app's "no busy religious motifs" guidance).
+  const BACKGROUNDS = [
+    { id:'golden',   name:'Golden Dawn',   best:'Feasts of Mary, celebration', accent:'#9A6D0F', rule:'rgba(154,109,15,0.3)', screen:'linear-gradient(180deg,#FFFDF6 0%,#FFF8E8 40%,#FCEFCE 100%)', card:'linear-gradient(165deg,#FDE9B0 0%,#F6C453 45%,#F0A63E 100%)', cardInk:'#4A3407', cardSub:'#7A5209', glow:'rgba(255,255,255,0.6)', motif:'moon' },
+    { id:'lavender', name:'Lavender Dusk', best:'Advent and Lent, reflection',  accent:'#5B3FC4', rule:'rgba(91,63,196,0.25)', screen:'linear-gradient(180deg,#FBF9FF 0%,#F1EBFF 45%,#E4D9FF 100%)', card:'linear-gradient(165deg,#E9DFFF 0%,#B79BFF 50%,#8E6BF0 100%)', cardInk:'#241459', cardSub:'#3A2490', glow:'rgba(255,255,255,0.5)', motif:'stars' },
+    { id:'sky',      name:'Morning Sky',   best:'Ordinary Time, hope',         accent:'#2F5FC9', rule:'rgba(47,95,201,0.25)', screen:'linear-gradient(180deg,#F7FBFF 0%,#E9F3FF 45%,#D5E8FF 100%)', card:'linear-gradient(165deg,#DCEBFF 0%,#9DBDFB 50%,#6A94F7 100%)', cardInk:'#0F2352', cardSub:'#1D3F8F', glow:'rgba(255,255,255,0.6)', motif:'rays' },
+    { id:'rose',     name:'Rose Light',    best:'Sacred Heart, love, family',  accent:'#B3463C', rule:'rgba(179,70,60,0.25)', screen:'linear-gradient(180deg,#FFF9F8 0%,#FFEDEA 45%,#FFDCD6 100%)', card:'linear-gradient(165deg,#FFE3DD 0%,#FFA79B 50%,#F57F6E 100%)', cardInk:'#4A1510', cardSub:'#7A2820', glow:'rgba(255,255,255,0.55)', motif:'rays' },
+    { id:'garden',   name:'Garden Green',  best:'Creation, growth, Ordinary Time', accent:'#2F6B45', rule:'rgba(47,107,69,0.25)', screen:'linear-gradient(180deg,#F8FDF9 0%,#E9F7EE 45%,#D3EEDC 100%)', card:'linear-gradient(165deg,#D9F2E1 0%,#92D6A8 50%,#58B476 100%)', cardInk:'#0F3320', cardSub:'#1E5A37', glow:'rgba(255,255,255,0.55)', motif:'leaves' },
+    { id:'sunset',   name:'Warm Sunset',   best:'Thanksgiving, evening prayer', accent:'#A4571A', rule:'rgba(164,87,26,0.25)', screen:'linear-gradient(180deg,#FFFBF5 0%,#FFEEDC 45%,#FFDDB8 100%)', card:'linear-gradient(165deg,#FFDDB8 0%,#FFA574 50%,#EC7A52 100%)', cardInk:'#4A1D08', cardSub:'#7C3512', glow:'rgba(255,255,255,0.5)', motif:'hills' },
+    { id:'sea',      name:'Calm Sea',      best:'Healing, peace, the sick',     accent:'#1F6F6F', rule:'rgba(31,111,111,0.25)', screen:'linear-gradient(180deg,#F5FCFC 0%,#E3F6F6 45%,#CBEEEE 100%)', card:'linear-gradient(165deg,#D4F3F1 0%,#84D2CD 50%,#45ADA7 100%)', cardInk:'#0B3433', cardSub:'#15605C', glow:'rgba(255,255,255,0.55)', motif:'waves' },
+    { id:'paper',    name:'Plain Paper',   best:'Words first, no decoration',   accent:'#6B5B3E', rule:'rgba(107,91,62,0.25)', screen:'#FFFDF8', card:'linear-gradient(165deg,#FBF6EA 0%,#F2EAD5 100%)', cardInk:'#3B3220', cardSub:'#6B5B3E', glow:'rgba(255,255,255,0)', motif:'none' },
+  ];
+  function bgOf(m) { return m.bg === 'custom' ? CUSTOM_BG(m) : (BACKGROUNDS.find(b => b.id === m.bg) || BACKGROUNDS[0]); }
+  // An uploaded photo: soft white wash behind the reading text, dark wash + white text on the share card so words stay readable.
+  function CUSTOM_BG(m) {
+    const u = m.customUrl ? `url(${m.customUrl}) center/cover` : '#EEF4FF';
+    return { id:'custom', name:'Your photo', accent:'#1F2937', rule:'rgba(31,41,55,0.25)', screen:`linear-gradient(rgba(255,253,246,0.9),rgba(255,253,246,0.92)), ${u}`, card:`linear-gradient(rgba(20,24,40,0.45),rgba(20,24,40,0.6)), ${u}`, cardInk:'#FFFFFF', cardSub:'rgba(255,255,255,0.85)', glow:'rgba(255,255,255,0)', motif:'none' };
+  }
+
+  // ---- sample content. The Assumption Minute is word-for-word what the parishioner screen shows today. ----
+  let minutes = [
+    { id:'MIN-001', date:'2026-08-15', occasion:'Feast of the Assumption', bg:'golden', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-10',
+      opening:"Today the Church remembers Mary, carried body and soul into glory \u2014 a life that had already said yes, long before this day arrived.",
+      reflection:"Mary's whole life was a series of small, unseen yeses \u2014 to an angel's strange news, to a long journey, to standing at the foot of a cross. None of it looked triumphant while she was living it. The Assumption isn't a reward that erases that \u2014 it's what an ordinary, faithful life quietly becomes.",
+      prayer:"Mary, help me say yes today in the small, unseen way you did. When no one is watching and nothing feels triumphant, let me still choose you. Carry my ordinary day the way you carried His extraordinary one." },
+    { id:'MIN-002', date:'2026-08-14', occasion:'Vigil of the Assumption', bg:'lavender', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-09',
+      opening:"Tomorrow\u2019s feast begins tonight, in the quiet.",
+      reflection:"Before every celebration there is a waiting. Mary knew long stretches of it, and she did not fill them with noise. Tonight, set aside a few minutes of stillness and let something good arrive without hurrying it.",
+      prayer:"Mother Mary, teach me to wait well. Quiet the rush in my mind and open my heart to the joy that is coming. Amen." },
+    { id:'MIN-003', date:'2026-08-16', occasion:'Twentieth Sunday in Ordinary Time', bg:'garden', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-11',
+      opening:"Faith sometimes sounds like a persistent whisper rather than a shout.",
+      reflection:"The woman who kept asking for help did not receive an easy answer, yet she did not turn away. Persistence is not pushiness; it is trust that stays when the answer is delayed. Today, bring the one prayer you almost stopped praying.",
+      prayer:"Lord, give me the courage to keep asking and the patience to keep listening. When your answer is slow, keep my heart from closing. Let my trust be quiet and stubborn. Amen." },
+    { id:'MIN-004', date:'2026-08-22', occasion:'Queenship of the Blessed Virgin Mary', bg:'rose', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-12',
+      opening:"Mary is honoured as Queen not because she ruled, but because she served.",
+      reflection:"A queen who carried water, kept silence and stood beneath a cross is not the kind we expect. Her crown is the fruit of a lifetime of faithfulness, offered quietly. She invites us to see that real greatness in God\u2019s kingdom often looks like patience at home and kindness no one notices.",
+      prayer:"Mary, Queen of heaven and mother of us all, teach me the greatness of small service. Where I am tempted to be noticed, make me faithful. Lead me, with all I love, to your Son." },
+    { id:'MIN-005', date:'2026-08-29', occasion:'Memorial of the Passion of Saint John the Baptist', bg:'sky', font:'serif', size:1, align:'center', motif:true, watermark:true, published:false, updated:'2026-08-13',
+      opening:"John pointed away from himself, even when it cost him everything.",
+      reflection:"It is hard to say, \u2018He must increase, I must decrease\u2019 and mean it. John\u2019s courage came from knowing exactly whose voice he was.",
+      prayer:"" },
+    { id:'MIN-006', date:'2026-09-08', occasion:'Nativity of the Blessed Virgin Mary', bg:'sea', font:'serif', size:1, align:'center', motif:true, watermark:true, published:true, updated:'2026-08-13',
+      opening:"A child is born, and the world does not yet know that heaven has begun to draw near.",
+      reflection:"We celebrate Mary\u2019s birthday because every beginning given to God matters. Her family, her hometown and her ordinary childhood were the soil God chose. Whatever feels small or unfinished in our lives may be exactly where grace is quietly starting.",
+      prayer:"Holy Mary, as we remember your birth, bless the beginnings in my life: a new day, a new effort, a mended friendship. Help me trust that God is already at work. Amen." },
+  ];
+
+  // Display status is derived from the date, so a Minute can never be "published" and silently out of date.
+  function statusOf(m) {
+    if (!m.published) return 'Draft';
+    if (m.date > DEMO_TODAY) return 'Scheduled';
+    if (m.date === DEMO_TODAY) return 'Live';
+    return 'Past';
+  }
+  function statusPill(m) {
+    const s = statusOf(m);
+    const map = { Live:['bg-green/20','text-[#2f6b45]','Live today'], Scheduled:['bg-primary-light','text-primary','Scheduled'], Draft:['bg-gold/20','text-[#8a5a10]','Draft'], Past:['bg-section-bg','text-ink-muted','Published'] };
+    const [bg, tx, label] = map[s];
+    return `<span class="${bg} ${tx} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${label}</span>`;
+  }
+
+  // ---- text helpers (the editor keeps only bold, italic and line breaks) ----
+  function cleanHTML(html) {
+    const d = document.createElement('div'); d.innerHTML = html;
+    const walk = n => { let out = ''; n.childNodes.forEach(c => {
+      if (c.nodeType === 3) out += esc(c.nodeValue);
+      else if (c.nodeType === 1) {
+        const t = c.tagName.toLowerCase(), inner = walk(c);
+        if (t === 'b' || t === 'strong') out += inner ? '<b>' + inner + '</b>' : '';
+        else if (t === 'i' || t === 'em') out += inner ? '<i>' + inner + '</i>' : '';
+        else if (t === 'br') out += '<br>';
+        else if (t === 'div' || t === 'p') out += (out && !/<br>$/.test(out) ? '<br>' : '') + inner;
+        else out += inner;
+      } }); return out; };
+    return walk(d).replace(/(<br>)+$/, '');
+  }
+  function plain(html) { const d = document.createElement('div'); d.innerHTML = html || ''; return (d.textContent || '').trim(); }
+  function wordCount(html) { const t = plain(html); return t ? t.split(/\s+/).length : 0; }
+  function asHTML(textOrHtml) { return /<(b|i|br)>/.test(textOrHtml) ? textOrHtml : esc(textOrHtml); }
+
+  // =========================================================================
+  // PREVIEWS — the same layouts as the parishioner app (Minute screen, 9:16 share card, home screen card)
+  // =========================================================================
+  const SIZES = { opening:[20, 24, 28], body:[14, 16, 18] };
+  function fonts(m) {
+    const verse = m.font === 'serif' ? "font-family:'Newsreader',serif;font-style:italic;" : "font-family:'Inter',sans-serif;font-weight:500;";
+    return { verse, o: SIZES.opening[m.size], b: SIZES.body[m.size] };
+  }
+  function minutePreview(m) {
+    const b = bgOf(m), f = fonts(m), al = m.align;
+    const open = m.opening ? esc(m.opening) : '<span style="opacity:.45">Your opening line appears here</span>';
+    const refl = plain(m.reflection) ? asHTML(m.reflection) : '<span style="opacity:.45">Your reflection appears here</span>';
+    const pray = plain(m.prayer) ? asHTML(m.prayer) : '<span style="opacity:.45">Your prayer appears here</span>';
+    const rule = `<div style="width:32px;height:1px;background:${b.rule};${al === 'center' ? 'margin:0 auto;' : ''}"></div>`;
+    return `
+      <div style="width:390px;min-height:760px;display:flex;flex-direction:column;background:${b.screen};color:#1F2937;font-family:'Inter',sans-serif;">
+        <div style="padding:24px 20px 8px;display:flex;justify-content:space-between;">
+          <span style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:rgba(107,114,128,.7)">${icon('x','icon w-5 h-5')}</span>
+          <span style="width:40px;height:40px;"></span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:36px;padding:40px 32px;text-align:${al};">
+          <div>
+            <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0 0 16px;color:${b.accent};">${esc(m.occasion) || 'Occasion'}</p>
+            <p style="${f.verse}font-size:${f.o}px;line-height:1.35;margin:0;">${open}</p>
+          </div>
+          ${rule}
+          <p style="font-size:${f.b}px;line-height:1.65;margin:0;color:rgba(31,41,55,.85);">${refl}</p>
+          ${rule}
+          <p style="${f.verse}font-size:${f.b}px;line-height:1.65;margin:0;color:rgba(31,41,55,.9);">${pray}</p>
+        </div>
+        <div style="padding:16px 32px 40px;text-align:center;"><span style="font-family:'Manrope',sans-serif;font-weight:600;font-size:18px;color:${b.accent};">Amen</span></div>
+      </div>`;
+  }
+  function motifSVG(kind, ink) {
+    const c = '#FFFDF3';
+    const sp = (x, y, s, o) => `<path d="M${x} ${y} l${2.5*s} ${6.5*s} ${6.5*s} ${2.5*s} -${6.5*s} ${2.5*s} -${2.5*s} ${6.5*s} -${2.5*s} -${6.5*s} -${6.5*s} -${2.5*s} ${6.5*s} -${2.5*s} Z" fill="${c}" opacity="${o}"/>`;
+    if (kind === 'moon') return `<g stroke="${c}" stroke-width="2.5" stroke-linecap="round" opacity="0.55"><line x1="140" y1="70" x2="140" y2="46"/><line x1="185" y1="88" x2="203" y2="70"/><line x1="95" y1="88" x2="77" y2="70"/><line x1="200" y1="118" x2="222" y2="112"/><line x1="80" y1="118" x2="58" y2="112"/></g><path d="M154 108a34 34 0 1 1 0-56 27 27 0 0 0 0 56Z" fill="${c}" opacity="0.92"/>${sp(52,210,1,.7)}${sp(226,250,.85,.65)}${sp(44,350,.85,.55)}${sp(238,390,1,.6)}<circle cx="90" cy="160" r="1.5" fill="${c}" opacity=".7"/><circle cx="195" cy="175" r="1.5" fill="${c}" opacity=".6"/>`;
+    if (kind === 'stars') return `<circle cx="140" cy="86" r="26" fill="${c}" opacity=".85"/>${sp(60,150,1.1,.8)}${sp(214,128,.9,.7)}${sp(40,260,.9,.6)}${sp(236,300,1.1,.7)}${sp(70,380,.8,.5)}${sp(200,420,.9,.55)}<circle cx="110" cy="190" r="1.6" fill="${c}" opacity=".7"/><circle cx="180" cy="230" r="1.6" fill="${c}" opacity=".6"/><circle cx="130" cy="330" r="1.4" fill="${c}" opacity=".5"/>`;
+    if (kind === 'rays') { let r = ''; for (let a = -70; a <= 70; a += 20) { const t = a * Math.PI / 180, x1 = 140 + Math.sin(t) * 52, y1 = 96 - Math.cos(t) * 52, x2 = 140 + Math.sin(t) * 78, y2 = 96 - Math.cos(t) * 78; r += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`; } return `<g stroke="${c}" stroke-width="3" stroke-linecap="round" opacity=".6">${r}</g><circle cx="140" cy="96" r="34" fill="${c}" opacity=".9"/>${sp(48,260,.9,.55)}${sp(230,330,.9,.5)}`; }
+    if (kind === 'hills') return `<circle cx="140" cy="110" r="38" fill="${c}" opacity=".85"/><path d="M0 430 Q70 380 140 410 T280 395 V498 H0Z" fill="${c}" opacity=".22"/><path d="M0 455 Q90 415 170 440 T280 430 V498 H0Z" fill="${c}" opacity=".3"/>`;
+    if (kind === 'leaves') { const lf = (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="9" ry="22" transform="rotate(${r} ${x} ${y})" fill="${c}" opacity=".6"/>`; return `<circle cx="140" cy="100" r="30" fill="${c}" opacity=".8"/>${lf(36,230,-30)}${lf(58,262,-10)}${lf(244,300,30)}${lf(222,334,12)}${lf(44,400,-25)}${lf(236,418,25)}`; }
+    if (kind === 'waves') return `<circle cx="140" cy="100" r="30" fill="${c}" opacity=".8"/><g fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M20 400 q30 -18 60 0 t60 0 t60 0 t60 0"/><path d="M20 428 q30 -18 60 0 t60 0 t60 0 t60 0" opacity=".7"/><path d="M20 456 q30 -18 60 0 t60 0 t60 0 t60 0" opacity=".5"/></g>`;
+    return '';
+  }
+  function cardPreview(m) {
+    const b = bgOf(m), f = fonts(m);
+    const prayer = plain(m.prayer) ? asHTML(m.prayer) : '<span style="opacity:.55">Your prayer appears here</span>';
+    const len = plain(m.prayer).length, size = Math.max(11, f.b - 1 - (len > 330 ? 3 : len > 230 ? 2 : 0));
+    return `
+      <div style="width:280px;height:498px;border-radius:24px;overflow:hidden;position:relative;background:${b.card};box-shadow:0 6px 24px rgba(30,41,59,.12);">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 34%, ${b.glow} 0%, rgba(255,255,255,0) 58%);"></div>
+        ${m.motif && b.motif !== 'none' ? `<svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 280 498" fill="none">${motifSVG(b.motif)}</svg>` : ''}
+        <div style="position:relative;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:150px 28px 30px;text-align:${m.align};">
+          <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0;color:${b.cardSub};">${esc(m.occasion) || 'Occasion'}</p>
+          <p style="${f.verse}font-size:${size}px;line-height:1.6;margin:0;color:${b.cardInk};">\u201c${prayer}\u201d</p>
+          <div>${m.watermark ? `<div style="width:32px;height:1px;background:${b.cardInk};opacity:.3;${m.align === 'center' ? 'margin:0 auto 6px;' : 'margin:0 0 6px;'}"></div><p style="font-size:10px;letter-spacing:.04em;margin:0;color:${b.cardSub};">Reflections by Parish Connect</p>` : ''}</div>
+        </div>
+      </div>`;
+  }
+  function dashPreview(m) {
+    const b = bgOf(m);
+    return `
+      <div style="width:342px;padding:8px 0;font-family:'Inter',sans-serif;">
+        <p style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin:0 0 12px;">Good morning, John</p>
+        <div style="border-radius:24px;padding:24px;position:relative;overflow:hidden;background:${b.screen};box-shadow:0 6px 24px rgba(30,41,59,.08);">
+          <div style="position:absolute;right:-24px;top:-24px;width:112px;height:112px;border-radius:50%;background:radial-gradient(circle, ${b.rule} 0%, transparent 70%);"></div>
+          <div style="position:relative;">
+            <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:0;color:${b.accent};">${esc(m.occasion) || 'Occasion'}</p>
+            <p style="font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;margin:8px 0 0;">A Minute with Jesus</p>
+            <p style="font-size:14px;color:#6B7280;line-height:1.6;margin:8px 0 0;">${m.opening ? esc(m.opening) : '<span style="opacity:.6">Your opening line appears here</span>'}</p>
+            <span style="display:inline-block;margin-top:20px;background:#1F2937;color:#fff;font-size:14px;font-weight:600;padding:12px 20px;border-radius:16px;">Begin \u203a</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // =========================================================================
+  // LIST VIEW
+  // =========================================================================
+  let view = 'list';           // 'list' | 'edit'
+  let listFilter = 'All';
+  let deletingId = null;
+  let draft = null;            // the Minute being edited (a working copy)
+  let isNew = false;
+  let dirty = false;
+  let previewTab = 'minute';
+  let editorError = null;
+  let loading = false;
+
+  function sortedMinutes() { return [...minutes].sort((a, b) => b.date.localeCompare(a.date)); }
+  function setFilter(f) { listFilter = f; render(); }
+
+  function renderList() {
+    const live = minutes.find(m => statusOf(m) === 'Live');
+    const counts = { All: minutes.length, Live: minutes.filter(m => statusOf(m) === 'Live').length, Scheduled: minutes.filter(m => statusOf(m) === 'Scheduled').length, Draft: minutes.filter(m => statusOf(m) === 'Draft').length, Past: minutes.filter(m => statusOf(m) === 'Past').length };
+    const list = sortedMinutes().filter(m => listFilter === 'All' || statusOf(m) === listFilter);
+    const pill = (f, label) => `<button onclick="setFilter('${f}')" aria-pressed="${listFilter === f}" class="px-4 h-10 rounded-badge text-sm font-semibold transition-warm ${listFilter === f ? 'bg-primary text-white' : 'bg-card-bg text-ink-muted hover:bg-section-bg'}">${label} <span class="${listFilter === f ? 'text-white/80' : 'text-ink-muted'} font-normal">${counts[f]}</span></button>`;
+    return `
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="font-heading font-bold text-2xl">A Minute with Jesus</p>
+          <p class="text-ink-muted text-sm mt-1 max-w-2xl">Write the short daily prayer moment that appears on every parishioner\u2019s home screen, in all parishes. Pick a look, preview exactly what they will see, then schedule or publish it.</p>
+        </div>
+        <button onclick="newMinute()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] transition-warm inline-flex items-center gap-2">${icon('plus','icon w-4 h-4')}New Minute</button>
+      </div>
+
+      ${live ? `
+      <div class="bg-card-bg rounded-card shadow-card p-5 mb-6 flex flex-wrap items-center gap-5">
+        <div class="flex-shrink-0 rounded-card overflow-hidden" style="width:112px;height:199px;"><div style="transform:scale(.4);transform-origin:top left;width:280px;height:498px;pointer-events:none;">${cardPreview(live)}</div></div>
+        <div class="flex-1 min-w-[220px]">
+          <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Showing to parishioners today \u00b7 ${formatDate(DEMO_TODAY)}</p>
+          <p class="font-heading font-bold text-xl mt-1">${esc(live.occasion)}</p>
+          <p class="text-sm text-ink-muted mt-2 max-w-xl">${esc(live.opening)}</p>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <button onclick="openMinute('${live.id}')" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-4 py-2.5 rounded-button min-h-[44px] transition-warm">Edit live Minute</button>
+          </div>
+        </div>
+      </div>` : `
+      <div class="bg-gold/15 rounded-card p-5 mb-6"><p class="text-sm font-semibold">No Minute is scheduled for today</p><p class="text-sm text-ink-muted mt-1">Parishioners will see a gentle default prayer until you publish one for ${formatDate(DEMO_TODAY)}.</p></div>`}
+
+      <div class="flex flex-wrap gap-2 mb-4" role="group" aria-label="Filter Minutes">${pill('All','All')}${pill('Live','Live')}${pill('Scheduled','Scheduled')}${pill('Draft','Drafts')}${pill('Past','Past')}</div>
+
+      ${list.length === 0 ? `
+        <div class="bg-card-bg rounded-card shadow-card p-10 text-center">
+          <svg width="72" height="72" viewBox="0 0 120 120" fill="none" class="mx-auto"><circle cx="90" cy="28" r="14" fill="#F6C453" opacity="0.35"/><path d="M40 100V56l20-16 20 16v44" stroke="#4F7CF5" stroke-width="3" stroke-linejoin="round" fill="#EEF4FF"/><rect x="55" y="72" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#4F7CF5" stroke-width="2.5"/></svg>
+          <p class="text-sm font-semibold mt-3">${listFilter === 'All' ? 'No Minutes yet' : 'Nothing here'}</p>
+          <p class="text-sm text-ink-muted mt-1">${listFilter === 'All' ? 'Write your first Minute and parishioners will see it on their home screen.' : 'No Minutes match this filter.'}</p>
+          <button onclick="newMinute()" class="mt-4 bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-5 py-3 rounded-button min-h-[44px] transition-warm">New Minute</button>
+        </div>` : `
+        <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+          ${list.map(m => deletingId === m.id ? `
+            <div class="px-5 py-4 bg-error-bg">
+              <p class="text-sm text-error mb-3">Delete \u201c${esc(m.occasion)}\u201d? ${statusOf(m) === 'Live' || statusOf(m) === 'Scheduled' ? 'It will be removed from parishioners\u2019 screens. ' : ''}This can\u2019t be undone.</p>
+              <div class="flex gap-2"><button onclick="deleteMinute('${m.id}')" class="bg-error text-white text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px]">Yes, delete</button><button onclick="deletingId=null; render()" class="text-ink-muted text-xs font-semibold px-4 py-2.5 rounded-button min-h-[40px] hover:bg-white">Cancel</button></div>
+            </div>` : `
+            <div class="px-5 py-4 flex flex-wrap sm:flex-nowrap items-center gap-4">
+              <button onclick="openMinute('${m.id}')" class="flex items-center gap-4 min-w-0 flex-1 text-left" aria-label="Open ${esc(m.occasion)}">
+                <span class="w-12 h-12 rounded-card flex-shrink-0" style="background:${bgOf(m).card};"></span>
+                <span class="min-w-0">
+                  <span class="block text-xs text-ink-muted font-semibold">${weekday(m.date)}, ${formatDate(m.date)}</span>
+                  <span class="block text-sm font-semibold mt-0.5">${esc(m.occasion)}</span>
+                  <span class="block text-xs text-ink-muted mt-0.5 truncate">${m.opening ? esc(m.opening) : 'No opening line yet'}</span>
+                </span>
+              </button>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                ${statusPill(m)}
+                <button onclick="openMinute('${m.id}')" aria-label="Edit" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                <button onclick="duplicateMinute('${m.id}')" aria-label="Duplicate" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('copy','icon w-4 h-4')}</button>
+                <button onclick="deletingId='${m.id}'; render()" aria-label="Delete" class="w-9 h-9 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+              </div>
+            </div>`).join('')}
+        </div>`}
+      <p class="text-xs text-ink-muted mt-3">Dates are counted from ${formatDate(DEMO_TODAY)} in this demo. A day can have only one published Minute.</p>`;
+  }
+
+  function nextFreeDate() { let d = addDays(DEMO_TODAY, 1); while (minutes.some(m => m.date === d)) d = addDays(d, 1); return d; }
+  function newMinute() {
+    isNew = true; dirty = false; editorError = null;
+    draft = { id:'MIN-' + String(Math.floor(100 + Math.random() * 899)), date:nextFreeDate(), occasion:'', opening:'', reflection:'', prayer:'', bg:'golden', font:'serif', size:1, align:'center', motif:true, watermark:true, published:false, updated:DEMO_TODAY };
+    openEditor();
+  }
+  function openMinute(id) { isNew = false; dirty = false; editorError = null; draft = JSON.parse(JSON.stringify(minutes.find(m => m.id === id))); openEditor(); }
+  function duplicateMinute(id) {
+    const src = minutes.find(m => m.id === id);
+    isNew = true; dirty = true; editorError = null;
+    draft = Object.assign(JSON.parse(JSON.stringify(src)), { id:'MIN-' + String(Math.floor(100 + Math.random() * 899)), date:nextFreeDate(), published:false, updated:DEMO_TODAY, occasion:src.occasion + ' (copy)' });
+    openEditor();
+  }
+  function deleteMinute(id) { const m = minutes.find(x => x.id === id); minutes = minutes.filter(x => x.id !== id); deletingId = null; toast('\u201c' + m.occasion + '\u201d deleted.'); render(); }
+  function openEditor() { view = 'edit'; previewTab = 'minute'; loading = true; render(); window.scrollTo({ top:0 }); setTimeout(() => { loading = false; render(); }, 350); }
+  function backToList() {
+    if (dirty) { confirmDialog({ title:'Leave without saving?', body:'<p>Your changes to this Minute have not been saved.</p>', label:'Discard changes', tone:'danger', onConfirm:() => { view = 'list'; draft = null; render(); } }); return; }
+    view = 'list'; draft = null; render();
+  }
+
+  // =========================================================================
+  // EDITOR — fields on the left, live parishioner preview on the right
+  // =========================================================================
+  function markDirty() { dirty = true; editorError = null; }
+  function setField(k, v) { draft[k] = v; markDirty(); refreshPreview(); if (k === 'date') render(true); }
+  function setStyle(k, v) { draft[k] = v; markDirty(); render(true); }
+  function onRte(k, el) { draft[k] = cleanHTML(el.innerHTML); markDirty(); refreshPreview(); refreshMeters(); }
+  function fmt(cmd) { document.execCommand(cmd); const el = document.activeElement; if (el && el.classList.contains('rte')) onRte(el.dataset.k, el); }
+  function clearFmt() { document.execCommand('removeFormat'); const el = document.activeElement; if (el && el.classList.contains('rte')) onRte(el.dataset.k, el); }
+  function pasteText(e) { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text')); }
+  function onUpload(input) {
+    const file = input.files && input.files[0]; if (!file) return;
+    if (!/^image\//.test(file.type)) { toast('Please choose an image file.'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast('That image is over 5 MB. Please choose a smaller one.'); return; }
+    draft.customUrl = URL.createObjectURL(file); draft.bg = 'custom'; markDirty(); render(true);
+  }
+  function setPreviewTab(t) { previewTab = t; render(true); }
+
+  function meterInfo() {
+    const words = wordCount(draft.opening) + wordCount(draft.reflection) + wordCount(draft.prayer);
+    const state = words <= 170 ? ['bg-green', 'text-[#2f6b45]', 'About a minute to read'] : words <= 210 ? ['bg-gold', 'text-[#8a5a10]', 'A little long for a minute'] : ['bg-error', 'text-error', 'Too long for a minute \u2014 try trimming'];
+    return { words, state };
+  }
+  function refreshMeters() {
+    const mi = meterInfo();
+    const el = document.getElementById('meter'); if (!el) return;
+    el.innerHTML = `<div class="flex items-center justify-between text-xs mb-1.5"><span class="font-semibold ${mi.state[1]}">${mi.state[2]}</span><span class="text-ink-muted">${mi.words} words</span></div><div class="h-2 bg-section-bg rounded-badge overflow-hidden"><div class="h-full ${mi.state[0]} rounded-badge transition-warm" style="width:${Math.min(100, Math.round(mi.words / 210 * 100))}%"></div></div>`;
+    const o = document.getElementById('open-count'); if (o) o.textContent = (draft.opening || '').length + ' / 180';
+    const r = document.getElementById('refl-count'); if (r) r.textContent = wordCount(draft.reflection) + ' words';
+    const p = document.getElementById('pray-count'); if (p) p.textContent = wordCount(draft.prayer) + ' words';
+  }
+
+  function previewHTML() {
+    if (previewTab === 'card') return `<div style="width:280px;margin:0 auto;">${cardPreview(draft)}</div>`;
+    if (previewTab === 'home') return `<div style="width:342px;margin:0 auto;">${dashPreview(draft)}</div>`;
+    return `<div id="phone-wrap" style="width:312px;margin:0 auto;border:8px solid #E8EDF5;border-radius:36px;overflow:hidden;box-shadow:0 6px 24px rgba(30,41,59,.1);background:#fff;"><div id="phone-scroll" style="height:600px;overflow-y:auto;"><div id="phone-sizer"><div id="phone-inner" style="transform:scale(.7846);transform-origin:top left;width:390px;">${minutePreview(draft)}</div></div></div></div>`;
+  }
+  function fitPhone() {
+    const inner = document.getElementById('phone-inner'), sizer = document.getElementById('phone-sizer'); if (!inner || !sizer) return;
+    sizer.style.height = Math.ceil(inner.offsetHeight * 0.7846) + 'px';
+  }
+  function refreshPreview() { const el = document.getElementById('preview-body'); if (el) { el.innerHTML = previewHTML(); fitPhone(); } }
+
+  function seg(label, items, current, fn) {
+    return `<div><p class="text-xs font-medium mb-1.5">${label}</p><div class="inline-flex bg-section-bg rounded-badge p-1" role="group" aria-label="${label}">${items.map(([v, t]) => `<button onclick="${fn}(${typeof v === 'string' ? "'" + v + "'" : v})" aria-pressed="${current === v}" class="px-3.5 h-9 rounded-badge text-xs font-semibold transition-warm ${current === v ? 'bg-white text-primary shadow-card' : 'text-ink-muted hover:text-ink'}">${t}</button>`).join('')}</div></div>`;
+  }
+  function toggle(label, key, hint, disabled) {
+    return `<label class="flex items-center justify-between gap-3 py-2 ${disabled ? 'opacity-50' : 'cursor-pointer'}"><span><span class="text-sm font-medium block">${label}</span><span class="text-xs text-ink-muted">${hint}</span></span><input type="checkbox" ${draft[key] ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="setStyle('${key}', this.checked)" class="w-5 h-5 accent-[#4F7CF5] flex-shrink-0"></label>`;
+  }
+  function rteField(label, k, ph, hint, countId) {
+    return `<div class="space-y-1.5">
+      <div class="flex items-center justify-between"><label class="text-xs font-medium" id="${k}-label">${label}</label><span id="${countId}" class="text-xs text-ink-muted"></span></div>
+      <div class="rte-wrap border border-divider rounded-input bg-white overflow-hidden">
+        <div class="flex items-center gap-1 px-2 py-1.5 border-b border-divider bg-bg-warm" role="toolbar" aria-label="Text formatting for ${label}">
+          <button type="button" onmousedown="event.preventDefault(); fmt('bold')" aria-label="Bold" class="w-8 h-8 rounded-button text-sm font-bold text-ink-muted hover:bg-section-bg">B</button>
+          <button type="button" onmousedown="event.preventDefault(); fmt('italic')" aria-label="Italic" class="w-8 h-8 rounded-button text-sm italic font-semibold text-ink-muted hover:bg-section-bg">I</button>
+          <button type="button" onmousedown="event.preventDefault(); clearFmt()" aria-label="Clear formatting" class="px-2 h-8 rounded-button text-xs font-semibold text-ink-muted hover:bg-section-bg">Clear</button>
+        </div>
+        <div class="rte px-3.5 py-3 text-sm leading-relaxed" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="${k}-label" data-k="${k}" data-placeholder="${ph}" oninput="onRte('${k}', this)" onpaste="pasteText(event)">${draft[k] ? asHTML(draft[k]) : ''}</div>
+      </div>
+      <p class="text-xs text-ink-muted">${hint}</p></div>`;
+  }
+
+  function renderEditor() {
+    if (loading) return `<div class="space-y-3"><div class="skeleton rounded-button h-8 w-1/3"></div><div class="grid lg:grid-cols-[minmax(0,1fr)_420px] gap-6"><div class="space-y-3"><div class="skeleton rounded-card h-24"></div><div class="skeleton rounded-card h-40"></div><div class="skeleton rounded-card h-40"></div></div><div class="skeleton rounded-card h-[560px]"></div></div></div>`;
+    const b = bgOf(draft), st = statusOf(draft), live = draft.published;
+    const clash = minutes.find(m => m.id !== draft.id && m.date === draft.date && m.published);
+    const primaryLabel = !live ? (draft.date > DEMO_TODAY ? 'Schedule' : 'Publish now') : 'Update published Minute';
+    const tab = (id, label) => `<button onclick="setPreviewTab('${id}')" aria-pressed="${previewTab === id}" class="px-3.5 h-9 rounded-badge text-xs font-semibold transition-warm ${previewTab === id ? 'bg-white text-primary shadow-card' : 'text-ink-muted hover:text-ink'}">${label}</button>`;
+    return `
+      <button onclick="backToList()" class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-primary mb-3 min-h-[40px] transition-warm">${icon('back','icon w-4 h-4')}All Minutes</button>
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div><p class="font-heading font-bold text-2xl">${isNew ? 'New Minute' : 'Edit Minute'}</p><p class="text-sm text-ink-muted mt-0.5">${draft.occasion ? esc(draft.occasion) : 'Write on the left, check what parishioners will see on the right.'}</p></div>
+        <div class="flex items-center gap-2">${statusPill(draft)}${dirty ? '<span class="text-xs text-ink-muted">Unsaved changes</span>' : ''}</div>
+      </div>
+      ${editorError ? `<div class="bg-error-bg rounded-card p-4 mb-5" role="alert"><p class="text-sm font-semibold text-error">${editorError.title}</p><ul class="text-sm text-error mt-1 list-disc list-inside">${editorError.items.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
+
+      <div class="grid lg:grid-cols-[minmax(0,1fr)_420px] gap-6 items-start">
+        <div class="space-y-5 min-w-0">
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
+            <h2 class="font-heading font-semibold text-lg">1. The day</h2>
+            <div class="grid sm:grid-cols-[180px_minmax(0,1fr)] gap-4">
+              <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-date">Show on</label><input id="f-date" type="date" value="${draft.date}" onchange="setField('date', this.value)" class="w-full min-w-0 box-border border border-divider rounded-input px-3 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"><p class="text-xs text-ink-muted">${draft.date ? weekday(draft.date) : ''}</p></div>
+              <div class="space-y-1.5 min-w-0"><label class="text-xs font-medium" for="f-occ">Occasion or feast</label><input id="f-occ" type="text" value="${esc(draft.occasion)}" placeholder="e.g. Feast of the Assumption, or Ordinary Time" oninput="setField('occasion', this.value)" class="w-full border border-divider rounded-input px-3.5 h-11 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none"></div>
+            </div>
+            ${clash ? `<p class="text-xs bg-gold/15 rounded-button px-3 py-2"><b>${esc(clash.occasion)}</b> is already published for this day. Publishing this Minute will replace it.</p>` : ''}
+          </section>
+
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
+            <h2 class="font-heading font-semibold text-lg">2. The words</h2>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between"><label class="text-xs font-medium" for="f-open">Opening line</label><span id="open-count" class="text-xs text-ink-muted"></span></div>
+              <textarea id="f-open" rows="2" maxlength="180" oninput="setField('opening', this.value); refreshMeters()" placeholder="One or two sentences that set the scene" class="w-full border border-divider rounded-input px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-primary-light focus:outline-none resize-none leading-relaxed">${esc(draft.opening)}</textarea>
+              <p class="text-xs text-ink-muted">Also shown as the teaser on the parishioner\u2019s home screen.</p>
+            </div>
+            ${rteField('Reflection', 'reflection', 'A few warm, plain sentences. No jargon.', 'Around 40\u201370 words reads well in under a minute.', 'refl-count')}
+            ${rteField('Prayer', 'prayer', 'Three short sentences the parishioner can carry through the day.', 'This exact text is also printed on the shareable card.', 'pray-count')}
+            <div id="meter"></div>
+          </section>
+
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6 space-y-4">
+            <h2 class="font-heading font-semibold text-lg">3. The look</h2>
+            <div>
+              <p class="text-xs font-medium mb-2">Background</p>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" role="group" aria-label="Background">
+                ${BACKGROUNDS.map(x => `
+                  <button onclick="setStyle('bg','${x.id}')" aria-pressed="${draft.bg === x.id}" class="text-left rounded-card p-2.5 border-2 transition-warm ${draft.bg === x.id ? 'border-primary bg-primary-light/50' : 'border-transparent bg-section-bg hover:border-divider'}">
+                    <span class="block h-14 rounded-button mb-2 relative overflow-hidden" style="background:${x.card};">${draft.bg === x.id ? `<span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">${icon('check','icon w-3 h-3')}</span>` : ''}</span>
+                    <span class="block text-xs font-semibold">${x.name}</span><span class="block text-[11px] text-ink-muted leading-snug">${x.best}</span>
+                  </button>`).join('')}
+                <label class="text-left rounded-card p-2.5 border-2 border-dashed cursor-pointer transition-warm focus-within:ring-2 focus-within:ring-primary ${draft.bg === 'custom' ? 'border-primary bg-primary-light/50' : 'border-divider bg-section-bg hover:border-primary'}">
+                  <span class="flex h-14 rounded-button mb-2 items-center justify-center text-ink-muted overflow-hidden" style="${draft.customUrl ? `background:url(${draft.customUrl}) center/cover;` : 'background:#fff;'}">${draft.customUrl ? '' : icon('image','icon w-5 h-5')}</span>
+                  <span class="block text-xs font-semibold">${draft.customUrl ? 'Your photo' : 'Upload a photo'}</span><span class="block text-[11px] text-ink-muted leading-snug">JPG or PNG, under 5 MB</span>
+                  <input type="file" accept="image/*" class="sr-only" onchange="onUpload(this)">
+                </label>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-x-8 gap-y-4">
+              ${seg('Text style', [['serif','Classic'],['sans','Clean']], draft.font, 'setFontStyle')}
+              ${seg('Text size', [[0,'Small'],[1,'Medium'],[2,'Large']], draft.size, 'setSize')}
+              ${seg('Alignment', [['center','Centre'],['left','Left']], draft.align, 'setAlign')}
+            </div>
+            <div class="divide-y divide-divider">
+              ${toggle('Decorative artwork on the share card', 'motif', b.motif === 'none' ? 'This background has no artwork' : 'Soft abstract shapes, no figures', b.motif === 'none')}
+              ${toggle('\u201cReflections by Parish Connect\u201d on the share card', 'watermark', 'Small credit line at the bottom', false)}
+            </div>
+          </section>
+
+          <section class="bg-card-bg rounded-card shadow-card p-5 sm:p-6">
+            <div class="flex flex-wrap items-center gap-3">
+              <button onclick="startPublish()" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-6 py-3 rounded-button min-h-[48px] transition-warm">${primaryLabel}</button>
+              <button onclick="saveDraft()" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-5 py-3 rounded-button min-h-[48px] transition-warm">${live ? 'Unpublish and save as draft' : 'Save as draft'}</button>
+              <button onclick="backToList()" class="text-ink-muted text-sm font-semibold px-4 py-3 rounded-button min-h-[48px] hover:bg-section-bg transition-warm">Close</button>
+            </div>
+            <p class="text-xs text-ink-muted mt-3">${live ? (st === 'Scheduled' ? 'Scheduled \u2014 it will appear to all parishioners on ' + formatDate(draft.date) + '.' : st === 'Live' ? 'This Minute is live now. Updating changes it immediately for everyone.' : 'This Minute has already been shown.') : 'Drafts are only visible to diocese staff.'}</p>
+          </section>
+        </div>
+
+        <aside class="lg:sticky lg:top-24 min-w-0">
+          <div class="bg-card-bg rounded-card shadow-card p-5">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <p class="font-heading font-semibold text-lg">What parishioners see</p>
+            </div>
+            <div class="inline-flex bg-section-bg rounded-badge p-1 mb-5" role="group" aria-label="Preview">${tab('minute','The Minute')}${tab('card','Share card')}${tab('home','Home screen')}</div>
+            <div id="preview-body" class="overflow-x-auto pb-1">${previewHTML()}</div>
+            <p class="text-xs text-ink-muted mt-4">${previewTab === 'minute' ? 'The full-screen reading page, scrolled the way a phone would show it.' : previewTab === 'card' ? 'The 9:16 image parishioners can share on WhatsApp or Instagram Stories.' : 'The card on the home screen. It shows the occasion and your opening line.'}</p>
+          </div>
+        </aside>
+      </div>`;
+  }
+  function setFontStyle(v) { setStyle('font', v); }
+  function setSize(v) { setStyle('size', v); }
+  function setAlign(v) { setStyle('align', v); }
+
+  // ---- save / publish ----
+  function validate() {
+    const items = [];
+    if (!draft.date) items.push('Choose the day this Minute should appear.');
+    if (!draft.occasion.trim()) items.push('Add the occasion or feast.');
+    if (!draft.opening.trim()) items.push('Write the opening line.');
+    if (!plain(draft.reflection)) items.push('Write the reflection.');
+    if (!plain(draft.prayer)) items.push('Write the prayer.');
+    return items;
+  }
+  function commit(published) {
+    draft.published = published; draft.updated = DEMO_TODAY;
+    const clash = published ? minutes.find(m => m.id !== draft.id && m.date === draft.date && m.published) : null;
+    if (clash) clash.published = false;
+    const i = minutes.findIndex(m => m.id === draft.id);
+    if (i >= 0) minutes[i] = JSON.parse(JSON.stringify(draft)); else minutes.push(JSON.parse(JSON.stringify(draft)));
+    dirty = false; view = 'list'; const label = draft.occasion; draft = null;
+    return { clash, label };
+  }
+  function saveDraft() {
+    if (!draft.occasion.trim() && !draft.opening.trim() && !plain(draft.reflection) && !plain(draft.prayer)) { editorError = { title:'There is nothing to save yet', items:['Add at least an occasion or a few words first.'] }; render(true); window.scrollTo({ top:0, behavior:'smooth' }); return; }
+    if (!draft.occasion.trim()) draft.occasion = 'Untitled Minute';
+    const wasLive = draft.published && statusOf(draft) !== 'Draft';
+    const r = commit(false); toast(wasLive ? '\u201c' + r.label + '\u201d unpublished and saved as a draft.' : 'Draft saved.'); render();
+  }
+  function startPublish() {
+    const items = validate();
+    if (items.length) { editorError = { title:'A few things are needed before this can go out', items }; render(true); window.scrollTo({ top:0, behavior:'smooth' }); return; }
+    const clash = minutes.find(m => m.id !== draft.id && m.date === draft.date && m.published);
+    const future = draft.date > DEMO_TODAY, past = draft.date < DEMO_TODAY;
+    const mi = meterInfo();
+    confirmDialog({
+      title: future ? 'Schedule this Minute?' : past ? 'Publish for a past date?' : 'Publish now?',
+      body: `<p><b class="text-ink">${esc(draft.occasion)}</b> will appear on the home screen of every parishioner in all 130 parishes ${future ? 'on <b class="text-ink">' + weekday(draft.date) + ', ' + formatDate(draft.date) + '</b>' : past ? 'as an archived Minute for ' + formatDate(draft.date) : '<b class="text-ink">today</b>'}.</p>`
+          + (clash ? `<p class="bg-gold/15 rounded-button px-3 py-2">This replaces <b class="text-ink">${esc(clash.occasion)}</b>, which will go back to a draft.</p>` : '')
+          + (mi.words > 210 ? '<p class="bg-gold/15 rounded-button px-3 py-2">It is longer than a minute to read. You can still publish it.</p>' : ''),
+      label: future ? 'Schedule' : 'Publish', onConfirm: doPublish });
+  }
+  function doPublish() {
+    const btn = document.querySelector('main button.bg-primary'); if (btn) { btn.disabled = true; btn.textContent = 'Publishing\u2026'; }
+    setTimeout(() => {
+      const future = draft.date > DEMO_TODAY, r = commit(true);
+      toast(future ? '\u201c' + r.label + '\u201d scheduled for ' + formatDate(minutes.find(m => m.occasion === r.label).date) + '.' : '\u201c' + r.label + '\u201d is now live for all parishioners.');
+      render();
+    }, 700);
+  }
+
+  // =========================================================================
+  function render(keepScroll) {
+    const root = document.getElementById('ff-root');
+    const y = window.scrollY;
+    root.innerHTML = view === 'list' ? renderList() : renderEditor();
+    if (view === 'edit' && !loading) { refreshMeters(); fitPhone(); }
+    if (keepScroll === true) window.scrollTo({ top:y });
+  }
+  render();
+</script>
+
+</body>
+</html>

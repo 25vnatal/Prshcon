@@ -77,6 +77,10 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M15 15.5a4 4 0 0 1 5 3.5"/></svg>
           Ministry
         </button>
+        <button onclick="return goFaithFormation()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Faith Formation
+        </button>
         <button onclick="return goCommunication()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-button text-ink-muted text-sm hover:bg-section-bg transition-warm">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v12H7l-3 3V4Z"/></svg>
           Communication
@@ -148,6 +152,7 @@
   function goDocuments() { window.location.href = 'screen-diocese-documents-hub.html?' + baseParams().toString(); return false; }
   function goMinistry() { window.location.href = 'screen-diocese-ministry-hub.html?' + baseParams().toString(); return false; }
 
+  function goFaithFormation() { window.location.href = 'screen-diocese-faithformation-hub.html?' + baseParams().toString(); return false; }
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('-translate-x-full');
     document.getElementById('sidebar-backdrop').classList.toggle('hidden');
