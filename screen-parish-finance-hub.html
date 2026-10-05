@@ -34,6 +34,14 @@
   :focus-visible { outline: 2px solid #4F7CF5; outline-offset: 2px; }
   .transition-warm { transition: all 200ms ease; }
   .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* iPad / Safari: native date and time fields ignore the width of their column and push into the next one.
+     Take over the sizing so they always stay inside their own cell. */
+  input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; box-sizing: border-box; line-height: 1.25; }
+  input[type="date"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.25em; }
+  input[type="date"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; right: 0; width: 44px; height: 100%; cursor: pointer; }
+  input[type="date"], input[type="time"] { position: relative; }
 </style>
 </head>
 <body class="text-ink">
@@ -141,6 +149,7 @@
           <p class="text-ink-muted text-sm mt-1">Track income and expenses, and manage categories and accounts.</p>
         </div>
 
+        <p class="text-xs text-ink-muted mb-2">Year to date · 1 Jan – 31 Jul 2026 · posted entries only. Matches Reports → Financial.</p>
         <div id="summary-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"></div>
 
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
@@ -296,6 +305,7 @@
     arrowUp: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
     arrowDown: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
     scale: '<path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7 2 14a3 3 0 0 0 6 0Z"/><path d="M19 7l-3 7a3 3 0 0 0 6 0Z"/>',
+    search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
     heart: '<path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2.3 5 5.7 5 8 5 10 6.3 12 9c2-2.7 4-4 6.3-4 3.4 0 5.3 3.4 3.7 6.7C19.5 16.4 12 21 12 21Z"/>',
   };
   function icon(name, cls) { return `<svg class="${cls||'icon'}" viewBox="0 0 24 24">${ICON_PATHS[name]}</svg>`; }
@@ -351,20 +361,217 @@
   ];
 
   // ---------------- Mock data: Transactions ----------------
+  // Jan–Jul 2026 ledger (year to date). Posted entries add up exactly to the figures on Reports → Financial:
+  // income ₹18,42,600, expenses ₹14,25,300, net ₹4,17,300 (and the same totals per category and per month).
+  // Two Draft entries are deliberately included to show that unposted items are not counted.
   let transactions = [
-    { id:"FIN-001", type:"Income", date:"2026-07-24", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"Sunday Mass intention offering — Rodrigues Family", referenceNumber:"MASS-BOOK-2026-0311", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-24" },
-    { id:"FIN-002", type:"Income", date:"2026-06-14", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"In memory of Michael Rodrigues", referenceNumber:"MASS-BOOK-2026-0204", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
-    { id:"FIN-003", type:"Income", date:"2026-07-26", amount:18500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-26" },
-    { id:"FIN-004", type:"Income", date:"2026-07-05", amount:400, accountId:"ACC-001", categoryId:"CAT-003", description:"Rodrigues Family — 2026-Q3 subscription", referenceNumber:"IJS/FAM/1001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-05" },
-    { id:"FIN-005", type:"Income", date:"2026-07-15", amount:3000, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-15" },
-    { id:"FIN-006", type:"Expense", date:"2026-07-01", amount:45000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — July", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-01" },
-    { id:"FIN-007", type:"Expense", date:"2026-07-10", amount:8500, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — July", referenceNumber:"BESCOM-JUL26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-10" },
-    { id:"FIN-008", type:"Expense", date:"2026-07-18", amount:12000, accountId:"ACC-001", categoryId:"CAT-009", description:"Roof repair — side chapel", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-18" },
-    { id:"FIN-009", type:"Expense", date:"2026-07-20", amount:5000, accountId:"ACC-002", categoryId:"CAT-011", description:"Poor Families Collection distribution", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-20" },
-    { id:"FIN-010", type:"Expense", date:"2026-07-08", amount:1200, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-08" },
+    { id:"FIN-001", type:"Expense", date:"2026-01-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — January", referenceNumber:"PAYROLL-2026-01", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-01" },
+    { id:"FIN-002", type:"Income", date:"2026-01-04", amount:24000, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-04" },
+    { id:"FIN-003", type:"Expense", date:"2026-01-05", amount:6000, accountId:"ACC-001", categoryId:"CAT-012", description:"Insurance and diocesan remittances", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-05" },
+    { id:"FIN-004", type:"Income", date:"2026-01-06", amount:8300, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Jan", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-06" },
+    { id:"FIN-005", type:"Income", date:"2026-01-07", amount:21200, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 January", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-07" },
+    { id:"FIN-006", type:"Expense", date:"2026-01-08", amount:19000, accountId:"ACC-001", categoryId:"CAT-009", description:"Hall roof waterproofing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-08" },
+    { id:"FIN-007", type:"Expense", date:"2026-01-09", amount:7500, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-09" },
+    { id:"FIN-008", type:"Expense", date:"2026-01-10", amount:18700, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — January", referenceNumber:"BESCOM-JAN26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-10" },
+    { id:"FIN-009", type:"Income", date:"2026-01-10", amount:16800, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-10" },
+    { id:"FIN-010", type:"Income", date:"2026-01-11", amount:21800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-11" },
+    { id:"FIN-011", type:"Expense", date:"2026-01-12", amount:6000, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — January", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-12" },
+    { id:"FIN-012", type:"Income", date:"2026-01-13", amount:8700, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Jan", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-13" },
+    { id:"FIN-013", type:"Expense", date:"2026-01-14", amount:5500, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — January", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-14" },
+    { id:"FIN-014", type:"Income", date:"2026-01-14", amount:19300, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 January", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-14" },
+    { id:"FIN-015", type:"Expense", date:"2026-01-15", amount:23900, accountId:"ACC-001", categoryId:"CAT-011", description:"Winter blanket distribution", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-15" },
+    { id:"FIN-016", type:"Income", date:"2026-01-15", amount:7900, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-15" },
+    { id:"FIN-017", type:"Income", date:"2026-01-17", amount:10100, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-17" },
+    { id:"FIN-018", type:"Income", date:"2026-01-18", amount:22700, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-18" },
+    { id:"FIN-019", type:"Expense", date:"2026-01-19", amount:4000, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-19" },
+    { id:"FIN-020", type:"Income", date:"2026-01-20", amount:7900, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Jan", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-20" },
+    { id:"FIN-021", type:"Income", date:"2026-01-20", amount:7600, accountId:"ACC-002", categoryId:"CAT-006", description:"Candle and book-stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-20" },
+    { id:"FIN-022", type:"Income", date:"2026-01-21", amount:18300, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 January", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-21" },
+    { id:"FIN-023", type:"Expense", date:"2026-01-22", amount:10200, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-22" },
+    { id:"FIN-024", type:"Expense", date:"2026-01-24", amount:15900, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-24" },
+    { id:"FIN-025", type:"Income", date:"2026-01-24", amount:6800, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-24" },
+    { id:"FIN-026", type:"Income", date:"2026-01-25", amount:22800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-25" },
+    { id:"FIN-027", type:"Income", date:"2026-01-27", amount:8400, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Jan", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-27" },
+    { id:"FIN-028", type:"Income", date:"2026-01-28", amount:17400, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 January", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-01-28" },
+    { id:"FIN-029", type:"Expense", date:"2026-02-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — February", referenceNumber:"PAYROLL-2026-02", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-01" },
+    { id:"FIN-030", type:"Income", date:"2026-02-01", amount:18800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-01" },
+    { id:"FIN-031", type:"Expense", date:"2026-02-05", amount:5200, accountId:"ACC-001", categoryId:"CAT-012", description:"Vehicle fuel and servicing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-05" },
+    { id:"FIN-032", type:"Income", date:"2026-02-06", amount:7700, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Feb", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-06" },
+    { id:"FIN-033", type:"Income", date:"2026-02-07", amount:19700, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 February", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-07" },
+    { id:"FIN-034", type:"Expense", date:"2026-02-08", amount:14600, accountId:"ACC-001", categoryId:"CAT-009", description:"Church bell tower painting", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-08" },
+    { id:"FIN-035", type:"Income", date:"2026-02-08", amount:18800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-08" },
+    { id:"FIN-036", type:"Expense", date:"2026-02-09", amount:7700, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-09" },
+    { id:"FIN-037", type:"Expense", date:"2026-02-10", amount:19200, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — February", referenceNumber:"BESCOM-FEB26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-10" },
+    { id:"FIN-038", type:"Income", date:"2026-02-10", amount:19800, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-10" },
+    { id:"FIN-039", type:"Expense", date:"2026-02-12", amount:6200, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — February", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-12" },
+    { id:"FIN-040", type:"Income", date:"2026-02-13", amount:8100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Feb", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-13" },
+    { id:"FIN-041", type:"Expense", date:"2026-02-14", amount:5600, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — February", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-14" },
+    { id:"FIN-042", type:"Income", date:"2026-02-14", amount:17900, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 February", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-14" },
+    { id:"FIN-043", type:"Income", date:"2026-02-15", amount:23100, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-15" },
+    { id:"FIN-044", type:"Income", date:"2026-02-15", amount:6300, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — community meeting", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-15" },
+    { id:"FIN-045", type:"Income", date:"2026-02-17", amount:11900, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-17" },
+    { id:"FIN-046", type:"Expense", date:"2026-02-19", amount:3400, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-19" },
+    { id:"FIN-047", type:"Expense", date:"2026-02-20", amount:27200, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-20" },
+    { id:"FIN-048", type:"Income", date:"2026-02-20", amount:7300, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Feb", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-20" },
+    { id:"FIN-049", type:"Income", date:"2026-02-20", amount:7000, accountId:"ACC-002", categoryId:"CAT-006", description:"Newsletter advertisements", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-20" },
+    { id:"FIN-050", type:"Income", date:"2026-02-21", amount:17000, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 February", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-21" },
+    { id:"FIN-051", type:"Expense", date:"2026-02-22", amount:7900, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-22" },
+    { id:"FIN-052", type:"Income", date:"2026-02-22", amount:19800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-22" },
+    { id:"FIN-053", type:"Income", date:"2026-02-24", amount:7900, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-24" },
+    { id:"FIN-054", type:"Income", date:"2026-02-27", amount:7800, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Feb", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-27" },
+    { id:"FIN-055", type:"Income", date:"2026-02-28", amount:16100, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 February", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-02-28" },
+    { id:"FIN-056", type:"Expense", date:"2026-03-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — March", referenceNumber:"PAYROLL-2026-03", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-01" },
+    { id:"FIN-057", type:"Income", date:"2026-03-01", amount:20000, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-01" },
+    { id:"FIN-058", type:"Expense", date:"2026-03-05", amount:7100, accountId:"ACC-001", categoryId:"CAT-012", description:"Vehicle fuel and servicing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-05" },
+    { id:"FIN-059", type:"Income", date:"2026-03-06", amount:7200, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Mar", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-06" },
+    { id:"FIN-060", type:"Income", date:"2026-03-07", amount:18300, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 March", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-07" },
+    { id:"FIN-061", type:"Expense", date:"2026-03-08", amount:30300, accountId:"ACC-001", categoryId:"CAT-009", description:"Pew repair and polishing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-08" },
+    { id:"FIN-062", type:"Income", date:"2026-03-08", amount:22700, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-08" },
+    { id:"FIN-063", type:"Expense", date:"2026-03-09", amount:6000, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-09" },
+    { id:"FIN-064", type:"Expense", date:"2026-03-10", amount:14900, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — March", referenceNumber:"BESCOM-MAR26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-10" },
+    { id:"FIN-065", type:"Income", date:"2026-03-10", amount:19900, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-10" },
+    { id:"FIN-066", type:"Expense", date:"2026-03-12", amount:4800, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — March", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-12" },
+    { id:"FIN-067", type:"Income", date:"2026-03-12", amount:12200, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — birthday celebration", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-12" },
+    { id:"FIN-068", type:"Income", date:"2026-03-13", amount:7600, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Mar", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-13" },
+    { id:"FIN-069", type:"Expense", date:"2026-03-14", amount:4400, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — March", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-14" },
+    { id:"FIN-070", type:"Income", date:"2026-03-14", amount:16600, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 March", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-14" },
+    { id:"FIN-071", type:"Income", date:"2026-03-15", amount:20900, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-15" },
+    { id:"FIN-072", type:"Income", date:"2026-03-17", amount:11900, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-17" },
+    { id:"FIN-073", type:"Expense", date:"2026-03-19", amount:4800, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-19" },
+    { id:"FIN-074", type:"Expense", date:"2026-03-20", amount:26400, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-20" },
+    { id:"FIN-075", type:"Income", date:"2026-03-20", amount:6800, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Mar", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-20" },
+    { id:"FIN-076", type:"Income", date:"2026-03-20", amount:6500, accountId:"ACC-002", categoryId:"CAT-006", description:"Candle and book-stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-20" },
+    { id:"FIN-077", type:"Income", date:"2026-03-21", amount:15800, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 March", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-21" },
+    { id:"FIN-078", type:"Expense", date:"2026-03-22", amount:16300, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-22" },
+    { id:"FIN-079", type:"Income", date:"2026-03-22", amount:20900, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-22" },
+    { id:"FIN-080", type:"Income", date:"2026-03-24", amount:8000, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-24" },
+    { id:"FIN-081", type:"Income", date:"2026-03-26", amount:5300, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — cultural programme", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-26" },
+    { id:"FIN-082", type:"Income", date:"2026-03-27", amount:7200, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Mar", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-27" },
+    { id:"FIN-083", type:"Income", date:"2026-03-28", amount:15000, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 March", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-28" },
+    { id:"FIN-084", type:"Income", date:"2026-03-29", amount:19200, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-03-29" },
+    { id:"FIN-085", type:"Expense", date:"2026-04-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — April", referenceNumber:"PAYROLL-2026-04", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-01" },
+    { id:"FIN-086", type:"Expense", date:"2026-04-05", amount:14200, accountId:"ACC-001", categoryId:"CAT-012", description:"Insurance and diocesan remittances", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-05" },
+    { id:"FIN-087", type:"Income", date:"2026-04-05", amount:33200, accountId:"ACC-001", categoryId:"CAT-002", description:"Easter Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-05" },
+    { id:"FIN-088", type:"Income", date:"2026-04-06", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Apr", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-06" },
+    { id:"FIN-089", type:"Income", date:"2026-04-07", amount:19000, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 April", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-07" },
+    { id:"FIN-090", type:"Expense", date:"2026-04-08", amount:19100, accountId:"ACC-001", categoryId:"CAT-009", description:"Sound system servicing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-08" },
+    { id:"FIN-091", type:"Expense", date:"2026-04-09", amount:7600, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-09" },
+    { id:"FIN-092", type:"Expense", date:"2026-04-10", amount:18800, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — April", referenceNumber:"BESCOM-APR26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-10" },
+    { id:"FIN-093", type:"Income", date:"2026-04-10", amount:42800, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-10" },
+    { id:"FIN-094", type:"Expense", date:"2026-04-12", amount:6100, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — April", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-12" },
+    { id:"FIN-095", type:"Income", date:"2026-04-12", amount:20800, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-12" },
+    { id:"FIN-096", type:"Income", date:"2026-04-12", amount:8500, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — catechism exam hall", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-12" },
+    { id:"FIN-097", type:"Income", date:"2026-04-13", amount:7800, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Apr", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-13" },
+    { id:"FIN-098", type:"Expense", date:"2026-04-14", amount:5400, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — April", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-14" },
+    { id:"FIN-099", type:"Income", date:"2026-04-14", amount:17300, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 April", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-14" },
+    { id:"FIN-100", type:"Expense", date:"2026-04-15", amount:48100, accountId:"ACC-001", categoryId:"CAT-011", description:"Easter charity drive", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-15" },
+    { id:"FIN-101", type:"Income", date:"2026-04-17", amount:25700, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-17" },
+    { id:"FIN-102", type:"Expense", date:"2026-04-19", amount:9400, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-19" },
+    { id:"FIN-103", type:"Income", date:"2026-04-19", amount:22700, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-19" },
+    { id:"FIN-104", type:"Income", date:"2026-04-20", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Apr", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-20" },
+    { id:"FIN-105", type:"Income", date:"2026-04-20", amount:6800, accountId:"ACC-002", categoryId:"CAT-006", description:"Easter stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-20" },
+    { id:"FIN-106", type:"Income", date:"2026-04-21", amount:16400, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 April", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-21" },
+    { id:"FIN-107", type:"Expense", date:"2026-04-22", amount:10300, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-22" },
+    { id:"FIN-108", type:"Expense", date:"2026-04-24", amount:32000, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-24" },
+    { id:"FIN-109", type:"Income", date:"2026-04-24", amount:17100, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-24" },
+    { id:"FIN-110", type:"Income", date:"2026-04-26", amount:25500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-26" },
+    { id:"FIN-111", type:"Income", date:"2026-04-26", amount:3700, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-26" },
+    { id:"FIN-112", type:"Income", date:"2026-04-27", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Apr", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-27" },
+    { id:"FIN-113", type:"Income", date:"2026-04-28", amount:15600, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 April", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-04-28" },
+    { id:"FIN-114", type:"Expense", date:"2026-05-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — May", referenceNumber:"PAYROLL-2026-05", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-01" },
+    { id:"FIN-115", type:"Income", date:"2026-05-03", amount:19300, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-03" },
+    { id:"FIN-116", type:"Expense", date:"2026-05-05", amount:5900, accountId:"ACC-001", categoryId:"CAT-012", description:"Vehicle fuel and servicing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-05" },
+    { id:"FIN-117", type:"Income", date:"2026-05-06", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 May", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-06" },
+    { id:"FIN-118", type:"Income", date:"2026-05-07", amount:18000, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 May", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-07" },
+    { id:"FIN-119", type:"Expense", date:"2026-05-08", amount:20000, accountId:"ACC-001", categoryId:"CAT-009", description:"Garden and grounds upkeep", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-08" },
+    { id:"FIN-120", type:"Expense", date:"2026-05-09", amount:6400, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-09" },
+    { id:"FIN-121", type:"Expense", date:"2026-05-10", amount:15800, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — May", referenceNumber:"BESCOM-MAY26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-10" },
+    { id:"FIN-122", type:"Income", date:"2026-05-10", amount:21700, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-10" },
+    { id:"FIN-123", type:"Income", date:"2026-05-10", amount:24800, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-10" },
+    { id:"FIN-124", type:"Expense", date:"2026-05-12", amount:5100, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — May", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-12" },
+    { id:"FIN-125", type:"Income", date:"2026-05-12", amount:10800, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — engagement function", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-12" },
+    { id:"FIN-126", type:"Income", date:"2026-05-13", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 May", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-13" },
+    { id:"FIN-127", type:"Expense", date:"2026-05-14", amount:4600, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — May", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-14" },
+    { id:"FIN-128", type:"Income", date:"2026-05-14", amount:16400, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 May", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-14" },
+    { id:"FIN-129", type:"Expense", date:"2026-05-15", amount:20100, accountId:"ACC-001", categoryId:"CAT-011", description:"Medical aid for families", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-15" },
+    { id:"FIN-130", type:"Income", date:"2026-05-17", amount:17700, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-17" },
+    { id:"FIN-131", type:"Income", date:"2026-05-17", amount:14900, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-17" },
+    { id:"FIN-132", type:"Expense", date:"2026-05-19", amount:3900, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-19" },
+    { id:"FIN-133", type:"Income", date:"2026-05-20", amount:6700, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 May", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-20" },
+    { id:"FIN-134", type:"Income", date:"2026-05-20", amount:6400, accountId:"ACC-002", categoryId:"CAT-006", description:"Candle and book-stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-20" },
+    { id:"FIN-135", type:"Income", date:"2026-05-21", amount:15600, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 May", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-21" },
+    { id:"FIN-136", type:"Expense", date:"2026-05-22", amount:10800, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-22" },
+    { id:"FIN-137", type:"Expense", date:"2026-05-24", amount:13400, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-24" },
+    { id:"FIN-138", type:"Income", date:"2026-05-24", amount:20100, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-24" },
+    { id:"FIN-139", type:"Income", date:"2026-05-24", amount:10000, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-24" },
+    { id:"FIN-140", type:"Income", date:"2026-05-26", amount:4600, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-26" },
+    { id:"FIN-141", type:"Income", date:"2026-05-27", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 May", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-27" },
+    { id:"FIN-142", type:"Income", date:"2026-05-28", amount:14800, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 May", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-28" },
+    { id:"FIN-143", type:"Income", date:"2026-05-31", amount:18500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-05-31" },
+    { id:"FIN-144", type:"Expense", date:"2026-06-01", amount:86000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — June", referenceNumber:"PAYROLL-2026-06", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-01" },
+    { id:"FIN-145", type:"Expense", date:"2026-06-05", amount:5300, accountId:"ACC-001", categoryId:"CAT-012", description:"Vehicle fuel and servicing", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-05" },
+    { id:"FIN-146", type:"Income", date:"2026-06-06", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Jun", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-06" },
+    { id:"FIN-147", type:"Income", date:"2026-06-07", amount:20500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-07" },
+    { id:"FIN-148", type:"Income", date:"2026-06-07", amount:19200, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 June", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-07" },
+    { id:"FIN-149", type:"Expense", date:"2026-06-09", amount:6700, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-09" },
+    { id:"FIN-150", type:"Expense", date:"2026-06-10", amount:16600, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — June", referenceNumber:"BESCOM-JUN26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-10" },
+    { id:"FIN-151", type:"Income", date:"2026-06-10", amount:23400, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-10" },
+    { id:"FIN-152", type:"Expense", date:"2026-06-12", amount:5300, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — June", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-12" },
+    { id:"FIN-153", type:"Income", date:"2026-06-13", amount:7900, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Jun", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-13" },
+    { id:"FIN-154", type:"Expense", date:"2026-06-14", amount:4800, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — June", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
+    { id:"FIN-155", type:"Income", date:"2026-06-14", amount:20500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
+    { id:"FIN-156", type:"Income", date:"2026-06-14", amount:17400, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 June", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
+    { id:"FIN-157", type:"Income", date:"2026-06-14", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"In memory of Michael Rodrigues", referenceNumber:"MASS-BOOK-2026-0204", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-14" },
+    { id:"FIN-158", type:"Income", date:"2026-06-15", amount:9200, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — cultural programme", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-15" },
+    { id:"FIN-159", type:"Income", date:"2026-06-17", amount:14000, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-17" },
+    { id:"FIN-160", type:"Expense", date:"2026-06-18", amount:19400, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-18" },
+    { id:"FIN-161", type:"Expense", date:"2026-06-19", amount:3600, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-19" },
+    { id:"FIN-162", type:"Expense", date:"2026-06-20", amount:29300, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-20" },
+    { id:"FIN-163", type:"Income", date:"2026-06-20", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Jun", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-20" },
+    { id:"FIN-164", type:"Income", date:"2026-06-20", amount:6800, accountId:"ACC-002", categoryId:"CAT-006", description:"Bank interest and stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-20" },
+    { id:"FIN-165", type:"Income", date:"2026-06-21", amount:21300, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-21" },
+    { id:"FIN-166", type:"Income", date:"2026-06-21", amount:16600, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 June", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-21" },
+    { id:"FIN-167", type:"Income", date:"2026-06-24", amount:9300, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-24" },
+    { id:"FIN-168", type:"Income", date:"2026-06-27", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Jun", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-27" },
+    { id:"FIN-169", type:"Income", date:"2026-06-28", amount:18000, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-28" },
+    { id:"FIN-170", type:"Income", date:"2026-06-28", amount:15700, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 June", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-06-28" },
+    { id:"FIN-171", type:"Expense", date:"2026-07-01", amount:68000, accountId:"ACC-001", categoryId:"CAT-007", description:"Staff salaries — July (3 of 4 paid; one pending)", referenceNumber:"PAYROLL-2026-07", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-01" },
+    { id:"FIN-172", type:"Expense", date:"2026-07-05", amount:8100, accountId:"ACC-001", categoryId:"CAT-012", description:"Insurance and diocesan remittances", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-05" },
+    { id:"FIN-173", type:"Income", date:"2026-07-05", amount:20500, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-05" },
+    { id:"FIN-174", type:"Income", date:"2026-07-05", amount:400, accountId:"ACC-001", categoryId:"CAT-003", description:"Rodrigues Family — 2026-Q3 subscription", referenceNumber:"IJS/FAM/1001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-05" },
+    { id:"FIN-175", type:"Income", date:"2026-07-06", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 6 Jul", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-06" },
+    { id:"FIN-176", type:"Income", date:"2026-07-07", amount:18100, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 1 July", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-07" },
+    { id:"FIN-177", type:"Expense", date:"2026-07-08", amount:40400, accountId:"ACC-001", categoryId:"CAT-009", description:"Roof repair — side chapel", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-08" },
+    { id:"FIN-178", type:"Expense", date:"2026-07-09", amount:3100, accountId:"ACC-002", categoryId:"CAT-010", description:"Stationery and printing", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-09" },
+    { id:"FIN-179", type:"Expense", date:"2026-07-10", amount:7600, accountId:"ACC-001", categoryId:"CAT-008", description:"BESCOM electricity bill — July", referenceNumber:"BESCOM-JUL26", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-10" },
+    { id:"FIN-180", type:"Income", date:"2026-07-10", amount:42400, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Church Renovation Fund", referenceNumber:"CAUSE-5001", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-10" },
+    { id:"FIN-181", type:"Expense", date:"2026-07-12", amount:2400, accountId:"ACC-001", categoryId:"CAT-008", description:"BWSSB water charges — July", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-12" },
+    { id:"FIN-182", type:"Income", date:"2026-07-12", amount:21400, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-12" },
+    { id:"FIN-183", type:"Income", date:"2026-07-13", amount:7500, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 13 Jul", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-13" },
+    { id:"FIN-184", type:"Expense", date:"2026-07-14", amount:2200, accountId:"ACC-001", categoryId:"CAT-008", description:"Internet, phone and cable — July", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-14" },
+    { id:"FIN-185", type:"Income", date:"2026-07-14", amount:16500, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 8 July", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-14" },
+    { id:"FIN-186", type:"Expense", date:"2026-07-15", amount:32200, accountId:"ACC-001", categoryId:"CAT-011", description:"Poor Families Collection distribution", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-15" },
+    { id:"FIN-187", type:"Income", date:"2026-07-15", amount:11600, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — wedding reception", referenceNumber:"", paymentMethod:"Bank Transfer", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-15" },
+    { id:"FIN-188", type:"Income", date:"2026-07-17", amount:25500, accountId:"ACC-001", categoryId:"CAT-005", description:"Online donations — Education Support Fund", referenceNumber:"CAUSE-5002", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-17" },
+    { id:"FIN-189", type:"Expense", date:"2026-07-19", amount:5400, accountId:"ACC-001", categoryId:"CAT-012", description:"Hospitality and miscellaneous", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-19" },
+    { id:"FIN-190", type:"Income", date:"2026-07-19", amount:21400, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-19" },
+    { id:"FIN-191", type:"Income", date:"2026-07-20", amount:6800, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 20 Jul", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-20" },
+    { id:"FIN-192", type:"Income", date:"2026-07-20", amount:6500, accountId:"ACC-002", categoryId:"CAT-006", description:"Candle and book-stall sales", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-20" },
+    { id:"FIN-193", type:"Income", date:"2026-07-21", amount:15600, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 15 July", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-21" },
+    { id:"FIN-194", type:"Expense", date:"2026-07-22", amount:21700, accountId:"ACC-001", categoryId:"CAT-009", description:"Routine cleaning and electrical repairs", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-22" },
+    { id:"FIN-195", type:"Expense", date:"2026-07-24", amount:21500, accountId:"ACC-001", categoryId:"CAT-011", description:"Assistance to families in need", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-24" },
+    { id:"FIN-196", type:"Income", date:"2026-07-24", amount:17000, accountId:"ACC-001", categoryId:"CAT-005", description:"Gift and thanksgiving offerings", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-24" },
+    { id:"FIN-197", type:"Income", date:"2026-07-24", amount:100, accountId:"ACC-001", categoryId:"CAT-001", description:"Sunday Mass intention offering — Rodrigues Family", referenceNumber:"MASS-BOOK-2026-0311", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-24" },
+    { id:"FIN-198", type:"Income", date:"2026-07-26", amount:21400, accountId:"ACC-001", categoryId:"CAT-002", description:"Weekly Sunday collection", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-26" },
+    { id:"FIN-199", type:"Income", date:"2026-07-26", amount:4900, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall rental — birthday celebration", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-26" },
+    { id:"FIN-200", type:"Income", date:"2026-07-27", amount:7100, accountId:"ACC-001", categoryId:"CAT-001", description:"Mass intention offerings — week ending 27 Jul", referenceNumber:"", paymentMethod:"Cash", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-27" },
+    { id:"FIN-201", type:"Expense", date:"2026-07-28", amount:18000, accountId:"ACC-001", categoryId:"CAT-009", description:"Quotation: choir loft repainting (awaiting approval)", referenceNumber:"QTN-0731", paymentMethod:"Bank Transfer", status:"Draft", createdBy:"Parish Staff", createdDate:"2026-07-28" },
+    { id:"FIN-202", type:"Income", date:"2026-07-28", amount:14800, accountId:"ACC-001", categoryId:"CAT-003", description:"Family subscription receipts — week of 22 July", referenceNumber:"", paymentMethod:"UPI", status:"Posted", createdBy:"Parish Staff", createdDate:"2026-07-28" },
+    { id:"FIN-203", type:"Income", date:"2026-07-29", amount:3500, accountId:"ACC-001", categoryId:"CAT-004", description:"Parish hall booking deposit (to be confirmed)", referenceNumber:"", paymentMethod:"UPI", status:"Draft", createdBy:"Parish Staff", createdDate:"2026-07-29" },
   ];
 
   function findCategory(id) { return categories.find(c => c.id === id); }
+  function accountBalance(id) { const a = accounts.find(x => x.id === id); return (a ? a.openingBalance : 0) + transactions.filter(t => t.accountId === id && t.status === 'Posted').reduce((s, t) => s + (t.type === 'Income' ? t.amount : -t.amount), 0); }
   function findAccount(id) { return accounts.find(a => a.id === id); }
   function categoryName(id) { const c = findCategory(id); return c ? c.name : 'Uncategorized'; }
   function accountName(id) { const a = findAccount(id); return a ? a.name : 'Unknown account'; }
@@ -395,15 +602,15 @@
     const net = totalIncome - totalExpense;
     document.getElementById('summary-cards').innerHTML = `
       <div class="bg-card-bg rounded-card shadow-card p-5">
-        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowDown','w-3.5 h-3.5 text-green')}Total Income</p>
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowDown','icon w-3.5 h-3.5 text-green')}Total Income (YTD)</p>
         <p class="font-heading font-bold text-2xl text-green">${formatMoney(totalIncome)}</p>
       </div>
       <div class="bg-card-bg rounded-card shadow-card p-5">
-        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowUp','w-3.5 h-3.5 text-coral')}Total Expenses</p>
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('arrowUp','icon w-3.5 h-3.5 text-coral')}Total Expenses (YTD)</p>
         <p class="font-heading font-bold text-2xl text-coral">${formatMoney(totalExpense)}</p>
       </div>
       <div class="bg-card-bg rounded-card shadow-card p-5">
-        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('scale','w-3.5 h-3.5 text-primary')}Net Balance</p>
+        <p class="text-xs text-ink-muted uppercase tracking-wide mb-1 flex items-center gap-1.5">${icon('scale','icon w-3.5 h-3.5 text-primary')}Net Balance (YTD)</p>
         <p class="font-heading font-bold text-2xl ${net >= 0 ? 'text-primary' : 'text-error'}">${formatMoney(net)}</p>
       </div>
     `;
@@ -422,51 +629,66 @@
   // =========================================================================
   // Income / Expenses modules (shared renderer, filtered by type)
   // =========================================================================
+  const FIN_MONTHS = [['All','All months (Jan\u2013Jul 2026)'],['01','January'],['02','February'],['03','March'],['04','April'],['05','May'],['06','June'],['07','July']];
+  const txState = { Income: { month:'All', cat:'All', q:'', limit:25 }, Expense: { month:'All', cat:'All', q:'', limit:25 } };
+  function txFiltered(type) {
+    const f = txState[type], q = f.q.trim().toLowerCase();
+    return transactions.filter(t => t.type === type
+      && (f.month === 'All' || t.date.slice(5, 7) === f.month)
+      && (f.cat === 'All' || t.categoryId === f.cat)
+      && (!q || (t.description + ' ' + t.referenceNumber + ' ' + categoryName(t.categoryId)).toLowerCase().includes(q)))
+      .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  }
+  function txSet(type, k, v) { txState[type][k] = v; txState[type].limit = 25; renderTxList(type); }
+  function txMore(type) { txState[type].limit += 25; renderTxList(type); }
   function renderTransactionsModule(el, type) {
-    const rows = transactions.filter(t => t.type === type).sort((a,b) => b.date.localeCompare(a.date));
+    const f = txState[type], cats = categories.filter(c => c.type === type);
+    const field = 'border border-divider rounded-input px-3 h-10 text-sm bg-bg-warm focus:ring-2 focus:ring-primary-light focus:outline-none min-w-0';
     el.innerHTML = `
-      <div class="flex justify-end mb-4">
-        <button onclick="openTransactionModal('${type}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5">${icon('plus','icon w-4 h-4')}Add ${type === 'Income' ? 'Income' : 'Expense'}</button>
-      </div>
-      <div class="bg-card-bg rounded-card shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-divider text-left text-ink-muted text-xs uppercase tracking-wide">
-                <th class="px-4 py-3 font-medium">Date</th>
-                <th class="px-4 py-3 font-medium">Category</th>
-                <th class="px-4 py-3 font-medium">Description</th>
-                <th class="px-4 py-3 font-medium">Account</th>
-                <th class="px-4 py-3 font-medium">Amount</th>
-                <th class="px-4 py-3 font-medium">Status</th>
-                <th class="px-4 py-3 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.length === 0 ? `<tr><td colspan="7" class="px-4 py-10 text-center text-sm text-ink-muted">No ${type.toLowerCase()} entries yet.</td></tr>` : rows.map(t => `
-                <tr class="border-b border-divider last:border-0">
-                  <td class="px-4 py-3 text-ink-muted whitespace-nowrap">${formatDate(t.date)}</td>
-                  <td class="px-4 py-3">${categoryName(t.categoryId)}</td>
-                  <td class="px-4 py-3 text-ink-muted">
-                    <p>${t.description}</p>
-                    ${t.referenceNumber ? `<p class="text-xs mt-0.5">${t.referenceNumber}</p>` : ''}
-                  </td>
-                  <td class="px-4 py-3 text-ink-muted">${accountName(t.accountId)}</td>
-                  <td class="px-4 py-3 font-semibold ${type==='Income' ? 'text-green' : 'text-coral'}">${formatMoney(t.amount)}</td>
-                  <td class="px-4 py-3"><span class="${t.status==='Posted' ? 'bg-green/20 text-[#2f6b45]' : 'bg-section-bg text-ink-muted'} text-xs font-semibold px-2.5 py-1 rounded-badge whitespace-nowrap">${t.status}</span></td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-1 justify-end">
-                      <button onclick="openTransactionModal('${type}', '${t.id}')" aria-label="Edit" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
-                      <button onclick="deleteTransaction('${t.id}')" aria-label="Delete" class="w-8 h-8 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
-                    </div>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+      <div class="bg-card-bg rounded-card shadow-card p-4 mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">${icon('search','icon w-4 h-4')}</span>
+          <input type="text" aria-label="Search ${type.toLowerCase()} entries" placeholder="Search description or reference\u2026" value="${f.q.replace(/"/g, '&quot;')}" oninput="txSet('${type}', 'q', this.value)" class="w-full ${field} pl-9 pr-3">
         </div>
+        <select aria-label="Month" onchange="txSet('${type}', 'month', this.value)" class="${field}">${FIN_MONTHS.map(([v, l]) => `<option value="${v}" ${f.month === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <select aria-label="Category" onchange="txSet('${type}', 'cat', this.value)" class="${field}"><option value="All">All categories</option>${cats.map(c => `<option value="${c.id}" ${f.cat === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}</select>
+        <button onclick="openTransactionModal('${type}')" class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold px-4 py-2.5 rounded-button min-h-[40px] transition-warm flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">${icon('plus','icon w-4 h-4')}Add ${type === 'Income' ? 'Income' : 'Expense'}</button>
       </div>
+      <div id="tx-list"></div>
     `;
+    renderTxList(type);
+  }
+  function renderTxList(type) {
+    const rows = txFiltered(type), f = txState[type], shown = rows.slice(0, f.limit);
+    const posted = rows.filter(t => t.status === 'Posted').reduce((s, t) => s + t.amount, 0);
+    const drafts = rows.filter(t => t.status !== 'Posted').length;
+    const tone = type === 'Income' ? 'text-green' : 'text-coral';
+    document.getElementById('tx-list').innerHTML = rows.length === 0
+      ? `<div class="bg-card-bg rounded-card shadow-card p-10 text-center"><svg width="72" height="72" viewBox="0 0 120 120" fill="none" class="mx-auto"><circle cx="90" cy="28" r="14" fill="#F6C453" opacity="0.35"/><path d="M40 100V56l20-16 20 16v44" stroke="#4F7CF5" stroke-width="3" stroke-linejoin="round" fill="#EEF4FF"/><rect x="55" y="72" width="10" height="28" rx="2" fill="#FFFFFF" stroke="#4F7CF5" stroke-width="2.5"/></svg><p class="text-sm font-semibold mt-3">No ${type.toLowerCase()} entries found</p><p class="text-sm text-ink-muted mt-1">Try another month, category or search.</p></div>`
+      : `<div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
+           <p class="text-sm text-ink-muted">${rows.length} ${rows.length === 1 ? 'entry' : 'entries'}${drafts ? ` \u00b7 ${drafts} not posted` : ''}</p>
+           <p class="text-sm">Posted total <b class="font-heading text-lg ${tone}">${formatMoney(posted)}</b></p>
+         </div>
+         <div class="bg-card-bg rounded-card shadow-card divide-y divide-divider overflow-hidden">
+           ${shown.map(t => {
+             const d = new Date(t.date + 'T00:00:00');
+             return `<div class="px-4 sm:px-5 py-3.5 flex flex-wrap sm:flex-nowrap items-center gap-x-4 gap-y-2">
+               <div class="w-12 flex-shrink-0 text-center"><p class="font-heading font-bold text-lg leading-none">${d.getDate()}</p><p class="text-[11px] text-ink-muted uppercase tracking-wide mt-0.5">${MONTH_NAMES[d.getMonth()]}</p></div>
+               <div class="min-w-0 flex-1 basis-[180px]">
+                 <p class="text-sm font-medium">${t.description}</p>
+                 <p class="text-xs text-ink-muted mt-0.5"><span class="bg-section-bg text-ink font-medium px-2 py-0.5 rounded-badge">${categoryName(t.categoryId)}</span> \u00b7 ${accountName(t.accountId)} \u00b7 ${t.paymentMethod}${t.referenceNumber ? ' \u00b7 ' + t.referenceNumber : ''}</p>
+               </div>
+               <div class="text-right flex-shrink-0">
+                 <p class="text-sm font-semibold ${tone}">${formatMoney(t.amount)}</p>
+                 ${t.status !== 'Posted' ? `<span class="inline-block mt-1 bg-gold/20 text-[#8a5a10] text-[11px] font-semibold px-2 py-0.5 rounded-badge whitespace-nowrap">${t.status} \u00b7 not counted</span>` : ''}
+               </div>
+               <div class="flex items-center gap-1 flex-shrink-0">
+                 <button onclick="openTransactionModal('${type}', '${t.id}')" aria-label="Edit" class="w-9 h-9 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
+                 <button onclick="deleteTransaction('${t.id}')" aria-label="Delete" class="w-9 h-9 rounded-button flex items-center justify-center text-error hover:bg-error-bg transition-warm">${icon('trash','icon w-4 h-4')}</button>
+               </div>
+             </div>`; }).join('')}
+         </div>
+         ${rows.length > shown.length ? `<div class="text-center mt-4"><button onclick="txMore('${type}')" class="bg-white border-2 border-primary text-primary text-sm font-semibold px-6 py-3 rounded-button min-h-[44px] transition-warm">Show ${Math.min(25, rows.length - shown.length)} more <span class="font-normal">(${rows.length - shown.length} left)</span></button></div>` : ''}`;
   }
 
   let editingTransactionId = null;
@@ -581,7 +803,7 @@
             <div class="px-4 py-3 flex items-center justify-between gap-3">
               <div class="min-w-0">
                 <p class="text-sm font-medium truncate">${a.name}</p>
-                <p class="text-xs text-ink-muted mt-0.5">${a.type} \u00b7 Opening balance ${formatMoney(a.openingBalance)} \u00b7 ${a.status}</p>
+                <p class="text-xs text-ink-muted mt-0.5">${a.type} \u00b7 Opening balance ${formatMoney(a.openingBalance)} \u00b7 <b class="text-ink">Balance ${formatMoney(accountBalance(a.id))}</b> \u00b7 ${a.status}</p>
               </div>
               <div class="flex items-center gap-1 flex-shrink-0">
                 <button onclick="openAccountModal('${a.id}')" aria-label="Edit account" class="w-8 h-8 rounded-button flex items-center justify-center text-ink-muted hover:bg-section-bg transition-warm">${icon('edit','icon w-4 h-4')}</button>
